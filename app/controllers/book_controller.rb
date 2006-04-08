@@ -1,29 +1,34 @@
 require 'time'
 
-# ‰ÆŒv•ë‹@”\‚ÌƒRƒ“ƒgƒ[ƒ‰
+# å®¶è¨ˆç°¿æ©Ÿèƒ½ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©
 class BookController < ApplicationController 
-  # æˆø‚Ì“ü—Í‚ğó‚¯•t‚¯‚é
+  # å–å¼•ã®å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ã‚‹
   def save_deal
     deal = Deal.create_simple(
       Time.parse(params[:new_deal_date]), params[:new_deal_summary],
       params[:new_amount].to_i,
-      params[:new_account_minus].to_i,
-      params[:new_account_plus].to_i
+      params[:new_account_minus][:id].to_i,
+      params[:new_account_plus][:id].to_i
     )
-    date = Time.parse(params[:new_deal_date])
-    deal = Deal.new(:date => date, :summary => params[:new_deal_summary])
-    # add minus
-    deal.add_entry(params[:new_account_minus].to_i, params[:new_amount].to_i*(-1))
-    deal.add_entry(params[:new_account_plus].to_i, params[:new_amount].to_i)
-    deal.save_deeply
- end
-  # æˆø‚Ìíœ‚ğó‚¯•t‚¯‚é
-  def deleteDeal
+    flash[:notice] = "è¨˜å…¥ #{deal.id} ã‚’è¿½åŠ ã—ã¾ã—ãŸã€‚"
+    redirect_to(:action => 'deals')
   end
-  # Œ‚²‚Æ‚Ìæˆøˆê——‚ğ•\¦‚·‚é
+  # å–å¼•ã®å‰Šé™¤ã‚’å—ã‘ä»˜ã‘ã‚‹
+  def delete_deal
+    deal = Deal.find(params[:id])
+    deal.destroy_deeply
+    flash[:notice] = "å–å¼• #{deal.id} ã‚’å‰Šé™¤ã—ã¾ã—ãŸã€‚"
+    redirect_to(:action => 'deals')
+  end
+  # æœˆã”ã¨ã®å–å¼•ä¸€è¦§ã‚’è¡¨ç¤ºã™ã‚‹
   def deals
-    # ŒûÀˆê——‚ğ—pˆÓ‚·‚é
+    @title ="æœˆé–“å–å¼•ä¸€è¦§"
+    # å£åº§ä¸€è¦§ã‚’ç”¨æ„ã™ã‚‹
     @accounts_minus = Account.find(:all, :conditions => "account_type != 2")
     @accounts_plus = Account.find(:all, :conditions => "account_type != 3")
+    
+    @year = params[:year] || "2006"
+    @month = params[:month] || "4"
+    @deals = Deal.get_for_month(@year.to_i, @month.to_i)
   end
 end

@@ -11,6 +11,22 @@ class Deal < ActiveRecord::Base
     deal.add_entry(minus_account_id, amount*(-1))
     deal.add_entry(plus_account_id, amount)
     deal.save_deeply
+    deal
+  end
+  
+  def self.get_for_month(year, month)
+    start_inclusive = Date.new(year, month, 1)
+    end_exclusive = start_inclusive >> 1
+    p start_inclusive
+    p end_exclusive
+    Deal.find(:all, :conditions => ["date >= ? and date < ?", start_inclusive, end_exclusive], :order => "date desc, id desc")
+  end
+
+  def destroy_deeply
+    self.account_entries.each do |e|
+      e.destroy
+    end
+    destroy
   end
   
   def add_entry(account_id, amount)

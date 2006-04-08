@@ -1,32 +1,38 @@
-<html>
-  <head>
-    <title>月間取引一覧</title>
-  </head>
-  <body>
-    <h1>月間取引一覧</h1>
+    <!-- 通信欄-->
+    <div><%=@flash[:notice] || ""%></div>
     <!-- 入力欄 -->
-    <div>
+    <div class="window">
       <h2>記入</h2>
       <%= form_tag :action => 'save_deal'%>
         <span>日付:</span><input type="text" name="new_deal_date" size="10"/>
-        <select name="new_account_minus">
-          <% for account in @accounts_minus %>
-            <option value="<%=account.id%>"><%=account.name%></option>
-          <% end %>
-        </select>
+        <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
         →
-        <select name="new_account_plus">
-          <% for account in @accounts_plus %>
-            <option value="<%=account.id%>"><%=account.name%></option>
-          <% end %>
-        </select>
+        <%= collection_select("new_account_plus", "id", @accounts_plus, :id, :name) %>
         <span>金額:</span><input type="text" name="new_amount" size="8"/><br />
         <span>摘要:</span><input type="text" name="new_deal_summary" size="40"/>
         <input type="submit" value="記入"/>
       <%=end_form_tag%>
     </div>
-    <div>
-      <h2>一覧表</h2>
+    <div class="window">
+      <h2>仕分け帳表示</h2>
+      <%= form_tag :action => 'deals'%>
+        <input type="text" name="year" size="4" value="<%=@year%>"/>/
+        <input type="text" name="month" size="2" value="<%=@month%>"/>
+        <input type="submit" value="更新" />
+      <%= end_form_tag %>
+      <table class="book">
+        <tr>
+          <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>操作</th>
+        </tr>
+        <% for deal in @deals %>
+          <tr>
+            <td class="number"><%=deal.id%></td><td><%= deal.date.strftime('%Y/%m/%d') %></td><td><%=deal.summary%></td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
+          </tr>
+          <% for account_entry in deal.account_entries %>
+            <tr>
+              <td> </td><td> </td><td>(<%= account_entry.account.name %>)</td><td class="number"><%= number_with_delimiter(account_entry.amount) if account_entry.amount > 0%></td><td class="number"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0%></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </table>
     </div>
-  </body>
-</html>

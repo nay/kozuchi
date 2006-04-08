@@ -1,0 +1,11 @@
+body { background-color: wheat; color: #333; }
+.header { padding: 0; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
+.header td { padding: 0; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
+.header .title { font-size: 20px; padding: 4px; }
+h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
+.window { border: 2px solid darkgoldenrod; margin: 20px 0px; padding: 8px;}
+.book { background-color: goldenrod; border: 1px solid darkgoldenrod; width:96%; }
+.book td { background-color: white; border: 0; margin: 0px; padding: 2px; }
+.book th { background-color: goldenrod;  margin: 0px;}
+.number { text-align: right; }
+.footer { border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
