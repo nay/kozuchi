@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>月間取引一覧</title>
+  </head>
+  <body>
+    <h1>月間取引一覧</h1>
+    <!-- 入力欄 -->
+    <div>
+      <h2>記入</h2>
+      <%= form_tag :action => 'save_deal'%>
+        <span>日付:</span><input type="text" name="new_deal_date" size="10"/>
+        <select name="new_account_minus">
+          <% for account in @accounts_minus %>
+            <option value="<%=account.id%>"><%=account.name%></option>
+          <% end %>
+        </select>
+        →
+        <select name="new_account_plus">
+          <% for account in @accounts_plus %>
+            <option value="<%=account.id%>"><%=account.name%></option>
+          <% end %>
+        </select>
+        <span>金額:</span><input type="text" name="new_amount" size="8"/><br />
+        <span>摘要:</span><input type="text" name="new_deal_summary" size="40"/>
+        <input type="submit" value="記入"/>
+      <%=end_form_tag%>
+    </div>
+    <div>
+      <h2>一覧表</h2>
+    </div>
+  </body>
+</html>
