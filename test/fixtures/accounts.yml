@@ -1,9 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 cache:
   id: 1
+  user_id: 1
   name: Œ»‹à
   account_type: 1
 food:
   id: 2
+  user_id: 1
   name: H”ï
   account_type: 2
