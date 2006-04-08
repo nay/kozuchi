@@ -1,5 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first:
+cache:
   id: 1
-another:
+  name: Œ»‹à
+  account_type: 1
+food:
   id: 2
+  name: H”ï
+  account_type: 2

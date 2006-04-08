@@ -4,6 +4,12 @@ require 'time'
 class BookController < ApplicationController 
   # Žæˆø‚Ì“ü—Í‚ðŽó‚¯•t‚¯‚é
   def save_deal
+    deal = Deal.create_simple(
+      Time.parse(params[:new_deal_date]), params[:new_deal_summary],
+      params[:new_amount].to_i,
+      params[:new_account_minus].to_i,
+      params[:new_account_plus].to_i
+    )
     date = Time.parse(params[:new_deal_date])
     deal = Deal.new(:date => date, :summary => params[:new_deal_summary])
     # add minus
