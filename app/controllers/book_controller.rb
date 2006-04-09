@@ -5,7 +5,8 @@ class BookController < ApplicationController
   # 取引の入力を受け付ける
   def save_deal
     deal = Deal.create_simple(
-      Time.parse(params[:new_deal_date]), params[:new_deal_summary],
+      1, #to do
+      Date.parse(params[:new_deal_date]), nil, params[:new_deal_summary],
       params[:new_amount].to_i,
       params[:new_account_minus][:id].to_i,
       params[:new_account_plus][:id].to_i

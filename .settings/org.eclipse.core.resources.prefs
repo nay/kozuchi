@@ -1,5 +1,7 @@
-#Sat Apr 08 14:51:08 JST 2006
+#Sun Apr 09 09:17:22 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/book_controller.rb=UTF-8
+encoding//app/models/deal.rb=UTF-8
 encoding//app/views/book/deals.rhtml=UTF-8
 encoding//app/views/layouts/book.rhtml=UTF-8
+encoding//db/development_testdata.sql=UTF-8
