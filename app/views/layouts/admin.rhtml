@@ -1,13 +1,20 @@
 <html>
-<head>
-  <title>Admin: <%= controller.action_name %></title>
-  <%= stylesheet_link_tag 'scaffold' %>
-</head>
-<body>
-
-<p style="color: green"><%= flash[:notice] %></p>
-
-<%= @content_for_layout %>
-
-</body>
+  <head>
+    <title><%= @title || controller.action_name %></title>
+    <%= stylesheet_link_tag 'book' %>
+  </head>
+  <body>
+    <!-- header -->
+    <table width="100%" class="header">
+      <tr class="header">
+        <td class="title" width="90%"><%= @title || controller.action_name %></td>
+        <td align="center">小槌</td>
+      </tr>
+    </table> 
+    <!-- 通信欄-->
+    <div><%=@flash[:notice] || ""%></div>
+    <%= @content_for_layout %>
+    <!-- footer -->
+    <div class="footer">小槌 Ver.0.1.0 (c)2006 Yasuko Ohba All rights reserved.</div>
+  </body>
 </html>

@@ -2,10 +2,4 @@
 first_user:
   id: 1
   login_id: test
-  login_password: test
-  name: testUser
-second_user:
-  id: 2
-  login_id: test2
-  login_password: test2
-  name: testUser2
+  hashed_password: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3

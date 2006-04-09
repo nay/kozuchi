@@ -3,9 +3,7 @@ drop table if exists users;
 create table users (
   id integer not null primary key autoincrement,
   login_id varchar (16) not null unique,
-  login_password varchar (16) not null,
-  name varchar (32) not null,
-  email_address varchar (64)
+  hashed_password char (40) not null
 );
 
 /* --- accounts --- */

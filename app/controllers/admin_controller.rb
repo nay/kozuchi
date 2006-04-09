@@ -1,51 +1,22 @@
+
 class AdminController < ApplicationController
-  def index
-    list
-    render :action => 'list'
+  def edit_user
+    @user = User.find(params[:id]) if params[:id]
+    @title = "管理"
+    @user ||= User.new
+    @users = User.find(:all)
   end
 
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  verify :method => :post, :only => [ :destroy, :create, :update ],
-         :redirect_to => { :action => :list }
-
-  def list
-    @account_pages, @accounts = paginate :accounts, :per_page => 10
-  end
-
-  def show
-    @account = Account.find(params[:id])
-  end
-
-  def new
-    @account = Account.new
-  end
-
-  def create
-    @account = Account.new(params[:account])
-    if @account.save
-      flash[:notice] = 'Account was successfully created.'
-      redirect_to :action => 'list'
+  def save_user
+    @user = User.new(params[:user])
+    
+    logger.debug(@user)
+    p @user
+    if @user.save
+      flash[:notice] = "ユーザー#{@user.login_id}を追加しました。"
     else
-      render :action => 'new'
+      flash[:notice] = "追加できませんでした。"
     end
-  end
-
-  def edit
-    @account = Account.find(params[:id])
-  end
-
-  def update
-    @account = Account.find(params[:id])
-    if @account.update_attributes(params[:account])
-      flash[:notice] = 'Account was successfully updated.'
-      redirect_to :action => 'show', :id => @account
-    else
-      render :action => 'edit'
-    end
-  end
-
-  def destroy
-    Account.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to(:action => 'edit_user')
   end
 end
