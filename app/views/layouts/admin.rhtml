@@ -11,9 +11,20 @@
         <td align="center">小槌</td>
       </tr>
     </table> 
-    <!-- 通信欄-->
-    <div><%=@flash[:notice] || ""%></div>
-    <%= @content_for_layout %>
+    <table>
+      <tr>
+        <td valign="top">
+          <table class="window">
+            <tr><td>ユーザー管理</td></tr>
+          </table>
+        </td>
+        <td>
+          <!-- 通信欄-->
+          <div><%=@flash[:notice] || ""%></div>
+          <%= @content_for_layout %>
+        </td>
+      </tr>
+    </table>
     <!-- footer -->
     <div class="footer">小槌 Ver.0.1.0 (c)2006 Yasuko Ohba All rights reserved.</div>
   </body>
