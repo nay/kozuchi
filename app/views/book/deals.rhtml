@@ -24,7 +24,7 @@
         </tr>
         <% for deal in @deals %>
           <tr>
-            <td class="number"><%=deal.id%></td><td><%= deal.date.strftime('%Y/%m/%d') %></td><td><%=deal.summary%></td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
+            <td class="number"><%=deal.id%></td><td><%= format_date(deal.date) %></td><td><%=deal.summary%></td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
           </tr>
           <% for account_entry in deal.account_entries %>
             <tr>

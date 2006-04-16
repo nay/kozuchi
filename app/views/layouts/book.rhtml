@@ -19,13 +19,13 @@
             <tr>
               <td class="header">
                 <%= session[:user].login_id %>さん<br />
-                <%= Time.now.strftime('%Y/%m/%d') %>
+                <%= format_date(Time.now) %>
               </td>
             </tr>
             <tr><td></td></tr>
-            <tr>
-              <td><%= link_to("ログアウト", :controller => "login", :action => "logout") %></td>
-            </tr>
+
+            <tr><td><%= link_to("設定", :controller => "login", :action => "logout") %></td></tr>
+            <tr><td><%= link_to("ログアウト", :controller => "login", :action => "logout") %></td></tr>
           </table>
         </td>
        <td width="100%">
