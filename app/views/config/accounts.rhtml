@@ -1,0 +1,31 @@
+<div class="window">
+  <%= form_tag :action => 'create_account'%>
+    <table>
+      <tr>
+        <td>
+          <%= hidden_field("account", "account_type_name")%>
+          <%= hidden_field("account", "account_type")%>
+          <%= text_field("account", "name") %>
+        </td>
+        <td><button type="submit" value="登録">新しい<%=@account.account_type_name%>を追加</button></td>
+      </tr>
+    </table>
+  <%=end_form_tag%>
+</div>
+<div class="window">
+  <h2><%=@account_type_name%>一覧</h2>
+  
+  <table class="masters" width="100%">
+    <tr>
+      <th><%=@account.account_type_name%>名</th>
+      <th>削除</th>
+    </tr>
+    <% for account in @accounts %>
+      <tr>
+        <td><%= account.name %></td>
+        <td><%= link_to("削除", :action => "delete_account", :id => account.id, :account_type => @account.account_type) %></td> 
+      </tr>
+    <% end %>
+  </table>
+  
+</div>

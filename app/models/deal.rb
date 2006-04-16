@@ -15,12 +15,12 @@ class Deal < ActiveRecord::Base
     deal
   end
   
-  def self.get_for_month(year, month)
+  def self.get_for_month(user_id, year, month)
     start_inclusive = Date.new(year, month, 1)
     end_exclusive = start_inclusive >> 1
     p start_inclusive
     p end_exclusive
-    Deal.find(:all, :conditions => ["date >= ? and date < ?", start_inclusive, end_exclusive], :order => "date desc, id desc")
+    Deal.find(:all, :conditions => ["user_id = ? and date >= ? and date < ?", user_id, start_inclusive, end_exclusive], :order => "date desc, id desc")
   end
 
   def destroy_deeply

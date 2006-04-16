@@ -1,5 +1,6 @@
 
 class AdminController < ApplicationController
+
   def edit_user
     @user = User.find(params[:id]) if params[:id]
     @title = "管理"

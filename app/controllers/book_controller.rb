@@ -3,6 +3,24 @@ require 'time'
 # 家計簿機能のコントローラ
 class BookController < ApplicationController 
   before_filter :authorize
+  layout "userview"
+  
+  def initialize
+    @menu_items = {}
+    @menu_items.store("deals", "仕分帳")
+  end
+  
+  def title
+    "家計簿"
+  end
+  
+  def name
+    "book"
+  end
+  
+  def menu_items
+    @menu_items
+  end
   
   # 取引の入力を受け付ける
   def save_deal
@@ -27,12 +45,14 @@ class BookController < ApplicationController
   def deals
     @title ="月間取引一覧"
     # 口座一覧を用意する
-    @accounts_minus = Account.find(:all, :conditions => "account_type != 2")
-    @accounts_plus = Account.find(:all, :conditions => "account_type != 3")
+    @accounts_minus = Account.find(:all,
+     :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
+    @accounts_plus = Account.find(:all,
+     :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
     
     @year = params[:year] || "2006"
     @month = params[:month] || "4"
-    @deals = Deal.get_for_month(@year.to_i, @month.to_i)
+    @deals = Deal.get_for_month(session[:user].id, @year.to_i, @month.to_i)
   end
   
   

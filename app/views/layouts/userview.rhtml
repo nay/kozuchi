@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <title><%= @title || controller.action_name %></title>
+    <%= stylesheet_link_tag 'book' %>
+  </head>
+  <body>
+    <table width="100%">
+      <!-- header -->
+      <tr>
+        <td colspan="2">
+          <table width="100%" class="header">
+            <tr>
+              <td>
+                <span class="title"><%= controller.title %></span><span class="subtitle"> - <%= controller.menu_items[controller.action_name] || controller.action_name %></span>
+              </td>
+              <td align="right">
+                <% if controller.title != "家計簿" %>
+                  <%= link_to("家計簿", :controller => "book", :action => "deals") %>
+                <% end %>
+                <% if controller.title != "設定" %>
+                  <%= link_to("設定", :controller => "config", :action => "index") %>
+                <% end %>
+                <%= link_to("ログアウト", :controller => "login", :action => "logout") %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <p class="info">
+            <%= session[:user].login_id %>さん<br />
+            <%= format_date(Time.now) %>
+          </p>
+          <!-- menu -->
+          <table class="menu" width="100%">
+            <% controller.menu_items.each do |key, val| %>
+              <tr><td width="100%"><%= link_to(val, :controller => controller.name, :action => key) %></td></tr>
+            <% end %>
+          </table>
+        </td>
+        <!-- contents -->
+        <td width="100%" valign="top">
+          <!-- 通信欄-->
+          <div><%=@flash[:notice] || ""%></div>
+          <%= @content_for_layout %>
+        </td>
+      </tr>
+    </table>
+    <!-- footer -->
+    <div class="footer">小槌 Ver.0.1.0 (c)2006 Yasuko Ohba All rights reserved.</div>
+  </body>
+</html>
