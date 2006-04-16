@@ -2,6 +2,8 @@ require 'time'
 
 # 家計簿機能のコントローラ
 class BookController < ApplicationController 
+  before_filter :authorize
+  
   # 取引の入力を受け付ける
   def save_deal
     deal = Deal.create_simple(
@@ -32,4 +34,6 @@ class BookController < ApplicationController
     @month = params[:month] || "4"
     @deals = Deal.get_for_month(@year.to_i, @month.to_i)
   end
+  
+  
 end

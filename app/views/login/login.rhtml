@@ -1,2 +1,18 @@
-<h1>Login#login</h1>
-<p>Find me in app/views/login/login.rhtml</p>
+<%= form_tag %>
+<div class="window">
+<table>
+  <h2>ログイン</h2>
+  <tr>
+    <td>ログインID</td>
+    <td><%= text_field("user", "login_id") %></td>
+  </tr>
+  <tr>
+    <td>パスワード</td>
+    <td><%= password_field("user", "password") %></td>
+  </tr>
+  <tr>
+    <td colspan="2"><button type="submit" class="window"><span>ログイン</span></button></td>
+  </tr>
+</table>
+<%=end_form_tag%>
+</div>

@@ -7,7 +7,7 @@
     <!-- header -->
     <table width="100%" class="header">
       <tr class="header">
-        <td class="title" width="90%"><%= @title || controller.action_name %></td>
+        <td class="title"><%= @title || controller.action_name %></td>
         <td align="center">小槌</td>
       </tr>
     </table> 
@@ -15,13 +15,20 @@
     <table>
       <tr>
         <td valign="top">
-          <table class="window">
+          <table class="menu">
             <tr>
-              <td>メニュー</td>
+              <td class="header">
+                <%= session[:user].login_id %>さん<br />
+                <%= Time.now.strftime('%Y/%m/%d') %>
+              </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr>
+              <td><%= link_to("ログアウト", :controller => "login", :action => "logout") %></td>
             </tr>
           </table>
         </td>
-       <td>
+       <td width="100%">
          <!-- 通信欄-->
          <div><%=@flash[:notice] || ""%></div>
          <%= @content_for_layout %>
