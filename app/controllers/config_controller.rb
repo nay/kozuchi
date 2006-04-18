@@ -53,8 +53,11 @@ class ConfigController < ApplicationController
   def create_account
     new_account = Account.new(params[:account])
     new_account.user_id = session[:user].id
-    new_account.save
-    flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
+    if new_account.save
+      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
+    else
+      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録できませんでした。"
+    end
     redirect_to(:action => @actions[new_account.account_type])
   end
   
