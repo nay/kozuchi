@@ -20,7 +20,7 @@ class LoginController < ApplicationController
   end
 
   def logout
-      session[:user] = nil
+      reset_session
       flash[:notice] = "ログアウトしました。"
       redirect_to(:action => "login")
   end

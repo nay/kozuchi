@@ -1,40 +1,57 @@
-    <!-- カレンダーとデフォルト年月日 -->
-
+    <script>
+      function submit_deal(form) {
+        // copy year and month
+        form.year.value = document.forms[0].year.value;
+        form.month.value = document.forms[0].month.value;
+        document.forms[0].day.value = form.day.value;
+        
+        if (form.new_amount.value == "" && form.new_deal_summary.value == "") {
+          document.forms[0].submit();
+          return;
+        }
+        if (form.new_amount.value == "") {
+          alert("金額を入れてください。");
+          return;
+        }
+        if (form.day.value == "") {
+          alert("日付を入れてください。");
+          return;
+        }
+        // TODO: 正しい日付でないときにもここではじく
+        form.submit();
+      }
+    </script>
     <div class="window">
+      <%= form_tag :action => 'deals' %>
         <input type="text" name="year" size="4" value="<%=@year%>"/>/
         <input type="text" name="month" size="2" value="<%=@month%>"/>
-    </div>
-    <div class="window">
-        /<input type="text" name="day" size="2"/>
-      (<input type="text" name="new_deal_summary" size="40"/>)
-        <br />
-
-        <span></span><input type="text" name="new_amount" size="8" style="text-align:right;"/>円 
-        <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
-        →
-        <%= collection_select("new_account_plus", "id", @accounts_plus, :id, :name) %>
-        <button>記入</button>
+        <input type="hidden" name="day" value="<%=@day%>"/>
+      <%=end_form_tag%>
     </div>
     <!-- 入力欄 -->
     <div class="window">
-      <h2>記入</h2>
-      <%= form_tag :action => 'save_deal'%>
-        <span>日付:</span><input type="text" name="new_deal_date" size="8"/><br />
-        <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
-        →
-        <%= collection_select("new_account_plus", "id", @accounts_plus, :id, :name) %>
-        <span>金額:</span><input type="text" name="new_amount" size="8"/><br />
-        <span>摘要:</span><input type="text" name="new_deal_summary" size="40"/>
-        <input type="submit" value="記入"/>
+      <%= form_tag :action => 'save_deal' %>
+      <table>
+        <tr>
+          <td>新規</td>
+          <td>
+            <input type="hidden" name="year" size="4" value="<%=@year%>"/>
+            <input type="hidden" name="month" size="2" value="<%=@month%>"/>
+            <input type="text" name="day" size="1" maxlength="2" value="<%=@day%>"/>日
+            <input type="text" name="new_deal_summary" size="40"/><br />
+            <input type="text" name="new_amount" class="amount" size="8"/>円
+            <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
+            →
+            <%= collection_select("new_account_plus", "id", @accounts_plus, :id, :name) %>
+          </td>
+          <td>
+            <button type="button" onClick="submit_deal(this.form);">記入</button>
+          </td>
+        </tr>
+      </table>
       <%=end_form_tag%>
     </div>
     <div class="window">
-      <h2>仕分け帳表示</h2>
-      <%= form_tag :action => 'deals'%>
-        <input type="text" name="year" size="4" value="<%=@year%>"/>/
-        <input type="text" name="month" size="2" value="<%=@month%>"/>
-        <input type="submit" value="更新" />
-      <%= end_form_tag %>
       <table class="book">
         <tr>
           <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>操作</th>

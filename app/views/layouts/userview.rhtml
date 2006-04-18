@@ -44,7 +44,9 @@
         <!-- contents -->
         <td width="100%" valign="top">
           <!-- 通信欄-->
-          <div><%=@flash[:notice] || ""%></div>
+          <% if @flash[:notice] || @flash[:notice].to_s != ""%>
+            <div class="notice"><%=@flash[:notice]%></div>
+          <% end %>
           <%= @content_for_layout %>
         </td>
       </tr>
