@@ -24,4 +24,8 @@ button { border: 4px outset goldenrod; background-color: goldenrod; color:black;
 .masters td { border: 1px inset wheat; background-color: wheat; margin: 0px; padding: 2px; }
 .masters th { border: 1px inset goldenrod; background-color: goldenrod;  margin: 0px;}
 input.amount { text-align: right; }
-form { margin:0; padding:0; }
+
+#calendar * { color: gold; font-weight: bold; text-align: left;}
+#calendar table tr td { width: 40px; padding: 0px 4px; background-color: darkgoldenrod; }
+#calendar table tr td.selected_month { border: 4px inset gold; text-align: right; background-color: gold; color: black; }
+#calendar table tr td.selectable_month { border: 4px outset goldenrod; text-align: right; background-color: goldenrod; color: black; }
