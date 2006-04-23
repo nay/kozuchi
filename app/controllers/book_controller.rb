@@ -71,6 +71,15 @@ class BookController < ApplicationController
     flash[:notice] = "記入 #{deal.id} を追加しました。"
     redirect_to(:action => 'deals')
   end
+  
+  # 取引内容の変更フォームを表示する
+  def edit_deal
+    deal = Deal.find(params[:id])
+    # todo
+    flash[:notice] = "未実装です。"
+    redirect_to(:action => 'deals')
+  end
+  
   # 取引の削除を受け付ける
   def delete_deal
     deal = Deal.find(params[:id])

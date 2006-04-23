@@ -54,11 +54,11 @@
     <div class="window">
       <table class="book">
         <tr>
-          <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>操作</th>
+          <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>変更</th><th>削除</th>
         </tr>
         <% for deal in @deals %>
           <tr>
-            <td class="number"><%=deal.id%></td><td><%= format_date(deal.date) %></td><td><%=deal.summary%></td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
+            <td class="number"><%=deal.id%></td><td><%= format_date(deal.date) %></td><td><%=deal.summary%></td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '変更' ,:action => 'edit_deal', :id => deal %></td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
           </tr>
           <% for account_entry in deal.account_entries %>
             <tr>
