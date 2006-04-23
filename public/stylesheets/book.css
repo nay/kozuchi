@@ -1,19 +1,23 @@
+* { margin:0; padding:0; }
 body { background-color: wheat; color: #333; }
-.header { padding: 0; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
-.header td { padding: 0pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
+#header * { background-color: darkgoldenrod; }
+#header { padding: 4px; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
+#header #menu { float: right; }
+#header #title { font-size: 20px; }
+#header #subtitle { font-size: 14px; }
+#sidebar { float:left; }
+#sidebar .menu { white-space: nowrap; margin: 2px 0px; padding: 4px; border: 2px solid darkgoldenrod;}
+#contents { float:right; }
+#notice { margin: 16px 0px; padding: 8px;}
+#footer { clear: both; border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
+.clearboth { clear: both; }
 p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
-.header .title { font-size: 20px; padding: 4px; }
-.header .subtitle { font-size: 14px; padding: 4px; }
 h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
 .window { border: 2px solid darkgoldenrod; margin: 16px 0px; padding: 8px;}
-.notice { margin: 16px 0px; padding: 8px;}
-.menu { margin: 16px 0px; padding: 0px; }
-.menu td { white-space: nowrap; padding: 4px; border: 2px solid darkgoldenrod;}
 .book { background-color: goldenrod; border: 1px solid darkgoldenrod; width:96%; }
 .book td { background-color: white; border: 0; margin: 0px; padding: 2px; }
 .book th { background-color: goldenrod;  margin: 0px;}
 .number { text-align: right; }
-.footer { border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
 button { border: 4px outset goldenrod; background-color: goldenrod; color:black;  font-weight: bold; margin: 0px; padding: 2px;}
 
 .masters { background-color: goldenrod; border: 0px; width:96%; font-size: 11pt;}
