@@ -1,0 +1,10 @@
+    <div class="tabbuttons">
+      <span class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></span>
+      <span class="selectedtab">残高</span>
+    </div>
+    <div class="tabsheet">
+      <%= form_remote_tag (:update => 'book', :url => {:action => 'save_balance'} ) %>
+            残高　残高　残高
+      <%=end_form_tag%>
+    </div>
+    

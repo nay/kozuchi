@@ -1,0 +1,16 @@
+    <div class="tabbuttons">
+      <span class="selectedtab">明細</span>
+      <span class="tabespace"></span>
+      <span class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></span>
+    </div>    <div class="tabsheet">
+      <%= form_remote_tag (:update => 'book', :url => {:action => 'save_deal'} ) %>
+            <input type="text" name="new_deal_summary" size="40"/><br />
+            <input type="text" name="new_amount" class="amount" size="8"/>円
+            <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
+            →
+            <%= collection_select("new_account_plus", "id", @accounts_plus, :id, :name) %>
+            <button type="button" onClick="submit_deal(this.form);">記入</button>
+      <%=end_form_tag%>
+    </div>
+
+    

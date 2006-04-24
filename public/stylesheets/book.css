@@ -14,7 +14,7 @@ body { background-color: wheat; color: #333; margin: 0px 4px;}
 p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
 h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
 .window { border: 2px solid darkgoldenrod; margin: 16px 0px; padding: 8px;}
-.book { background-color: goldenrod; border: 1px solid darkgoldenrod; width:96%; }
+.book { background-color: goldenrod; border: 1px solid darkgoldenrod; width:100%; }
 .book td { background-color: white; border: 0; margin: 0px; padding: 2px; }
 .book th { background-color: goldenrod;  margin: 0px;}
 .number { text-align: right; }
@@ -23,10 +23,22 @@ button { border: 4px outset goldenrod; background-color: goldenrod; color:black;
 .masters { background-color: goldenrod; border: 0px; width:96%; font-size: 11pt;}
 .masters td { border: 1px inset wheat; background-color: wheat; margin: 0px; padding: 2px; }
 .masters th { border: 1px inset goldenrod; background-color: goldenrod;  margin: 0px;}
-input.amount { text-align: right; }
+input.amount { text-align: right; padding: 4px opx; }
 
 #calendar * { margin: 16px 0px; color: black; font-weight: bold; text-align: left;}
 #calendar table { background-color: darkgoldenrod; }
 #calendar table tr td { width: 40px; padding: 0px 4px; background-color: goldenrod; }
 #calendar table tr td.selected_month { border: 4px inset gold; text-align: right; background-color: gold; color: black; }
 #calendar table tr td.selectable_month { border: 4px outset goldenrod; text-align: right; background-color: goldenrod; color: black; }
+
+.tabsheet { border-top: 2px solid darkgoldenrod; border-bottom: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;  margin: 48px 0px 0px 0px; padding: 8px 8px 8px 8px; background-color: gold; }
+.tab, .selectedtab { margin-bottom: 16px; font-weight: bold; height: 24px; padding : 2px 16px; border-top: 2px solid darkgoldenrod;border-left: 2px solid darkgoldenrod;border-right: 2px solid darkgoldenrod; }
+.selectedtab { background-color: gold; }
+.tab {  }
+.tabbuttons { float:right; margin-top: 8px;}
+.tabwindow {  }
+
+#datebox { float:left; margin: 0px 0px 0px 0px; padding: 8px 8px 0px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
+
+#book { clear: both; margin: 16px 0px 0px 0px;}
+

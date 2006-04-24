@@ -102,6 +102,14 @@ class BookController < ApplicationController
     flash[:notice] = "取引 #{deal.id} を削除しました。"
     redirect_to(:action => 'deals')
   end
+  
+  def select_balance_tab
+    render(:partial => "edit_balance", :layout => false)
+  end
+
+  def select_deal_tab
+    render(:partial => "edit_deal", :layout => false)
+  end
 
   private
   
