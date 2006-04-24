@@ -32,7 +32,7 @@ class BookController < ApplicationController
     @deals = Deal.get_for_month(session[:user].id, date.year, date.month)
   end
   
-  # 取引の入力を受け付ける
+  # 取引の入力を受け付け
   def save_deal
 
     # 月・日に問題がある場合は deal にまかせる

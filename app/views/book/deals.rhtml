@@ -55,6 +55,9 @@
       function display_calendar(year, month) {
         selectedMonth = new Month(year, month);
         
+        // 連動
+        
+        
         if (null == startMonth) {
           startMonth = new Month(year, month);
           startMonth.add(-3);
@@ -133,25 +136,23 @@
         form.submit();
       }
     </script>
-    <div class="window">
-      <%= form_tag :action => 'deals' %>
-        <input type="text" name="year" size="4" value="<%=@year%>"/>/
-        <input type="text" name="month" size="2" value="<%=@month%>"/>
-        <input type="hidden" name="day" value="<%=@day%>"/>
-      <%=end_form_tag%>
-      <div id="calendar">
-      </div>
+    <%= form_tag :action => 'deals' %>
+      <input type="hidden" name="year" size="4" value="<%=@year%>"/>
+      <input type="hidden" name="month" size="2" value="<%=@month%>"/>
+      <input type="hidden" name="day" value="<%=@day%>"/>
+    <%=end_form_tag%>
+    <div id="calendar">
     </div>
     <!-- 入力欄 -->
     <div class="window">
-      <%= form_tag :action => 'save_deal' %>
+      <%= form_remote_tag (:update => 'book', :url => {:action => 'save_deal'} ) %>
       <table>
         <tr>
           <td>新規</td>
           <td>
-            <input type="hidden" name="year" size="4" value="<%=@year%>"/>
-            <input type="hidden" name="month" size="2" value="<%=@month%>"/>
-            <input type="text" name="day" size="1" maxlength="2" value="<%=@day%>"/>日
+            <input type="text" name="year" size="2" value="<%=@year%>"/>/
+            <input type="text" name="month" size="1" value="<%=@month%>"/>/
+            <input type="text" name="day" size="1" maxlength="2" value="<%=@day%>"/>
             <input type="text" name="new_deal_summary" size="40"/><br />
             <input type="text" name="new_amount" class="amount" size="8"/>円
             <%= collection_select("new_account_minus", "id", @accounts_minus, :id, :name) %>
@@ -165,7 +166,11 @@
       </table>
       <%=end_form_tag%>
     </div>
-    <div class="window">
+    <div class="window" id="book">
+      <!-- 通信欄-->
+      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
+        <div id="notice"><%=@flash[:notice]%></div>
+      <% end %>
       <table class="book">
         <tr>
           <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>変更</th><th>削除</th>
