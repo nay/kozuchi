@@ -32,19 +32,14 @@ class BookController < ApplicationController
   # 仕分け帳画面を表示するための処理
   def deals
     prepare_accounts
-    p "year = #{params[:year]}"
-    p "month = #{params[:month]}"
-    p "day = #{params[:day]}"
-    date = nil
     begin
       date = load_date
+      @deals = Deal.get_for_month(session[:user].id, date.year, date.month)
     rescue Exception
-      p "create flash"
       flash[:notice] = "不正な日付です。"
       @deals = Array.new
       return
     end
-    @deals = Deal.get_for_month(session[:user].id, date.year, date.month)
   end
   
   # 取引の入力を受け付けて仕分け帳を更新
@@ -104,10 +99,14 @@ class BookController < ApplicationController
   end
   
   def select_balance_tab
+    @accounts_for_balance = Account.find(:all,
+     :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+  
     render(:partial => "edit_balance", :layout => false)
   end
 
   def select_deal_tab
+    prepare_accounts
     render(:partial => "edit_deal", :layout => false)
   end
 

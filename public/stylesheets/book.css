@@ -9,7 +9,7 @@ body { background-color: wheat; color: #333; margin: 0px 4px;}
 #sidebar .menu { white-space: nowrap; margin: 2px 0px; padding: 4px; border: 2px solid darkgoldenrod;}
 #contents { float:right; }
 #notice { margin: 16px 0px; padding: 8px;}
-#footer { clear: both; border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
+#footer { clear: both; margin-top: 8px; border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
 .clearboth { clear: both; }
 p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
 h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
