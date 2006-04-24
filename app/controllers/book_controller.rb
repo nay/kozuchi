@@ -14,6 +14,21 @@ class BookController < ApplicationController
     @name = "book"
   end
 
+  # 仕分け帳画面部分だけを更新するためのAjax対応処理
+  def update_deals
+    begin
+      @year = params[:year]
+      @month = params[:month]
+      @deals = Deal.get_for_month(session[:user].id, @year.to_i, @month.to_i)
+      session[:year] = @year
+      session[:month] = @month
+    rescue Exception
+      flash[:notice] = "不正な日付です。"
+      @deals = Array.new
+    end
+    render(:partial => "deals", :layout => false)
+  end
+
   # 仕分け帳画面を表示するための処理
   def deals
     prepare_accounts
@@ -32,7 +47,7 @@ class BookController < ApplicationController
     @deals = Deal.get_for_month(session[:user].id, date.year, date.month)
   end
   
-  # 取引の入力を受け付け
+  # 取引の入力を受け付けて仕分け帳を更新
   def save_deal
 
     # 月・日に問題がある場合は deal にまかせる

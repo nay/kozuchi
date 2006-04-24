@@ -1,5 +1,5 @@
 * { margin:0; padding:0; }
-body { background-color: wheat; color: #333; }
+body { background-color: wheat; color: #333; margin: 0px 4px;}
 #header * { background-color: darkgoldenrod; }
 #header { padding: 4px; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
 #header #menu { float: right; }
