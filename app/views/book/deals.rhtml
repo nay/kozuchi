@@ -26,8 +26,8 @@
       }
     </script>
     <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'} ) %>
-      <input type="hidden" name="year" size="4" value="<%=@year%>"/>
-      <input type="hidden" name="month" size="2" value="<%=@month%>"/>
+      <%= hidden_field("target_month", "year") %>
+      <%= hidden_field("target_month", "month") %>
     <%=end_form_tag%>
     
     <!-- カレンダー -->
@@ -37,6 +37,9 @@
     <!-- 入力欄 -->
     <div>
     <div id="datebox">
+      <%= text_field("date", "year", {:size => "2", :maxlength => "4", :id =>"year"}) %>
+      <%= text_field("date", "month", :size => "1", :maxlength => "2", :id => "month") %>
+      <%= text_field("date", "day", :size => "1", :maxlength => "2", :id => "day") %>
             <input type="text" name="year" size="2" value="<%=@year%>"/>/
             <input type="text" name="month" size="1" value="<%=@month%>"/>/
             <input type="text" name="day" size="1" maxlength="2" value="<%=@day%>"/>
@@ -52,6 +55,6 @@
     </div>
 
     <script>
-      select_month(<%=@year%>,<%=@month%>, false);
+      select_month(<%=@target_month.year%>,<%=@target_month.month%>, false);
     </script>
     

@@ -109,8 +109,10 @@ Month.prototype = {
 
     $("calendar").innerHTML = str;
     
-    document.forms[0].year.value = selectedMonth.year;
-    document.forms[0].month.value = selectedMonth.month;
+    $("target_month_year").value = selectedMonth.year;
+    $("target_month_month").value = selectedMonth.month;
+//    document.forms[0].year.value = selectedMonth.year;
+//    document.forms[0].month.value = selectedMonth.month;
     
     if (updatesBook) {
       document.forms[0].onsubmit();

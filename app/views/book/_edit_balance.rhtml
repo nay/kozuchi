@@ -4,8 +4,8 @@
     </div>
     <div class="tabsheet">
       <%= form_remote_tag (:update => 'book', :url => {:action => 'save_balance'} ) %>
-        <%= collection_select("account", "id", @accounts_for_balance, :id, :name) %>
-        残高<input type="text" name="balance" class="amount" size="8"/>円
+        <%= collection_select("balance", "account_id", @accounts_for_balance, :id, :name) %>
+        <label>残高:</label><%= text_field("balance","amount")%><input type="text" name="balance" class="amount" size="8"/>円
         <button type="submit">記入</button>
       <%=end_form_tag%>
     </div>

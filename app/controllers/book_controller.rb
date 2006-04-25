@@ -14,32 +14,37 @@ class BookController < ApplicationController
     @name = "book"
   end
 
+  def select_deal_tab
+    prepare_select_deal_tab
+    render(:partial => "edit_deal", :layout => false)
+  end
+
   # 仕分け帳画面部分だけを更新するためのAjax対応処理
   def update_deals
-    begin
-      @year = params[:year]
-      @month = params[:month]
-      @deals = Deal.get_for_month(session[:user].id, @year.to_i, @month.to_i)
-      session[:year] = @year
-      session[:month] = @month
-    rescue Exception
-      flash[:notice] = "不正な日付です。"
-      @deals = Array.new
-    end
+    @target_month = DateBox.set(params[:target_month])
+    prepare_update_deals
     render(:partial => "deals", :layout => false)
   end
 
   # 仕分け帳画面を表示するための処理
   def deals
-    prepare_accounts
+    @target_month = DateBox.new();
+    @target_month.year = "2006";
+    @target_month.month = "4";
+    prepare_select_deal_tab
     begin
-      date = load_date
-      @deals = Deal.get_for_month(session[:user].id, date.year, date.month)
+      @deals = Deal.get_for_month(session[:user].id, @target_month.year.to_i, @target_month.month.to_i)
     rescue Exception
-      flash[:notice] = "不正な日付です。"
+      flash[:notice] = "不正な日付です。 #{@target_month.year} #{@target_month.month}"
       @deals = Array.new
       return
     end
+  end
+  
+  # 残高確認記録を登録
+  def save_balance
+    balance = Balance.new(params[:balance]);
+    
   end
   
   # 取引の入力を受け付けて仕分け帳を更新
@@ -105,10 +110,6 @@ class BookController < ApplicationController
     render(:partial => "edit_balance", :layout => false)
   end
 
-  def select_deal_tab
-    prepare_accounts
-    render(:partial => "edit_deal", :layout => false)
-  end
 
   private
   
@@ -142,11 +143,23 @@ class BookController < ApplicationController
     Date.new(@year.to_i, @month.to_i, @day.to_i) # exception if illeagl values
   end  
   
-  def prepare_accounts
+  def prepare_select_deal_tab
     @accounts_minus = Account.find(:all,
      :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
     @accounts_plus = Account.find(:all,
      :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
+  end
+
+  def prepare_update_deals
+    begin
+      @deals = Deal.get_for_month(session[:user].id, @target_month.year_i, @target_month.month_i)
+      session[:target_month] = @target_month
+      #session[:year] = @year
+      #session[:month] = @month
+    rescue Exception
+      flash[:notice] = "不正な日付です。 #{@target_month}"
+      @deals = Array.new
+    end
   end
   
 end
