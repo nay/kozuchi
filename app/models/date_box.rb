@@ -31,4 +31,12 @@ class DateBox
   def day_i
     @day.to_i
   end
+  
+  def to_s
+    return "#{@year}/#{@month}/#{@day}"
+  end
+  
+  def to_date
+    Date.new(year_i, month_i, day_i)
+  end
 end

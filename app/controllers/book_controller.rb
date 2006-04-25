@@ -20,6 +20,8 @@ class BookController < ApplicationController
         save_deal
       when "save_balance"
         save_balance
+      else
+        raise Exception("unknown tabaction " + params[:tab_action].to_s)
     end
   end
 
@@ -53,42 +55,25 @@ class BookController < ApplicationController
   
   # 取引の入力を受け付けて仕分け帳を更新
   def save_deal
-
-    # 月・日に問題がある場合は deal にまかせる
-    begin 
-      load_date
-    rescue Exception
-      render(:action => 'deals')
-      return
-    end
-    
-    # 金額と日付はJavaScriptではねる
-    
+    @date = DateBox.new(params[:date])
+    p @date
     amount = params[:new_amount]
-    if (!amount || amount == "")
-      redirect_to(:action => 'deals')
-      return
-    end    
-
-    # 日に問題がある場合はエラー
-    date = nil
     begin
-      date = get_date
-    rescue
-      flash[:notice] = "日がおかしいため記入できませんでした。"
-      redirect_to(:action => 'deals')
-      return
+      deal = Deal.create_simple(
+        1, #to do
+        @date.to_date, nil, params[:new_deal_summary],
+        params[:new_amount].to_i,
+        params[:new_account_minus][:id].to_i,
+        params[:new_account_plus][:id].to_i
+      )
+      flash[:notice] = "記入 #{deal.id} を追加しました。"
+      @target_month = @date
+    rescue => err
+      flash[:notice] = "エラーが発生したため記入できませんでした。" + err
+      @target_month = session[:target_month]
     end
-
-    deal = Deal.create_simple(
-      1, #to do
-      date, nil, params[:new_deal_summary],
-      params[:new_amount].to_i,
-      params[:new_account_minus][:id].to_i,
-      params[:new_account_plus][:id].to_i
-    )
-    flash[:notice] = "記入 #{deal.id} を追加しました。"
-    redirect_to(:action => 'deals')
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    render(:partial => "deals", :layout => false)
   end
   
   # 取引内容の変更フォームを表示する
@@ -117,36 +102,6 @@ class BookController < ApplicationController
 
   private
   
-  def load_date
-    @year = params[:year]
-    @month = params[:month]
-    @day = params[:day]
-
-    if (!@year || @year=="" || !@month || @month=="")
-      @year = session[:year]
-      @month = session[:month]
-      @day = session[:day]
-    end
-
-    if (!@year || @year=="" || !@month || @month=="")
-      t = Time.now
-      @year = t.year.to_s
-      @month = t.month.to_s
-      @day = t.day.to_s
-      p "load time y#{@year} #{@month} #{@day}"
-    end
-    
-    session[:year] = @year
-    session[:month] = @month
-    session[:day] = @day
-    
-    Date.new(@year.to_i, @month.to_i, 1) # exception if illeagl values    
-  end
-  
-  def get_date
-    Date.new(@year.to_i, @month.to_i, @day.to_i) # exception if illeagl values
-  end  
-  
   def prepare_select_deal_tab
     @accounts_minus = Account.find(:all,
      :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
@@ -159,7 +114,7 @@ class BookController < ApplicationController
       @deals = Deal.get_for_month(session[:user].id, @target_month.year_i, @target_month.month_i)
       session[:target_month] = @target_month
     rescue Exception
-      flash[:notice] = "不正な日付です。 #{@target_month}"
+      flash[:notice] = "不正な日付です。 " + @target_month.to_s
       @deals = Array.new
     end
   end

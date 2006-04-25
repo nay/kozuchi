@@ -37,10 +37,6 @@
     </div>
     <!-- contents -->
     <div id="contents">
-      <!-- 通信欄-->
-      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
-        <div id="notice"><%=@flash[:notice]%></div>
-      <% end %>
       <%= @content_for_layout %>
     </div>
     <!-- footer -->

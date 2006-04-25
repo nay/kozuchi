@@ -8,7 +8,7 @@ body { background-color: wheat; color: #333; margin: 0px 4px;}
 #sidebar { float:left; }
 #sidebar .menu { white-space: nowrap; margin: 2px 0px; padding: 4px; border: 2px solid darkgoldenrod;}
 #contents { float:right; }
-#notice { margin: 16px 0px; padding: 8px;}
+#notice { padding: 8px; background-color: gold; }
 #footer { clear: both; margin-top: 8px; border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
 .clearboth { clear: both; }
 p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
