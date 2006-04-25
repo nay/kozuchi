@@ -31,14 +31,14 @@ input.amount { text-align: right; padding: 4px opx; }
 #calendar table tr td.selected_month { border: 4px inset gold; text-align: right; background-color: gold; color: black; }
 #calendar table tr td.selectable_month { border: 4px outset goldenrod; text-align: right; background-color: goldenrod; color: black; }
 
-.tabsheet { border-top: 2px solid darkgoldenrod; border-bottom: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;  margin: 48px 0px 0px 0px; padding: 8px 8px 8px 8px; background-color: gold; }
-.tab, .selectedtab { margin-bottom: 16px; font-weight: bold; height: 24px; padding : 2px 16px; border-top: 2px solid darkgoldenrod;border-left: 2px solid darkgoldenrod;border-right: 2px solid darkgoldenrod; }
+.tabsheet { border-top: 2px solid darkgoldenrod; border-bottom: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;  margin: 52px 0px 0px 0px; padding: 8px 8px 8px 8px; background-color: gold; }
+.tab, .selectedtab { margin-top: 4px; margin-bottom: 16px; font-weight: bold; height: 24px; padding : 2px 16px; border-top: 2px solid darkgoldenrod;border-left: 2px solid darkgoldenrod;border-right: 2px solid darkgoldenrod; }
 .selectedtab { background-color: gold; }
 .tab {  }
 .tabbuttons { float:right; margin-top: 8px;}
 .tabwindow {  }
 
-#datebox { float:left; margin: 0px 0px 0px 0px; padding: 8px 8px 0px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
+#datebox { float:left; margin: 2px 0px 0px 0px; padding: 4px 8px 4px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
 
 #book { clear: both; margin: 16px 0px 0px 0px;}
 

@@ -15,6 +15,16 @@ class Deal < ActiveRecord::Base
     deal
   end
   
+  def self.create_balance(user_id, date, insert_before, account_id, amount)
+    deal = Deal.new
+    deal.user_id = user_id
+    deal.date = date
+    deal.summary = "残高確認" #todo
+    deal.add_balance_entry(account_id, amount)
+    deal.save_deeply(insert_before)
+    deal
+  end
+  
   def self.get_for_month(user_id, year, month)
     start_inclusive = Date.new(year, month, 1)
     end_exclusive = start_inclusive >> 1
@@ -32,6 +42,10 @@ class Deal < ActiveRecord::Base
   
   def add_entry(account_id, amount)
     self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => amount)
+  end
+  
+  def add_balance_entry(account_id, amount)
+    self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => 0, :balance => amount)
   end
   
   def save_deeply(insert_before)

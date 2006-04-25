@@ -15,14 +15,23 @@ class BookController < ApplicationController
   end
 
   def submit_tab
-    case params[:tab_action]
-      when "save_deal"
-        save_deal
-      when "save_balance"
-        save_balance
-      else
-        raise Exception("unknown tabaction " + params[:tab_action].to_s)
+    @date = DateBox.new(params[:date])
+    begin
+      case params[:tab_action]
+        when "save_deal"
+          save_deal
+        when "save_balance"
+          save_balance
+        else
+          raise Exception("unknown tabaction " + params[:tab_action].to_s)
+      end
+      @target_month = @date
+    rescue => err
+      flash[:notice] = "エラーが発生したため記入できませんでした。" + err
+      @target_month = session[:target_month]
     end
+    prepare_update_deals
+    render(:partial => "deals", :layout => false)
   end
 
   def select_deal_tab
@@ -47,34 +56,6 @@ class BookController < ApplicationController
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
   
-  # 残高確認記録を登録
-  def save_balance
-    balance= Balance.new(params[:balance]);
-    
-  end
-  
-  # 取引の入力を受け付けて仕分け帳を更新
-  def save_deal
-    @date = DateBox.new(params[:date])
-    p @date
-    amount = params[:new_amount]
-    begin
-      deal = Deal.create_simple(
-        1, #to do
-        @date.to_date, nil, params[:new_deal_summary],
-        params[:new_amount].to_i,
-        params[:new_account_minus][:id].to_i,
-        params[:new_account_plus][:id].to_i
-      )
-      flash[:notice] = "記入 #{deal.id} を追加しました。"
-      @target_month = @date
-    rescue => err
-      flash[:notice] = "エラーが発生したため記入できませんでした。" + err
-      @target_month = session[:target_month]
-    end
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-    render(:partial => "deals", :layout => false)
-  end
   
   # 取引内容の変更フォームを表示する
   def edit_deal
@@ -101,6 +82,29 @@ class BookController < ApplicationController
 
 
   private
+
+  # 残高確認記録を登録
+  def save_balance
+    balance= Balance.new(params[:balance]);
+    deal = Deal.create_balance(
+      session[:user].id, @date.to_date, nil, balance.account_id_i, balance.amount_i
+    )
+    flash[:notice] = "記入 #{deal.id} を追加しました。"
+  end
+  
+  # 取引の入力を受け付けて仕分け帳を更新
+  def save_deal
+    amount = params[:new_amount]
+    deal = Deal.create_simple(
+      session[:user].id,
+      @date.to_date, nil, params[:new_deal_summary],
+      params[:new_amount].to_i,
+      params[:new_account_minus][:id].to_i,
+      params[:new_account_plus][:id].to_i
+    )
+    flash[:notice] = "記入 #{deal.id} を追加しました。"
+  end
+
   
   def prepare_select_deal_tab
     @accounts_minus = Account.find(:all,
