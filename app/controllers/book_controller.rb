@@ -14,6 +14,15 @@ class BookController < ApplicationController
     @name = "book"
   end
 
+  def submit_tab
+    case params[:tab_action]
+      when "save_deal"
+        save_deal
+      when "save_balance"
+        save_balance
+    end
+  end
+
   def select_deal_tab
     prepare_select_deal_tab
     render(:partial => "edit_deal", :layout => false)
@@ -22,22 +31,23 @@ class BookController < ApplicationController
   # 仕分け帳画面部分だけを更新するためのAjax対応処理
   def update_deals
     @target_month = DateBox.new(params[:target_month])
-    prepare_update_deals
-    # ↑帳簿を更新し成功したら月をセッションに格納する
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
     render(:partial => "deals", :layout => false)
   end
 
   # 仕分け帳画面を初期表示するための処理
   def deals
     @target_month = session[:target_month]
+    @date = @target_month || DateBox.today
     @target_month ||= DateBox.this_month
+
     prepare_select_deal_tab
-    prepare_update_deals
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
   
   # 残高確認記録を登録
   def save_balance
-    balance = Balance.new(params[:balance]);
+    balance= Balance.new(params[:balance]);
     
   end
   

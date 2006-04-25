@@ -14,6 +14,11 @@ class DateBox
     t = Time.now
     DateBox.new("year" => t.year.to_s, "month" => t.month.to_s)
   end
+  
+  def self.today
+    t = Time.now
+    DateBox.new("year" => t.year.to_s, "month" => t.month.to_s, "day" => t.day.to_s)
+  end
 
   def year_i
     @year.to_i

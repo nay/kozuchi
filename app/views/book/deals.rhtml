@@ -35,19 +35,16 @@
     </div>
 
     <!-- 入力欄 -->
-    <div>
-    <div id="datebox">
-      <%= text_field("date", "year", {:size => "2", :maxlength => "4", :id =>"year"}) %>
-      <%= text_field("date", "month", :size => "1", :maxlength => "2", :id => "month") %>
-      <%= text_field("date", "day", :size => "1", :maxlength => "2", :id => "day") %>
-            <input type="text" name="year" size="2" value="<%=@year%>"/>/
-            <input type="text" name="month" size="1" value="<%=@month%>"/>/
-            <input type="text" name="day" size="1" maxlength="2" value="<%=@day%>"/>
-    </div>
-    <div id="tabwindow">
-      <%= render :partial => "edit_deal" %>
-    </div>
-    </div>
+    <%= form_remote_tag (:update => 'book', :url => {:action => 'submit_tab'} ) %>
+      <div id="datebox">
+        <%= text_field("date", "year", {:size => "2", :maxlength => "4"}) %>
+        <%= text_field("date", "month", :size => "1", :maxlength => "2") %>
+        <%= text_field("date", "day", :size => "1", :maxlength => "2") %>
+      </div>
+      <div id="tabwindow">
+        <%= render :partial => 'edit_deal' %>
+      </div>
+    <%=end_form_tag%>
 
     <!-- 帳簿 -->
     <div id="book">
