@@ -21,24 +21,18 @@ class BookController < ApplicationController
 
   # 仕分け帳画面部分だけを更新するためのAjax対応処理
   def update_deals
-    @target_month = DateBox.set(params[:target_month])
+    @target_month = DateBox.new(params[:target_month])
     prepare_update_deals
+    # ↑帳簿を更新し成功したら月をセッションに格納する
     render(:partial => "deals", :layout => false)
   end
 
-  # 仕分け帳画面を表示するための処理
+  # 仕分け帳画面を初期表示するための処理
   def deals
-    @target_month = DateBox.new();
-    @target_month.year = "2006";
-    @target_month.month = "4";
+    @target_month = session[:target_month]
+    @target_month ||= DateBox.this_month
     prepare_select_deal_tab
-    begin
-      @deals = Deal.get_for_month(session[:user].id, @target_month.year.to_i, @target_month.month.to_i)
-    rescue Exception
-      flash[:notice] = "不正な日付です。 #{@target_month.year} #{@target_month.month}"
-      @deals = Array.new
-      return
-    end
+    prepare_update_deals
   end
   
   # 残高確認記録を登録
@@ -154,8 +148,6 @@ class BookController < ApplicationController
     begin
       @deals = Deal.get_for_month(session[:user].id, @target_month.year_i, @target_month.month_i)
       session[:target_month] = @target_month
-      #session[:year] = @year
-      #session[:month] = @month
     rescue Exception
       flash[:notice] = "不正な日付です。 #{@target_month}"
       @deals = Array.new

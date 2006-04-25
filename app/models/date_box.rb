@@ -1,16 +1,18 @@
+require 'time'
+
 class DateBox
   attr_accessor :year, :month, :day
   
-  def self.set(values)
-     i = DateBox.new()
-     i.year = values["year"]
-     i.month = values["month"]
-     i.day = values["day"]
-     i
+  def initialize(values = nil)
+    return if !values
+    @year = values["year"]
+    @month = values["month"]
+    @day = values["day"]
   end
   
-  def DateBox.foo
-    return new
+  def self.this_month
+    t = Time.now
+    DateBox.new("year" => t.year.to_s, "month" => t.month.to_s)
   end
 
   def year_i
