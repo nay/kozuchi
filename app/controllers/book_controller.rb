@@ -4,12 +4,13 @@ require 'time'
 class BookController < ApplicationController 
   before_filter :authorize
   attr_accessor :menu_items, :title, :name
-  layout "userview"
 
   # メニューなどレイアウトに必要な情報を設定する  
   def initialize
     @menu_items = {}
     @menu_items.store("deals", "仕分帳")
+    @menu_items.store("display_in_out", "収支表")
+    @menu_items.store("account_deals", "口座別出納")
     @title = "家計簿"
     @name = "book"
   end
@@ -79,6 +80,16 @@ class BookController < ApplicationController
   
     render(:partial => "edit_balance", :layout => false)
   end
+  
+  # 口座別出納
+  def account_deals
+    @target_month = session[:target_month]
+    @date = @target_month || DateBox.today
+    @target_month ||= DateBox.this_month
+
+    # prepare_select_deal_tab
+    prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
+  end
 
 
   private
@@ -122,5 +133,36 @@ class BookController < ApplicationController
       @deals = Array.new
     end
   end
+
+  def prepare_update_account_deals
+  # todo 
+    @account_id = 1
+    @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+    begin
+      deals = Deal.get_for_account(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i)
+      @account_entries = Array.new();
+      @balance_start = AccountEntry.balance_start(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
+      balance_estimated = @balance_start
+      for deal in deals do
+        for account_entry in deal.account_entries do
+          if account_entry.account.id != @account_id || account_entry.balance
+            if account_entry.balance
+              balance_estimated = account_entry.balance
+            else
+              balance_estimated -= account_entry.amount
+              account_entry.balance_estimated = balance_estimated
+            end
+            @account_entries << account_entry
+          end
+        end
+      end
+      @balance_end = @account_entries.last.balance || @account_entries.last.balance_estimated
+      session[:target_month] = @target_month
+    rescue => err
+      flash[:notice] = "不正な日付です。 " + @target_month.to_s + err + err.backtrace.to_s
+      @account_entries = Array.new
+    end
+  end
+
   
 end

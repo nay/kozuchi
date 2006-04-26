@@ -1,0 +1,49 @@
+      <!-- 通信欄-->
+      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
+        <div id="notice"><%=@flash[:notice]%></div>
+      <% end %>
+      <div id="account_options">
+        <%= collection_select("account", "id", @accounts, :id, :name) %>
+      </div>
+      <table class="book">
+        <tr>
+          <th> </th>
+          <th>日付</th>
+          <th>摘要</th>
+          <th colspan="2">入金</th>
+          <th colspan="2">出金</th>
+          <th>残高</th>
+        </tr>
+        <tr>
+          <td> </td>
+          <td> </td>
+          <td colspan="5">期首残高</td>
+          <td class="number"><%= @balance_start %></td>
+        </tr>
+        <% for entry in @account_entries %>
+          <tr>
+            <% if entry.balance %>
+              <td class="number"><%=entry.deal.id%></td>
+              <td><%= format_date(entry.deal.date) %></td>
+              <td colspan="5"><%= entry.deal.summary%></td>
+              <td class="number"><%= number_with_delimiter(entry.balance)%></td>
+            <% else %>
+              <td class="number"><%=entry.deal.id%></td>
+              <td><%= format_date(entry.deal.date) %></td>
+              <td><%= entry.deal.summary%></td>
+              <td><%= entry.account.name if entry.amount < 0 && !entry.balance %></td>
+              <td class="number"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
+              <td><%= entry.account.name if entry.amount >= 0 && !entry.balance %></td>
+              <td class="number"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
+              <td class="number"><%= number_with_delimiter(entry.balance_estimated)%></td>
+            <% end %>
+          
+          </tr>
+        <% end %>
+        <tr>
+          <td> </td>
+          <td> </td>
+          <td colspan="5">期末残高</td>
+          <td class="number"><%= number_with_delimiter(@balance_end) %></td>
+        </tr>
+      </table>

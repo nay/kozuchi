@@ -1,0 +1,24 @@
+    <script>
+      var selectedMonth = null;
+      var startMonth = null;
+    </script>
+    <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'} ) %>
+      <%= hidden_field("target_month", "year") %>
+      <%= hidden_field("target_month", "month") %>
+    <%=end_form_tag%>
+
+    <div>    
+      <!-- カレンダー -->
+      <span id="calendar">
+      </span>
+    </div>
+
+    <%= @deals_size %>
+    <div id="book">
+      <%= render :partial => "account_deals" %>
+    </div>
+
+    <script>
+      select_month(<%=@target_month.year%>,<%=@target_month.month%>, false);
+    </script>
+    

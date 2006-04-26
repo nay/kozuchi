@@ -41,4 +41,5 @@ input.amount { text-align: right; padding: 4px opx; }
 #datebox { float:left; margin: 2px 0px 0px 0px; padding: 4px 8px 4px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
 
 #book { clear: both; margin: 16px 0px 0px 0px;}
-
+.clearfloat { clear:both; }
+#account_options { text-align: right; }

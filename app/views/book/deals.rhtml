@@ -29,13 +29,15 @@
       <%= hidden_field("target_month", "year") %>
       <%= hidden_field("target_month", "month") %>
     <%=end_form_tag%>
-    
-    <!-- カレンダー -->
-    <div id="calendar">
-    </div>
 
+    <div>    
+      <!-- カレンダー -->
+      <span id="calendar">
+      </span>
+    </div>
     <!-- 入力欄 -->
-    <%= form_remote_tag (:update => 'book', :url => {:action => 'submit_tab'} ) %>
+    <%= form_remote_tag (:update => 'book',
+                         :url => {:action => 'submit_tab'} ) %>
       <div id="datebox">
         <%= text_field("date", "year", {:size => "2", :maxlength => "4"}) %>
         <%= text_field("date", "month", :size => "1", :maxlength => "2") %>
@@ -46,7 +48,6 @@
       </div>
     <%=end_form_tag%>
 
-    <!-- 帳簿 -->
     <div id="book">
       <%= render :partial => "deals" %>
     </div>

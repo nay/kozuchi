@@ -28,10 +28,30 @@ class Deal < ActiveRecord::Base
   def self.get_for_month(user_id, year, month)
     start_inclusive = Date.new(year, month, 1)
     end_exclusive = start_inclusive >> 1
-    p start_inclusive
-    p end_exclusive
-    Deal.find(:all, :conditions => ["user_id = ? and date >= ? and date < ?", user_id, start_inclusive, end_exclusive], :order => "date desc, id desc")
+    Deal.find(:all, :conditions => ["user_id = ? and date >= ? and date < ?", user_id, start_inclusive, end_exclusive], :order => "date, daily_seq")
   end
+
+  def self.get_for_account(user_id, account_id, year, month)
+    start_inclusive = Date.new(year, month, 1)
+    end_exclusive = start_inclusive >> 1
+    #Deal.find(:all,
+    #          :conditions => ["et.user_id = ? and et.account_id = ? and date >= ? and date < ?", user_id, account_id, start_inclusive, end_exclusive],
+    #          :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
+    #          :order => "date, daily_seq")
+    # TODO: 複数テーブルの検索がなぜかうまくいかないのでメモリ上で処理する
+    deals = self.get_for_month(user_id, year, month)
+    result = Array.new
+    for deal in deals do
+      for account_entry in deal.account_entries do
+        if account_entry.account_id == account_id
+          result << deal
+          break
+        end
+      end
+    end
+    return result 
+  end
+
 
   def destroy_deeply
     self.account_entries.each do |e|
