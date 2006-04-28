@@ -87,9 +87,17 @@ class BookController < ApplicationController
     @date = @target_month || DateBox.today
     @target_month ||= DateBox.this_month
 
+      
     # prepare_select_deal_tab
     prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
   end
+  
+  def update_account_deals
+    @target_month = DateBox.new(params[:target_month])
+    prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
+    render(:partial => "account_deals", :layout => false)
+  end
+    
 
 
   private
@@ -136,17 +144,32 @@ class BookController < ApplicationController
 
   def prepare_update_account_deals
   # todo 
-    @account_id = 1
     @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+    
+    if @accounts.size == 0
+      raise Exception("口座が１つもありません")
+    end
+    if !params[:account] || !params[:account][:id]
+      @account_id = @accounts.first.id
+    else
+      @account_id = @params[:account][:id].to_i
+    end
+    p "account_id = " + @account_id.to_s
+    p "target_month = " + @target_month.to_s
     begin
       deals = Deal.get_for_account(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i)
+      p "user_id = " + session[:user].id.to_s
+      p "deals.size = " + deals.size.to_s
       @account_entries = Array.new();
       @balance_start = AccountEntry.balance_start(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
+      p "balance_start = " + @balance_start.to_s
+      p "balance_start is null!! " if !@balance_start
       balance_estimated = @balance_start
       for deal in deals do
         for account_entry in deal.account_entries do
-          if account_entry.account.id != @account_id || account_entry.balance
+          if (account_entry.account.id != @account_id.to_i) || account_entry.balance
             if account_entry.balance
+              account_entry.unknown_amount = account_entry.balance - balance_estimated
               balance_estimated = account_entry.balance
             else
               balance_estimated -= account_entry.amount
@@ -156,7 +179,7 @@ class BookController < ApplicationController
           end
         end
       end
-      @balance_end = @account_entries.last.balance || @account_entries.last.balance_estimated
+      @balance_end = @account_entries.size > 0 ? (@account_entries.last.balance || @account_entries.last.balance_estimated) : @balance_start 
       session[:target_month] = @target_month
     rescue => err
       flash[:notice] = "不正な日付です。 " + @target_month.to_s + err + err.backtrace.to_s

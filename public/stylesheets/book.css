@@ -43,3 +43,4 @@ input.amount { text-align: right; padding: 4px opx; }
 #book { clear: both; margin: 16px 0px 0px 0px;}
 .clearfloat { clear:both; }
 #account_options { text-align: right; }
+.automatic { color: blue; }

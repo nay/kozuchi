@@ -2,9 +2,6 @@
       <% if @flash[:notice] || @flash[:notice].to_s != ""%>
         <div id="notice"><%=@flash[:notice]%></div>
       <% end %>
-      <div id="account_options">
-        <%= collection_select("account", "id", @accounts, :id, :name) %>
-      </div>
       <table class="book">
         <tr>
           <th> </th>
@@ -25,7 +22,11 @@
             <% if entry.balance %>
               <td class="number"><%=entry.deal.id%></td>
               <td><%= format_date(entry.deal.date) %></td>
-              <td colspan="5"><%= entry.deal.summary%></td>
+              <td class="automatic">残高確認</td>
+              <td class="automatic"><%="不明金" if entry.unknown_amount >= 0%></td>
+              <td class="number"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
+              <td class="automatic"><%="不明金" if entry.unknown_amount < 0%></td>
+              <td class="number"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
               <td class="number"><%= number_with_delimiter(entry.balance)%></td>
             <% else %>
               <td class="number"><%=entry.deal.id%></td>

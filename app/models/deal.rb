@@ -40,15 +40,22 @@ class Deal < ActiveRecord::Base
     #          :order => "date, daily_seq")
     # TODO: 複数テーブルの検索がなぜかうまくいかないのでメモリ上で処理する
     deals = self.get_for_month(user_id, year, month)
+    p "deals size in get_for_account " + deals.size.to_s
     result = Array.new
     for deal in deals do
       for account_entry in deal.account_entries do
-        if account_entry.account_id == account_id
+        p "account_entry.account_id = " + account_entry.account_id.to_s
+        p "account_id = " + account_id.to_s
+        if account_entry.account_id.to_i == account_id.to_i
+          p "added result"
           result << deal
           break
+        else
+          p "didn't added result"
         end
       end
     end
+    p "result size = " + result.size.to_s
     return result 
   end
 
