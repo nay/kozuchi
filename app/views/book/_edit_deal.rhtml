@@ -1,6 +1,17 @@
     <div class="tabbuttons">
-      <span class="selectedtab">明細</span>
-      <span class="tabespace"></span>
+      <span class="selectedtab">
+      <% if @deal.id %>
+        <%= hidden_field("deal", "id") %>
+        <span>変更(<%= @deal.date %>-<%= @deal.daily_seq %>)</span>
+      <% else %>
+       <span>明細</span>
+      <% end %>
+      </span>
+      <span class="tabspace"></span>
+      <% if @deal.id %>
+      <span class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></span>
+      <span class="tabspace"></span>
+      <% end %>
       <span class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></span>
     </div>
     <div class="tabsheet">
@@ -20,5 +31,12 @@
       </span>
       <button type="submit">記入</button>
     </div>
+    <% if @deal.date %>
+      <script>
+        $('date_year').value = '<%=@deal.date.year%>'
+        $('date_month').value = '<%=@deal.date.month%>'
+        $('date_day').value = '<%=@deal.date.day%>'
+      </script>
+    <% end %>
 
     

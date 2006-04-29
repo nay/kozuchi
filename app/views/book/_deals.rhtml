@@ -36,5 +36,11 @@
       <% if @updated_deal %>
       <script>
         location.hash = "<%=@updated_deal.id%>";
+        if ($('deal_amount')) {
+          $('deal_amount').value = "";
+        }
+        if ($('deal_summary')) {
+          $('deal_summary').value = "";
+        }
       </script>
       <% end %>

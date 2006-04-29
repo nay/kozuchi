@@ -93,6 +93,9 @@ input .text {
 .tab {  }
 .tabbuttons { float:right; margin-top: 8px;}
 .tabwindow {  }
+.tabspace {
+  margin-left:4px;
+}
 
 #datebox { float:left; margin: 2px 0px 0px 0px; padding: 4px 8px 4px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
 

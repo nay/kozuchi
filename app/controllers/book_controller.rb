@@ -113,9 +113,8 @@ class BookController < ApplicationController
     flash[:notice] = "記入 #{deal.date}-#{deal.daily_seq} を追加しました。"
   end
   
-  # 取引の入力を受け付けて仕分け帳を更新
+  # 明細登録・変更
   def save_deal
-    amount = params[:new_amount]
     deal = Deal.create_simple(
       session[:user].id,
       @date.to_date, nil, params[:deal][:summary],
