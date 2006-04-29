@@ -118,8 +118,10 @@ class BookController < ApplicationController
     deal = Deal.create_or_update_simple(
       Deal.new(params[:deal]),
       session[:user].id,
-      @date.to_date, nil
-    )
+      @date.to_date,
+      nil,
+      params[:deal][:id] ? params[:deal][:id].to_i : nil
+      )
     flash_save_deal(deal)
   end
 

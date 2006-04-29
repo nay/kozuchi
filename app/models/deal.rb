@@ -37,15 +37,35 @@ class Deal < ActiveRecord::Base
     return nil
   end
   
-  def self.create_or_update_simple(deal, user_id, date, insert_before)
+  def self.create_or_update_simple(deal, user_id, date, insert_before, deal_id = nil)
+    deal.id = deal_id
+    return update_simple(deal, user_id, date) if deal.id
     deal.user_id = user_id
     deal.date = date
-    # add minus
-    deal.add_entry(deal.minus_account_id.to_i, deal.amount.to_i*(-1))
-    deal.add_entry(deal.plus_account_id.to_i, deal.amount.to_i)
-    deal.save_deeply(insert_before)
+    deal.add_entries
+    deal.set_daily_seq(insert_before)
+    deal.save_deeply
     deal
   end
+  
+  def add_entries
+    add_entry(@minus_account_id.to_i, @amount.to_i*(-1))
+    add_entry(@plus_account_id.to_i, @amount.to_i)
+  end
+  
+  def self.update_simple(input_deal, user_id, date)
+    AccountEntry.delete_all(["deal_id = ? and user_id = ?", input_deal.id, user_id])
+    deal = Deal.find(:first, :conditions => ["id = ? and user_id = ?", input_deal.id, user_id])
+    deal.summary = input_deal.summary
+    deal.amount = input_deal.amount
+    deal.minus_account_id = input_deal.minus_account_id
+    deal.plus_account_id = input_deal.plus_account_id
+    deal.date = date
+    deal.add_entries
+    deal.save_deeply
+    deal
+  end
+  
   
   def self.create_balance(user_id, date, insert_before, account_id, amount)
     deal = Deal.new
@@ -53,6 +73,7 @@ class Deal < ActiveRecord::Base
     deal.date = date
     deal.summary = "残高確認" #todo
     deal.add_balance_entry(account_id, amount)
+    self.daily_seq = get_daily_seq(insert_before)
     deal.save_deeply(insert_before)
     deal
   end
@@ -107,8 +128,7 @@ class Deal < ActiveRecord::Base
     self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => 0, :balance => amount)
   end
   
-  def save_deeply(insert_before)
-    self.daily_seq = get_daily_seq(insert_before)
+  def save_deeply
     save
     self.account_entries.each do |e|
       e.deal_id = self.id
@@ -116,7 +136,7 @@ class Deal < ActiveRecord::Base
     end
   end
   
-  def get_daily_seq(insert_before)
+  def set_daily_seq(insert_before)
     # 挿入の場合
     if insert_before
       # 日付が違ったら例外
@@ -126,7 +146,7 @@ class Deal < ActiveRecord::Base
         "update deals set daily_seq = daily_seq +1 where user_id == #{self.user_id} and date == '#{self.date.strftime('%Y-%m-%d')}' and ( daily_seq > #{insert_before.daily_seq}  or (daily_seq == #{insert_before.daily_seq} and id >= #{insert_before.id}));"
 #        "update deals set daily_seq = daily_seq +1 where user_id == #{self.user_id} and ( daily_seq > #{insert_before.daily_seq}  or (daily_seq == #{insert_before.daily_seq} and id >= #{insert_before.id}));"
       )
-      return insert_before.daily_seq;
+      self.daily_seq = insert_before.daily_seq;
     
     # 追加の場合
     else
@@ -135,7 +155,7 @@ class Deal < ActiveRecord::Base
 #        "select max(daily_seq) from deals where user_id == #{self.user_id} ;"
       ).values[0] || "0"
       p "max=#{max}"
-      return 1 + max.to_i
+      self.daily_seq = 1 + max.to_i
     end
     
   end
