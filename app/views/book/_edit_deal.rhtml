@@ -5,17 +5,17 @@
     </div>
     <div class="tabsheet">
       <input type="hidden" name="tab_action" value="save_deal"/>
-      <input type="text" name="new_deal_summary" size="40"/><br />
-      <input type="text" name="new_amount" class="amount" size="8"/>円
+      <%= text_field("deal", "summary", :class =>"text", :size => "40") %><br />
+      <%= text_field("deal", "amount", :class => "amount", :size => "8") %>円
       <span id="account_minus">
-      <select name="new_account_minus[id]" id="new_account_minus_id">
-        <%= option_groups_from_collection_for_select(@accounts_minus, :accounts, :name, :id, :name, nil)%>
+      <select name="deal[minus_account_id]" id="new_account_minus_id">
+        <%= option_groups_from_collection_for_select(@accounts_minus, :accounts, :name, :id, :name, @deal.minus_account_id)%>
       </select>
       </span>
       →
       <span id="account_plus">
-      <select name="new_account_plus[id]" id="new_account_plus_id">
-        <%= option_groups_from_collection_for_select(@accounts_plus, :accounts, :name, :id, :name, nil)%>
+      <select name="deal[plus_account_id]" id="new_account_plus_id">
+        <%= option_groups_from_collection_for_select(@accounts_plus, :accounts, :name, :id, :name, @deal.plus_account_id)%>
       </select>
       </span>
       <button type="submit">記入</button>

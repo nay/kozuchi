@@ -39,9 +39,9 @@
     <%= form_remote_tag (:update => 'book',
                          :url => {:action => 'submit_tab'} ) %>
       <div id="datebox">
-        <%= text_field("date", "year", {:size => "2", :maxlength => "4"}) %>
-        <%= text_field("date", "month", :size => "1", :maxlength => "2") %>
-        <%= text_field("date", "day", :size => "1", :maxlength => "2") %>
+        <%= text_field("date", "year", {:size => "2", :maxlength => "4", :class= => "number_field"}) %>
+        <%= text_field("date", "month", :size => "1", :maxlength => "2", :class= => "number_field") %>
+        <%= text_field("date", "day", :size => "1", :maxlength => "2", :class= => "number_field") %>
       </div>
       <div id="tabwindow">
         <%= render :partial => 'edit_deal' %>

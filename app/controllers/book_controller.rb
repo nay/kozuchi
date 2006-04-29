@@ -28,7 +28,7 @@ class BookController < ApplicationController
       end
       @target_month = @date
     rescue => err
-      flash[:notice] = "エラーが発生したため記入できませんでした。" + err
+      flash[:notice] = "エラーが発生したため記入できませんでした。" + err + err.backtrace.to_s
       @target_month = session[:target_month]
     end
     prepare_update_deals
@@ -60,10 +60,9 @@ class BookController < ApplicationController
   
   # 取引内容の変更フォームを表示する
   def edit_deal
-    deal = Deal.find(params[:id])
-    # todo
-    flash[:notice] = "未実装です。"
-    redirect_to(:action => 'deals')
+    @deal = Deal.find(params[:id])
+    prepare_select_deal_tab
+    render(:partial => "edit_deal", :layout => false)
   end
   
   # 取引の削除を受け付ける
@@ -119,25 +118,25 @@ class BookController < ApplicationController
     amount = params[:new_amount]
     deal = Deal.create_simple(
       session[:user].id,
-      @date.to_date, nil, params[:new_deal_summary],
-      params[:new_amount].to_i,
-      params[:new_account_minus][:id].to_i,
-      params[:new_account_plus][:id].to_i
+      @date.to_date, nil, params[:deal][:summary],
+      params[:deal][:amount].to_i,
+      params[:deal][:minus_account_id].to_i,
+      params[:deal][:plus_account_id].to_i
     )
     flash_save_deal(deal)
   end
 
-  
+  # 記入エリアの準備
   def prepare_select_deal_tab
     @accounts_minus = BookHelper::AccountGroup.groups(
      Account.find(:all,
      :conditions => ["account_type != 2 and user_id = ?", session[:user].id]), true
      )
-
     @accounts_plus = BookHelper::AccountGroup.groups(
       Account.find(:all,
      :conditions => ["account_type != 3 and user_id = ?", session[:user].id]), false
      )
+     @deal ||= Deal.new
   end
 
   def prepare_update_deals

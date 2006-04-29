@@ -74,7 +74,10 @@ input.amount {
   padding: 4px opx;
   ime-mode:disabled;
 }
-input {
+#datebox input {
+  ime-mode:disabled;
+}
+input .text {
   ime-mode:active;
 }
 

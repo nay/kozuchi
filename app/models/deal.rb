@@ -2,6 +2,40 @@ require 'time'
 
 class Deal < ActiveRecord::Base
   has_many :account_entries
+  attr_writer :minus_account_id, :plus_account_id, :amount
+  
+  def minus_account_id
+    return @minus_account_id if @minus_account_id
+    for entry in self.account_entries
+      if entry.amount < 0
+        @minus_account_id = entry.account_id
+        return @minus_account_id
+      end
+    end
+    return nil
+  end
+
+  def plus_account_id
+    return @plus_account_id if @plus_account_id
+    for entry in self.account_entries
+      if entry.amount >= 0
+        @plus_account_id = entry.account_id
+        return @plus_account_id
+      end
+    end
+    return nil
+  end
+
+  def amount
+    return @amount if @amount
+    for entry in self.account_entries
+      if entry.amount
+        @amount = entry.amount.abs
+        return @amount
+      end
+    end
+    return nil
+  end
   
   def self.create_simple(user_id, date, insert_before, summary, amount, minus_account_id, plus_account_id)
     deal = Deal.new
