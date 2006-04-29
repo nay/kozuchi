@@ -37,14 +37,12 @@ class Deal < ActiveRecord::Base
     return nil
   end
   
-  def self.create_simple(user_id, date, insert_before, summary, amount, minus_account_id, plus_account_id)
-    deal = Deal.new
+  def self.create_or_update_simple(deal, user_id, date, insert_before)
     deal.user_id = user_id
     deal.date = date
-    deal.summary = summary
     # add minus
-    deal.add_entry(minus_account_id, amount*(-1))
-    deal.add_entry(plus_account_id, amount)
+    deal.add_entry(deal.minus_account_id.to_i, deal.amount.to_i*(-1))
+    deal.add_entry(deal.plus_account_id.to_i, deal.amount.to_i)
     deal.save_deeply(insert_before)
     deal
   end

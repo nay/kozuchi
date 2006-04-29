@@ -115,12 +115,10 @@ class BookController < ApplicationController
   
   # 明細登録・変更
   def save_deal
-    deal = Deal.create_simple(
+    deal = Deal.create_or_update_simple(
+      Deal.new(params[:deal]),
       session[:user].id,
-      @date.to_date, nil, params[:deal][:summary],
-      params[:deal][:amount].to_i,
-      params[:deal][:minus_account_id].to_i,
-      params[:deal][:plus_account_id].to_i
+      @date.to_date, nil
     )
     flash_save_deal(deal)
   end

@@ -8,14 +8,14 @@ class DealTest < Test::Unit::TestCase
   def test_create_simple
     user = User.find(1)
     assert user
+    
+    deal = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
 
     # 追加
-    deal = Deal.create_simple(
+    deal = Deal.create_or_update_simple(
+      deal,
       user.id,
-      Date.parse("2006/04/01"), nil, "おにぎり",
-      105,
-      1,
-      2)
+      Date.parse("2006/04/01"), nil)
 
     deal = Deal.find(1)
     assert deal
@@ -33,22 +33,20 @@ class DealTest < Test::Unit::TestCase
     assert_equal 1, deal.daily_seq
 
     # 追加
-    deal2 = Deal.create_simple(
+    deal2 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+    deal2 = Deal.create_or_update_simple(
+      deal2,
       user.id,
-      Date.parse("2006/04/01"), nil, "おにぎり",
-      105,
-      1,
-      2)
+      Date.parse("2006/04/01"), nil)
 
     assert_equal 2, deal2.daily_seq
     
     #2の前に挿入
-    deal3 = Deal.create_simple(
+    deal3 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+    deal3 = Deal.create_or_update_simple(
+      deal3,
       user.id,
-      Date.parse("2006/04/01"), deal2, "おにぎり",
-      105,
-      1,
-      2)
+      Date.parse("2006/04/01"), deal2)
    
    assert_equal 2, deal3.daily_seq
    
@@ -60,33 +58,30 @@ class DealTest < Test::Unit::TestCase
    assert_equal 3, deal2.daily_seq
    
     #日付違いを追加したら新規になることを確認
-    deal4 = Deal.create_simple(
+    deal4 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+    deal4 = Deal.create_or_update_simple(
+      deal4,
       user.id,
-      Date.parse("2006/04/02"), nil, "おにぎり",
-      105,
-      1,
-      2)
+      Date.parse("2006/04/02"), nil)
     assert_equal 1, deal4.daily_seq
     
     #日付違いによる挿入がうまくいくことを確認
-    deal5 = Deal.create_simple(
+    deal5 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+    deal5 = Deal.create_or_update_simple(
+      deal5,
       user.id,
-      Date.parse("2006/04/02"), deal4, "おにぎり",
-      105,
-      1,
-      2)
+      Date.parse("2006/04/02"), deal4)
     assert_equal 1, deal5.daily_seq
     deal4 = Deal.find(deal4.id)
     assert_equal 2, deal4.daily_seq
     
     #日付と挿入ポイントがあっていないと例外が発生することを確認
     begin
-      Deal.create_simple(
+      dealx = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+      Deal.create_or_update_simple(
+        dealx,
         user.id,
-        Date.parse("2006/04/02"), deal, "おにぎり",
-        105,
-        1,
-        2)
+        Date.parse("2006/04/02"), deal)
       assert false
     rescue ArgumentError
       assert true
