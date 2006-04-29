@@ -2,18 +2,29 @@
       <% if @flash[:notice] || @flash[:notice].to_s != ""%>
         <div id="notice"><%=@flash[:notice]%></div>
       <% end %>
-      <table class="book">
+      <div class="book_header">
+      <table>
         <tr>
-          <th> </th><th>日付</th><th>摘要</th><th>借方</th><th>貸方</th><th>残高</th><th>変更</th><th>削除</th>
+          <th class="number"> </th><th class="date">日付</th><th>摘要</th><th class="amount">借方</th><th class="amount">貸方</th><th class="amount">残高</th><th class="action">変更</th><th class="action">削除</th><th class="scroll_space"></th>
         </tr>
+      </table>
+      </div>
+      <div class="book">
+      <table>
         <% for deal in @deals %>
-          <tr>
-            <td class="number"><%=deal.id%></td><td><%= format_date(deal.date) %></td><td><%=deal.summary%></td><td> </td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '変更' ,:action => 'edit_deal', :id => deal %></td><td rowspan="<%=deal.account_entries.size+1%>"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
+          <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%>>
+            <td class="number"><a name="#<%=deal.id%>"%><%=deal.id%></a></td><td class="date"><%= format_date(deal.date) %></td><td><%=deal.summary%></td><td> </td><td> </td><td> </td><td rowspan="<%=deal.account_entries.size+1%>" class="action"><%= link_to '変更' ,:action => 'edit_deal', :id => deal %></td><td rowspan="<%=deal.account_entries.size+1%>" class="action"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
           </tr>
           <% for account_entry in deal.account_entries %>
-            <tr>
-              <td> </td><td> </td><td>(<%= account_entry.account.name %>)</td><td class="number"><%= number_with_delimiter(account_entry.amount) if account_entry.amount > 0%></td><td class="number"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0%></td><td class="number"><%= number_with_delimiter(account_entry.balance)%> </td>
+            <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%>>
+              <td> </td><td class="date"> </td><td>(<%= account_entry.account.name %>)</td><td class="amount"><%= number_with_delimiter(account_entry.amount) if account_entry.amount > 0%></td><td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0%></td><td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
             </tr>
           <% end %>
         <% end %>
       </table>
+      </div>
+      <% if @updated_deal %>
+      <script>
+        location.hash = "<%=@updated_deal.id%>";
+      </script>
+      <% end %>

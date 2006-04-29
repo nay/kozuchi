@@ -108,7 +108,12 @@ class BookController < ApplicationController
     deal = Deal.create_balance(
       session[:user].id, @date.to_date, nil, balance.account_id_i, balance.amount_i
     )
-    flash[:notice] = "記入 #{deal.id} を追加しました。"
+    flash_save_deal(deal)
+  end
+  
+  def flash_save_deal(deal)
+    @updated_deal = deal
+    flash[:notice] = "記入 #{deal.date}-#{deal.daily_seq} を追加しました。"
   end
   
   # 取引の入力を受け付けて仕分け帳を更新
@@ -121,7 +126,7 @@ class BookController < ApplicationController
       params[:new_account_minus][:id].to_i,
       params[:new_account_plus][:id].to_i
     )
-    flash[:notice] = "記入 #{deal.id} を追加しました。"
+    flash_save_deal(deal)
   end
 
   
