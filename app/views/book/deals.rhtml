@@ -3,27 +3,6 @@
       var selectedMonth = null;
       var startMonth = null;
       
-      function submit_deal(form) {
-        // copy year and month
-        form.year.value = document.forms[0].year.value;
-        form.month.value = document.forms[0].month.value;
-        document.forms[0].day.value = form.day.value;
-        
-        if (form.new_amount.value == "" && form.new_deal_summary.value == "") {
-          document.forms[0].submit();
-          return;
-        }
-        if (form.new_amount.value == "") {
-          alert("金額を入れてください。");
-          return;
-        }
-        if (form.day.value == "") {
-          alert("日付を入れてください。");
-          return;
-        }
-        // TODO: 正しい日付でないときにもここではじく
-        form.submit();
-      }
     </script>
     <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'} ) %>
       <%= hidden_field("target_month", "year") %>
@@ -35,6 +14,7 @@
       <span id="calendar">
       </span>
     </div>
+
     <!-- 入力欄 -->
     <%= form_remote_tag (:update => 'book',
                          :url => {:action => 'submit_tab'} ) %>
