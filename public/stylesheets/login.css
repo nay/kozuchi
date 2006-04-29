@@ -1,0 +1,46 @@
+* {
+  margin:0;
+  padding:0;
+}
+body {
+  background-color: wheat;
+  color: #333;
+  margin: 0px 4px;
+}
+
+#login_title {
+  background-color: darkgoldenrod;
+  text-align: center;
+  color: gold;
+  padding-top: 10px;
+  padding-bottom: 4px;
+  font-size: 24px;
+  vertical-align: middle;
+}
+
+#login_field {
+  margin:10px;
+  text-align: center;
+}
+#application_name {
+  font-weight: bold;
+  font-size: 36px;
+}
+#footer {
+  clear: both;
+  margin-top: 8px;
+  border-bottom:1px dashed darkgoldenrod;
+  color:darkgoldenrod;
+  text-align:right;
+  font-size:small;
+  padding:2px;
+}
+#login_button {
+  margin-top: 8px;
+  width: 200px;
+  border: 4px outset goldenrod;
+  background-color: goldenrod;
+  color:black;
+  font-weight: bold;
+  padding: 2px;
+}

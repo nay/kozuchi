@@ -1,5 +1,10 @@
 class LoginController < ApplicationController
   before_filter :authorize, :except => :login
+  layout false
+  
+  def index
+    render("login")
+  end
 
   def login
     if request.get?
