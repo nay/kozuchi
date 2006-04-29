@@ -15,18 +15,15 @@ p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color:
 h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
 .window { border: 2px solid darkgoldenrod; margin: 16px 0px; padding: 8px;}
 
-.book table, .book_header table {
+.book, .book_header {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
   width:100%;
 }
-.book {
+.book200 {
   height: 200px;
   overflow-y: scroll;
   }
-.book_header {
-  overflow-y: hidden;
-}
 
 .book .updated_line td {
   background-color: pink;
@@ -47,6 +44,7 @@ th.scroll_space {
 td.number, td.amount{
   text-align: right;
 }
+
 .number {
   width: 20px;
 }
@@ -59,13 +57,26 @@ td.number, td.amount{
 .action {
   width: 48px;
 }
+.account {
+  width: 80px;
+}
+.balance_line td {
+  color: blue;
+}
 
 button { border: 4px outset goldenrod; background-color: goldenrod; color:black;  font-weight: bold; margin: 0px; padding: 2px;}
 
 .masters { background-color: goldenrod; border: 0px; width:96%; font-size: 11pt;}
 .masters td { border: 1px inset wheat; background-color: wheat; margin: 0px; padding: 2px; }
 .masters th { border: 1px inset goldenrod; background-color: goldenrod;  margin: 0px;}
-input.amount { text-align: right; padding: 4px opx; }
+input.amount {
+  text-align: right;
+  padding: 4px opx;
+  ime-mode:disabled;
+}
+input {
+  ime-mode:active;
+}
 
 #calendar * { margin: 16px 0px; color: black; font-weight: bold; text-align: left;}
 #calendar table { background-color: darkgoldenrod; }

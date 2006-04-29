@@ -2,49 +2,56 @@
       <% if @flash[:notice] || @flash[:notice].to_s != ""%>
         <div id="notice"><%=@flash[:notice]%></div>
       <% end %>
+      <table class="book_header">
+        <tr>
+          <th class="date">日付</th>
+          <th class="number"> </th>
+          <th>摘要</th>
+          <th class="account">　</th>
+          <th class="amount">入金</th>
+          <th class="amount">出金</th>
+          <th class="amount">残高</th>
+          <th class="scroll_space"> </th>
+        </tr>
+      </table>
       <table class="book">
         <tr>
-          <th> </th>
-          <th>日付</th>
-          <th>摘要</th>
-          <th colspan="2">入金</th>
-          <th colspan="2">出金</th>
-          <th>残高</th>
+          <td class="date"> </td>
+          <td class="number"> </td>
+          <td>期首残高</td>
+          <td class="amount"><%= @balance_start %></td>
         </tr>
-        <tr>
-          <td> </td>
-          <td> </td>
-          <td colspan="5">期首残高</td>
-          <td class="number"><%= @balance_start %></td>
-        </tr>
+      </table>
+      <table class="book">
         <% for entry in @account_entries %>
-          <tr>
-            <% if entry.balance %>
-              <td class="number"><%=entry.deal.id%></td>
-              <td><%= format_date(entry.deal.date) %></td>
-              <td class="automatic">残高確認</td>
-              <td class="automatic"><%="不明金" if entry.unknown_amount >= 0%></td>
-              <td class="number"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
-              <td class="automatic"><%="不明金" if entry.unknown_amount < 0%></td>
-              <td class="number"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
-              <td class="number"><%= number_with_delimiter(entry.balance)%></td>
-            <% else %>
-              <td class="number"><%=entry.deal.id%></td>
-              <td><%= format_date(entry.deal.date) %></td>
+          <% if entry.balance %>
+            <tr class="balance_line">
+              <td class="date"><%= format_date(entry.deal.date) %></td>
+              <td class="number"><%=entry.deal.daily_seq%></td>
+              <td>残高確認</td>
+              <td class="account">不明金</td>
+              <td class="amount"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
+              <td class="amount"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
+              <td class="amount"><%= number_with_delimiter(entry.balance)%></td>
+            </tr>
+          <% else %>
+            <tr>
+              <td class="date"><%= format_date(entry.deal.date) %></td>
+              <td class="number"><%=entry.deal.daily_seq%></td>
               <td><%= entry.deal.summary%></td>
-              <td><%= entry.account.name if entry.amount < 0 && !entry.balance %></td>
-              <td class="number"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
-              <td><%= entry.account.name if entry.amount >= 0 && !entry.balance %></td>
-              <td class="number"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
-              <td class="number"><%= number_with_delimiter(entry.balance_estimated)%></td>
-            <% end %>
-          
-          </tr>
+              <td class="account"><%= entry.account.name %></td>
+              <td class="amount"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
+              <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
+              <td class="amount"><%= number_with_delimiter(entry.balance_estimated)%></td>
+            </tr>
+          <% end %>
         <% end %>
+      </table>
+      <table class="book">
         <tr>
-          <td> </td>
-          <td> </td>
-          <td colspan="5">期末残高</td>
-          <td class="number"><%= number_with_delimiter(@balance_end) %></td>
+          <td class="date"> </td>
+          <td class="number"> </td>
+          <td >期末残高</td>
+          <td class="amount"><%= number_with_delimiter(@balance_end) %></td>
         </tr>
       </table>
