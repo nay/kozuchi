@@ -131,10 +131,20 @@ class BookController < ApplicationController
 
   
   def prepare_select_deal_tab
-    @accounts_minus = Account.find(:all,
+#    @accounts_minus = Account.find(:all,
+#     :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
+    @accounts_minus = BookHelper::AccountGroup.groups(
+     Account.find(:all,
      :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
-    @accounts_plus = Account.find(:all,
+     )
+
+#    @accounts_plus = Account.find(:all,
+#     :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
+
+    @accounts_plus = BookHelper::AccountGroup.groups(
+      Account.find(:all,
      :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
+     )
   end
 
   def prepare_update_deals

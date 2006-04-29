@@ -1,10 +1,11 @@
-#Sat Apr 29 08:29:11 JST 2006
+#Sat Apr 29 11:51:41 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/admin_controller.rb=UTF-8
 encoding//app/controllers/application.rb=UTF-8
 encoding//app/controllers/book_controller.rb=UTF-8
 encoding//app/controllers/config_controller.rb=UTF-8
 encoding//app/controllers/login_controller.rb=UTF-8
+encoding//app/helpers/book_helper.rb=UTF-8
 encoding//app/models/account.rb=UTF-8
 encoding//app/models/balance.rb=UTF-8
 encoding//app/models/date_box.rb=UTF-8
