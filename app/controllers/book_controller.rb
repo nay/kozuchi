@@ -25,17 +25,24 @@ class BookController < ApplicationController
 
   # 残高タブが選択されたときのAjaxアクション
   def select_balance_tab
-    @accounts_for_balance = Account.find(:all,
-     :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
-      render(:partial => "edit_balance", :layout => false)
+    prepare_select_balance_tab
+    render(:partial => "edit_balance", :layout => false)
   end
 
-  # 取引内容の変更フォームを表示する
+  # 明細変更状態にするAjaxアクション
   def edit_deal
     @deal = Deal.find(params[:id])
     prepare_select_deal_tab
     render(:partial => "edit_deal", :layout => false)
   end
+
+  # 残高変更状態にするAjaxアクション
+  def edit_balance
+    @deal = Deal.find(params[:id])
+    prepare_select_balance_tab
+    render(:partial => "edit_balance", :layout => false)
+  end
+
 
   # ----- 編集実行系 --------------------------------------------------
 
@@ -43,21 +50,14 @@ class BookController < ApplicationController
   def submit_tab
     @date = DateBox.new(params[:date])
     begin
-      case params[:tab_action]
-        when "save_deal"
-          save_deal
-        when "save_balance"
-          save_balance
-        else
-          raise Exception("unknown tabaction " + params[:tab_action].to_s)
-      end
-      @target_month = @date
+      deal = "deal" == params[:tab_name] ? save_deal : save_balance
+      session[:target_month] = @date
+      flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
+      updated_deal_id = deal.id
     rescue => err
       flash[:notice] = "エラーが発生したため記入できませんでした。" + err + err.backtrace.to_s
-      @target_month = session[:target_month]
     end
-    prepare_update_deals
-    render(:partial => "deals", :layout => false)
+    redirect_to(:action => "deals", :tab_name => params[:tab_name], :updated_deal_id => updated_deal_id)
   end
 
   # 取引の削除を受け付ける
@@ -71,12 +71,20 @@ class BookController < ApplicationController
   # ----- 情報表示系 ------------------------------------------------------------
 
   # 仕分け帳画面を初期表示するための処理
+  # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def deals
     @target_month = session[:target_month]
     @date = @target_month || DateBox.today
     @target_month ||= DateBox.this_month
-
-    prepare_select_deal_tab
+    @tab_name = params[:tab_name] || 'deal'
+    
+    case @tab_name
+      when "deal"
+        prepare_select_deal_tab
+      else
+        prepare_select_balance_tab
+    end
+    @updated_deal = params[:updated_deal_id] ? Deal.find(params[:updated_deal_id]) : nil
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
 
@@ -118,27 +126,37 @@ class BookController < ApplicationController
      )
      @deal ||= Deal.new
   end
+  
+  def prepare_select_balance_tab
+    @accounts_for_balance = Account.find(:all,
+     :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+    @deal ||=  Deal.new
+  end
 
   # ----- 編集実行系 --------------------------------------------------
+
   # 明細登録・変更
   def save_deal
-    deal = Deal.create_or_update_simple(
+    Deal.create_or_update_simple(
       Deal.new(params[:deal]),
       session[:user].id,
       @date.to_date,
       nil,
       params[:deal][:id] ? params[:deal][:id].to_i : nil
       )
-    flash_save_deal(deal, !params[:deal][:id])
   end
 
   # 残高確認記録を登録
   def save_balance
-    balance= Balance.new(params[:balance]);
-    deal = Deal.create_balance(
-      session[:user].id, @date.to_date, nil, balance.account_id_i, balance.amount_i
+    #balance= Balance.new(params[:balance]);
+    Deal.create_balance(
+      Deal.new(params[:deal]),
+      session[:user].id,
+      @date.to_date,
+      nil,
+      params[:deal][:id] ? params[:deal][:id].to_i : nil
+#       balance.account_id_i, balance.amount_i
     )
-    flash_save_deal(deal)
   end
 
   def flash_save_deal(deal, is_new = true)

@@ -10,6 +10,7 @@
       <div class="book200">
       <table class="book">
         <% for deal in @deals %>
+          <% edit_target = deal.balance ? 'edit_balance' : 'edit_deal' %>
           <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%>>
             <td class="date"><a name="#<%=deal.id%>"%><%= format_date(deal.date) %></a></td>
             <td class="number"><%= deal.daily_seq %></td>
@@ -17,7 +18,7 @@
             <td> </td>
             <td> </td>
             <td> </td>
-            <td rowspan="<%=deal.account_entries.size+1%>" class="action"><%= link_to_remote('変更' , :update => 'tabwindow', :url => { :action => 'edit_deal', :id => deal }) %></td>
+            <td rowspan="<%=deal.account_entries.size+1%>" class="action"><%= link_to_remote('変更' , :update => 'tabwindow', :url => { :action => edit_target, :id => deal }) %></td>
             <td rowspan="<%=deal.account_entries.size+1%>" class="action"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
           </tr>
           <% for account_entry in deal.account_entries %>

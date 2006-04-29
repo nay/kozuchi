@@ -2,7 +2,12 @@ require 'time'
 
 class Deal < ActiveRecord::Base
   has_many :account_entries
-  attr_writer :minus_account_id, :plus_account_id, :amount
+  attr_writer :minus_account_id, :plus_account_id, :amount, :balance_account_id
+  
+  # 残高確認だか判定する
+  def balance
+    return account_entries.first && account_entries.first.balance
+  end
   
   def minus_account_id
     return @minus_account_id if @minus_account_id
@@ -25,6 +30,12 @@ class Deal < ActiveRecord::Base
     end
     return nil
   end
+  
+  def balance_account_id
+    return @balance_account_id if @balance_account_id
+    return account_entries.first ? account_entries.first.account_id : nil
+  end
+      
 
   def amount
     return @amount if @amount
@@ -67,14 +78,13 @@ class Deal < ActiveRecord::Base
   end
   
   
-  def self.create_balance(user_id, date, insert_before, account_id, amount)
-    deal = Deal.new
+  def self.create_balance(deal, user_id, date, insert_before, deal_id = nil)
     deal.user_id = user_id
     deal.date = date
     deal.summary = "残高確認" #todo
-    deal.add_balance_entry(account_id, amount)
-    self.daily_seq = get_daily_seq(insert_before)
-    deal.save_deeply(insert_before)
+    deal.add_balance_entry(deal.balance_account_id.to_i, deal.amount.to_i)
+    deal.set_daily_seq(insert_before)
+    deal.save_deeply
     deal
   end
   
