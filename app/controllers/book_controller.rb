@@ -97,9 +97,7 @@ class BookController < ApplicationController
     prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
     render(:partial => "account_deals", :layout => false)
   end
-    
-
-
+  
   private
 
   # 残高確認記録を登録
@@ -131,19 +129,14 @@ class BookController < ApplicationController
 
   
   def prepare_select_deal_tab
-#    @accounts_minus = Account.find(:all,
-#     :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
     @accounts_minus = BookHelper::AccountGroup.groups(
      Account.find(:all,
-     :conditions => ["account_type != 2 and user_id = ?", session[:user].id])
+     :conditions => ["account_type != 2 and user_id = ?", session[:user].id]), true
      )
-
-#    @accounts_plus = Account.find(:all,
-#     :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
 
     @accounts_plus = BookHelper::AccountGroup.groups(
       Account.find(:all,
-     :conditions => ["account_type != 3 and user_id = ?", session[:user].id])
+     :conditions => ["account_type != 3 and user_id = ?", session[:user].id]), false
      )
   end
 

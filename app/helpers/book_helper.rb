@@ -3,7 +3,7 @@ module BookHelper
 class AccountGroup
   attr_reader :name, :accounts
 
-  def self.groups(accounts)
+  def self.groups(accounts, is_asc)
     groups = []
     for account in accounts do
       case account.account_type
@@ -18,9 +18,15 @@ class AccountGroup
           incomes << account
       end
     end
-    groups << assets if assets
-    groups << expenses if expenses
-    groups << incomes if incomes
+    if (is_asc)
+      groups << assets if assets
+      groups << expenses if expenses
+      groups << incomes if incomes
+    else
+      groups << expenses if expenses
+      groups << assets if assets
+      groups << incomes if incomes
+    end
     p groups.to_s
     return groups
   end
