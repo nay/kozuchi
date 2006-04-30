@@ -11,5 +11,5 @@ class Account < ActiveRecord::Base
   def account_type_name
     @account_type_name ||= Account.get_account_type_name(self.account_type)
   end
-  
+    
 end

@@ -281,7 +281,8 @@ class BookController < ApplicationController
       @incomes_summaries << AccountSummary.new(account, values[account.id] ? values[account.id]*-1: 0)
     end
     
-    # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺しない。）を得る
+    # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺する。）を得る
+    asset_accounts = 
     
   end
 

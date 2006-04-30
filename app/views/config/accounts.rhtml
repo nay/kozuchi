@@ -5,8 +5,8 @@
         <td>
           <%= hidden_field("account", "account_type_name")%>
           <%= hidden_field("account", "account_type")%>
-          <label>口座名</label><%= text_field("account", "name", :size => 16) %><br />
-          <label>並び順</label><%= text_field("account", "sort_key", :size => 2) %>
+          <label>口座名</label><%= text_field("account", "name", :size => 16, :class => "text") %><br />
+          <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
           <span>※小さいほど上に表示されます。</span>
         </td>
         <td><button type="submit">新しい<%=@account.account_type_name%>を追加</button></td>
@@ -31,8 +31,8 @@
     </tr>
     <% for @account in @accounts %>
       <tr>
-        <td><%= text_field("account[]", "name") %></td>
-        <td><%= text_field("account[]", "sort_key", :size => 2) %></td>
+        <td><%= text_field("account[]", "name", :class => "text") %></td>
+        <td><%= text_field("account[]", "sort_key", :size => 2, :class => "amount") %></td>
         <% if @account == @accounts.first %>
           <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>
         <% end %>

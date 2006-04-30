@@ -107,3 +107,6 @@ input .text {
 .clearfloat { clear:both; }
 #account_options { text-align: right; }
 .automatic { color: blue; }
+.inner_table {
+  vertical-align: top;
+}
