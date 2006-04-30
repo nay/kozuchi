@@ -4,6 +4,10 @@ class AccountEntry < ActiveRecord::Base
   validates_presence_of :amount
   attr_accessor :balance_estimated, :unknown_amount
   
+  def self.delete(deal_id, user_id)
+    delete_all(["deal_id = ? and user_id = ?", deal_id, user_id])
+  end
+  
   def self.get_for_month(user_id, account_id, year, month)
     start_inclusive = Date.new(year, month, 1)
     end_exclusive = start_inclusive >> 1

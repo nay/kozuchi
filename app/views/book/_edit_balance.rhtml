@@ -17,7 +17,14 @@
     <div class="tabsheet">
       <input type="hidden" name="tab_name" value="balance"/>
       <%= collection_select("deal", "balance_account_id", @accounts_for_balance, :id, :name) %>
-      <label>残高:</label><%= text_field("deal","amount", :class => "amount", :size => "8")%>円
+      <label>残高:</label><%= text_field("deal","balance", :class => "amount", :size => "8")%>円
       <button type="submit">記入</button>
     </div>
+    <% if @deal.date %>
+      <script>
+        $('date_year').value = '<%=@deal.date.year%>'
+        $('date_month').value = '<%=@deal.date.month%>'
+        $('date_day').value = '<%=@deal.date.day%>'
+      </script>
+    <% end %>
     

@@ -18,6 +18,13 @@ body {
   vertical-align: middle;
 }
 
+#login_message {
+  margin-top: 10px;
+  text-align: center;
+  color: darkgoldenrod;
+  font-weight: bold;
+}
+
 #login_field {
   margin:10px;
   text-align: center;

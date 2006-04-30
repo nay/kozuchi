@@ -137,26 +137,38 @@ class BookController < ApplicationController
 
   # 明細登録・変更
   def save_deal
-    Deal.create_or_update_simple(
-      Deal.new(params[:deal]),
-      session[:user].id,
-      @date.to_date,
-      nil,
-      params[:deal][:id] ? params[:deal][:id].to_i : nil
+    # 更新のとき
+    if params[:deal][:id]
+      Deal.update_simple(params[:deal][:id].to_i,
+                    session[:user].id,
+                    @date.to_date,
+                    params[:deal]
       )
+    else
+      Deal.create_simple(session[:user].id,
+                         @date.to_date,
+                         params[:deal],
+                         nil
+      )
+    end
   end
 
   # 残高確認記録を登録
   def save_balance
-    #balance= Balance.new(params[:balance]);
-    Deal.create_balance(
-      Deal.new(params[:deal]),
-      session[:user].id,
-      @date.to_date,
-      nil,
-      params[:deal][:id] ? params[:deal][:id].to_i : nil
-#       balance.account_id_i, balance.amount_i
-    )
+    # 更新のとき
+    if params[:deal][:id]
+      Deal.update_balance(params[:deal][:id].to_i,
+                    session[:user].id,
+                    @date.to_date,
+                    params[:deal]
+      )
+    else
+      Deal.create_balance(session[:user].id,
+                         @date.to_date,
+                         params[:deal],
+                         nil
+      )
+    end
   end
 
   def flash_save_deal(deal, is_new = true)

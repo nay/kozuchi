@@ -2,8 +2,8 @@ require 'time'
 
 class Deal < ActiveRecord::Base
   has_many :account_entries
-  attr_writer :minus_account_id, :plus_account_id, :amount, :balance_account_id
-  
+  attr_writer :minus_account_id, :plus_account_id, :amount, :balance_account_id, :balance
+
   # 残高確認だか判定する
   def balance
     return account_entries.first && account_entries.first.balance
@@ -48,44 +48,62 @@ class Deal < ActiveRecord::Base
     return nil
   end
   
-  def self.create_or_update_simple(deal, user_id, date, insert_before, deal_id = nil)
-    deal.id = deal_id
-    return update_simple(deal, user_id, date) if deal.id
+  def balance
+    return @balance if @balance
+    return account_entries.first ? account_entries.first.balance : nil
+  end
+  
+  def self.get(deal_id, user_id)
+    return Deal.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
+  end
+
+  # 明細新規登録  
+  def self.create_simple(user_id, date, attributes, insert_before)
+    deal = Deal.new(attributes)
     deal.user_id = user_id
     deal.date = date
     deal.add_entries
     deal.set_daily_seq(insert_before)
     deal.save_deeply
-    deal
   end
   
-  def add_entries
-    add_entry(@minus_account_id.to_i, @amount.to_i*(-1))
-    add_entry(@plus_account_id.to_i, @amount.to_i)
+  # 明細更新
+  def self.update_simple(deal_id, user_id, date, attributes)
+    transaction() do
+      AccountEntry.delete(deal_id, user_id)
+      deal = get(deal_id, user_id)
+      is_date_changed = deal.date != date
+      deal.date = date
+      deal.set_daily_seq if is_date_changed
+      deal.attributes = attributes
+      deal.add_entries
+      deal.save_deeply
+    end
   end
   
-  def self.update_simple(input_deal, user_id, date)
-    AccountEntry.delete_all(["deal_id = ? and user_id = ?", input_deal.id, user_id])
-    deal = Deal.find(:first, :conditions => ["id = ? and user_id = ?", input_deal.id, user_id])
-    deal.summary = input_deal.summary
-    deal.amount = input_deal.amount
-    deal.minus_account_id = input_deal.minus_account_id
-    deal.plus_account_id = input_deal.plus_account_id
-    deal.date = date
-    deal.add_entries
-    deal.save_deeply
-    deal
-  end
-  
-  
-  def self.create_balance(deal, user_id, date, insert_before, deal_id = nil)
+  # 残高の新規登録  
+  def self.create_balance(user_id, date, attributes, insert_before)
+    deal = Deal.new(attributes)
     deal.user_id = user_id
     deal.date = date
-    deal.summary = "残高確認" #todo
-    deal.add_balance_entry(deal.balance_account_id.to_i, deal.amount.to_i)
+    deal.summary = ""
+    deal.add_balance_entry(deal.balance_account_id.to_i, deal.balance.to_i)
     deal.set_daily_seq(insert_before)
     deal.save_deeply
-    deal
+  end
+
+  # 残高の変更
+  def self.update_balance(deal_id, user_id, date, attributes)
+    transaction() do
+      AccountEntry.delete(deal_id, user_id)
+      deal = Deal.get(deal_id, user_id)
+      is_date_changed = deal.date != date
+      deal.date = date
+      deal.set_daily_seq if is_date_changed
+      deal.attributes = attributes
+      deal.add_balance_entry(deal.balance_account_id.to_i, deal.balance.to_i)
+      deal.save_deeply
+    end
   end
   
   def self.get_for_month(user_id, year, month)
@@ -130,23 +148,9 @@ class Deal < ActiveRecord::Base
     destroy
   end
   
-  def add_entry(account_id, amount)
-    self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => amount)
-  end
   
-  def add_balance_entry(account_id, amount)
-    self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => 0, :balance => amount)
-  end
   
-  def save_deeply
-    save
-    self.account_entries.each do |e|
-      e.deal_id = self.id
-      e.save
-    end
-  end
-  
-  def set_daily_seq(insert_before)
+  def set_daily_seq(insert_before = nil)
     # 挿入の場合
     if insert_before
       # 日付が違ったら例外
@@ -169,4 +173,28 @@ class Deal < ActiveRecord::Base
     end
     
   end
+  
+  # 明細情報から口座明細情報を構築する
+  def add_entries
+    add_entry(@minus_account_id.to_i, @amount.to_i*(-1))
+    add_entry(@plus_account_id.to_i, @amount.to_i)
+  end
+
+  def save_deeply
+    save
+    self.account_entries.each do |e|
+      e.deal_id = self.id
+      e.save
+    end
+    return self
+  end
+
+  def add_entry(account_id, amount)
+    self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => amount)
+  end
+  
+  def add_balance_entry(account_id, amount)
+    self.account_entries << AccountEntry.new(:user_id => self.user_id, :account_id => account_id, :amount => 0, :balance => amount)
+  end
+  
 end

@@ -11,7 +11,9 @@
       <%= image_tag("/images/kozuchi.bmp", :size => "48x48")%>
     </div>
     <!-- 通信欄-->
-    <div><%=@flash[:notice] || ""%></div>
+    <% if @flash[:notice] %>
+      <div id="login_message"><%=@flash[:notice]%></div>
+    <% end %>
 
     <%= form_tag %>
       <div id="login_field">
