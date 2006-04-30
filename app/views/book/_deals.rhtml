@@ -4,7 +4,7 @@
       <% end %>
       <table class="book_header">
         <tr>
-          <th class="date">日付</th><th class="number"> </th><th>摘要</th><th class="account"> </th><th class="amount">借方</th><th class="amount">貸方</th><th class="amount">残高</th><th class="action">変更</th><th class="action">削除</th><th class="scroll_space"></th>
+          <th class="date">日付</th><th class="number"> </th><th>摘要</th><th class="account"> </th><th class="amount">入金</th><th class="amount">出金</th><th class="amount">残高</th><th class="action">変更</th><th class="action">削除</th><th class="scroll_space"></th>
         </tr>
       </table>
       <div class="book200">
@@ -22,7 +22,7 @@
                 <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0%></td>
                 <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
                 <td rowspan="<%=deal.account_entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'tabwindow', :url => { :action => edit_target, :id => deal }) %></td>
-                <td rowspan="<%=deal.account_entries.size%>" class="action"><%= link_to '削除' ,:action => 'delete_deal', :id => deal %></td>
+                <td rowspan="<%=deal.account_entries.size%>" class="action"><%= link_to '削除' ,{:action => 'delete_deal', :id => deal}, :confirm => "#{format_deal(deal)}を削除します。よろしいですか？" %></td>
               </tr>
             <% else %>
               <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%>>
