@@ -13,6 +13,7 @@ create table accounts (
   user_id integer not null,
   name varchar (32) not null,
   account_type integer not null,
+  sort_key integer,
   foreign key (user_id) references users
 );
 

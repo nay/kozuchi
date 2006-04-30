@@ -1,7 +1,7 @@
 require 'time'
-
 # 家計簿機能のコントローラ
 class BookController < ApplicationController 
+  include BookHelper
   before_filter :authorize
   attr_accessor :menu_items, :title, :name
 
@@ -71,7 +71,7 @@ class BookController < ApplicationController
   # 取引の削除を受け付ける
   def delete_deal
     deal = Deal.find(params[:id])
-    deal_info = BookHelper.format_deal(deal)
+    deal_info = format_deal(deal)
     deal.destroy_deeply
     flash[:notice] = "#{deal_info} を削除しました。"
     redirect_to(:action => 'deals')
@@ -127,11 +127,11 @@ class BookController < ApplicationController
   def prepare_select_deal_tab
     @accounts_minus = BookHelper::AccountGroup.groups(
      Account.find(:all,
-     :conditions => ["account_type != 2 and user_id = ?", session[:user].id]), true
+     :conditions => ["account_type != 2 and user_id = ?", session[:user].id], :order => "sort_key"), true
      )
     @accounts_plus = BookHelper::AccountGroup.groups(
       Account.find(:all,
-     :conditions => ["account_type != 3 and user_id = ?", session[:user].id]), false
+     :conditions => ["account_type != 3 and user_id = ?", session[:user].id], :order => "sort_key"), false
      )
      p params.to_s
      if params[:deal]
@@ -144,7 +144,8 @@ class BookController < ApplicationController
   
   def prepare_select_balance_tab
     @accounts_for_balance = Account.find(:all,
-     :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+     :conditions => ["account_type == 1 and user_id = ?", session[:user].id],
+     :order => "sort_key")
     @deal ||=  Deal.new
   end
 
@@ -206,7 +207,8 @@ class BookController < ApplicationController
 
   def prepare_update_account_deals
   # todo 
-    @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id])
+    @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id],
+    :order => "sort_key")
     
     if @accounts.size == 0
       raise Exception("口座が１つもありません")

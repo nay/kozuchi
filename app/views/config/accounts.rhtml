@@ -5,27 +5,41 @@
         <td>
           <%= hidden_field("account", "account_type_name")%>
           <%= hidden_field("account", "account_type")%>
-          <%= text_field("account", "name") %>
+          <label>口座名</label><%= text_field("account", "name", :size => 16) %><br />
+          <label>並び順</label><%= text_field("account", "sort_key", :size => 2) %>
+          <span>※小さいほど上に表示されます。</span>
         </td>
-        <td><button type="submit" value="登録">新しい<%=@account.account_type_name%>を追加</button></td>
+        <td><button type="submit">新しい<%=@account.account_type_name%>を追加</button></td>
       </tr>
     </table>
   <%=end_form_tag%>
 </div>
+<!-- 通信欄-->
+<% if @flash[:notice] && @flash[:notice].to_s != ""%>
+  <div id="notice"><%=@flash[:notice]%></div>
+<% end %>
 <div class="window">
   <h2><%=@account_type_name%>一覧</h2>
-  
+  <%= form_tag :action => 'update_accounts'%>
+  <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
   <table class="masters" width="100%">
     <tr>
       <th><%=@account.account_type_name%>名</th>
+      <th>並び順</th>
+      <th>変更</th>
       <th>削除</th>
     </tr>
-    <% for account in @accounts %>
+    <% for @account in @accounts %>
       <tr>
-        <td><%= account.name %></td>
-        <td><%= link_to("削除", :action => "delete_account", :id => account.id, :account_type => @account.account_type) %></td> 
+        <td><%= text_field("account[]", "name") %></td>
+        <td><%= text_field("account[]", "sort_key", :size => 2) %></td>
+        <% if @account == @accounts.first %>
+          <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>
+        <% end %>
+        <td class="action"><%= link_to("削除", :action => "delete_account", :id => @account.id, :account_type => @account.account_type) %></td> 
       </tr>
     <% end %>
   </table>
+  <%=end_form_tag%>
   
 </div>

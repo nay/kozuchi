@@ -55,6 +55,7 @@ class ConfigController < ApplicationController
     new_account.user_id = session[:user].id
     if new_account.save
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
+      p flash[:notice].to_s
     else
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録できませんでした。"
     end
@@ -62,14 +63,8 @@ class ConfigController < ApplicationController
   end
   
   def delete_account
-    if params[:account_type]
-      account_type = params[:account_type].to_i
-      account_type_name = Account.get_account_type_name(account_type)
-    else
-      account_type = nil
-      account_type_name = nil
-    end
-    
+    account_type = params[:account_type].to_i
+    account_type_name = Account.get_account_type_name(account_type)
     target_account = Account.find(:first, :conditions => "id = #{params[:id]} and user_id = #{session[:user].id}")
     if !target_account
       flash[:notice]="指定された#{account_type_name}がみつかりません。"
@@ -78,12 +73,21 @@ class ConfigController < ApplicationController
     end
     # 使われていたら消せない
     if AccountEntry.find(:first, :conditions => "account_id = #{target_account.id}")
-      flash[:notice]="#{account_type_name} '#{target_account.name} はすでに使われているため削除できません。"
+      flash[:notice]="#{account_type_name} '#{target_account.name}' はすでに使われているため削除できません。"
       redirect_to(:action => @actions[account_type])
       return
     end
     flash[:notice]="#{account_type_name} '#{target_account.name}' を削除しました。"
     target_account.destroy
+    redirect_to(:action => @actions[account_type])
+  end
+  
+  def update_accounts
+    account_type = params[:account_type].to_i
+    account_type_name = Account.get_account_type_name(account_type)
+    # todo 悪意ある post によってuser_id と一致しない危険性がちょっと気になる。
+    Account.update(params[:account].keys, params[:account].values)
+    flash[:notice]="すべての#{account_type_name}を変更しました。"
     redirect_to(:action => @actions[account_type])
   end
   
