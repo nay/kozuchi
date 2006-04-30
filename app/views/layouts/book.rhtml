@@ -31,9 +31,9 @@
         <%= format_date(Time.now) %>
       </p>
       <!-- menu -->
-      <% controller.menu_items.each do |key, val| %>
-        <div class="menu"><%= link_to(val, :controller => controller.name, :action => key) %></div>
-      <% end %>
+      <div class="menu"><%= link_to(controller.menu_items["deals"], :action => "deals") %></div>
+      <div class="menu"><%= link_to(controller.menu_items["account_deals"], :action => "account_deals") %></div>
+      <div class="menu"><%= link_to(controller.menu_items["profit_and_loss"], :action => "profit_and_loss") %></div>
     </div>
     <!-- contents -->
     <div id="contents">

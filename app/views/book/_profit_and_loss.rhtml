@@ -1,0 +1,36 @@
+      <!-- 通信欄-->
+      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
+        <div id="notice"><%=@flash[:notice]%></div>
+      <% end %>
+      <table width="100%">
+      <tr>
+      <td>
+      <!-- 支出一覧 -->
+      <table class="book">
+        <tr>
+          <th colspan="2">支出</th>
+        </tr>
+        <% for summary in @expenses_summaries %>
+          <tr>
+            <td><%= summary.account.name%></td>
+            <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
+          </tr>
+        <% end %>
+      </table>
+      </td>
+      <td>
+      <!-- 収入一覧 -->
+      <table class="book">
+        <tr>
+          <th colspan="2">収入</th>
+        </tr>
+        <% for summary in @incomes_summaries %>
+          <tr>
+            <td><%= summary.account.name%></td>
+            <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
+          </tr>
+        <% end %>
+      </table>
+      </td>
+      </table>
+      

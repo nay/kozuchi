@@ -9,8 +9,8 @@ class BookController < ApplicationController
   def initialize
     @menu_items = {}
     @menu_items.store("deals", "仕分帳")
-    @menu_items.store("display_in_out", "収支表")
     @menu_items.store("account_deals", "口座別出納")
+    @menu_items.store("profit_and_loss", "収支表")
     @title = "家計簿"
     @name = "book"
   end
@@ -112,12 +112,26 @@ class BookController < ApplicationController
     @target_month ||= DateBox.this_month
     prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
   end
-
+  
   # 月を選択して口座別出納を表示しなおす  
   def update_account_deals
     @target_month = DateBox.new(params[:target_month])
     prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
     render(:partial => "account_deals", :layout => false)
+  end
+
+  # 収支表
+  def profit_and_loss
+    @target_month = session[:target_month]
+    @date = @target_month || DateBox.today
+    @target_month ||= DateBox.this_month
+    prepare_update_profit_and_loss
+  end
+  
+  def update_profit_and_loss
+    @target_month = DateBox.new(params[:target_month])
+    prepare_update_profit_and_loss
+    render(:partial => "profit_and_loss", :layout => false)
   end
   
   private
@@ -195,6 +209,7 @@ class BookController < ApplicationController
 
   # ----- 情報表示系 --------------------------------------------------
 
+  # 仕分け帳　表示準備
   def prepare_update_deals
     begin
       @deals = Deal.get_for_month(session[:user].id, @target_month.year_i, @target_month.month_i)
@@ -205,6 +220,7 @@ class BookController < ApplicationController
     end
   end
 
+  # 口座別出納　表示準備
   def prepare_update_account_deals
   # todo 
     @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id],
@@ -243,6 +259,30 @@ class BookController < ApplicationController
       flash[:notice] = "不正な日付です。 " + @target_month.to_s + err + err.backtrace.to_s
       @account_entries = Array.new
     end
+  end
+  
+  def prepare_update_profit_and_loss
+    # 費目ごとの合計を得る
+    start_inclusive = Date.new(@target_month.year_i, @target_month.month_i, 1)
+    end_exclusive = start_inclusive >> 1
+    values = AccountEntry.sum(:amount,
+     :group => 'account_id',
+     :conditions => ["dl.date >= ? and dl.date < ?", start_inclusive, end_exclusive],
+     :joins => "as et inner join deals as dl on dl.id = et.deal_id")
+    expense_accounts = Account.find(:all, :conditions => 'account_type = 2', :order => 'sort_key')
+    @expenses_summaries = []
+    for account in expense_accounts
+      @expenses_summaries << AccountSummary.new(account, values[account.id] || 0)
+    end
+    # 収入項目ごとの合計を得る
+    @incomes_summaries = []
+    income_accounts = Account.find(:all, :conditions => 'account_type = 3', :order => 'sort_key')
+    for account in income_accounts
+      @incomes_summaries << AccountSummary.new(account, values[account.id] ? values[account.id]*-1: 0)
+    end
+    
+    # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺しない。）を得る
+    
   end
 
   
