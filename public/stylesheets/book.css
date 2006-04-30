@@ -55,13 +55,17 @@ td.number, td.amount{
   width: 80px;
 }
 .action {
-  width: 48px;
+  width: 36px;
+  text-align: center;
 }
 .account {
-  width: 80px;
+  width: 100px;
 }
 .balance_line td {
   color: blue;
+}
+.summary {
+  vertical-align: top;
 }
 
 button { border: 4px outset goldenrod; background-color: goldenrod; color:black;  font-weight: bold; margin: 0px; padding: 2px;}
