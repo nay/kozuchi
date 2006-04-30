@@ -49,15 +49,23 @@ class BookController < ApplicationController
   # タブシート内の「記入」ボタンが押されたときのアクション
   def submit_tab
     @date = DateBox.new(params[:date])
+    options = {:action => "deals", :tab_name => params[:tab_name]}
     begin
-      deal = "deal" == params[:tab_name] ? save_deal : save_balance
+      if "deal" == params[:tab_name]
+        deal = save_deal
+        options.store("deal[minus_account_id]", deal.minus_account_id)
+        options.store("deal[plus_account_id]", deal.plus_account_id)
+      else
+        deal = save_balance
+        # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
+      end
       session[:target_month] = @date
       flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
-      updated_deal_id = deal.id
+      options.store("updated_deal_id", deal.id)
     rescue => err
       flash[:notice] = "エラーが発生したため記入できませんでした。" + err + err.backtrace.to_s
     end
-    redirect_to(:action => "deals", :tab_name => params[:tab_name], :updated_deal_id => updated_deal_id)
+    redirect_to(options)
   end
 
   # 取引の削除を受け付ける
@@ -125,7 +133,13 @@ class BookController < ApplicationController
       Account.find(:all,
      :conditions => ["account_type != 3 and user_id = ?", session[:user].id]), false
      )
-     @deal ||= Deal.new
+     p params.to_s
+     if params[:deal]
+       p params[:deal].to_s
+       p params[:deal][:minus_account_id].to_s if params[:deal][:minus_account_id]
+     end
+     @deal ||= Deal.new(params[:deal])
+     p "deal.minus_account_id = #{@deal.minus_account_id}"
   end
   
   def prepare_select_balance_tab

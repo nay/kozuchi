@@ -34,14 +34,16 @@
         <% end %>
       </table>
       </div>
-      <% if @updated_deal %>
-      <script>
-        location.hash = "<%=@updated_deal.id%>";
-        if ($('deal_amount')) {
-          $('deal_amount').value = "";
-        }
-        if ($('deal_summary')) {
-          $('deal_summary').value = "";
-        }
-      </script>
+      <% if @target_month && !@date%>
+        <script>
+          $('date_year').value = '<%=@target_month.year%>'
+          $('date_month').value = '<%=@target_month.month%>'
+          $('date_day').value = ''
+        </script>
       <% end %>
+      <% if @updated_deal%>
+        <script>
+          location.hash = "<%=@updated_deal.id%>";
+        </script>
+      <% end %>
+      
