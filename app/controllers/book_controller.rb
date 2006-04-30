@@ -63,8 +63,9 @@ class BookController < ApplicationController
   # 取引の削除を受け付ける
   def delete_deal
     deal = Deal.find(params[:id])
+    deal_info = BookHelper.format_deal(deal)
     deal.destroy_deeply
-    flash[:notice] = "取引 #{deal.id} を削除しました。"
+    flash[:notice] = "#{deal_info} を削除しました。"
     redirect_to(:action => 'deals')
   end
 
@@ -174,7 +175,7 @@ class BookController < ApplicationController
   def flash_save_deal(deal, is_new = true)
     @updated_deal = deal
     action_name = is_new ? "追加" : "更新"
-    flash[:notice] = "記入 #{deal.date}-#{deal.daily_seq} を#{action_name}しました。"
+    flash[:notice] = "#{BookHelper.format_deal(deal)} を#{action_name}しました。"
   end
 
   # ----- 情報表示系 --------------------------------------------------

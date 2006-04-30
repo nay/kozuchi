@@ -40,4 +40,9 @@ class AccountGroup
     @accounts << account
   end
 end
+
+def self.format_deal(deal)
+  return "記入 #{deal.date}-#{deal.daily_seq}"
+end
+
 end
