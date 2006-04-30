@@ -140,12 +140,10 @@ class BookController < ApplicationController
   # 記入エリアの準備
   def prepare_select_deal_tab
     @accounts_minus = BookHelper::AccountGroup.groups(
-     Account.find(:all,
-     :conditions => ["account_type != 2 and user_id = ?", session[:user].id], :order => "sort_key"), true
+      Account.find_all(session[:user].id, [1,3]), true
      )
     @accounts_plus = BookHelper::AccountGroup.groups(
-      Account.find(:all,
-     :conditions => ["account_type != 3 and user_id = ?", session[:user].id], :order => "sort_key"), false
+      Account.find_all(session[:user].id, [1,2]), false
      )
      p params.to_s
      if params[:deal]
@@ -157,9 +155,7 @@ class BookController < ApplicationController
   end
   
   def prepare_select_balance_tab
-    @accounts_for_balance = Account.find(:all,
-     :conditions => ["account_type == 1 and user_id = ?", session[:user].id],
-     :order => "sort_key")
+    @accounts_for_balance = Account.find_all(session[:user].id, [1])
     @deal ||=  Deal.new
   end
 
@@ -223,8 +219,7 @@ class BookController < ApplicationController
   # 口座別出納　表示準備
   def prepare_update_account_deals
   # todo 
-    @accounts = Account.find(:all, :conditions => ["account_type == 1 and user_id = ?", session[:user].id],
-    :order => "sort_key")
+    @accounts = Account.find_all(session[:user].id, [1])
     
     if @accounts.size == 0
       raise Exception("口座が１つもありません")
@@ -269,20 +264,38 @@ class BookController < ApplicationController
      :group => 'account_id',
      :conditions => ["dl.date >= ? and dl.date < ?", start_inclusive, end_exclusive],
      :joins => "as et inner join deals as dl on dl.id = et.deal_id")
-    expense_accounts = Account.find(:all, :conditions => 'account_type = 2', :order => 'sort_key')
+    expense_accounts = Account.find_all(session[:user].id, [2])
     @expenses_summaries = []
     for account in expense_accounts
       @expenses_summaries << AccountSummary.new(account, values[account.id] || 0)
     end
     # 収入項目ごとの合計を得る
     @incomes_summaries = []
-    income_accounts = Account.find(:all, :conditions => 'account_type = 3', :order => 'sort_key')
+    income_accounts = Account.find_all(session[:user].id, [3])
     for account in income_accounts
       @incomes_summaries << AccountSummary.new(account, values[account.id] ? values[account.id]*-1: 0)
     end
     
     # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺する。）を得る
-    asset_accounts = 
+    asset_accounts = Account.find_all(session[:user].id, [1])
+    for account in asset_accounts
+      balance_start = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, start_inclusive) # 期首残高
+      balance_end = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, end_exclusive) # 期末残高
+      p "account_id #{account.id} balance_start = #{balance_start}, balance_end = #{balance_end}"
+      unknown_amount = balance_end - balance_start - (values[account.id] || 0)
+      if unknown_amount > 0
+        @incomes_summaries << AccountSummary.new(account, unknown_amount)
+      else
+        if unknown_amount < 0
+          @expenses_summaries << AccountSummary.new(account, unknown_amount.abs)
+        end
+      end
+      # 不明金0なら報告しない
+      @expenses_sum = AccountSummary.get_sum(@expenses_summaries)
+      @incomes_sum = AccountSummary.get_sum(@incomes_summaries)
+      @profit = @incomes_sum - @expenses_sum
+      
+    end
     
   end
 

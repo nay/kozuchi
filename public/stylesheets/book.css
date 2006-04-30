@@ -110,3 +110,20 @@ input .text {
 .inner_table {
   vertical-align: top;
 }
+.profit {
+  color: darkgreen;
+}
+.loss {
+  color: darkred;
+}
+.result {
+  white-space: nowrap;
+  margin: 10px, 100px;
+  padding: 6px;
+  border-top: 6px double darkgoldenrod;
+  border-bottom: 6px double darkgoldenrod;
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  
+}

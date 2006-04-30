@@ -12,7 +12,7 @@
         </tr>
         <% for summary in @expenses_summaries %>
           <tr>
-            <td><%= summary.account.name%></td>
+            <td><%= summary.name %></td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>
@@ -26,11 +26,40 @@
         </tr>
         <% for summary in @incomes_summaries %>
           <tr>
-            <td><%= summary.account.name%></td>
+            <td><%= summary.name %></td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>
       </table>
       </td>
+      <tr>
+      <td class="inner_table" width="50%">
+      <!-- 支出合計 -->
+      <table class="book">
+        <tr>
+          <td>支出合計</td>
+          <td class="amount"><%= number_with_delimiter(@expenses_sum)%></td>
+        </tr>
       </table>
+      </td>
+      <td class="inner_table" width="50%">
+      <!-- 収入合計 -->
+      <table class="book">
+        <tr>
+          <td>収入合計</td>
+          <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
+        </tr>
+      </table>
+      </td>  
+      </tr>
+      </table>
+
+  <div class="result">
+    <div class="<%= @profit >= 0 ? "profit" : "loss" %>">
+    <span><%= @profit >= 0 ? "利益" : "損失" %>合計</span>
+    <span class="amount"><%= number_with_delimiter(@profit.abs)%>円</span>
+    </div>
+  </div>
+    　　
+  </div>
       
