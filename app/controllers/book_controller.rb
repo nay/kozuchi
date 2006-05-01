@@ -200,7 +200,7 @@ class BookController < ApplicationController
   def flash_save_deal(deal, is_new = true)
     @updated_deal = deal
     action_name = is_new ? "追加" : "更新"
-    flash[:notice] = "#{BookHelper.format_deal(deal)} を#{action_name}しました。"
+    flash[:notice] = "#{format_deal(deal)} を#{action_name}しました。"
   end
 
   # ----- 情報表示系 --------------------------------------------------
@@ -277,11 +277,22 @@ class BookController < ApplicationController
     end
     
     # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺する。）を得る
+    # TODO 同じ account_summaries でも口座増減と不明金は意味が違い気持ちがわるい
     asset_accounts = Account.find_all(session[:user].id, [1])
+    @asset_plus_summaries = []
+    @asset_minus_summaries = []
     for account in asset_accounts
       balance_start = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, start_inclusive) # 期首残高
       balance_end = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, end_exclusive) # 期末残高
-      p "account_id #{account.id} balance_start = #{balance_start}, balance_end = #{balance_end}"
+      diff = balance_end - balance_start
+      if diff > 0
+        @asset_plus_summaries << AccountSummary.new(account, 0, diff)
+      end
+      if diff < 0
+        @asset_minus_summaries << AccountSummary.new(account, 0, diff)
+      end
+      # 増減なしなら報告しない
+
       unknown_amount = balance_end - balance_start - (values[account.id] || 0)
       if unknown_amount > 0
         @incomes_summaries << AccountSummary.new(account, unknown_amount)
@@ -294,7 +305,10 @@ class BookController < ApplicationController
       @expenses_sum = AccountSummary.get_sum(@expenses_summaries)
       @incomes_sum = AccountSummary.get_sum(@incomes_summaries)
       @profit = @incomes_sum - @expenses_sum
-      
+      @assets_plus_sum = AccountSummary.get_diff_sum(@asset_plus_summaries)
+      @assets_minus_sum = AccountSummary.get_diff_sum(@asset_minus_summaries)
+
+      session[:target_month] = @target_month
     end
     
   end

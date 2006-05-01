@@ -1,4 +1,4 @@
-#Sun Apr 30 17:21:59 JST 2006
+#Mon May 01 09:08:44 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/admin_controller.rb=UTF-8
 encoding//app/controllers/application.rb=UTF-8
@@ -26,6 +26,7 @@ encoding//app/views/layouts/admin.rhtml=UTF-8
 encoding//app/views/layouts/book.rhtml=UTF-8
 encoding//app/views/layouts/userview.rhtml=UTF-8
 encoding//app/views/login/login.rhtml=UTF-8
+encoding//app/views/shared/_footer.rhtml=UTF-8
 encoding//db/development_testdata.sql=UTF-8
 encoding//public/javascripts/book.js=UTF-8
 encoding//public/stylesheets/login.css=UTF-8

@@ -56,10 +56,60 @@
 
   <div class="result">
     <div class="<%= @profit >= 0 ? "profit" : "loss" %>">
-    <span><%= @profit >= 0 ? "利益" : "損失" %>合計</span>
-    <span class="amount"><%= number_with_delimiter(@profit.abs)%>円</span>
+      <span><%= @profit >= 0 ? "利益" : "損失" %>合計</span>
+      <span class="amount"><%= number_with_delimiter(@profit.abs)%>円</span>
     </div>
   </div>
+
+  <!-- 資産の増減 -->
+  <table width="100%">
+    <tr>
+      <td class="inner_table" width="50%">
+        <table class="book">
+          <tr>
+            <th colspan="2">資産減少</th>
+          </tr>
+          <% for summary in @asset_minus_summaries %>
+            <tr>
+              <td><%= summary.account.name %></td>
+              <td class="amount">-<%= number_with_delimiter(summary.diff.abs)%></td>
+            </tr>
+          <% end %>
+        </table>
+      </td>
+      <td class="inner_table" width="50%">
+        <table class="book">
+          <tr>
+            <th colspan="2">資産増加</th>
+          </tr>
+          <% for summary in @asset_plus_summaries %>
+            <tr>
+              <td><%= summary.account.name %></td>
+              <td class="amount">+<%= number_with_delimiter(summary.diff)%></td>
+            </tr>
+          <% end %>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="inner_table" width="50%">
+        <table class="book">
+          <tr>
+            <td>減少合計</td>
+            <td class="amount">-<%= number_with_delimiter(@assets_minus_sum.abs)%></td>
+          </tr>
+        </table>
+      </td>
+      <td class="inner_table" width="50%">
+        <table class="book">
+          <tr>
+            <td>増加合計</td>
+            <td class="amount">+<%= number_with_delimiter(@assets_plus_sum)%></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
     　　
-  </div>
       
