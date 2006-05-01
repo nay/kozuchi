@@ -1,26 +1,24 @@
 @charset "utf-8";
 
 
-/* ------------- 共通（構造） ---------------*/
+/* ------------ 共通（ビジュアル） ------------*/ 
 * {
   margin: 0;
   padding: 0;
 }
-#header, #user_and_today, #sidebar .menu {
-  padding: 4px;
-}
 
-/* ------------ 共通（ビジュアル） ------------*/ 
 /* 反転エリア */
-#header, #header *, #user_and_today {
+#header, #user_and_today {
   background-color: darkgoldenrod;
   color: gold;
   font-weight: bold;
+  padding: 4px;
 }
 
 /* 線で囲んだエリア */
 #sidebar .menu {
   border: 2px solid darkgoldenrod;
+  padding: 4px;
 }
 
 /* ------------　共通（SPAN レベル文字サイズ等） ------------*/
@@ -56,11 +54,13 @@ body {
 #sidebar .menu {
   white-space: nowrap;
   margin: 8px 0px;
+  overflow: hidden;
 }
 
 #contents {
   float:right;
-  width: 85%;
+  width: 83%;
+  padding-left: 4px;
 }
 
 #notice {
@@ -102,7 +102,7 @@ body {
 
 
 #book {
-  margin: 2px 0px 0px 4px;
+  margin: 2px 0px 0px 0px;
 }
 
 .book200 {
@@ -196,12 +196,12 @@ input .text {
   ime-mode:active;
 }
 
+/** カレンダー **/
 #calendar {
-  margin-left: 4px;
+  margin-bottom: 8px;
 }
 
 #calendar * {
-  margin: 16px 0px;
   color: black;
   font-weight: bold;
   text-align: left;
@@ -281,10 +281,6 @@ input .text {
   border-top: 2px solid darkgoldenrod;
   border-left: 2px solid darkgoldenrod;
   border-right: 2px solid darkgoldenrod;
-}
-
-.datebox {
-  margin-left: 4px;
 }
 
 .clearfloat {

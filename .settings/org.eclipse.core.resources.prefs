@@ -1,4 +1,4 @@
-#Mon May 01 23:47:42 JST 2006
+#Mon May 01 23:51:53 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/admin_controller.rb=UTF-8
 encoding//app/controllers/application.rb=UTF-8
@@ -23,7 +23,7 @@ encoding//app/views/book/profit_and_loss.rhtml=UTF-8
 encoding//app/views/config/accounts.rhtml=UTF-8
 encoding//app/views/config/assets.rhtml=UTF-8
 encoding//app/views/layouts/admin.rhtml=UTF-8
-encoding//app/views/layouts/userview.rhtml.back=UTF-8
+encoding//app/views/layouts/main.rhtml=UTF-8
 encoding//app/views/login/login.rhtml=UTF-8
 encoding//app/views/shared/_footer.rhtml=UTF-8
 encoding//db/development_testdata.sql=UTF-8
