@@ -78,6 +78,11 @@ body {
   padding:2px;
 }
 
+/* datebox */
+#datebox input {
+  ime-mode:disabled;
+}
+
 .clearboth {
   clear: both;
 }
@@ -188,9 +193,6 @@ input.amount {
   ime-mode:disabled;
 }
 
-#datebox input {
-  ime-mode:disabled;
-}
 
 input .text {
   ime-mode:active;
