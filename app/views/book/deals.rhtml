@@ -14,7 +14,7 @@
       </div>
 
     <!-- 入力欄 -->
-    <%= start_form_tag (:action => 'submit_tab' ) %>
+    <%= start_form_tag ({:action => 'submit_tab'}, {:class => 'datebox'} ) %>
       <div id="datebox">
         <%= text_field("date", "year", {:size => "2", :maxlength => "4", :class= => "number_field"}) %>
         <%= text_field("date", "month", :size => "1", :maxlength => "2", :class= => "number_field") %>
