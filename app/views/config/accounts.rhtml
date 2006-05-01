@@ -5,7 +5,7 @@
         <td>
           <%= hidden_field("account", "account_type_name")%>
           <%= hidden_field("account", "account_type")%>
-          <label>口座名</label><%= text_field("account", "name", :size => 16, :class => "text") %><br />
+          <label><%=@account.account_type_name%>名</label><%= text_field("account", "name", :size => 16, :class => "text") %><br />
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
           <span>※小さいほど上に表示されます。</span>
         </td>
