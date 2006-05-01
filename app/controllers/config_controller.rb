@@ -46,7 +46,7 @@ class ConfigController < ApplicationController
   def load_accounts(account_type)
     @account = Account.new
     @account.account_type = account_type
-    @accounts = Account.find(:all, :conditions => ["account_type = ? and user_id = ?", @account.account_type, session[:user].id])
+    @accounts = Account.find_all(session[:user].id, [@account.account_type])
     render(:action => "accounts")
   end
   
