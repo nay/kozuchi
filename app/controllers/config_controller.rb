@@ -1,27 +1,16 @@
 class ConfigController < ApplicationController
+  attr_reader :menu_items, :title, :name, :menu_keys
   before_filter :authorize
   layout "main"
   
   def initialize
-    @menu_items = {}
-    @menu_items.store("assets", "口座")
-    @menu_items.store("expenses", "費目")
-    @menu_items.store("incomes", "収入内訳")
-    @actions = {1 => "assets", 2 => "expenses", 3 => "incomes"}
+    @menu_items = {'assets' => '口座', 'expenses' => '費目', 'incomes' => '収入内訳'}
+    @menu_keys = ['assets', 'expenses', 'incomes']
+    @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
+    @title = '設定'
+    @name = 'config'
   end
   
-  def title
-    "設定"
-  end
-  
-  def name
-    "config"
-  end
-  
-  def menu_items
-    @menu_items
-  end
-
   def index
     redirect_to(:action => "assets")
   end

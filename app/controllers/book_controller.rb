@@ -2,18 +2,16 @@ require 'time'
 # 家計簿機能のコントローラ
 class BookController < ApplicationController 
   include BookHelper
+  attr_reader :menu_items, :title, :name, :menu_keys
   before_filter :authorize
-  attr_accessor :menu_items, :title, :name
   layout "main"
 
   # メニューなどレイアウトに必要な情報を設定する  
   def initialize
-    @menu_items = {}
-    @menu_items.store("deals", "仕分帳")
-    @menu_items.store("account_deals", "口座別出納")
-    @menu_items.store("profit_and_loss", "収支表")
-    @title = "家計簿"
-    @name = "book"
+    @menu_items = {'deals' => '仕分帳', 'account_deals' => '口座別出納', 'profit_and_loss' => '収支表'}
+    @menu_keys = ['deals', 'account_deals', 'profit_and_loss']
+    @title = '家計簿'
+    @name = 'book'
   end
 
   # ----- 入力画面表示系 -----------------------------------------------

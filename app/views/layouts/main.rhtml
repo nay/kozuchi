@@ -34,8 +34,8 @@
         <%= format_date(Time.now) %>
       </div>
       <!-- menu -->
-      <% controller.menu_items.each do |key, val| %>
-        <div class="menu"><%= link_to(val, :controller => controller.name, :action => key) %></div>
+      <% controller.menu_keys.each do |key| %>
+        <div class="menu"><%= link_to(controller.menu_items[key], :controller => controller.name, :action => key) %></div>
       <% end %>
     </div>
     <!-- contents -->
