@@ -1,29 +1,105 @@
-* { margin:0; padding:0; }
-body { background-color: wheat; color: #333; margin: 0px 4px;}
-#header * { background-color: darkgoldenrod; }
-#header { padding: 4px; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
-#header #menu { float: right; }
-#header #title { font-size: 20px; }
-#header #subtitle { font-size: 14px; }
-#sidebar { float:left; }
-#sidebar .menu { white-space: nowrap; margin: 2px 0px; padding: 4px; border: 2px solid darkgoldenrod;}
-#contents { float:right; }
-#notice { padding: 8px; background-color: gold; }
-#footer { clear: both; margin-top: 8px; border-bottom:1px dashed darkgoldenrod; color:darkgoldenrod; text-align:right; font-size:small; padding:2px; }
-.clearboth { clear: both; }
-p.info { margin: 16px 0px; padding: 4pt; background-color: darkgoldenrod; color: gold; font-weight: bold; font-size: 12pt; }
-h2 { color: darkgoldenrod; font-size: 12pt; font-weight:bold; padding: 0; margin: 0; }
-.window { border: 2px solid darkgoldenrod; margin: 16px 0px; padding: 8px;}
+* {
+  margin:0;
+  padding:0;
+}
+
+body {
+  background-color: wheat;
+  color: #333;
+  margin: 0px 4px;
+}
+
+#header * {
+  background-color: darkgoldenrod;
+ }
+
+#header {
+  padding: 4px;
+  background-color: darkgoldenrod;
+  color: gold;
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+#header #menu {
+  float: right;
+}
+
+#header #title {
+  font-size: 20px;
+}
+
+#header #subtitle {
+  font-size: 14px;
+}
+
+#sidebar {
+  float:left;
+}
+
+#sidebar .menu {
+  white-space: nowrap;
+  margin: 2px 0px;
+  padding: 4px;
+  border: 2px solid darkgoldenrod;
+}
+
+#contents {
+  float:right;
+}
+
+#notice {
+  padding: 8px;
+  background-color: gold;
+}
+
+#footer {
+  clear: both;
+  margin-top: 8px;
+  border-bottom:1px dashed darkgoldenrod;
+  color:darkgoldenrod;
+  text-align:right;
+  font-size:small;
+  padding:2px;
+}
+
+.clearboth {
+  clear: both;
+}
+
+p.info {
+  margin: 16px 0px;
+  padding: 4pt;
+  background-color: darkgoldenrod;
+  color: gold;
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+h2 {
+  color: darkgoldenrod;
+  font-size: 12pt;
+  font-weight:bold;
+  padding: 0;
+  margin: 0;
+}
+
+.window {
+  border: 2px solid darkgoldenrod;
+  margin: 16px 0px;
+  padding: 8px;
+}
 
 .book, .book_header {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
   width:100%;
 }
+
 .book200 {
   height: 200px;
   overflow-y: scroll;
-  }
+}
 
 .book .updated_line td {
   background-color: pink;
@@ -68,54 +144,152 @@ td.number, td.amount{
   vertical-align: top;
 }
 
-button { border: 4px outset goldenrod; background-color: goldenrod; color:black;  font-weight: bold; margin: 0px; padding: 2px;}
+button {
+  border: 4px outset goldenrod;
+  background-color: goldenrod;
+  color: black;
+  font-weight: bold;
+  margin: 0px;
+  padding: 2px;
+}
 
-.masters { background-color: goldenrod; border: 0px; width:96%; font-size: 11pt;}
-.masters td { border: 1px inset wheat; background-color: wheat; margin: 0px; padding: 2px; }
-.masters th { border: 1px inset goldenrod; background-color: goldenrod;  margin: 0px;}
+.masters {
+  background-color: goldenrod;
+  border: 0px;
+  width:96%;
+  font-size: 11pt;
+}
+
+.masters td {
+  border: 1px inset wheat;
+  background-color: wheat;
+  margin: 0px;
+  padding: 2px;
+}
+
+.masters th {
+  border: 1px inset goldenrod;
+  background-color: goldenrod;
+  margin: 0px;
+}
+
 input.amount {
   text-align: right;
   padding: 4px opx;
   ime-mode:disabled;
 }
+
 #datebox input {
   ime-mode:disabled;
 }
+
 input .text {
   ime-mode:active;
 }
 
-#calendar * { margin: 16px 0px; color: black; font-weight: bold; text-align: left;}
-#calendar table { background-color: darkgoldenrod; }
-#calendar table tr td { width: 40px; padding: 0px 4px; background-color: goldenrod; }
-#calendar table tr td.selected_month { border: 4px inset gold; text-align: right; background-color: gold; color: black; }
-#calendar table tr td.selectable_month { border: 4px outset goldenrod; text-align: right; background-color: goldenrod; color: black; }
+#calendar * {
+  margin: 16px 0px;
+  color: black;
+  font-weight: bold;
+  text-align: left;
+}
 
-.tabsheet { border-top: 2px solid darkgoldenrod; border-bottom: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;  margin: 52px 0px 0px 0px; padding: 8px 8px 8px 8px; background-color: gold; }
-.tab, .selectedtab { margin-top: 4px; margin-bottom: 16px; font-weight: bold; height: 24px; padding : 2px 16px; border-top: 2px solid darkgoldenrod;border-left: 2px solid darkgoldenrod;border-right: 2px solid darkgoldenrod; }
+#calendar table {
+  background-color: darkgoldenrod;
+}
+
+#calendar table tr td {
+  width: 40px;
+  padding: 0px 4px;
+  background-color: goldenrod;
+}
+
+#calendar table tr td.selected_month {
+  border: 4px inset gold;
+  text-align: right;
+  background-color: gold;
+  color: black;
+}
+
+#calendar table tr td.selectable_month {
+  border: 4px outset goldenrod;
+  text-align: right;
+  background-color: goldenrod;
+  color: black;
+}
+
+.tabsheet {
+  border-top: 2px solid darkgoldenrod;
+  border-bottom: 2px solid darkgoldenrod;
+  border-left: 2px solid darkgoldenrod;
+  border-right: 2px solid darkgoldenrod;
+  margin: 52px 0px 0px 0px;
+  padding: 8px 8px 8px 8px;
+  background-color: gold;
+}
+
+.tab, .selectedtab {
+  margin-top: 4px;
+  margin-bottom: 16px;
+  font-weight: bold;
+  height: 24px;
+  padding : 2px 16px;
+  border-top: 2px solid darkgoldenrod;
+  border-left: 2px solid darkgoldenrod;
+  border-right: 2px solid darkgoldenrod;
+}
+
 .selectedtab { background-color: gold; }
+
 .tab {  }
+
 .tabbuttons { float:right; margin-top: 8px;}
+
 .tabwindow {  }
+
 .tabspace {
   margin-left:4px;
 }
 
-#datebox { float:left; margin: 2px 0px 0px 0px; padding: 4px 8px 4px 8px; background: gold; border-top: 2px solid darkgoldenrod; border-left: 2px solid darkgoldenrod; border-right: 2px solid darkgoldenrod;}
+#datebox {
+  float:left;
+  margin: 2px 0px 0px 0px;
+  padding: 4px 8px 4px 8px;
+  background: gold;
+  border-top: 2px solid darkgoldenrod;
+  border-left: 2px solid darkgoldenrod;
+  border-right: 2px solid darkgoldenrod;
+}
 
-#book { clear: both; margin: 16px 0px 0px 0px;}
-.clearfloat { clear:both; }
-#account_options { text-align: right; }
-.automatic { color: blue; }
+#book {
+  clear: both;
+  margin: 16px 0px 0px 0px;
+}
+
+.clearfloat {
+  clear:both;
+}
+
+#account_options {
+  text-align: right;
+}
+
+.automatic {
+  color: blue;
+}
+
 .inner_table {
   vertical-align: top;
 }
+
 .profit {
   color: darkgreen;
 }
+
 .loss {
   color: darkred;
 }
+
 .result {
   white-space: nowrap;
   margin: 10px, 100px;
@@ -124,6 +298,5 @@ input .text {
   border-bottom: 6px double darkgoldenrod;
   text-align: center;
   font-weight: bold;
-  font-size: 24px;
-  
+  font-size: 24px;  
 }
