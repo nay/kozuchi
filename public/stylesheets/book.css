@@ -1,6 +1,9 @@
+@charset "utf-8";
+
+
 * {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -34,7 +37,7 @@ body {
 }
 
 #sidebar {
-  float:left;
+  float: left;
 }
 
 #sidebar .menu {
@@ -94,6 +97,11 @@ h2 {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
   width:100%;
+}
+
+#book {
+  clear: both;
+  margin: 16px 0px 0px 0px;
 }
 
 .book200 {
@@ -175,7 +183,7 @@ button {
 
 input.amount {
   text-align: right;
-  padding: 4px opx;
+  padding: 4px 0px;
   ime-mode:disabled;
 }
 
@@ -261,11 +269,6 @@ input .text {
   border-right: 2px solid darkgoldenrod;
 }
 
-#book {
-  clear: both;
-  margin: 16px 0px 0px 0px;
-}
-
 .clearfloat {
   clear:both;
 }
@@ -292,7 +295,7 @@ input .text {
 
 .result {
   white-space: nowrap;
-  margin: 10px, 100px;
+  margin: 10px 100px;
   padding: 6px;
   border-top: 6px double darkgoldenrod;
   border-bottom: 6px double darkgoldenrod;
