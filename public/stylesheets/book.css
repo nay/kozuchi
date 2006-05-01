@@ -38,6 +38,7 @@ body {
 
 #sidebar {
   float: left;
+  width: 10%;
 }
 
 #sidebar .menu {
@@ -49,6 +50,7 @@ body {
 
 #contents {
   float:right;
+  width: 90%;
 }
 
 #notice {
@@ -195,6 +197,10 @@ input .text {
   ime-mode:active;
 }
 
+#calendar {
+  margin-left: 4px;
+}
+
 #calendar * {
   margin: 16px 0px;
   color: black;
@@ -260,8 +266,8 @@ input .text {
 }
 
 #datebox {
-  float:left;
-  margin: 2px 0px 0px 0px;
+  float: left;
+  margin: -40px 0px 0px 0px;
   padding: 4px 8px 4px 8px;
   background: gold;
   border-top: 2px solid darkgoldenrod;
@@ -270,7 +276,7 @@ input .text {
 }
 
 .clearfloat {
-  clear:both;
+  clear: both;
 }
 
 #account_options {
