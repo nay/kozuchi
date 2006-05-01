@@ -252,22 +252,25 @@ input .text {
   border-right: 2px solid darkgoldenrod;
 }
 
-.selectedtab { background-color: gold; }
+.selectedtab {
+  margin-left: 2px;
+    float: right;
+  background-color: gold;
+}
 
-.tab {  }
+.tab {
+  margin-left: 2px;
+  float: right;
+}
 
 .tabbuttons {
   float: right;
-  margin-top: -1.2em;
+  margin-top: -1.8em;
 }
 
 #tabwindow {
-  margin-top: 0px;
+  margin-top: -1.0em;
   clear: both;
-}
-
-.tabspace {
-  margin-left:4px;
 }
 
 #datebox {

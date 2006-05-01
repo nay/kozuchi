@@ -9,10 +9,9 @@
       </span>
       <span class="tabspace"></span>
       <% if @deal.id %>
-        <span class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></span>
-        <span class="tabspace"></span>
+        <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
       <% end %>
-      <span class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></span>
+      <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
     </div>
     <div class="tabsheet">
       <input type="hidden" name="tab_name" value="deal"/>
