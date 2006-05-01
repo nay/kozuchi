@@ -36,6 +36,7 @@ create table account_entries (
   account_id integer not null,
   deal_id integer not null,
   amount integer not null,
+  balance integer,
   foreign key (account_id) references accounts,
   foreign key (deal_id) references deals, 
   foreign key (user_id) references users
