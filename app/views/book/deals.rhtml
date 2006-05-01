@@ -1,17 +1,12 @@
-    <script>
-    
-      var selectedMonth = null;
-      var startMonth = null;
-      
-    </script>
-    <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'} ) %>
+    <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'},
+     :html => {:id => 'month_form'} ) %>
       <%= hidden_field("target_month", "year") %>
       <%= hidden_field("target_month", "month") %>
     <%=end_form_tag%>
 
-      <!-- カレンダー -->
-      <div id="calendar">
-      </div>
+    <!-- カレンダー -->
+    <div id="calendar">
+    </div>
 
     <!-- 入力欄 -->
     <%= start_form_tag (:action => 'submit_tab') %>

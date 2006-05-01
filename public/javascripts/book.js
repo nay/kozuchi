@@ -52,6 +52,8 @@ Month.prototype = {
     return this.months == _month.months;
   }
 }
+  var selectedMonth = null;
+  var startMonth = null;
 
   /** 月の選択 **/
   function select_month(year, month, updatesBook) {
@@ -111,11 +113,9 @@ Month.prototype = {
     
     $("target_month_year").value = selectedMonth.year;
     $("target_month_month").value = selectedMonth.month;
-//    document.forms[0].year.value = selectedMonth.year;
-//    document.forms[0].month.value = selectedMonth.month;
     
     if (updatesBook) {
-      document.forms[0].onsubmit();
+      document.forms.month_form.onsubmit();
     }
   }
 
