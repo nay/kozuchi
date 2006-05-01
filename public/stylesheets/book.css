@@ -1,56 +1,66 @@
 @charset "utf-8";
 
 
+/* ------------- 共通（構造） ---------------*/
 * {
   margin: 0;
   padding: 0;
 }
-
-body {
-  background-color: wheat;
-  color: #333;
-  margin: 0px 4px;
+#header, #user_and_today, #sidebar .menu {
+  padding: 4px;
 }
 
-#header * {
-  background-color: darkgoldenrod;
- }
-
-#header {
-  padding: 4px;
+/* ------------ 共通（ビジュアル） ------------*/ 
+/* 反転エリア */
+#header, #header *, #user_and_today {
   background-color: darkgoldenrod;
   color: gold;
   font-weight: bold;
-  font-size: 12pt;
 }
 
-#header #menu {
-  float: right;
+/* 線で囲んだエリア */
+#sidebar .menu {
+  border: 2px solid darkgoldenrod;
 }
 
-#header #title {
+/* ------------　共通（SPAN レベル文字サイズ等） ------------*/
+span.large {
   font-size: 20px;
 }
 
-#header #subtitle {
-  font-size: 14px;
+/* ------------ 固有　 ------------*/ 
+body {
+  margin: 0px;
+  padding: 0px;
+}
+#page {
+  background-color: wheat;
+  margin: 0px 4px;
+  padding: 8px;
+}
+#header {
+  margin-bottom: 8px;
+}
+#header_title {
+  float: left;
+}
+#header_menu {
+  float: right;
 }
 
 #sidebar {
   float: left;
-  width: 10%;
+  width: 15%;
 }
 
 #sidebar .menu {
   white-space: nowrap;
-  margin: 2px 0px;
-  padding: 4px;
-  border: 2px solid darkgoldenrod;
+  margin: 8px 0px;
 }
 
 #contents {
   float:right;
-  width: 90%;
+  width: 85%;
 }
 
 #notice {
@@ -72,34 +82,24 @@ body {
   clear: both;
 }
 
-p.info {
-  margin: 16px 0px;
-  padding: 4pt;
-  background-color: darkgoldenrod;
-  color: gold;
-  font-weight: bold;
-  font-size: 12pt;
-}
-
-h2 {
-  color: darkgoldenrod;
-  font-size: 12pt;
-  font-weight:bold;
-  padding: 0;
-  margin: 0;
-}
-
 .window {
   border: 2px solid darkgoldenrod;
   margin: 16px 0px;
   padding: 8px;
 }
 
-.book, .book_header {
+.book {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
   width:100%;
 }
+
+.book_header {
+  background-color: goldenrod;
+  border: 1px solid darkgoldenrod;
+  width:100%;
+}
+
 
 #book {
   margin: 2px 0px 0px 4px;

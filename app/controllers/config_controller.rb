@@ -1,6 +1,6 @@
 class ConfigController < ApplicationController
   before_filter :authorize
-  layout "userview"
+  layout "main"
   
   def initialize
     @menu_items = {}

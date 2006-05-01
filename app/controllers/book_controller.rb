@@ -4,6 +4,7 @@ class BookController < ApplicationController
   include BookHelper
   before_filter :authorize
   attr_accessor :menu_items, :title, :name
+  layout "main"
 
   # メニューなどレイアウトに必要な情報を設定する  
   def initialize

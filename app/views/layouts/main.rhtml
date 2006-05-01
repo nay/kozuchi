@@ -10,13 +10,14 @@
     <%= javascript_include_tag "book" %>
   </head>
   <body>
+    <div id="page">
     <!-- header -->
     <div id="header">
-      <div style="float:left;">
-        <span id="title"><%= controller.title %></span>
-        <span id="subtitle"> - <%= controller.menu_items[controller.action_name] || controller.action_name %></span>
+      <div id="header_title">
+        <span class="large"><%= controller.title %></span>
+        <span> - <%= controller.menu_items[controller.action_name] || controller.action_name %></span>
       </div>
-      <div id="menu">
+      <div id="header_menu">
         <% if controller.title != "家計簿" %>
           <%= link_to("家計簿", :controller => "book", :action => "deals") %>
         <% end %>
@@ -28,14 +29,14 @@
       <div class="clearboth"></div>
     </div>
     <div id="sidebar">
-      <p class="info">
+      <div id="user_and_today">
         <%= session[:user].login_id %>さん<br />
         <%= format_date(Time.now) %>
-      </p>
+      </div>
       <!-- menu -->
-      <div class="menu"><%= link_to(controller.menu_items["deals"], :action => "deals") %></div>
-      <div class="menu"><%= link_to(controller.menu_items["account_deals"], :action => "account_deals") %></div>
-      <div class="menu"><%= link_to(controller.menu_items["profit_and_loss"], :action => "profit_and_loss") %></div>
+      <% controller.menu_items.each do |key, val| %>
+        <div class="menu"><%= link_to(val, :controller => controller.name, :action => key) %></div>
+      <% end %>
     </div>
     <!-- contents -->
     <div id="contents">
@@ -43,5 +44,6 @@
     </div>
     <!-- footer -->
     <%= render :partial => "shared/footer" %>
+    </div>
   </body>
 </html>
