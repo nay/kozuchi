@@ -1,13 +1,13 @@
 @charset "utf-8";
 
 
-/* ------------ ‹¤’ÊiƒrƒWƒ…ƒAƒ‹j ------------*/ 
+/* ------------ å…±é€šï¼ˆãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ï¼‰ ------------*/ 
 * {
   margin: 0;
   padding: 0;
 }
 
-/* ”½“]ƒGƒŠƒA */
+/* åè»¢ã‚¨ãƒªã‚¢ */
 #header, #user_and_today {
   background-color: darkgoldenrod;
   color: gold;
@@ -15,18 +15,18 @@
   padding: 4px;
 }
 
-/* ü‚ÅˆÍ‚ñ‚¾ƒGƒŠƒA */
+/* ç·šã§å›²ã‚“ã ã‚¨ãƒªã‚¢ */
 #sidebar .menu {
   border: 2px solid darkgoldenrod;
   padding: 4px;
 }
 
-/* ------------@‹¤’ÊiSPAN ƒŒƒxƒ‹•¶šƒTƒCƒY“™j ------------*/
+/* ------------ã€€å…±é€šï¼ˆSPAN ãƒ¬ãƒ™ãƒ«æ–‡å­—ã‚µã‚¤ã‚ºç­‰ï¼‰ ------------*/
 span.large {
   font-size: 20px;
 }
 
-/* ------------ ŒÅ—L@ ------------*/ 
+/* ------------ å›ºæœ‰ã€€ ------------*/ 
 body {
   margin: 0px;
   padding: 0px;
@@ -196,7 +196,7 @@ input .text {
   ime-mode:active;
 }
 
-/** ƒJƒŒƒ“ƒ_[ **/
+/** ã‚«ãƒ¬ãƒ³ãƒ€ãƒ¼ **/
 #calendar {
   margin-bottom: 8px;
 }
