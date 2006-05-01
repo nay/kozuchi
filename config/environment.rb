@@ -54,3 +54,7 @@ end
 
 # Include your application configuration below
 #ActionController::AbstractRequest.relative_url_root = '/kozuchi'
+
+
+KOZUCHI_VERSION = '0.3.1'
+
