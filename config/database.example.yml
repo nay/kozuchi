@@ -14,6 +14,7 @@ development:
 #  adapter: mysql
   adapter: sqlite3
   dbfile: db/kozuchi_development.db
+  encoding : utf8
 #  database: kozuchi_development
 #  username: root
 #  password:
@@ -26,6 +27,7 @@ test:
 #  adapter: mysql
   adapter: sqlite3
   dbfile: db/kozuchi_test.db
+  encoding : utf8
 #  database: kozuchi_test
 #  username: root
 #  password:
@@ -35,6 +37,7 @@ production:
 #  adapter: mysql
   adapter: sqlite3
   dbfile: db/kozuchi_production.db
+  encoding : utf8
 #  database: kozuchi_production
 #  username: root
 #  password: 
