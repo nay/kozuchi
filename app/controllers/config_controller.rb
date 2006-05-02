@@ -1,14 +1,15 @@
-class ConfigController < ApplicationController
-  attr_reader :menu_items, :title, :name, :menu_keys
-  before_filter :authorize
-  layout "main"
+class ConfigController < MainController
+  
+  def sub_title(action_name)
+    menu_caption(action_name)
+  end
   
   def initialize
-    @menu_items = {'assets' => '口座', 'expenses' => '費目', 'incomes' => '収入内訳'}
-    @menu_keys = ['assets', 'expenses', 'incomes']
+    super('設定')
+    add_menu('口座', {:action => 'assets'}, :action)
+    add_menu('費目', {:action => 'expenses'}, :action)
+    add_menu('収入内訳', {:action => 'incomes'}, :action)
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
-    @title = '設定'
-    @name = 'config'
   end
   
   def index

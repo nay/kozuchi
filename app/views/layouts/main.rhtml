@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
     <title>
-      <%= controller.title %> - <%= controller.menu_items[controller.action_name] || controller.action_name %> 
+      <%= controller.title %> - <%= controller.sub_title(controller.action_name) || controller.action_name %> 
     </title>
     <%= render :partial => "shared/html_header" %>
     <%= stylesheet_link_tag 'book' %>
@@ -17,7 +17,7 @@
     <div id="header">
       <div id="header_title">
         <span class="large"><%= controller.title %></span>
-        <span> - <%= controller.menu_items[controller.action_name] || controller.action_name %></span>
+        <span> - <%= controller.sub_title(controller.action_name) || controller.action_name %></span>
       </div>
       <div id="header_menu">
         <% if controller.title != "家計簿" %>
@@ -35,8 +35,8 @@
         <%= format_date(Time.now) %>
       </div>
       <!-- menu -->
-      <% controller.menu_keys.each do |key| %>
-        <div class="menu" class="middle_box"><%= link_to(controller.menu_items[key], :controller => key, :action => 'index') %></div>
+      <% for menu in controller.menues %>
+        <div class="menu" class="middle_box"><%= link_to(menu.caption, menu.options) %></div>
       <% end %>
     </div>
     <!-- contents -->

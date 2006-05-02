@@ -1,15 +1,16 @@
 # 家計簿機能のコントローラ
-class BookController < ApplicationController 
+class BookController < MainController 
   include BookHelper
-  attr_reader :menu_items, :title, :name, :menu_keys
-  before_filter :authorize
-  layout "main"
+  
+  def sub_title(action_name)
+    menu_caption(controller_name)
+  end
 
   # メニューなどレイアウトに必要な情報を設定する  
   def initialize
-    @menu_items = {'deals' => '仕分帳', 'account_deals' => '口座別出納', 'profit_and_loss' => '収支表'}
-    @menu_keys = ['deals', 'account_deals', 'profit_and_loss']
-    @title = '家計簿'
-    @name = 'book'
+    super('家計簿')
+    add_menu('仕分帳', {:controller => 'deals', :action => 'index'}, :controller)
+    add_menu('口座別出納', {:controller => 'account_deals', :action => 'index'}, :controller)
+    add_menu('収支表', {:controller => 'profit_and_loss', :action => 'index'}, :controller)
   end
 end
