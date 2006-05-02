@@ -8,6 +8,7 @@
         </tr>
       </table>
       <div class="scroll_box">
+      <div class="scroll_inner_box">
       <table class="book">
         <% for deal in @deals %>
           <% for account_entry in deal.account_entries %>
@@ -37,6 +38,7 @@
           <% end %>
         <% end %>
       </table>
+      </div>
       </div>
       <% if @target_month && !@date%>
         <script>

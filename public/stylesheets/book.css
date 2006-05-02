@@ -84,6 +84,11 @@ button {
   padding: 4px;
 }
 
+/* IE 対策 */
+.scroll_inner_box {
+  padding-right:1em;
+}
+
 .book {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
@@ -290,11 +295,12 @@ body {
 #datebox {
   float: left;
   margin: 0px 0px 0px 0px;
-  padding: 4px 8px 4px 8px;
+  padding: 4px;
   background: gold;
   border-top: 2px solid darkgoldenrod;
   border-left: 2px solid darkgoldenrod;
   border-right: 2px solid darkgoldenrod;
+  border-bottom: 2px solid gold;
 }
 
 /* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
