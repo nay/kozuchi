@@ -17,7 +17,7 @@ class LoginController < ApplicationController
     logged_in_user = @user.try_to_login
     if logged_in_user
       session[:user] = logged_in_user
-      redirect_to(:controller => "book", :action => "deals")
+      redirect_to(:controller => 'deals', :action => 'index')
     else
       flash[:notice] = "ログインに失敗しました。"
       @user.password = ""
