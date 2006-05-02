@@ -1,4 +1,4 @@
-<div class="window">
+<div class="form_box">
   <%= form_tag :action => 'create_account'%>
     <table>
       <tr>
@@ -18,8 +18,7 @@
 <% if @flash[:notice] && @flash[:notice].to_s != ""%>
   <div id="notice"><%=@flash[:notice]%></div>
 <% end %>
-<div class="window">
-  <h2><%=@account_type_name%>一覧</h2>
+<div id="window">
   <%= form_tag :action => 'update_accounts'%>
   <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
   <table class="masters" width="100%">

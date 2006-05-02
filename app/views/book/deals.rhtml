@@ -9,16 +9,18 @@
     </div>
 
     <!-- 入力欄 -->
-    <%= start_form_tag (:action => 'submit_tab') %>
-      <div id="datebox">
-        <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
-        <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
-        <%= text_field("date", "day", :size => "2", :maxlength => "2") %>
-      </div>
-      <div id="tabwindow">
-        <%= render :partial => ('edit_'+@tab_name) %>
-      </div>
-    <%=end_form_tag%>
+    <div id="edit_box">
+      <%= start_form_tag (:action => 'submit_tab') %>
+        <div id="datebox">
+          <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
+          <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
+          <%= text_field("date", "day", :size => "2", :maxlength => "2") %>
+        </div>
+        <div id="tabwindow">
+          <%= render :partial => ('edit_'+@tab_name) %>
+        </div>
+      <%=end_form_tag%>
+    </div>
 
     <div id="book">
       <%= render :partial => "deals" %>

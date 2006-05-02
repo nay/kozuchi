@@ -1,4 +1,8 @@
     <div class="tabbuttons">
+      <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
+      <% if @deal.id %>
+        <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
+      <% end %>
       <span class="selectedtab">
         <% if @deal.id %>
           <%= hidden_field("deal", "id") %>
@@ -7,16 +11,11 @@
          <span>明細</span>
         <% end %>
       </span>
-      <span class="tabspace"></span>
-      <% if @deal.id %>
-        <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
-      <% end %>
-      <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
     </div>
     <div class="tabsheet">
       <input type="hidden" name="tab_name" value="deal"/>
-      <%= text_field("deal", "summary", :class =>"text", :size => "40") %><br />
-      <%= text_field("deal", "amount", :class => "amount", :size => "8") %>円
+      <%= text_field("deal", "summary", :size => "40") %><br />
+      <%= text_field("deal", "amount", :size => "8") %>円
       <span id="account_minus">
       <select name="deal[minus_account_id]" id="deal_account_minus_id">
         <%= option_groups_from_collection_for_select(@accounts_minus, :accounts, :name, :id, :name, @deal.minus_account_id.to_i)%>

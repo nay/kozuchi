@@ -1,14 +1,14 @@
 @charset "utf-8";
 
 
-/* ------------ 共通（ビジュアル） ------------*/ 
+/* ============== 共通情報　=============== */
 * {
   margin: 0;
   padding: 0;
 }
 
 /* 反転エリア */
-#header, #user_and_today {
+#header, #header *, #user_and_today {
   background-color: darkgoldenrod;
   color: gold;
   font-weight: bold;
@@ -21,76 +21,63 @@
   padding: 4px;
 }
 
-/* ------------　共通（SPAN レベル文字サイズ等） ------------*/
-span.large {
-  font-size: 20px;
-}
-
-/* ------------ 固有　 ------------*/ 
-body {
-  margin: 0px;
-  padding: 0px;
-}
-#page {
-  background-color: wheat;
-  margin: 0px 4px;
-  padding: 8px;
-}
-#header {
-  margin-bottom: 8px;
-}
-#header_title {
-  float: left;
-}
-#header_menu {
-  float: right;
-}
-
-#sidebar {
-  float: left;
-  width: 15%;
-}
-
-#sidebar .menu {
-  white-space: nowrap;
-  margin: 8px 0px;
-  overflow: hidden;
-}
-
-#contents {
-  float:right;
-  width: 83%;
-  padding-left: 4px;
-}
-
-#notice {
-  padding: 8px;
+/* フォーム地 */
+.tabsheet, .form_box {
+  border: 2px solid darkgoldenrod;
+  padding: 4px;
   background-color: gold;
 }
 
-#footer {
-  clear: both;
-  margin-top: 8px;
-  border-bottom:1px dashed darkgoldenrod;
-  color:darkgoldenrod;
-  text-align:right;
-  font-size:small;
-  padding:2px;
+
+/* general input fields padding */
+/*#datebox input, #deal_amount, #deal_summary, select {*/
+input, select {
+  padding: 0px 1px;
+  font-size: 100%;
+  margin: 4px;
+}
+option {
+  font-size: 90%;
+  padding: 2px;
 }
 
-/* datebox */
-#datebox input {
+/* number fields */
+#datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;
+  text-align: right;
 }
 
+/* text fields */
+#deal_summary {
+  ime-mode:active;
+}
+
+
+/* 大きな文字 */
+span.large {
+  font-size: 1.3em;
+}
+
+button {
+  border: 4px outset goldenrod;
+  background-color: goldenrod;
+  color: black;
+  font-weight: bold;
+  padding: 1px 4px;
+  font-size: 100%;
+  margin: 4px;
+}
+
+/*
 .clearboth {
   clear: both;
 }
+*/
 
 .window {
-  border: 2px solid darkgoldenrod;
-  margin: 16px 0px;
-  padding: 8px;
+  border: 1px dashed darkgoldenrod;
+  margin-bottom: 16px;
+  padding: 4px;
 }
 
 .book {
@@ -105,16 +92,15 @@ body {
   width:100%;
 }
 
-
-#book {
-  margin: 2px 0px 0px 0px;
-}
-
-.book200 {
+.scroll_box {
   height: 200px;
   overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100%;
+  border-bottom: 1px solid darkgoldenrod;
 }
 
+/* 更新行ハイライト */
 .book .updated_line td {
   background-color: pink;
 }
@@ -158,19 +144,11 @@ td.number, td.amount{
   vertical-align: top;
 }
 
-button {
-  border: 4px outset goldenrod;
-  background-color: goldenrod;
-  color: black;
-  font-weight: bold;
-  margin: 0px;
-  padding: 2px;
-}
-
+/* マスタメンテナンステーブル */
 .masters {
   background-color: goldenrod;
   border: 0px;
-  width:96%;
+  width:100%;
   font-size: 11pt;
 }
 
@@ -187,15 +165,84 @@ button {
   margin: 0px;
 }
 
-input.amount {
-  text-align: right;
-  padding: 4px 0px;
-  ime-mode:disabled;
+
+.tab, .selectedtab {
+  margin-top: 4px;
+/*  margin-bottom: 16px;*/
+  font-weight: bold;
+/*  height: 24px;*/
+  padding : 2px 16px;
+  border-top: 2px solid darkgoldenrod;
+  border-left: 2px solid darkgoldenrod;
+  border-right: 2px solid darkgoldenrod;
 }
 
+.selectedtab {
+  margin-left: 2px;
+    float: right;
+  background-color: gold;
+}
 
-input .text {
-  ime-mode:active;
+.tab {
+  margin-left: 2px;
+  float: right;
+}
+
+.tabbuttons {
+  float: right;
+  margin-top: -1.8em;
+}
+
+.automatic {
+  color: blue;
+}
+
+.inner_table {
+  vertical-align: top;
+}
+
+/* ========== 固有情報　=============== */
+
+/* ------- top level ------------*/
+body {
+  margin: 0px;
+  padding: 0px;
+}
+#page {
+  background-color: wheat;
+  margin: 0px 4px;
+  padding: 8px;
+}
+/* -------- header -------*/
+#header {
+  height: 2em;
+  margin-bottom: 8px;
+  border: 4px double gold;
+}
+#header_title {
+  float: left;
+}
+#header_menu {
+  float: right;
+}
+/* -------- sidebar -------*/
+#sidebar {
+  clear: both;
+  float: left;
+  width: 13%;
+}
+
+#sidebar .menu {
+  white-space: nowrap;
+  margin: 8px 0px;
+  overflow: hidden;
+}
+
+/* -------- contents -------*/
+#contents {
+  float:right;
+  width: 86%;
+  padding-left: 4px;
 }
 
 /** カレンダー **/
@@ -233,48 +280,12 @@ input .text {
   color: black;
 }
 
-.tabsheet {
-  border-top: 2px solid darkgoldenrod;
-  border-bottom: 2px solid darkgoldenrod;
-  border-left: 2px solid darkgoldenrod;
-  border-right: 2px solid darkgoldenrod;
-  margin: 0px 0px 0px 0px;
-  padding: 8px 8px 8px 8px;
-  background-color: gold;
+/*　------ 入力欄  ------- */
+#edit_box {
+  margin: 8px 0px;
 }
 
-.tab, .selectedtab {
-  margin-top: 4px;
-/*  margin-bottom: 16px;*/
-  font-weight: bold;
-/*  height: 24px;*/
-  padding : 2px 16px;
-  border-top: 2px solid darkgoldenrod;
-  border-left: 2px solid darkgoldenrod;
-  border-right: 2px solid darkgoldenrod;
-}
-
-.selectedtab {
-  margin-left: 2px;
-    float: right;
-  background-color: gold;
-}
-
-.tab {
-  margin-left: 2px;
-  float: right;
-}
-
-.tabbuttons {
-  float: right;
-  margin-top: -1.8em;
-}
-
-#tabwindow {
-  margin-top: -1.0em;
-  clear: both;
-}
-
+/* 日付欄 */
 #datebox {
   float: left;
   margin: 0px 0px 0px 0px;
@@ -285,30 +296,43 @@ input .text {
   border-right: 2px solid darkgoldenrod;
 }
 
-.clearfloat {
+/* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
+#tabwindow {
+  margin-top: -1.0em;
   clear: both;
 }
 
+
+/*　------ メッセージ欄 ------- */
+#notice {
+  padding: 8px;
+  background-color: gold;
+}
+
+/*　------ 帳簿欄 ------- */
+#book {
+  margin-top: 8px;
+}
+
+/* -------- footer -------*/
+#footer {
+  clear: both;
+  margin-top: 8px;
+  border-bottom:1px dashed darkgoldenrod;
+  color:darkgoldenrod;
+  text-align:right;
+  font-size:small;
+  padding:2px;
+}
+/* ================ 機能別 =================== */
+
+/* ------ 口座別出納：口座選択欄 --------*/
 #account_options {
   text-align: right;
 }
 
-.automatic {
-  color: blue;
-}
 
-.inner_table {
-  vertical-align: top;
-}
-
-.profit {
-  color: darkgreen;
-}
-
-.loss {
-  color: darkred;
-}
-
+/* 利益・損益のレポートエリア */
 .result {
   white-space: nowrap;
   margin: 10px 100px;
@@ -318,4 +342,11 @@ input .text {
   text-align: center;
   font-weight: bold;
   font-size: 24px;  
+}
+.profit {
+  color: darkgreen;
+}
+
+.loss {
+  color: darkred;
 }
