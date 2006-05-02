@@ -5,11 +5,11 @@
     <%=end_form_tag%>
 
     <!-- カレンダー -->
-    <div id="calendar">
+    <div id="calendar" class="top_box">
     </div>
 
     <!-- 入力欄 -->
-    <div id="edit_box">
+    <div id="edit_box" class="middle_box">
       <%= start_form_tag (:action => 'submit_tab') %>
         <div id="datebox">
           <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
@@ -22,7 +22,7 @@
       <%=end_form_tag%>
     </div>
 
-    <div id="book">
+    <div id="book" class="bottom_box">
       <%= render :partial => "deals" %>
     </div>
 

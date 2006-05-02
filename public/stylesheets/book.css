@@ -7,6 +7,17 @@
   padding: 0;
 }
 
+/* 上下の margin に関する汎用部品 */
+.top_box {
+  margin-bottom: 8px;
+}
+.middle_box {
+  margin: 8px 0px;
+}
+.bottom_box {
+  margin-top: 8px;
+}
+
 /* 反転エリア */
 #header, #header *, #user_and_today {
   background-color: darkgoldenrod;
@@ -67,12 +78,6 @@ button {
   font-size: 100%;
   margin: 4px;
 }
-
-/*
-.clearboth {
-  clear: both;
-}
-*/
 
 .window {
   border: 1px dashed darkgoldenrod;
@@ -246,9 +251,6 @@ body {
 }
 
 /** カレンダー **/
-#calendar {
-  margin-bottom: 8px;
-}
 
 #calendar * {
   color: black;
@@ -281,9 +283,6 @@ body {
 }
 
 /*　------ 入力欄  ------- */
-#edit_box {
-  margin: 8px 0px;
-}
 
 /* 日付欄 */
 #datebox {
@@ -309,20 +308,16 @@ body {
   background-color: gold;
 }
 
-/*　------ 帳簿欄 ------- */
-#book {
-  margin-top: 8px;
-}
-
 /* -------- footer -------*/
 #footer {
   clear: both;
-  margin-top: 8px;
+  margin-top: 16px;
   border-bottom:1px dashed darkgoldenrod;
   color:darkgoldenrod;
   text-align:right;
   font-size:small;
-  padding:2px;
+  padding-bottom:2px;
+  padding-top:16px;
 }
 /* ================ 機能別 =================== */
 

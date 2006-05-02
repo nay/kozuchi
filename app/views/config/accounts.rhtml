@@ -18,7 +18,7 @@
 <% if @flash[:notice] && @flash[:notice].to_s != ""%>
   <div id="notice"><%=@flash[:notice]%></div>
 <% end %>
-<div id="window">
+<div class="bottom_box">
   <%= form_tag :action => 'update_accounts'%>
   <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
   <table class="masters" width="100%">
