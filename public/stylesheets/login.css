@@ -2,9 +2,14 @@
   margin:0;
   padding:0;
 }
+input, select {
+  padding: 0px 1px;
+  font-size: 100%;
+  margin: 4px;
+}
+
 body {
   background-color: wheat;
-  color: #333;
   margin: 0px 4px;
 }
 
@@ -14,7 +19,7 @@ body {
   color: gold;
   padding-top: 10px;
   padding-bottom: 4px;
-  font-size: 24px;
+  font-size: 1.4em;
   vertical-align: middle;
 }
 
@@ -31,7 +36,7 @@ body {
 }
 #application_name {
   font-weight: bold;
-  font-size: 36px;
+  font-size: 1.8em;
 }
 #footer {
   clear: both;
@@ -43,11 +48,12 @@ body {
   padding:2px;
 }
 #login_button {
+  padding: 1px 4px;
+  font-size: 100%;
   margin-top: 8px;
   width: 200px;
   border: 4px outset goldenrod;
   background-color: goldenrod;
   color:black;
   font-weight: bold;
-  padding: 2px;
 }

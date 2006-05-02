@@ -41,7 +41,6 @@
 
 
 /* general input fields padding */
-/*#datebox input, #deal_amount, #deal_summary, select {*/
 input, select {
   padding: 0px 1px;
   font-size: 100%;
