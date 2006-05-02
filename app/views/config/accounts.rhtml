@@ -31,7 +31,7 @@
     <% for @account in @accounts %>
       <tr>
         <td><%= text_field("account[]", "name", :class => "text") %></td>
-        <td><%= text_field("account[]", "sort_key", :size => 2, :class => "amount") %></td>
+        <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>
         <% if @account == @accounts.first %>
           <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>
         <% end %>

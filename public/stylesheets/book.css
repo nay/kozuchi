@@ -53,7 +53,7 @@ option {
 }
 
 /* number fields */
-#datebox input, #deal_amount, #deal_balance {
+input.number, #datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;
   text-align: right;
 }
@@ -122,52 +122,55 @@ th.scroll_space {
   width: 12px;
 }
 
-td.number, td.amount{
-  text-align: right;
+.number, .amount {
+  text-align:right;
 }
 
-.number {
+td.number, th.number {
   width: 20px;
 }
-.amount {
+td.amount, th.amount {
   width: 70px;
 }
-.date {
+
+td.date, th.amount {
   width: 80px;
 }
-.action {
+
+td.action, th.action {
   width: 36px;
   text-align: center;
 }
-.account {
+
+td.account, th.account {
   width: 100px;
 }
+
 .balance_line td {
   color: blue;
 }
-.summary {
+
+td.summary {
   vertical-align: top;
 }
 
 /* マスタメンテナンステーブル */
-.masters {
+table.masters {
   background-color: goldenrod;
-  border: 0px;
+  border: 1px solid darkgoldenrod;
   width:100%;
-  font-size: 11pt;
 }
 
 .masters td {
   border: 1px inset wheat;
   background-color: wheat;
-  margin: 0px;
   padding: 2px;
 }
 
 .masters th {
   border: 1px inset goldenrod;
   background-color: goldenrod;
-  margin: 0px;
+  padding: 2px;
 }
 
 
