@@ -1,5 +1,5 @@
 <%= render :partial => "shared/doctype" %>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
     <title>
       <%= controller.title %> - <%= controller.menu_items[controller.action_name] || controller.action_name %> 
@@ -8,6 +8,8 @@
     <%= stylesheet_link_tag 'book' %>
     <%= javascript_include_tag "prototype" %>
     <%= javascript_include_tag "book" %>
+    <%= javascript_include_tag "dragdrop" %>
+    <%= javascript_include_tag "effects" %>
   </head>
   <body>
     <div id="page">
