@@ -190,19 +190,19 @@ table.masters {
 }
 
 .selectedtab {
-  margin-left: 2px;
-    float: right;
   background-color: gold;
 }
 
-.tab {
+.tab, .selectedtab {
+  margin-top:1.2em;
   margin-left: 2px;
   float: right;
 }
 
 .tabbuttons {
-  float: right;
-  margin-top: -1.8em;
+/*  float: right; */
+/*  margin-top: -1.8em;*/
+  height: 2.4em;
 }
 
 .automatic {
@@ -294,7 +294,6 @@ body {
 /* 日付欄 */
 #datebox {
   float: left;
-  margin: 0px 0px 0px 0px;
   padding: 4px;
   background: gold;
   border-top: 2px solid darkgoldenrod;
@@ -305,10 +304,12 @@ body {
 
 /* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
 #tabwindow {
-  margin-top: -1.0em;
-  clear: both;
+/*  margin-top: -1.0em; */
+/*  clear: both; */
 }
-
+#tabsheet {
+  clear:both;
+}
 
 /*　------ メッセージ欄 ------- */
 #notice {

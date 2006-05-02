@@ -1,16 +1,21 @@
     <div class="tabbuttons">
+      <div id="datebox">
+        <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
+        <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
+        <%= text_field("date", "day", :maxlength => "2") %>
+      </div>
       <% if @deal.id %>
-        <span class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></span>
+        <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
       <% end %>
-      <span class="selectedtab">
+      <div class="selectedtab">
         <% if @deal.id %>
           <%= hidden_field("deal", "id") %>
-          <span>変更(<%= @deal.date %>-<%= @deal.daily_seq %>)</span>
+          <div>変更(<%= @deal.date %>-<%= @deal.daily_seq %>)</div>
         <% else %>
-         <span>残高</span>
+         <div>残高</div>
         <% end %>
-      </span>
-      <span class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></span>
+      </div>
+      <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
     </div>
     <div class="tabsheet">
       <input type="hidden" name="tab_name" value="balance"/>

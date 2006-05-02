@@ -1,4 +1,9 @@
     <div class="tabbuttons">
+      <div id="datebox">
+        <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
+        <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
+        <%= text_field("date", "day", :maxlength => "2") %>
+      </div>
       <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
       <% if @deal.id %>
         <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
@@ -12,7 +17,7 @@
         <% end %>
       </span>
     </div>
-    <div class="tabsheet">
+    <div id="tabsheet" class="tabsheet">
       <input type="hidden" name="tab_name" value="deal"/>
       <%= text_field("deal", "summary", :size => "40") %><br />
       <%= text_field("deal", "amount", :size => "8") %>円
