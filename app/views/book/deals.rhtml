@@ -1,13 +1,4 @@
-    <%= form_remote_tag (:update => 'book', :url => {:action => 'update_deals'},
-     :html => {:id => 'month_form'} ) %>
-      <%= hidden_field("target_month", "year") %>
-      <%= hidden_field("target_month", "month") %>
-    <%=end_form_tag%>
-
-    <!-- カレンダー -->
-    <div id="calendar" class="top_box">
-    </div>
-
+    <%= render (:partial => "calendar", :object => 'update_deals') %>
     <!-- 入力欄 -->
     <div id="edit_box" class="middle_box">
       <%= start_form_tag (:action => 'submit_tab') %>
@@ -26,7 +17,4 @@
       <%= render :partial => "deals" %>
     </div>
 
-    <script>
-      select_month(<%=@target_month.year%>,<%=@target_month.month%>, false);
-    </script>
     

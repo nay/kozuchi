@@ -18,14 +18,12 @@ class BookController < ApplicationController
 
   # 明細タブが選択されたときのAjaxアクション
   def select_deal_tab
-    @date = DateBox.new(params[:date])
     prepare_select_deal_tab
     render(:partial => "edit_deal", :layout => false)
   end
 
   # 残高タブが選択されたときのAjaxアクション
   def select_balance_tab
-    @date = DateBox.new(params[:date])
     p @date.year.to_s
     prepare_select_balance_tab
     render(:partial => "edit_balance", :layout => false)
@@ -132,6 +130,7 @@ class BookController < ApplicationController
   
   def update_profit_and_loss
     @target_month = DateBox.new(params[:target_month])
+    p @target_month.month.to_s
     prepare_update_profit_and_loss
     render(:partial => "profit_and_loss", :layout => false)
   end

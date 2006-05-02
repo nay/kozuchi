@@ -13,6 +13,7 @@
         <% for summary in @expenses_summaries %>
           <tr>
             <td><%= summary.name %></td>
+            <td class="percentage"><%= @expenses_sum != 0 ? (summary.sum * 100/ @expenses_sum).to_i : 0%>%</td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>
@@ -27,6 +28,7 @@
         <% for summary in @incomes_summaries %>
           <tr>
             <td><%= summary.name %></td>
+            <td class="percentage"><%= @incomes_sum != 0 ? (summary.sum * 100/ @incomes_sum).to_i : 0 %>%</td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>

@@ -126,8 +126,12 @@ th.scroll_space {
   width: 12px;
 }
 
-.number, .amount {
+.number, .amount, .percentage {
   text-align:right;
+}
+
+td.percentage {
+  width: 3em;
 }
 
 td.number, th.number {
