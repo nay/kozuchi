@@ -194,7 +194,7 @@ table.masters {
 }
 
 .tab, .selectedtab {
-  margin-top:1.2em;
+  margin-top: 1em;
   margin-left: 2px;
   float: right;
 }
@@ -229,7 +229,7 @@ body {
 #header {
   height: 2em;
   margin-bottom: 8px;
-  border: 4px double gold;
+  border: 4px double darkgoldenrod;
 }
 #header_title {
   float: left;
@@ -299,15 +299,12 @@ body {
   border-top: 2px solid darkgoldenrod;
   border-left: 2px solid darkgoldenrod;
   border-right: 2px solid darkgoldenrod;
-  border-bottom: 2px solid gold;
 }
 
 /* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
 #tabwindow {
-/*  margin-top: -1.0em; */
-/*  clear: both; */
 }
-#tabsheet {
+.tabsheet {
   clear:both;
 }
 

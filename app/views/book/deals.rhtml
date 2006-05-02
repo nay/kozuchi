@@ -11,6 +11,11 @@
     <!-- 入力欄 -->
     <div id="edit_box" class="middle_box">
       <%= start_form_tag (:action => 'submit_tab') %>
+        <div id="datebox">
+          <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
+          <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
+          <%= text_field("date", "day", :maxlength => "2") %>
+        </div>
         <div id="tabwindow">
           <%= render :partial => ('edit_'+@tab_name) %>
         </div>
