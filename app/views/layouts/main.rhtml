@@ -21,7 +21,7 @@
       </div>
       <div id="header_menu">
         <% if controller.title != "家計簿" %>
-          <%= link_to("家計簿", :controller => "book", :action => "deals") %>
+          <%= link_to("家計簿", :controller => "deals", :action => 'index') %>
         <% end %>
         <% if controller.title != "設定" %>
           <%= link_to("設定", :controller => "config", :action => "index") %>
@@ -36,7 +36,7 @@
       </div>
       <!-- menu -->
       <% controller.menu_keys.each do |key| %>
-        <div class="menu" class="middle_box"><%= link_to(controller.menu_items[key], :controller => controller.name, :action => key) %></div>
+        <div class="menu" class="middle_box"><%= link_to(controller.menu_items[key], :controller => key, :action => 'index') %></div>
       <% end %>
     </div>
     <!-- contents -->
