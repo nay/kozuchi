@@ -1,0 +1,3 @@
+  <div id="account_options">
+    <%= collection_select("account", "id", @accounts, :id, :name, {}, "onChange" => "$('month_form').onsubmit();") %>
+  </div>

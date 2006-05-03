@@ -10,7 +10,6 @@ class ProfitAndLossController < BookController
   
   def update
     @target_month = DateBox.new(params[:target_month])
-    p @target_month.month.to_s
     prepare_update_profit_and_loss
     render(:partial => "profit_and_loss", :layout => false)
   end
