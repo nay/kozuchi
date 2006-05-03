@@ -6,15 +6,30 @@ create table users (
   hashed_password char (40) not null
 );
 
+/* --- rules --- */
+drop table if exists rules;
+create table rules (
+  id integer not null primary key autoincrement,
+  user_id integer not null,
+  name varchar (32) not null,
+  associated_account_id integer not null,
+  closing_day integer not null,
+  payment_term_months integer not null,
+  payment_day integer not null
+);
+
 /* --- accounts --- */
 drop table if exists accounts;
 create table accounts (
   id integer not null primary key autoincrement,
   user_id integer not null,
+  rule_id integer,
   name varchar (32) not null,
   account_type integer not null,
+  asset_type integer,
   sort_key integer,
-  foreign key (user_id) references users
+  foreign key (user_id) references users,
+  foreign key (rule_id) references rules
 );
 
 /* --- deals --- */
@@ -37,6 +52,7 @@ create table account_entries (
   deal_id integer not null,
   amount integer not null,
   balance integer,
+  is_plan boolean not null,
   foreign key (account_id) references accounts,
   foreign key (deal_id) references deals, 
   foreign key (user_id) references users

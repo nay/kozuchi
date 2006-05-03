@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
     unless session[:user]
       flash[:notice] = "ログインしてください。"
       p "authorize"
-      redirect_to(:controller => "login", :action => "login")
+      redirect_to(:controller => 'login', :action => 'index')
     end
   end
 

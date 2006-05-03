@@ -5,7 +5,13 @@
         <td>
           <%= hidden_field("account", "account_type_name")%>
           <%= hidden_field("account", "account_type")%>
-          <label><%=@account.account_type_name%>名</label><%= text_field("account", "name", :size => 16, :class => "text") %><br />
+          <label><%=@account.account_type_name%>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
+          <% if @account.account_type == 1%>
+            <label>種別</label>
+            <%= select('account', 'asset_type',
+                       Account.asset_types.invert)%>
+          <% end %>
+          <br />
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
           <span>※小さいほど上に表示されます。</span>
         </td>
@@ -24,6 +30,9 @@
   <table class="masters" width="100%">
     <tr>
       <th><%=@account.account_type_name%>名</th>
+      <% if @account.account_type == 1%>
+        <th>種別</th>
+      <% end %>
       <th>並び順</th>
       <th>変更</th>
       <th>削除</th>
@@ -31,6 +40,12 @@
     <% for @account in @accounts %>
       <tr>
         <td><%= text_field("account[]", "name", :class => "text") %></td>
+        <% if @account.account_type == 1%>
+          <td>
+            <%= select('account[]', 'asset_type',
+                       Account.asset_types.invert)%>
+          </td>
+        <% end %>
         <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>
         <% if @account == @accounts.first %>
           <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>

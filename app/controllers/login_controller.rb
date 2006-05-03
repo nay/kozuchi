@@ -1,12 +1,8 @@
 class LoginController < ApplicationController
-  before_filter :authorize, :except => :login
+  before_filter :authorize, :except => :index
   layout false
   
   def index
-    render("login")
-  end
-
-  def login
     if request.get?
       session[:user] =  nil
       @user = User.new
@@ -22,6 +18,10 @@ class LoginController < ApplicationController
       flash[:notice] = "ログインに失敗しました。"
       @user.password = ""
     end
+  end
+
+  def login
+    redirect_to(:index => "index")
   end
 
   def logout

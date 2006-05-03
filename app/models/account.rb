@@ -1,6 +1,12 @@
 class Account < ActiveRecord::Base
   attr_accessor :account_type_name, :balance, :percentage
   validates_presence_of :name, :account_type
+  
+  @@asset_types = {1 => '現金', 2 => '金融機関口座', 3 => 'クレジットカード', 4 => '債権'}
+
+  def self.asset_types
+    @@asset_types
+  end
 
   def self.get_account_type_name(account_type)
     account_type_names = {1 => "口座", 2 => "費目", 3 => "収入内訳"}
