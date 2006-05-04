@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+  belongs_to :rule
   attr_accessor :account_type_name, :balance, :percentage
   validates_presence_of :name, :account_type
   
@@ -17,7 +18,7 @@ class Account < ActiveRecord::Base
     @account_type_name ||= Account.get_account_type_name(self.account_type)
   end
   
-  def self.find_all(user_id, types)
+  def self.find_all(user_id, types, asset_types = nil)
     account_types = "";
     types.each do |type|
       if account_types != ""
@@ -26,6 +27,16 @@ class Account < ActiveRecord::Base
       account_types += type.to_s
     end
     conditions = "user_id = ? and account_type in (#{account_types})"
+    if asset_types
+      condition = "";
+      asset_types.each do |t|
+        if condition != ""
+          condition += ","
+        end
+        condition += t.to_s
+      end
+      conditions += " and asset_type in (#{condition})"
+    end
     Account.find(:all,
                  :conditions => [conditions, user_id],
                  :order => "sort_key")

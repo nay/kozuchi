@@ -1,5 +1,7 @@
 class ConfigController < MainController
   
+  PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]
+  
   def sub_title(action_name)
     menu_caption(action_name)
   end
@@ -10,6 +12,7 @@ class ConfigController < MainController
     add_menu('費目', {:action => 'expenses'}, :action)
     add_menu('収入内訳', {:action => 'incomes'}, :action)
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
+    add_menu('精算ルール', {:action => 'rules'}, :action)
   end
   
   def index
@@ -81,5 +84,49 @@ class ConfigController < MainController
     redirect_to(:action => @actions[account_type])
   end
   
+  # 精算ルールのメンテナンス -----------------------------------------------------------------------
+  def rules
+    @rule = Rule.new
+    @rule.closing_day = 0
+    @rule.payment_term_months = 1
+    @rule.payment_day = 0
+    @rules = Rule.find_all(session[:user].id)
+    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
+    @day_options = ConfigController.day_options
+    @payment_term_months = PAYMENT_TERM_MONTHS
+  end
+  
+  def self.day_options
+    day_options = []
+    for var in 1..28
+      day_options << ["#{var}日", var]
+    end
+    day_options << ['末日', 0]
+    day_options
+  end
+  
+  def create_rule
+    rule = Rule.new(params[:rule])
+    rule.user_id = session[:user].id
+    if rule.save
+      flash[:notice] = "精算ルール「#{rule.name}」を登録しました。"
+    else
+      flash[:notice] = "精算ルール「#{rule.name}」を登録できませんでした。"
+    end
+    redirect_to(:action => 'rules')
+  end
+  
+  def delete_rule
+    target = Rule.get(session[:user].id, params[:id].to_i)
+    if target
+      target_rule_name = target.name
+      target.accounts.clear
+      target.destroy
+      flash[:notice] = "精算ルール「#{target_rule_name}」を削除しました。"
+    else
+      flash[:notice] = "精算ルールを削除できません。"
+    end
+    redirect_to(:action => 'rules')
+  end
   
 end
