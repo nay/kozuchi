@@ -18,6 +18,12 @@ class Account < ActiveRecord::Base
     @account_type_name ||= Account.get_account_type_name(self.account_type)
   end
   
+  def self.find_rule_free(user_id)
+    find(:all,
+     :conditions => ["user_id = ? and account_type = 1 and asset_type in (3, 4) and rule_id is null", user_id],
+     :order => 'sort_key')
+  end
+  
   def self.find_all(user_id, types, asset_types = nil)
     account_types = "";
     types.each do |type|

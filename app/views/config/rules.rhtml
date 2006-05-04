@@ -10,10 +10,17 @@
       <label>精算日</label>
       <%= select('rule', 'payment_term_months', @payment_term_months)%>
       <%= select('rule', 'payment_day', @day_options) %>
+      <% if @accounts_to_be_applied.size > 0%>
+        <br />
+        <br />
+        <label>このルールを適用する口座</label>
+        <ul>
+        <% for account in @accounts_to_be_applied %>
+          <li><input type="checkbox" name="accounts_to_be_applied[<%= account.id%>]" value="<%= account.id%>"/><%= account.name %></li>
+        <% end %>
+        </ul>
+      <% end %>
       <button type="submit">新しい精算ルールを登録</button>
-      <br/>
-      <br/>
-      <span>※精算ルールを口座に適用するには、口座メニューから紐付けを行ってください。</span>
     <%=end_form_tag%>
   </div>
 </div>

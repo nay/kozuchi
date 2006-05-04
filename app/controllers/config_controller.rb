@@ -92,6 +92,7 @@ class ConfigController < MainController
     @rule.payment_day = 0
     @rules = Rule.find_all(session[:user].id)
     @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
+    @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
     @day_options = ConfigController.day_options
     @payment_term_months = PAYMENT_TERM_MONTHS
   end
@@ -109,6 +110,12 @@ class ConfigController < MainController
     rule = Rule.new(params[:rule])
     rule.user_id = session[:user].id
     if rule.save
+      if params[:accounts_to_be_applied]
+        keys = params[:accounts_to_be_applied].keys
+        for key in keys
+          Account.update_all(["rule_id = ?", rule.id], ["id = ? and user_id = ?", key.to_i, session[:user].id])
+        end
+    end
       flash[:notice] = "精算ルール「#{rule.name}」を登録しました。"
     else
       flash[:notice] = "精算ルール「#{rule.name}」を登録できませんでした。"
