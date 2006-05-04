@@ -32,6 +32,7 @@
       <th><%=@account.account_type_name%>名</th>
       <% if @account.account_type == 1%>
         <th>種別</th>
+        <th>精算ルール</th>
       <% end %>
       <th>並び順</th>
       <th>変更</th>
@@ -44,6 +45,13 @@
           <td>
             <%= select('account[]', 'asset_type',
                        Account.asset_types.invert)%>
+          </td>
+          <td>
+            <% if @account.asset_type == 3 || @account.asset_type == 4%>
+            <span>todo:ルール選択</span>
+            <% else %>
+            <span>*</span>
+            <% end %>
           </td>
         <% end %>
         <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>

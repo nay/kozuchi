@@ -23,7 +23,7 @@ drop table if exists accounts;
 create table accounts (
   id integer not null primary key autoincrement,
   user_id integer not null,
-  rule_id integer,
+  rule_id integer default null,
   name varchar (32) not null,
   account_type integer not null,
   asset_type integer,
