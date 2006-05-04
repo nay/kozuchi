@@ -217,6 +217,13 @@ table.masters {
   vertical-align: top;
 }
 
+tr.undecided td {
+  color: gray;
+}
+span.system {
+  background-color: gold;
+}
+
 /* ========== 固有情報　=============== */
 
 /* ------- top level ------------*/
@@ -355,3 +362,5 @@ body {
 .loss {
   color: darkred;
 }
+
+

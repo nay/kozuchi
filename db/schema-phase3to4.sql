@@ -13,7 +13,7 @@ create table rules (
 
 alter table accounts add column asset_type integer;
 alter table accounts add column rule_id integer;
-alter table account_entries add column is_plan boolean not null default 0;
+alter table deals add column undecided boolean not null default 'f';
 
 update account_entries set is_plan = 0;
 update accounts set asset_type = 1 where account_type = 1;

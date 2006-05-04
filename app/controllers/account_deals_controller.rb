@@ -41,8 +41,12 @@ class AccountDealsController < BookController
             if account_entry.balance
               account_entry.unknown_amount = account_entry.balance - balance_estimated
               balance_estimated = account_entry.balance
+            # 通常明細
             else
-              balance_estimated -= account_entry.amount
+              # 未確定の場合は残高に反映しない
+              if !deal.undecided
+                balance_estimated -= account_entry.amount
+              end
               account_entry.balance_estimated = balance_estimated
             end
             @account_entries << account_entry

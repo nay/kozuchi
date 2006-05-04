@@ -57,11 +57,12 @@ class Deal < ActiveRecord::Base
     return Deal.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
   end
 
-  # 明細新規登録  
+  # 明細新規登録
   def self.create_simple(user_id, date, attributes, insert_before)
     deal = Deal.new(attributes)
     deal.user_id = user_id
     deal.date = date
+    deal.undecided = false
     deal.add_entries
     deal.set_daily_seq(insert_before)
     deal.save_deeply
@@ -74,6 +75,7 @@ class Deal < ActiveRecord::Base
       deal = get(deal_id, user_id)
       is_date_changed = deal.date != date
       deal.date = date
+      deal.undecided = false
       deal.set_daily_seq if is_date_changed
       deal.attributes = attributes
       deal.add_entries

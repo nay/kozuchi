@@ -40,8 +40,10 @@ create table deals (
   date date not null,
   daily_seq integer not null,
   summary varchar (64) not null,
+  undecided boolean not null default 'f',
   foreign key (user_id) references users
 );
+/* ruby stores 'f' for false, 't' for true to sqlite3. */ 
 
 /* --- account_entries -- */
 drop table if exists account_entries;
@@ -52,7 +54,6 @@ create table account_entries (
   deal_id integer not null,
   amount integer not null,
   balance integer,
-  is_plan boolean not null,
   foreign key (account_id) references accounts,
   foreign key (deal_id) references deals, 
   foreign key (user_id) references users
