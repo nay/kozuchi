@@ -123,7 +123,7 @@ button {
   text-align: center;
 }
 th.scroll_space {
-  width: 12px;
+  width: 0.6em;
 }
 
 .number, .amount, .percentage {
@@ -141,12 +141,12 @@ td.amount, th.amount {
   width: 70px;
 }
 
-td.date, th.amount {
+td.date, th.date {
   width: 80px;
 }
 
 td.action, th.action {
-  width: 36px;
+  width: 2.5em;
   text-align: center;
 }
 
