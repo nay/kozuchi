@@ -1,4 +1,4 @@
-#Thu May 04 15:20:11 JST 2006
+#Fri May 05 04:24:59 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -13,20 +13,20 @@ encoding//app/controllers/profit_and_loss_controller.rb=UTF-8
 encoding//app/controllers/test_controller.rb=UTF-8
 encoding//app/helpers/book_helper.rb=UTF-8
 encoding//app/models/account.rb=UTF-8
+encoding//app/models/account_rule.rb=UTF-8
 encoding//app/models/account_summary.rb=UTF-8
 encoding//app/models/accounts.rb=UTF-8
 encoding//app/models/balance.rb=UTF-8
 encoding//app/models/date_box.rb=UTF-8
 encoding//app/models/deal.rb=UTF-8
 encoding//app/models/menu.rb=UTF-8
-encoding//app/models/rule.rb=UTF-8
 encoding//app/views/account_deals/_account_deals.rhtml=UTF-8
 encoding//app/views/account_deals/_account_options.rhtml=UTF-8
 encoding//app/views/admin/edit_user.rhtml=UTF-8
 encoding//app/views/assets/_assets.rhtml=UTF-8
 encoding//app/views/assets/index.rhtml=UTF-8
+encoding//app/views/config/account_rules.rhtml=UTF-8
 encoding//app/views/config/accounts.rhtml=UTF-8
-encoding//app/views/config/rules.rhtml=UTF-8
 encoding//app/views/deals/_deals.rhtml=UTF-8
 encoding//app/views/deals/_edit_balance.rhtml=UTF-8
 encoding//app/views/deals/_edit_deal.rhtml=UTF-8

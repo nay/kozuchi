@@ -12,7 +12,7 @@ class ConfigController < MainController
     add_menu('費目', {:action => 'expenses'}, :action)
     add_menu('収入内訳', {:action => 'incomes'}, :action)
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
-    add_menu('精算ルール', {:action => 'rules'}, :action)
+    add_menu('精算ルール', {:action => 'account_rules'}, :action)
   end
   
   def index
@@ -70,8 +70,13 @@ class ConfigController < MainController
       redirect_to(:action => @actions[account_type])
       return
     end
-    flash[:notice]="#{account_type_name} '#{target_account.name}' を削除しました。"
-    target_account.destroy
+    begin
+      target_account.destroy
+      flash[:notice]="#{account_type_name} '#{target_account.name}' を削除しました。"
+    rescue => err
+      flash[:errors]= [err.message]
+    end
+    
     redirect_to(:action => @actions[account_type])
   end
   
@@ -81,20 +86,28 @@ class ConfigController < MainController
     # todo 悪意ある post によってuser_id と一致しない危険性がちょっと気になる。
     Account.update(params[:account].keys, params[:account].values)
     flash[:notice]="すべての#{account_type_name}を変更しました。"
+    
     redirect_to(:action => @actions[account_type])
   end
   
   # 精算ルールのメンテナンス -----------------------------------------------------------------------
-  def rules
-    @rule = Rule.new
-    @rule.closing_day = 0
-    @rule.payment_term_months = 1
-    @rule.payment_day = 0
-    @rules = Rule.find_all(session[:user].id)
-    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
+  def account_rules
+    @rules = AccountRule.find_all(session[:user].id)
     @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
+    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
+    @creatable = false
+    @rule = AccountRule.new
     @day_options = ConfigController.day_options
     @payment_term_months = PAYMENT_TERM_MONTHS
+    if @accounts_to_be_applied.size == 0
+      @explanation = "新たに精算ルールを登録できる口座（クレジットカード、債権）はありません。"
+      return;
+    end
+    if @accounts_to_be_associated.size == 0
+      @explanation = "精算ルールを登録するには、金融機関口座が必要です。"
+      return;
+    end
+    @creatable = true
   end
   
   def self.day_options
@@ -106,34 +119,29 @@ class ConfigController < MainController
     day_options
   end
   
-  def create_rule
-    rule = Rule.new(params[:rule])
+  def create_account_rule
+    rule = AccountRule.new(params[:rule])
     rule.user_id = session[:user].id
-    if rule.save
-      if params[:accounts_to_be_applied]
-        keys = params[:accounts_to_be_applied].keys
-        for key in keys
-          Account.update_all(["rule_id = ?", rule.id], ["id = ? and user_id = ?", key.to_i, session[:user].id])
-        end
+    p rule.account_id
+    begin
+      rule.save!
+      flash[:notice] = "#{rule.account.name}に精算ルールを登録しました。"
+    rescue RecordInvalid => error
+      flash[:notice] = "#{rule.account.name}に精算ルールを登録できませんでした。#{error}"
     end
-      flash[:notice] = "精算ルール「#{rule.name}」を登録しました。"
-    else
-      flash[:notice] = "精算ルール「#{rule.name}」を登録できませんでした。"
-    end
-    redirect_to(:action => 'rules')
+    redirect_to(:action => 'account_rules')
   end
   
-  def delete_rule
-    target = Rule.get(session[:user].id, params[:id].to_i)
+  def delete_account_rule
+    target = AccountRule.get(session[:user].id, params[:id].to_i)
     if target
-      target_rule_name = target.name
-      target.accounts.clear
+      target_account_name = target.account.name
       target.destroy
-      flash[:notice] = "精算ルール「#{target_rule_name}」を削除しました。"
+      flash[:notice] = "#{target_account_name}から精算ルールを削除しました。"
     else
       flash[:notice] = "精算ルールを削除できません。"
     end
-    redirect_to(:action => 'rules')
+    redirect_to(:action => 'account_rules')
   end
   
 end

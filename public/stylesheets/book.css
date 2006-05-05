@@ -224,6 +224,24 @@ span.system {
   background-color: gold;
 }
 
+/* ガイド欄 */
+p.guide {
+  border: 2px dotted darkgoldenrod;
+  padding: 8px;
+  margin: 4px;
+  color: darkgoldenrod;
+  background-color: white;
+  line-height: 1.5em;
+}
+span.guide_title {
+  font-weight: bold;
+}
+
+ul {
+  padding-left: 16px;
+}
+
+
 /* ========== 固有情報　=============== */
 
 /* ------- top level ------------*/
@@ -323,6 +341,11 @@ body {
 #notice {
   padding: 8px;
   background-color: gold;
+}
+
+#errors {
+  padding: 8px;
+  background-color: orange;
 }
 
 /* -------- footer -------*/

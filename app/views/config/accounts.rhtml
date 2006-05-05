@@ -24,6 +24,16 @@
 <% if @flash[:notice] && @flash[:notice].to_s != ""%>
   <div id="notice"><%=@flash[:notice]%></div>
 <% end %>
+<% if @flash[:errors] && !@flash[:errors].empty? %>
+  <div id="errors" class="middle_box">
+  <span>エラーが発生しました。</span>
+    <ul>
+    <% for error_message in @flash[:errors] %>
+      <li><%=error_message%></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
 <div class="bottom_box">
   <%= form_tag :action => 'update_accounts'%>
   <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
@@ -32,7 +42,6 @@
       <th><%=@account.account_type_name%>名</th>
       <% if @account.account_type == 1%>
         <th>種別</th>
-        <th>精算ルール</th>
       <% end %>
       <th>並び順</th>
       <th>変更</th>
@@ -44,13 +53,12 @@
         <% if @account.account_type == 1%>
           <td>
             <%= select('account[]', 'asset_type',
-                       Account.asset_types.invert)%>
-          </td>
-          <td>
-            <% if @account.asset_type == 3 || @account.asset_type == 4%>
-            <span>todo:ルール選択</span>
-            <% else %>
-            <span>*</span>
+                       @account.asset_type_options)%>
+            <% if @account.account_rule %>
+              <span class="system">精算ルール</span>
+            <% end %>
+            <% if !@account.associated_account_rules.empty? %>
+              <span class="system">精算口座</span>
             <% end %>
           </td>
         <% end %>
@@ -58,7 +66,13 @@
         <% if @account == @accounts.first %>
           <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>
         <% end %>
-        <td class="action"><%= link_to("削除", :action => "delete_account", :id => @account.id, :account_type => @account.account_type) %></td> 
+        <td class="action">
+          <% if @account.associated_account_rules.empty? %>
+            <%= link_to("削除", :action => "delete_account", :id => @account.id, :account_type => @account.account_type) %>
+          <% else %>
+            <span>×</span>
+          <% end %>
+        </td> 
       </tr>
     <% end %>
   </table>

@@ -6,16 +6,18 @@ create table users (
   hashed_password char (40) not null
 );
 
-/* --- rules --- */
-drop table if exists rules;
-create table rules (
+/* --- account_rules --- */
+drop table if exists account_rules;
+create table account_rules (
   id integer not null primary key autoincrement,
   user_id integer not null,
-  name varchar (32) not null,
+  account_id integer not null,
   associated_account_id integer not null,
-  closing_day integer not null,
-  payment_term_months integer not null,
-  payment_day integer not null
+  closing_day integer not null default 0,
+  payment_term_months integer not null default 1,
+  payment_day integer not null default 0,
+  foreign key (account_id) references accounts,
+  foreign key (associated_account_id) references accounts
 );
 
 /* --- accounts --- */
@@ -23,13 +25,11 @@ drop table if exists accounts;
 create table accounts (
   id integer not null primary key autoincrement,
   user_id integer not null,
-  rule_id integer default null,
   name varchar (32) not null,
   account_type integer not null,
   asset_type integer,
   sort_key integer,
   foreign key (user_id) references users,
-  foreign key (rule_id) references rules
 );
 
 /* --- deals --- */
