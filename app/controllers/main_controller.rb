@@ -4,6 +4,10 @@ class MainController < ApplicationController
   layout "main"
   before_filter :authorize
   
+  def user
+    session[:user]
+  end
+  
   def initialize(title)
     @title = title
     @menues = []

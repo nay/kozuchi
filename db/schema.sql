@@ -36,6 +36,7 @@ create table accounts (
 drop table if exists deals;
 create table deals (
   id integer not null primary key autoincrement,
+  type varchar (20) not null,
   user_id integer not null,
   date date not null,
   daily_seq integer not null,

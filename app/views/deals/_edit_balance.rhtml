@@ -14,7 +14,7 @@
     </div>
     <div class="tabsheet">
       <input type="hidden" name="tab_name" value="balance"/>
-      <%= collection_select("deal", "balance_account_id", @accounts_for_balance, :id, :name) %>
+      <%= collection_select("deal", "account_id", @accounts_for_balance, :id, :name) %>
       <label>残高:</label><%= text_field("deal","balance", :size => "8")%>円
       <button type="submit">記入</button>
     </div>
