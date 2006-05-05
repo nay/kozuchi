@@ -13,6 +13,7 @@ class Deal < BaseDeal
 
   # Prepare sugar methods
   def after_find
+    set_old_date
     raise "Invalid Deal Object with #{account_entries.size} entries." unless account_entries.size == 2
     
     @minus_account_id = account_entries[0].account_id

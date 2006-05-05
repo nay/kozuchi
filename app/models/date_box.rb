@@ -3,6 +3,16 @@ require 'time'
 class DateBox
   attr_accessor :year, :month, :day
   
+  # 月はじめの日を返す
+  def start_inclusive
+    Date.new(year_i, month_i, 1)
+  end
+  
+  # その月を越えた最初の日を返す
+  def end_exclusive
+    self.start_inclusive >> 1
+  end
+  
   def initialize(values = nil)
     return if !values
     @year = values["year"]

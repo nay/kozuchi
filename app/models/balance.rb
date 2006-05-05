@@ -14,6 +14,8 @@ class Balance < BaseDeal
 
   # Prepare sugar methods
   def after_find
+    set_old_date
+    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
     @account_id = account_entries[0].account_id
     @balance = account_entries[0].balance
   end

@@ -31,7 +31,7 @@ class AccountDealsController < BookController
       @account_id = @params[:account][:id].to_i
     end
     begin
-      deals = Deal.get_for_account(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i)
+      deals = BaseDeal.get_for_account(user.id, @account_id, @target_month)
       @account_entries = Array.new();
       @balance_start = AccountEntry.balance_start(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
       balance_estimated = @balance_start

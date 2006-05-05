@@ -123,27 +123,13 @@ class DealsController < BookController
       deal = Deal.get(params[:deal][:id].to_i, user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       
-      is_date_changed = deal.date != @date.to_date
-      deal.date = @date.to_date
-      deal.set_daily_seq if is_date_changed
       deal.attributes = params[:deal]
       
-#      Deal.update_simple(params[:deal][:id].to_i,
-#                    session[:user].id,
-#                    @date.to_date,
-#                    params[:deal]
-#      )
     else
       deal = Deal.new(params[:deal])
       deal.user_id = user.id
-      deal.date = @date.to_date
-      deal.set_daily_seq(nil)
-#      Deal.create_simple(session[:user].id,
-#                         @date.to_date,
-#                         params[:deal],
-#                         nil
-#      )
     end
+    deal.date = @date.to_date
     deal.save!
     deal
   end
@@ -155,16 +141,12 @@ class DealsController < BookController
       balance = Balance.get(params[:deal][:id].to_i, user.id)
       raise "no balance #{params[:deal][:id]}" unless balance
 
-      is_date_changed = balance.date != @date.to_date
-      balance.date = @date.to_date
-      balance.set_daily_seq if is_date_changed
       balance.attributes = params[:deal]
     else
       balance = Balance.new(params[:deal])
       balance.user_id = user.id
-      balance.date = @date.to_date
-      balance.set_daily_seq(nil)
     end
+      balance.date = @date.to_date
     balance.save!
     balance
   end
@@ -179,7 +161,7 @@ class DealsController < BookController
   # 仕分け帳　表示準備
   def prepare_update_deals
     begin
-      @deals = BaseDeal.get_for_month(session[:user].id, @target_month.year_i, @target_month.month_i)
+      @deals = BaseDeal.get_for_month(session[:user].id, @target_month)
       session[:target_month] = @target_month
     rescue Exception
       flash[:notice] = "不正な日付です。 " + @target_month.to_s

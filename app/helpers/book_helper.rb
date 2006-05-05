@@ -45,4 +45,7 @@ def format_deal(deal)
   return "記入 #{deal.date}-#{deal.daily_seq}"
 end
 
+class DateSpan
+end
+
 end
