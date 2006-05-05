@@ -2,6 +2,10 @@
 class Balance < BaseDeal
   attr_accessor :account_id, :balance
 
+  def before_save
+    pre_before_save
+  end
+
   def before_create
     self.summary = ""
     create_entry

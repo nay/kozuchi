@@ -42,6 +42,7 @@ create table deals (
   daily_seq integer not null,
   summary varchar (64) not null,
   undecided boolean not null default 'f',
+  parent_deal_id integer,
   foreign key (user_id) references users
 );
 /* ruby stores 'f' for false, 't' for true to sqlite3. */ 

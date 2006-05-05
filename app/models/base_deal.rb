@@ -2,10 +2,14 @@ require 'time'
 
 class BaseDeal < ActiveRecord::Base
   set_table_name "deals"
-  has_many :account_entries,
-           :foreign_key => 'deal_id',
-           :exclusively_dependent => true,
-           :order => "amount"
+  has_many   :account_entries,
+             :foreign_key => 'deal_id',
+             :exclusively_dependent => true,
+             :order => "amount"
+  belongs_to :parent,
+             :class_name => 'BaseDeal',
+             :foreign_key => 'parent_deal_id'
+           
   attr_writer :insert_before
   attr_accessor :old_date
   
@@ -46,7 +50,8 @@ class BaseDeal < ActiveRecord::Base
   end
 
   # daily_seq をセットする。
-  def before_save
+  # super.before_save では呼び出せないためひとまずこの方式で。
+  def pre_before_save
     self.daily_seq = nil if self.date != @old_date
   
     # 番号が入っていればそのまま
@@ -70,6 +75,7 @@ class BaseDeal < ActiveRecord::Base
           self.date]
      ) || 0
       self.daily_seq = 1 + max
+
     end
     
   end

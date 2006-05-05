@@ -58,7 +58,7 @@ class AccountEntry < ActiveRecord::Base
                              start_exclusive,
                              entry.deal.date,
                              entry.deal.date,
-                             entry.daily_seq,
+                             entry.deal.daily_seq,
                              false],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                              ) || 0)
