@@ -6,7 +6,9 @@ class Account < ActiveRecord::Base
            :foreign_key => 'associated_account_id'
   attr_accessor :account_type_name, :balance, :percentage
   attr_reader :name_with_asset_type
-  validates_presence_of :name, :account_type
+  validates_presence_of :name,
+                        :message => "名前を定義してください。"
+  validates_presence_of :account_type
   
   # 口座種別値
   ACCOUNT_ASSET = 1

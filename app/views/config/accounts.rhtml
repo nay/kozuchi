@@ -26,12 +26,11 @@
 <% end %>
 <% if @flash[:errors] && !@flash[:errors].empty? %>
   <div id="errors" class="middle_box">
-  <span>エラーが発生しました。</span>
-    <ul>
-    <% for error_message in @flash[:errors] %>
-      <li><%=error_message%></li>
-    <% end %>
-    </ul>
+  <ul>
+  <% for error_message in @flash[:errors] %>
+    <li><%=error_message%></li>
+  <% end %>
+  </ul>
   </div>
 <% end %>
 <div class="bottom_box">

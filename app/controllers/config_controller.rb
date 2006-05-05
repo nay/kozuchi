@@ -46,11 +46,15 @@ class ConfigController < MainController
   def create_account
     new_account = Account.new(params[:account])
     new_account.user_id = session[:user].id
-    if new_account.save
+    begin
+      new_account.save!
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
-      p flash[:notice].to_s
-    else
-      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録できませんでした。"
+    rescue
+      flash[:errors]= []
+      new_account.errors.each do |attr, msg|
+        flash[:errors] << msg
+      end 
+#      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録できませんでした。"
     end
     redirect_to(:action => @actions[new_account.account_type])
   end
