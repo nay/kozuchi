@@ -63,22 +63,23 @@ class Deal < BaseDeal
     end
 
     # 精算ルールに従って従属行を用意する
-    account_rule = account_entries[0].account.account_rule || account_entries[1].account.account_rule
-    if account_rule
-      # どこからからルール適用口座への異動額
-      new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
-      # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
-      if (Account::ASSET_CREDIT_CARD == account_rule.account.asset_type && new_amount < 0) ||(Account::ASSET_CREDIT == account_rule.account.asset_type && new_amount > 0)
-        children.create(
-          :minus_account_id => account_rule.account_id,
-          :plus_account_id => account_rule.associated_account_id,
-          :amount => new_amount,
-          :user_id => self.user_id,
-          :date => self.date  >> 1,
-          :summary => "",
-          :undecided => true)
+    for i in 0..1
+      account_rule = account_entries[i].account.account_rule
+      if account_rule
+        # どこからからルール適用口座への異動額
+        new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
+        # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
+        if (Account::ASSET_CREDIT_CARD == account_rule.account.asset_type && new_amount < 0) ||(Account::ASSET_CREDIT == account_rule.account.asset_type && new_amount > 0)
+          children.create(
+            :minus_account_id => account_rule.account_id,
+            :plus_account_id => account_rule.associated_account_id,
+            :amount => new_amount,
+            :user_id => self.user_id,
+            :date => self.date  >> 1,
+            :summary => "",
+            :undecided => true)
+        end
       end
-    else
     end
   end
   

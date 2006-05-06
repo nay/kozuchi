@@ -245,6 +245,9 @@ ul {
   width:2em;
 }
 
+input.readonly {
+  background-color: floralwhite;
+}
 
 /* ========== 固有情報　=============== */
 

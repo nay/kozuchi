@@ -22,7 +22,7 @@ class DealsController < BookController
 
   # 明細変更状態にするAjaxアクション
   def edit_deal
-    @deal = Deal.find(params[:id])
+    @deal = BaseDeal.find(params[:id]) # Deal だとsubordinate がとってこられない。とれてもいいんだけど。
     prepare_select_deal_tab
     render(:partial => "edit_deal", :layout => false)
   end
@@ -110,13 +110,7 @@ class DealsController < BookController
     @accounts_plus = BookHelper::AccountGroup.groups(
       Account.find_all(session[:user].id, [1,2]), false
      )
-     p params.to_s
-     if params[:deal]
-       p params[:deal].to_s
-       p params[:deal][:minus_account_id].to_s if params[:deal][:minus_account_id]
-     end
      @deal ||= Deal.new(params[:deal])
-     p "deal.minus_account_id = #{@deal.minus_account_id}"
   end
   
   def prepare_select_balance_tab
@@ -130,7 +124,7 @@ class DealsController < BookController
   def save_deal
     # 更新のとき
     if params[:deal][:id]
-      deal = Deal.get(params[:deal][:id].to_i, user.id)
+      deal = BaseDeal.get(params[:deal][:id].to_i, user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       
       deal.attributes = params[:deal]

@@ -9,6 +9,10 @@ class BaseDeal < ActiveRecord::Base
            
   attr_writer :insert_before
   attr_accessor :old_date
+
+  def is_subordinate
+    return false
+  end
   
   def parent_for(account_id)
     return nil
