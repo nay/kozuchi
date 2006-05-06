@@ -75,7 +75,8 @@ class Deal < BaseDeal
             :plus_account_id => account_rule.associated_account_id,
             :amount => new_amount,
             :user_id => self.user_id,
-            :date => self.date  >> 1,
+            :date => account_rule.payment_date(self.date),
+#            :date => self.date  >> 1,
             :summary => "",
             :confirmed => false)
         end

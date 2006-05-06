@@ -3,6 +3,27 @@ class AccountRule < ActiveRecord::Base
              :class_name => 'Account',
              :foreign_key => 'associated_account_id'
   belongs_to :account
+
+  # 元となる取引に対して、精算予定日を計算する
+  def payment_date(date)
+    # この取引の締月を計算する。日にちは1で計算する。
+    closing_date = Date.new(date.year, date.month, 1)
+    # 過ぎていたら来月
+    if (closing_day != 0 && closing_day < date.day)
+      closing_date = closing_date >> 1
+    end
+  
+    # 締月から精算月を計算する
+    payment_date = closing_date >> self.payment_term_months
+
+    # 精算日を入れて返す
+    self.payment_day == 0 ? last_day(payment_date.year, payment_date.month) : Date.new(payment_date.year, payment_date.month, self.payment_day)
+  end
+  
+  # 末日を求める（わからんので。。）
+  def last_day(year, month)
+    date = (Date.new(year, month, 1) >> 1)-1
+  end
   
   def self.find_all(user_id)
     return find(:all, :conditions => ['user_id = ?', user_id])
