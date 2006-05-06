@@ -2,6 +2,12 @@ class DealsController < BookController
 
   # ----- 入力画面表示系 -----------------------------------------------
 
+  # 指定された行にジャンプするアクション
+  def jump
+    # todo tab_name は月更新すると不明状態となるので受け渡しても意味がない。hiddenなどで管理可能だが、今後の課題でいいだろう。
+    redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
+  end
+
   # 明細タブが選択されたときのAjaxアクション
   def select_deal_tab
     prepare_select_deal_tab
@@ -66,9 +72,14 @@ class DealsController < BookController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
-    @target_month = session[:target_month]
-    @date = @target_month || DateBox.today
-    @target_month ||= DateBox.this_month
+    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
+    if @updated_deal
+      @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month)
+    else
+      @target_month = session[:target_month]
+      @date = @target_month || DateBox.today
+      @target_month ||= DateBox.this_month
+    end
     @tab_name = params[:tab_name] || 'deal'
     
     case @tab_name
@@ -77,7 +88,6 @@ class DealsController < BookController
       else
         prepare_select_balance_tab
     end
-    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
 

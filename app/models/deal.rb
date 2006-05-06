@@ -1,14 +1,29 @@
 # 異動明細クラス。
 class Deal < BaseDeal
   attr_accessor :minus_account_id, :plus_account_id, :amount
-  has_one    :child,
-             :class_name => 'Deal',
+  has_many   :children,
+             :class_name => 'SubordinateDeal',
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
+  # 自分の取引のなかに指定された口座IDが含まれるか
+  def has_account(account_id)
+    for entry in account_entries
+      return true if entry.account.id == account_id
+    end
+    return false
+  end
+  
+  # 子取引のなかに指定された口座IDが含まれればそれをかえす
+  def child_for(account_id)
+    for child in children
+      return child if child.has_account(account_id)
+    end
+    return false
+  end
+
   def before_save
     pre_before_save
-    
   end
 
   def before_create
@@ -50,7 +65,7 @@ class Deal < BaseDeal
       new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
       # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
       if (Account::ASSET_CREDIT_CARD == account_rule.account.asset_type && new_amount < 0) ||(Account::ASSET_CREDIT == account_rule.account.asset_type && new_amount > 0)
-        create_child(
+        children.create(
           :minus_account_id => account_rule.account_id,
           :plus_account_id => account_rule.associated_account_id,
           :amount => new_amount,

@@ -6,12 +6,17 @@ class BaseDeal < ActiveRecord::Base
              :foreign_key => 'deal_id',
              :exclusively_dependent => true,
              :order => "amount"
-  belongs_to :parent,
-             :class_name => 'BaseDeal',
-             :foreign_key => 'parent_deal_id'
            
   attr_writer :insert_before
   attr_accessor :old_date
+  
+  def parent_for(account_id)
+    return nil
+  end
+  
+  def child_for(account_id)
+    return nil
+  end
   
   def balance
     return nil
