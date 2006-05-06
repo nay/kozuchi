@@ -31,7 +31,7 @@ class Deal < BaseDeal
   end
   
   def before_update
-    account_entries.clear
+    clear_relations
     create_relations
   end
 
@@ -46,6 +46,11 @@ class Deal < BaseDeal
   end
   
   private
+
+  def clear_relations
+    account_entries.clear
+    children.clear
+  end
   
   def create_relations
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
@@ -60,7 +65,6 @@ class Deal < BaseDeal
     # 精算ルールに従って従属行を用意する
     account_rule = account_entries[0].account.account_rule || account_entries[1].account.account_rule
     if account_rule
-      p "Start creating new line for account rule #{account_rule.id}."
       # どこからからルール適用口座への異動額
       new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
       # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
@@ -73,10 +77,8 @@ class Deal < BaseDeal
           :date => self.date  >> 1,
           :summary => "",
           :undecided => true)
-      p "Created child #{self.child.id}"
       end
     else
-      p "no account_rule for deal #{id}"
     end
   end
   

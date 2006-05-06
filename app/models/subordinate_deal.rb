@@ -7,5 +7,10 @@ class SubordinateDeal < Deal
   def parent_for(account_id)
     return parent.has_account(account_id)
   end
+  
+  # TODO 表現を含んでいるが・・
+  def summary
+    return "#{parent.date.strftime('%Y/%m/%d')}の精算<br />(#{parent.summary})"
+  end
 
 end
