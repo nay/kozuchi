@@ -23,3 +23,11 @@ alter table deals add column confirmed boolean not null default 't';
 alter table deals add column type varchar(20) default 'Deal';
 update deals set type = 'balance' where balance is not null;
 alter table deals add column parent_deal_id integer;
+
+/* --- user preferences -- */
+drop table if exists preferences;
+create table preferences (
+  id integer not null primary key autoincrement,
+  user_id integer not null,
+  deals_scroll_height varchar(20)
+);
