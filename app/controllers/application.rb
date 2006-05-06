@@ -3,6 +3,19 @@
 class ApplicationController < ActionController::Base
   before_filter :set_charset
 
+  def flash_validation_errors(obj)
+    flash[:errors] ||= []
+    obj.errors.each do |attr, msg|
+      flash[:errors] << msg
+    end
+  end
+  
+  def flash_error(message)
+    flash[:errors] ||= []
+    flash[:errors] << message
+  end
+  
+
   def authorize
     unless session[:user]
       flash[:notice] = "ログインしてください。"

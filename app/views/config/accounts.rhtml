@@ -21,18 +21,7 @@
   <%=end_form_tag%>
 </div>
 <!-- 通信欄-->
-<% if @flash[:notice] && @flash[:notice].to_s != ""%>
-  <div id="notice"><%=@flash[:notice]%></div>
-<% end %>
-<% if @flash[:errors] && !@flash[:errors].empty? %>
-  <div id="errors" class="middle_box">
-  <ul>
-  <% for error_message in @flash[:errors] %>
-    <li><%=error_message%></li>
-  <% end %>
-  </ul>
-  </div>
-<% end %>
+<%= render :partial => 'shared/information' %>
 <div class="bottom_box">
   <%= form_tag :action => 'update_accounts'%>
   <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>

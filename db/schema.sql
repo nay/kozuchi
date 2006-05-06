@@ -41,7 +41,7 @@ create table deals (
   date date not null,
   daily_seq integer not null,
   summary varchar (64) not null,
-  undecided boolean not null default 'f',
+  confirmed boolean not null default 't',
   parent_deal_id integer,
   foreign key (user_id) references users
 );

@@ -1,0 +1,13 @@
+<!-- 通信欄-->
+<% if @flash[:notice] && @flash[:notice].to_s != ""%>
+  <div id="notice"><%=@flash[:notice]%></div>
+<% end %>
+<% if @flash[:errors] && !@flash[:errors].empty? %>
+  <div id="errors" class="middle_box">
+  <ul>
+  <% for error_message in @flash[:errors] %>
+    <li><%=error_message%></li>
+  <% end %>
+  </ul>
+  </div>
+<% end %>

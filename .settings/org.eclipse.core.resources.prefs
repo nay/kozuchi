@@ -1,4 +1,4 @@
-#Sat May 06 08:15:27 JST 2006
+#Sat May 06 14:16:23 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -39,6 +39,7 @@ encoding//app/views/profit_and_loss/_profit_and_loss.rhtml=UTF-8
 encoding//app/views/profit_and_loss/index.rhtml=UTF-8
 encoding//app/views/shared/_calendar.rhtml=UTF-8
 encoding//app/views/shared/_footer.rhtml=UTF-8
+encoding//app/views/shared/_information.rhtml=UTF-8
 encoding//db/development_testdata.sql=UTF-8
 encoding//public/javascripts/book.js=UTF-8
 encoding//public/stylesheets/book.css=UTF-8

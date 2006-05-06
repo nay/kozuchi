@@ -77,7 +77,7 @@ class Deal < BaseDeal
             :user_id => self.user_id,
             :date => self.date  >> 1,
             :summary => "",
-            :undecided => true)
+            :confirmed => false)
         end
       end
     end

@@ -43,8 +43,8 @@ class AccountDealsController < BookController
               balance_estimated = account_entry.balance
             # 通常明細
             else
-              # 未確定の場合は残高に反映しない
-              if !deal.undecided
+              # 確定のときだけ残高に反映
+              if deal.confirmed
                 balance_estimated -= account_entry.amount
               end
               account_entry.balance_estimated = balance_estimated

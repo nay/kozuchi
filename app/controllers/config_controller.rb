@@ -50,11 +50,7 @@ class ConfigController < MainController
       new_account.save!
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
     rescue
-      flash[:errors]= []
-      new_account.errors.each do |attr, msg|
-        flash[:errors] << msg
-      end 
-#      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録できませんでした。"
+      flash_validation_errors(new_account)
     end
     redirect_to(:action => @actions[new_account.account_type])
   end
@@ -145,6 +141,25 @@ class ConfigController < MainController
     else
       flash[:notice] = "精算ルールを削除できません。"
     end
+    redirect_to(:action => 'account_rules')
+  end
+  
+  def update_account_rule
+    p params.to_s
+    p params[:rule].to_s
+    rule = AccountRule.get(user.id, params[:rule][:id].to_i)
+    if rule
+      rule.attributes = params[:rule]
+      begin
+        rule.save!
+        flash[:notice] = "精算ルールを変更しました。"
+      rescue
+        flash_validation_errors(rule)
+      end
+    else
+      flash_error("指定された精算ルール( #{params[:rule][:id]} )が見つかりません。 ")
+    end
+  
     redirect_to(:action => 'account_rules')
   end
   

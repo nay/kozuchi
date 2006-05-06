@@ -30,21 +30,21 @@ class AccountEntry < ActiveRecord::Base
       # 期限より後にも残高確認がなければ、期限以前の異動合計を残高とする（初期残高０とみなす）。なければ０とする。
       if !entry
         return AccountEntry.sum("amount",
-                      :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and dl.undecided = ?", user_id, account_id, start_exclusive, false],
+                      :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and dl.confirmed = ?", user_id, account_id, start_exclusive, true],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                       ) || 0
       # 期限より後に残高確認があれば、期首から残高確認までの異動分をその残高から引いたものを期首残高とする
       else
         return entry.balance - (AccountEntry.sum("amount",
                       :conditions => [
-                        "et.user_id = ? and account_id = ? and dl.date >= ? and (dl.date < ? or (dl.date =? and dl.daily_seq < ?)) and dl.undecided = ?",
+                        "et.user_id = ? and account_id = ? and dl.date >= ? and (dl.date < ? or (dl.date =? and dl.daily_seq < ?)) and dl.confirmed = ?",
                         user_id,
                         account_id,
                         start_exclusive,
                         entry.deal.date,
                         entry.deal.date,
                         entry.deal.daily_seq,
-                        false],
+                        true],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                        ) || 0)
       end
@@ -52,14 +52,14 @@ class AccountEntry < ActiveRecord::Base
     # 期限より前の最新残高確認があれば、それ以降の異動合計と残高を足したものとする。
     else
       return entry.balance + (AccountEntry.sum("amount",
-                             :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and (dl.date > ? or (dl.date =? and dl.daily_seq > ?)) and dl.undecided = ?",
+                             :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and (dl.date > ? or (dl.date =? and dl.daily_seq > ?)) and dl.confirmed = ?",
                              user_id,
                              account_id,
                              start_exclusive,
                              entry.deal.date,
                              entry.deal.date,
                              entry.deal.daily_seq,
-                             false],
+                             true],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                              ) || 0)
     end

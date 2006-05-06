@@ -25,7 +25,7 @@
           <% first = true %>
 
           <% for account_entry in deal.account_entries %>
-            <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="undecided"' if deal.undecided %>>
+            <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed %>>
               <td class="date">
                 <% if first %>
                   <a name="#<%=deal.id%>"%><%= format_date(deal.date) %></a>
@@ -36,7 +36,9 @@
               </td>
               <% if first %>
                 <td class="summary" rowspan="<%=deal.account_entries.size%>">
-                  <%= '<span class="system">未確定</span>' if deal.undecided %>
+                  <% if !deal.confirmed %>
+                    <%= link_to_remote('要確認' , {:update => 'book', :url => { :action => 'confirm', :id => deal }}, :class => 'small_button' ) %>
+                  <% end %>
                   <%=deal.balance ? "残高確認" : deal.summary%>
                 </td>
               <% end %>

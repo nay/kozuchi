@@ -22,7 +22,7 @@ class ProfitAndLossController < BookController
     end_exclusive = start_inclusive >> 1
     values = AccountEntry.sum(:amount,
      :group => 'account_id',
-     :conditions => ["dl.date >= ? and dl.date < ? and dl.undecided = ?", start_inclusive, end_exclusive, false],
+     :conditions => ["dl.date >= ? and dl.date < ? and dl.confirmed = ?", start_inclusive, end_exclusive, true],
      :joins => "as et inner join deals as dl on dl.id = et.deal_id")
     expense_accounts = Account.find_all(session[:user].id, [2])
     @expenses_summaries = []

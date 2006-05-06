@@ -97,6 +97,24 @@ class DealsController < BookController
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
     render(:partial => "deals", :layout => false)
   end
+  
+  # 確認処理
+  def confirm
+    p "confirm"
+    deal = BaseDeal.find(:first, :conditions => ["id = ? and user_id = ?", params[:id], user.id])
+    p "deal = #{deal}"
+    raise "Could not get deal #{params[:id]}" unless deal
+    
+    p "deal.confirmed = #{deal.confirmed}"
+    deal.confirmed = true
+    p "deal.confirmed = #{deal.confirmed}"
+    deal.save!  # TODO: account_entry作り直しとかいらないけどひとまず保留
+    p "deal.confirmed = #{deal.confirmed}"
+    
+    @target_month = DateBox.new('year' => deal.date.year, 'month' => deal.date.month)
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    render(:partial => "deals", :layout => false)
+  end
 
 
   private

@@ -30,9 +30,7 @@
     <% end %>
   </div>
 </div>
-<% if @flash[:notice] && @flash[:notice].to_s != ""%>
-  <div id="notice" class="middle_box"><%=@flash[:notice]%></div>
-<% end %>
+<%= render :partial => 'shared/information' %>
 <div class="bottom_box">
   <table class="masters">
     <tr>
@@ -40,8 +38,8 @@
       <th>変更</th><th>削除</th>
     </tr>
     <% for rule in @rules %>
-      <%= form_tag :action => 'update_rule'%>
-      <% hidden_field('rule', 'id')%>
+      <%= form_tag :action => 'update_account_rule'%>
+      <input type="hidden" name="rule[id]" id="rule_id" value="<%= rule.id %>"/><% # hidden_field だとはいらない %>
       <tr>
         <td>
           <%= rule.account.name %>
@@ -68,7 +66,7 @@
           </select>
         </td>
         <td class="action"><button type="submit">変更</button></td>
-        <td class="action"><%= link_to("削除", :action => "delete_account_rule", :id => rule.id) %></td>
+        <td class="action"><%= button_to("削除", {:action => "delete_account_rule", :id => rule.id}, :class => 'button') %></td>
       </tr>
       
     <%=end_form_tag%>

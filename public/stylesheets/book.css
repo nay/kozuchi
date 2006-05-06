@@ -68,7 +68,9 @@ span.large {
   font-size: 1.3em;
 }
 
-button {
+button, .button {
+  white-space: nowrap;
+  text-decoration: none;
   border: 4px outset goldenrod;
   background-color: goldenrod;
   color: black;
@@ -146,7 +148,7 @@ td.date, th.date {
 }
 
 td.action, th.action {
-  width: 2.5em;
+  width: 4em;
   text-align: center;
 }
 
@@ -217,10 +219,10 @@ table.masters {
   vertical-align: top;
 }
 
-tr.undecided td {
+tr.unconfirmed td {
   color: gray;
 }
-span.system {
+span.system, span.system_button {
   background-color: gold;
 }
 
@@ -247,6 +249,16 @@ ul {
 
 input.readonly {
   background-color: floralwhite;
+}
+
+.system_button {
+  border: 1px outset goldenrod; 
+}
+a.small_button {
+  border: 1px outset goldenrod; 
+  background-color: gold;
+  color: gray;
+  text-decoration: none;
 }
 
 /* ========== 固有情報　=============== */

@@ -14,12 +14,12 @@ create table account_rules (
 );
 
 alter table accounts add column asset_type integer;
-alter table deals add column undecided boolean not null default 'f';
 
 update accounts set asset_type = 1 where account_type = 1;
 
 /* after commit */
 
+alter table deals add column confirmed boolean not null default 't';
 alter table deals add column type varchar(20) default 'Deal';
 update deals set type = 'balance' where balance is not null;
 alter table deals add column parent_deal_id integer;
