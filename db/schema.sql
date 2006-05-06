@@ -60,3 +60,11 @@ create table account_entries (
   foreign key (deal_id) references deals, 
   foreign key (user_id) references users
 );
+
+/* --- user preferences -- */
+drop table if exists preferences;
+create table preferences (
+  id integer not null primary key autoincrement,
+  user_id integer not null,
+  deals_scroll_height varchar(20)
+);

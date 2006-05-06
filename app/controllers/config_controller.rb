@@ -13,6 +13,7 @@ class ConfigController < MainController
     add_menu('収入内訳', {:action => 'incomes'}, :action)
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
     add_menu('精算ルール', {:action => 'account_rules'}, :action)
+    add_menu('カスタマイズ', {:action => 'preferences'}, :action)
   end
   
   def index
@@ -161,6 +162,24 @@ class ConfigController < MainController
     end
   
     redirect_to(:action => 'account_rules')
+  end
+  
+  # カスタマイズ （個人的好みによる設定） ----------------------------------------------------------------
+  def preferences
+    @preferences = Preferences.get(user.id)
+  end
+  
+  def update_preferences
+    preferences = Preferences.get(user.id)
+    preferences.attributes = params[:preferences]
+    begin
+      preferences.save!
+      session[:user] = User.find(user.id)
+      flash_notice("更新しました。")
+    rescue
+      flash_validation_errors(preferences)
+    end
+    redirect_to(:action => 'preferences')
   end
   
 end

@@ -15,6 +15,9 @@ class ApplicationController < ActionController::Base
     flash[:errors] << message
   end
   
+  def flash_notice(message)
+    flash[:notice] = message
+  end
 
   def authorize
     unless session[:user]

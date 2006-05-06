@@ -1,0 +1,10 @@
+<div class="top_box">
+  <%= form_tag :action => 'update_preferences'%>
+    <div class="form_box">
+      <label>仕訳帳のスクロールバーの高さ</label>
+      <%= text_field('preferences', 'deals_scroll_height', :size => 10) %> 例：200px
+      <div class="buttons_line"><button type="submit">カスタマイズ設定を更新</button></div>
+    </div>
+  <%=end_form_tag%>
+</div>
+<%= render :partial => 'shared/information' %>

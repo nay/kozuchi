@@ -65,8 +65,8 @@
             <%= options_for_select(@day_options, rule.payment_day)%>
           </select>
         </td>
-        <td class="action"><button type="submit">変更</button></td>
-        <td class="action"><%= button_to("削除", {:action => "delete_account_rule", :id => rule.id}, :class => 'button') %></td>
+        <td class="button_action"><button type="submit">変更</button></td>
+        <td class="button_action"><%= button_to("削除", {:action => "delete_account_rule", :id => rule.id}, :class => 'button') %></td>
       </tr>
       
     <%=end_form_tag%>

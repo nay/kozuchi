@@ -4,6 +4,9 @@ class User < ActiveRecord::Base
   attr_accessible :password, :login_id
   validates_uniqueness_of :login_id
   validates_presence_of :login_id, :password
+  has_one :preferences,
+          :class_name => "Preferences",
+          :dependent => true
 
   def self.login(login_id, password)
     hashed_password = hash_password(password || "")
@@ -22,6 +25,7 @@ class User < ActiveRecord::Base
   def after_create
     @password = nil
   end
+  
   private
   def self.hash_password(password)
     Digest::SHA1.hexdigest(password)

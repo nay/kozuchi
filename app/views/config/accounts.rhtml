@@ -52,11 +52,11 @@
         <% end %>
         <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>
         <% if @account == @accounts.first %>
-          <td rowspan="<%= @accounts.size %>" class="action"><button type="submit">変更</button></td>
+          <td rowspan="<%= @accounts.size %>" class="button_action"><button type="submit">変更</button></td>
         <% end %>
-        <td class="action">
+        <td class="button_action">
           <% if @account.associated_account_rules.empty? %>
-            <%= link_to("削除", :action => "delete_account", :id => @account.id, :account_type => @account.account_type) %>
+            <%= button_to("削除", {:action => "delete_account", :id => @account.id, :account_type => @account.account_type}, :class => 'button') %>
           <% else %>
             <span>×</span>
           <% end %>

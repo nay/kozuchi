@@ -148,9 +148,15 @@ td.date, th.date {
 }
 
 td.action, th.action {
-  width: 4em;
+  width: 2.5em;
   text-align: center;
 }
+
+td.button_action, th.button_action {
+  width: 5em;
+  text-align: center;
+}
+
 
 td.account, th.account {
   width: 100px;
@@ -254,11 +260,14 @@ input.readonly {
 .system_button {
   border: 1px outset goldenrod; 
 }
-a.small_button {
+a.small_button, .action a {
   border: 1px outset goldenrod; 
   background-color: gold;
   color: gray;
   text-decoration: none;
+}
+.buttons_line {
+  text-align: center;
 }
 
 /* ========== 固有情報　=============== */

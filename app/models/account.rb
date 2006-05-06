@@ -9,6 +9,7 @@ class Account < ActiveRecord::Base
   validates_presence_of :name,
                         :message => "名前を定義してください。"
   validates_presence_of :account_type
+  validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
   
   # 口座種別値
   ACCOUNT_ASSET = 1

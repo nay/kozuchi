@@ -182,6 +182,8 @@ class DealsController < BookController
   
   # 仕分け帳　表示準備
   def prepare_update_deals
+    # todo preference のロード整備
+    @deals_scroll_height = user.preferences ? user.preferences.deals_scroll_height : nil
     begin
       @deals = BaseDeal.get_for_month(session[:user].id, @target_month)
       session[:target_month] = @target_month
