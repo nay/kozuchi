@@ -43,7 +43,11 @@ class ProfitAndLossController < BookController
     @asset_minus_summaries = []
     for account in asset_accounts
       balance_start = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, start_inclusive) # 期首残高
+      p "balance_start = #{balance_start}"
+      
       balance_end = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, end_exclusive) # 期末残高
+      p "balance_end = #{balance_end}"
+
       diff = balance_end - balance_start
       if diff > 0
         @asset_plus_summaries << AccountSummary.new(account, 0, diff)
@@ -54,6 +58,9 @@ class ProfitAndLossController < BookController
       # 増減なしなら報告しない
 
       unknown_amount = balance_end - balance_start - (values[account.id] || 0)
+      p "values[account.id] = #{values[account.id]}"
+      p "unknown_amount = #{unknown_amount}"
+      
       if unknown_amount > 0
         @incomes_summaries << AccountSummary.new(account, unknown_amount)
       else

@@ -26,7 +26,7 @@ class AccountEntry < ActiveRecord::Base
                       :select => "et.*",
                       :conditions => ["et.user_id = ? and et.account_id = ? and dl.date >= ? and et.balance is not null", user_id, account_id, start_exclusive],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id",
-                      :order => "dl.date desc, dl.daily_seq")
+                      :order => "dl.date, dl.daily_seq")
       # 期限より後にも残高確認がなければ、期限以前の異動合計を残高とする（初期残高０とみなす）。なければ０とする。
       if !entry
         return AccountEntry.sum("amount",
