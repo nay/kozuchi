@@ -37,6 +37,14 @@ class Account < ActiveRecord::Base
   RULE_ASSOCIATED_ASSET_TYPES = [
     ASSET_TYPES[1]
   ]
+  
+  def self.count_in_user(user_id, account_types = nil)
+    if account_types
+      return count(:conditions => ["user_id = ? and account_type in (?)", user_id, account_types.join(',')])
+    else
+      return count(:conditions => ["user_id = ?", user_id])
+    end
+  end
 
   def name_with_asset_type
     return "#{self.name}(#{@@asset_types[asset_type]||''})"
