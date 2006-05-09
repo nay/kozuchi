@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
       redirect_to(:controller => 'login', :action => 'index')
     end
   end
-
+  
   protected
   def set_charset
     @headers["Content-Type"] = 'text/html; charset=utf-8'

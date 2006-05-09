@@ -1,4 +1,4 @@
-#Sat May 06 16:07:17 JST 2006
+#Tue May 09 17:13:56 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -23,16 +23,16 @@ encoding//app/models/menu.rb=UTF-8
 encoding//app/models/subordinate_deal.rb=UTF-8
 encoding//app/views/account_deals/_account_deals.rhtml=UTF-8
 encoding//app/views/account_deals/_account_options.rhtml=UTF-8
+encoding//app/views/admin/deals/_deals.rhtml=UTF-8
+encoding//app/views/admin/deals/_edit_balance.rhtml=UTF-8
+encoding//app/views/admin/deals/_edit_deal.rhtml=UTF-8
+encoding//app/views/admin/deals/index.rhtml=UTF-8
 encoding//app/views/admin/edit_user.rhtml=UTF-8
 encoding//app/views/assets/_assets.rhtml=UTF-8
 encoding//app/views/assets/index.rhtml=UTF-8
 encoding//app/views/config/account_rules.rhtml=UTF-8
 encoding//app/views/config/accounts.rhtml=UTF-8
 encoding//app/views/config/preferences.rhtml=UTF-8
-encoding//app/views/deals/_deals.rhtml=UTF-8
-encoding//app/views/deals/_edit_balance.rhtml=UTF-8
-encoding//app/views/deals/_edit_deal.rhtml=UTF-8
-encoding//app/views/deals/index.rhtml=UTF-8
 encoding//app/views/layouts/admin.rhtml=UTF-8
 encoding//app/views/layouts/main.rhtml=UTF-8
 encoding//app/views/login/index.rhtml=UTF-8
