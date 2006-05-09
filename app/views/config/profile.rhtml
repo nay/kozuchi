@@ -1,0 +1,12 @@
+<%= render :partial => 'shared/information' %>
+<div class="top_bottom">
+  <div class="form_box">
+    <%= start_form_tag(:action => 'update_password') %>
+      <label>新しいパスワード：</label><input type="password" name="password" /><br />
+      <label>新しいパスワード（確認用）：</label><input type="password" name="password_confirm"/><br />
+      <button type="submit">パスワードを変更する</button><br />
+      <p class="guide">※新しいパスワードは次回ログイン時から有効となります。</p>
+      
+    <%= end_form_tag %>
+  </div>
+</div>

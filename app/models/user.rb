@@ -17,10 +17,9 @@ class User < ActiveRecord::Base
   def try_to_login
     User.login(self.login_id, self.password)
   end
-  
-  def before_create
+
+  def before_save
     self.hashed_password = User.hash_password(self.password)
-    p "hashed_password = #{self.hashed_password}"
   end
   def after_create
     @password = nil

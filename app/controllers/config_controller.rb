@@ -14,6 +14,7 @@ class ConfigController < MainController
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
     add_menu('精算ルール', {:action => 'account_rules'}, :action)
     add_menu('カスタマイズ', {:action => 'preferences'}, :action)
+    add_menu('プロフィール', {:action => 'profile'}, :action)
   end
   
   def index
@@ -182,4 +183,26 @@ class ConfigController < MainController
     redirect_to(:action => 'preferences')
   end
   
+  # プロファイル変更（当面パスワード）
+  def profile
+  end
+  
+  def update_password
+    if !params[:password] || params[:password]==""
+      flash_error("パスワードを設定してください。")
+    else
+      if params[:password] != params[:password_confirm]
+        flash_error("確認用パスワードと一致していません。もう一度入力しなおしてください。")
+      else
+        user.password = params[:password]
+        begin
+          user.save!
+          flash_notice("パスワードを変更しました。")
+        rescue
+          flash_validation_errors(user)
+        end
+      end
+    end
+    redirect_to(:action => 'profile')
+  end
 end
