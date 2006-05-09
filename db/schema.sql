@@ -29,7 +29,7 @@ create table accounts (
   account_type integer not null,
   asset_type integer,
   sort_key integer,
-  foreign key (user_id) references users,
+  foreign key (user_id) references users
 );
 
 /* --- deals --- */
