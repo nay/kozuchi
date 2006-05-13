@@ -11,13 +11,12 @@
             <%= select('account', 'asset_type',
                        Account.asset_types.invert)%>
           <% end %>
-          <br />
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
-          <span>※小さいほど上に表示されます。</span>
         </td>
         <td><button type="submit">新しい<%=@account.account_type_name%>を追加</button></td>
       </tr>
     </table>
+    <p class="guide">※並び順が小さいものほど上に表示されます。</p>
   <%=end_form_tag%>
 </div>
 <!-- 通信欄-->

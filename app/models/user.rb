@@ -4,9 +4,20 @@ class User < ActiveRecord::Base
   attr_accessible :password, :login_id
   validates_uniqueness_of :login_id
   validates_presence_of :login_id, :password
-  has_one :preferences,
-          :class_name => "Preferences",
-          :dependent => true
+  has_one   :preferences,
+            :class_name => "Preferences",
+            :dependent => true
+  has_many  :friends,
+            :dependent => true
+  has_many  :friend_applicants,
+            :class_name => 'Friend',
+            :foreign_key => 'friend_user_id',
+            :dependent => true
+
+
+  def self.find_by_login_id(login_id)
+    find(:first, :conditions => ["login_id = ? ", login_id])
+  end
 
   def self.login(login_id, password)
     hashed_password = hash_password(password || "")
