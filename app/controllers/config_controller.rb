@@ -87,6 +87,8 @@ class ConfigController < MainController
     account_type = params[:account_type].to_i
     account_type_name = Account.get_account_type_name(account_type)
     # todo 悪意ある post によってuser_id と一致しない危険性がちょっと気になる。
+    p params[:account].keys.to_s
+    p params[:account].values.to_s
     Account.update(params[:account].keys, params[:account].values)
     flash[:notice]="すべての#{account_type_name}を変更しました。"
     

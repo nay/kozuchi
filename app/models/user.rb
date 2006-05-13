@@ -15,6 +15,11 @@ class User < ActiveRecord::Base
             :dependent => true
 
 
+  def self.find_friend_of(user_id, login_id)
+    return 2 == Friend.count(:joins => "as fr inner join users as us on (fr.user_id = us.id or fr.friend_user_id = us.id)",
+                   :conditions => ["us.login_id = ? and fr.friend_level > 0", login_id])
+  end
+
   def self.find_by_login_id(login_id)
     find(:first, :conditions => ["login_id = ? ", login_id])
   end

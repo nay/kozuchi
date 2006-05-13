@@ -11,7 +11,7 @@
 <div class="bottom_box">
   <table class="masters">
     <tr>
-      <th>ユーザー</th><th>状態</th><th colspan="2">操作</th>
+      <th>ユーザー</th><th>状態</th><th colspan="2">関係の変更</th>
     </tr>
     <% for friend in @friends %>
       <tr>
@@ -31,6 +31,9 @@
 
           <% if friend.is_friend %>
             <span><%= "フレンド"%></span>
+            <% if friend.exists_account %>
+              <span class="system">口座連動中</span>
+            <% end %>
           <% end %>
         </td>
           <% if friend.is_applied %>

@@ -38,6 +38,13 @@ class Account < ActiveRecord::Base
     ASSET_TYPES[1]
   ]
   
+  def friend_user
+    if self.account_type == ACCOUNT_ASSET && self.asset_type == ASSET_CREDIT
+      return User.find_friend_of(self.user_id, self.name)
+    end
+    nil
+  end
+  
   def self.count_in_user(user_id, account_types = nil)
     if account_types
       return count(:conditions => ["user_id = ? and account_type in (?)", user_id, account_types.join(',')])
