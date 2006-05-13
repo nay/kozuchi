@@ -2,6 +2,13 @@
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
   before_filter :set_charset
+  before_filter :set_ssl
+
+  def set_ssl
+    if KOZUCHI_SSL
+      request.env["HTTPS"] = "on"
+    end
+  end
 
   def flash_validation_errors(obj)
     flash[:errors] ||= []
