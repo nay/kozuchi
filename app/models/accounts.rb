@@ -2,27 +2,26 @@
 # 口座の集合に対する処理、合計などを行う
 
 class Accounts
-  def initialize(accounts = nil)
-    @list = accounts || []
+  attr_reader :sum
+
+  def initialize
+    @list = []
+    @sum = 0
   end
   
   def <<(account)
     @list << account
+    @sum += account.balance
   end
   
   def each(&block)
     @list.each(&block)
   end
   
-  def balance_before(date)
-    balance_sum = 0
+  def set_percentage
     each do |account|
-      balance_sum += account.balance_before(date)
+      account.percentage = @sum != 0 ? (100*account.balance/@sum).to_i : 0
     end
-    each do |account|
-      account.percentage = balance_sum != 0 ? (100*account.balance/balance_sum).to_i : 0
-    end
-    balance_sum
   end
   
   def to_s
@@ -30,3 +29,4 @@ class Accounts
   end
 
 end
+

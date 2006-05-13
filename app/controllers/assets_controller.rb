@@ -17,9 +17,8 @@ class AssetsController < BookController
   
   # 資産口座の期末残高一覧を表示して合計を出す。
   def prepare
-    @assets = Accounts.new(Account.find_all(session[:user].id, [1]))
     date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
-    @balance_sum = @assets.balance_before(date)
+    @assets = AccountsBalanceReport.new(Account.find_all(session[:user].id, [1]), date)
   end
 
 end

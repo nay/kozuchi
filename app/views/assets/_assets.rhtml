@@ -1,14 +1,14 @@
 <div id="assets_sum" class="result">
   <span>資産合計</span>　
-  <span class="amount"><%= number_with_delimiter(@balance_sum) %></span>円
+  <span class="amount"><%= number_with_delimiter(@assets.sum) %></span>円
 </div>
 
-
+<div class="middle_box">
 <table class="book">
   <tr>
-    <th>口座名</th><th></th><th class="amount">期末残高</th>
+    <th>正の資産</th><th></th><th class="amount">期末残高</th>
   </tr>
-  <% @assets.each do |account| %>
+  <% @assets.plus.each do |account| %>
     <tr>
       <td><%= account.name %></td>
       <td class="percentage"><%= account.percentage %>%</td>
@@ -16,3 +16,25 @@
     </tr>
   <% end %>
 </table>
+<table class="book">
+  <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.plus.sum) %></td></tr>
+</table>
+</div>
+
+<div class="bottom_box">
+<table class="book">
+  <tr>
+    <th>負の資産</th><th></th><th class="amount">期末残高</th>
+  </tr>
+  <% @assets.minus.each do |account| %>
+    <tr>
+      <td><%= account.name %></td>
+      <td class="percentage"><%= account.percentage %>%</td>
+      <td class="amount"><%= number_with_delimiter(account.balance) %></td>
+    </tr>
+  <% end %>
+</table>
+<table class="book">
+  <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
+</table>
+</div>

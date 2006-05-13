@@ -1,4 +1,4 @@
-#Tue May 09 23:11:36 JST 2006
+#Sat May 13 17:20:14 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -16,6 +16,7 @@ encoding//app/models/account.rb=UTF-8
 encoding//app/models/account_rule.rb=UTF-8
 encoding//app/models/account_summary.rb=UTF-8
 encoding//app/models/accounts.rb=UTF-8
+encoding//app/models/accounts_balance_report.rb=UTF-8
 encoding//app/models/balance.rb=UTF-8
 encoding//app/models/date_box.rb=UTF-8
 encoding//app/models/deal.rb=UTF-8
