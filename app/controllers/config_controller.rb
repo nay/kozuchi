@@ -14,6 +14,7 @@ class ConfigController < MainController
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
     add_menu('精算ルール', {:action => 'account_rules'}, :action)
     add_menu('フレンド', {:action => 'friends'}, :action)
+    add_menu('フレンド連動', {:action => 'friend_accounts'}, :action)
     add_menu('カスタマイズ', {:action => 'preferences'}, :action)
     add_menu('プロフィール', {:action => 'profile'}, :action)
   end
@@ -288,6 +289,74 @@ class ConfigController < MainController
     end
     
     redirect_to(:action => 'friends')
+  end
+
+
+  # 口座のフレンド連動設定
+  def friend_accounts
+    @accounts = Account.find_all(user.id, [Account::ACCOUNT_ASSET, Account::ACCOUNT_EXPENSE, Account::ACCOUNT_INCOME])
+    @friends = []
+    friend_links = user.friends(true)
+    for l in friend_links
+      @friends << l.friend_user
+    end
+    @accounts_with_partners = Account.find(:all, :conditions => ["user_id = ? and partner_account_id is not null", user.id])
+  end
+  
+  def update_account_partner
+    account_id = @params[:account] ? @params[:account][:id] : nil
+    raise "no account_id" unless account_id
+    
+    account = Account.get(user.id, account_id)
+    raise "no account" unless account
+    
+    partner_user = User.find_friend_of(user.id, params[:account][:partner_login_id])
+    raise "no partner user" unless partner_user
+
+    partner_account_name = params[:account][:partner_account_name]
+    if !partner_account_name || partner_account_name == ""
+      flash_error("フレンドの口座名を指定してください")
+      redirect_to(:action => 'friend_accounts')
+      return
+    end
+
+    partner_account = Account.get_by_name(partner_user.id, partner_account_name)
+    if !partner_account
+      flash_error("フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。")
+      redirect_to(:action => 'friend_accounts')
+      return
+    end
+    
+    account.partner_account_id = partner_account.id
+    begin
+      account.save!
+      flash_notice("#{account.name}のフレンド連動を更新しました。")
+    rescue => err
+      if account.errors.empty?
+        flash_error(err)
+        flash_error(err.backtrace.to_s)
+      else
+        flash_validation_errors(account)
+      end
+    end
+    redirect_to(:action => 'friend_accounts')
+  end
+  
+  def clear_account_partner
+    p "clear_account_partner"
+    id = params[:id]
+    account = Account.get(user.id, id)
+    raise "no account" if !account
+    
+    account.partner_account_id = nil
+    begin
+      account.save!
+      flash_notice("#{account.name}のフレンド連動を解除しました。")
+    rescue => err
+      flash_error(err)
+      flash_error(err.backtrace.to_s)
+    end
+    redirect_to(:action => 'friend_accounts')
   end
   
 end

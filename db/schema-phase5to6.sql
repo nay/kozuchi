@@ -16,3 +16,5 @@ create table friend_deals (
   friend_deal_id integer not null
 );
 
+/* -- accounts -- */
+alter table accounts add column partner_account_id integer;

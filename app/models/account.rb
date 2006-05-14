@@ -4,6 +4,14 @@ class Account < ActiveRecord::Base
   has_many :associated_account_rules,
            :class_name => 'AccountRule',
            :foreign_key => 'associated_account_id'
+  belongs_to :partner_applying_account,
+             :class_name => 'Account',
+             :foreign_key => 'partner_account_id'
+  has_one    :partner_applied_account,
+             :class_name => 'Account',
+             :foreign_key => 'partner_account_id'
+  belongs_to :user
+  
   attr_accessor :account_type_name, :balance, :percentage
   attr_reader :name_with_asset_type
   validates_presence_of :name,
@@ -21,6 +29,8 @@ class Account < ActiveRecord::Base
   ASSET_BANKING_FACILITY = 2
   ASSET_CREDIT_CARD = 3
   ASSET_CREDIT = 4
+
+  @@account_types = {ACCOUNT_ASSET => '口座', ACCOUNT_EXPENSE => '支出', ACCOUNT_INCOME => '収入'}
   
   @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権'}
 
@@ -37,6 +47,14 @@ class Account < ActiveRecord::Base
   RULE_ASSOCIATED_ASSET_TYPES = [
     ASSET_TYPES[1]
   ]
+  
+  def self.get(user_id, account_id)
+    return Account.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])
+  end
+  
+  def self.get_by_name(user_id, name)
+    return Account.find(:first, :conditions => ["user_id = ? and name = ?", user_id, name])
+  end
   
   def self.find_credit(user_id, name)
       return Account.find(
@@ -70,7 +88,11 @@ class Account < ActiveRecord::Base
   end
 
   def name_with_asset_type
-    return "#{self.name}(#{@@asset_types[asset_type]||''})"
+    return "#{self.name}(#{@@asset_types[asset_type]||@@account_types[account_type]})"
+  end
+
+  def self.account_types
+    @@account_types
   end
 
   def self.asset_types
@@ -136,9 +158,31 @@ class Account < ActiveRecord::Base
 
   # account_type, asset_type, account_rule の整合性をあわせる
   def before_save
+    p "before_save #{self.id}"
     # asset_type が credit 系でなければ、自分が適用対象として紐づいている rule があれば削除
     if self.asset_type != ASSET_CREDIT_CARD && self.asset_type != ASSET_CREDIT
       self.account_rule = nil
+    end
+  end
+  
+  def after_save
+    # とにかくセーブは行う。
+    # セーブした結果として、不整合が起きたら調整する
+    if self.partner_account_id
+    # 自分がpartner指定している以外の口座からpartner指定されていたら、指定されているリンクを解除する
+      Account.update_all("partner_account_id = null", ["partner_account_id = ? and id != ?", self.id, self.partner_account_id])
+      # 自分がpartner指定している口座から partner指定されていなかったら、空いていたら張る。空いていなければ例外
+      if !self.partner_applying_account(true).partner_account_id
+        partner_applying_account.partner_account_id = self.id
+        partner_applying_account.save!
+      else
+        # 自分以外のものとリンクが張られていたら例外を発生させる
+        raise "'#{self.partner_applying_account.user.login_id}'さんの'#{self.partner_applying_account.name}'はすでにほかの口座との連動が設定されています。" if self.partner_applying_account.partner_account_id != self.id
+        # 自分と張られている場合はなにもしない
+      end
+    else
+    # パートナー指定していなければ全部解除するだけ
+      Account.update_all("partner_account_id = null", ["partner_account_id = ?", self.id])
     end
   end
   

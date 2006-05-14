@@ -29,6 +29,10 @@ create table account_rules (
   foreign key (associated_account_id) references accounts
 );
 
+/* --- account_pairs --*/
+drop table if exists account_pairs;
+create table account 
+
 /* --- accounts --- */
 drop table if exists accounts;
 create table accounts (
@@ -38,6 +42,7 @@ create table accounts (
   account_type integer not null,
   asset_type integer,
   sort_key integer,
+  partner_account_id integer,
   foreign key (user_id) references users
 );
 

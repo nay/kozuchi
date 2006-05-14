@@ -1,0 +1,42 @@
+<div class="top_box">
+  <div class="form_box">
+    <%= form_tag :action => 'update_account_partner'%>
+      <%= session[:user].login_id %>
+      <span>さんの</span>
+      <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
+      <span>への記入と、<br />フレンド</span>
+      <%= collection_select('account', 'partner_login_id', @friends, :login_id, :login_id) %>
+      <span>さんの</span>
+      <%= text_field('account', 'partner_account_name', :size => 16, :class => "text") %>
+      <span>への記入を</span>
+      <button type="submit">連動</button>
+    <%= end_form_tag %>
+  </div>
+</div>
+<%= render :partial => 'shared/information' %>
+<div class="bottom_box">
+  <table class="masters">
+    <tr>
+      <th colspan="2"><%= session[:user].login_id%>さんの設定</th>
+      <th colspan="3">フレンド設定</th>
+      <th rowspan="2">操作</th>
+    </tr>
+    <tr>
+      <th>種類</th>
+      <th>名称</th>
+      <th>ユーザー名</th>
+      <th>種類</th>
+      <th class="button_action">名称</th>
+    </tr>
+    <% for account in @accounts_with_partners %>
+      <tr>
+        <td><%= Account::account_types[account.account_type] %><%= "(#{Account::asset_types[account.asset_type]})" if account.asset_type %></td>
+        <td><%= account.name %></td>
+        <td><%= account.partner_applying_account.user.login_id %></td>
+        <td><%= Account::account_types[account.partner_applying_account.account_type] %><%= "(#{Account::asset_types[account.partner_applying_account.asset_type]})" if account.partner_applying_account.asset_type %></td>
+        <td><%= account.partner_applying_account.name %></td>
+        <td class="button_action"><%= button_to("解消", {:action => 'clear_account_partner', :id => account.id}, :class => 'button')%></td>
+      </tr>
+    <% end %>
+  </table>
+</div>

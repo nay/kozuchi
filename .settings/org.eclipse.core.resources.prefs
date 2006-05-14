@@ -1,4 +1,4 @@
-#Sun May 14 08:19:24 JST 2006
+#Sun May 14 11:40:39 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -35,6 +35,7 @@ encoding//app/views/assets/index.rhtml=UTF-8
 encoding//app/views/book/need_accounts.rhtml=UTF-8
 encoding//app/views/config/account_rules.rhtml=UTF-8
 encoding//app/views/config/accounts.rhtml=UTF-8
+encoding//app/views/config/friend_accounts.rhtml=UTF-8
 encoding//app/views/config/friends.rhtml=UTF-8
 encoding//app/views/config/preferences.rhtml=UTF-8
 encoding//app/views/config/profile.rhtml=UTF-8
