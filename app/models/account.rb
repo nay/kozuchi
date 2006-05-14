@@ -38,6 +38,22 @@ class Account < ActiveRecord::Base
     ASSET_TYPES[1]
   ]
   
+  def self.find_credit(user_id, name)
+      return Account.find(
+        :first,
+        :conditions => ["user_id = ? and name = ? and account_type = ? and asset_type = ?", user_id, name, Account::ACCOUNT_ASSET, Account::ASSET_CREDIT]
+     )
+  end
+  
+  def self.find_default_asset(user_id)
+    return Account.find(
+      :first,
+      :conditions => ["user_id = ? and account_type = ?", user_id, Account::ACCOUNT_ASSET],
+      :order => "sort_key"
+    )
+  end
+
+  
   def friend_user
     if self.account_type == ACCOUNT_ASSET && self.asset_type == ASSET_CREDIT
       return User.find_friend_of(self.user_id, self.name)

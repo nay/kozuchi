@@ -11,7 +11,7 @@
 <div class="bottom_box">
   <table class="masters">
     <tr>
-      <th>ユーザー</th><th>状態</th><th colspan="2">関係の変更</th>
+      <th>ユーザー</th><th>状態</th><th>口座連動</th><th colspan="2">関係の変更</th>
     </tr>
     <% for friend in @friends %>
       <tr>
@@ -31,9 +31,21 @@
 
           <% if friend.is_friend %>
             <span><%= "フレンド"%></span>
+          <% end %>
+        </td>
+        <td>
+          <% if friend.is_friend %>
             <% if friend.exists_account %>
-              <span class="system">口座連動中</span>
+              <% if !friend.exists_my_account %>
+                <span class="system">相手側に<%= @session[:user].login_id %>さんの債権口座が設定されていません。</span>
+              <% else %>
+                <span class="system">口座連動中</span>
+              <% end %>
+            <% else %>
+              <span class="system">連動するには、債権口座「<%=friend.friend_user.login_id%>」を用意してください。</span>
             <% end %>
+          <% else %>
+            <span>-</span>
           <% end %>
         </td>
           <% if friend.is_applied %>

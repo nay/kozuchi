@@ -28,11 +28,14 @@ class Deal < BaseDeal
 
   def before_create
     create_relations
+    create_friend_deals
   end
   
   def before_update
+    clear_friend_deals(get_friend_deal_ids_to_be_cleared)
     clear_relations
     create_relations
+    create_friend_deals
   end
 
   # Prepare sugar methods
@@ -43,6 +46,11 @@ class Deal < BaseDeal
     @minus_account_id = account_entries[0].account_id
     @plus_account_id = account_entries[1].account_id
     @amount = account_entries[1].amount
+  end
+  
+  def before_destroy
+    # フレンドリンクまたは本体までを消す
+    clear_friend_deals
   end
   
   private
@@ -62,9 +70,9 @@ class Deal < BaseDeal
       account_entries.create(:user_id => user_id, :account_id => @minus_account_id, :amount => @amount.to_i*(-1))
     end
 
-    # 精算ルールに従って従属行を用意する
     for i in 0..1
       account_rule = account_entries[i].account.account_rule
+      # 精算ルールに従って従属行を用意する
       if account_rule
         # どこからからルール適用口座への異動額
         new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
@@ -83,6 +91,82 @@ class Deal < BaseDeal
       end
     end
   end
+  
+  def create_friend_deals
+    # フレンド連動に従ってフレンド行を用意する
+    for i in 0..1
+      next if !self.confirmed # お手玉を防ぐ
+
+      friend_user = account_entries[i].account.friend_user
+      p "create_friend_deals : friend_user = #{friend_user}, confirmed = #{self.confirmed}"
+      next if !friend_user #　関係ない口座
+
+      # すでにある場合（更新時）は登録しない      
+      find_friend_deal = false
+      for friend_deal in self.friend_deals(true)
+        if friend_deal.friend_deal.user.id == friend_user.id
+          find_friend_deal = true
+          break
+        end
+      end
+      p "found #{friend_user.login_id}'s friend_deal. Supposed this update didn't change #{friend_user.login_id}'s amount." if find_friend_deal
+      next if find_friend_deal
+
+      my_account = Account.find_credit(friend_user.id, User.find(self.user_id).login_id)
+      p "my_account = #{my_account}"
+      next if !my_account # 先方に自分の口座がない
+      
+      other_account = Account.find_default_asset(friend_user.id)
+      next if !other_account || other_account.id == my_account.id # 先方に入れるべきデフォルト口座がない
+      
+      friend_real_deal = Deal.create(
+              :minus_account_id => my_account.id,
+              :plus_account_id => other_account.id,
+              :amount => account_entries[i].amount, # my account の friend 口座にプラスがはいったなら、マイナス額
+              :user_id => friend_user.id,
+              :date => self.date,
+              :summary => self.summary,
+              :confirmed => false
+      )
+      # 相手側リンクは下記が実行されたタイミング（たぶんこのdealがクリエイトされたとき）で自動的に作られる
+      self.friend_deals.create(
+              :user_id => self.user_id,
+              :friend_deal_id => friend_real_deal.id
+      )
+    end
+  end
+  
+  def clear_friend_deals(ids_to_be_cleared = nil)
+    for friend_deal in friend_deals
+      next if ids_to_be_cleared && !ids_to_be_cleared.find{|e| e==friend_deal.id}
+      friend_real_deal = friend_deal.friend_deal
+      # まずリンクを切る
+      friend_deal.destroy # 相手方リンクも連動して削除される
+      if !friend_real_deal.confirmed
+        # 未確認なら、本体も削除する
+        friend_real_deal.destroy
+      end
+    end
+  end
+  
+  def get_friend_deal_ids_to_be_cleared
+    current = Deal.find(self.id) # 変更前オブジェクト
+    friend_deal_ids_to_be_cleared = []
+    for account_entry in current.account_entries
+      for friend_deal in current.friend_deals
+        if account_entry.account.friend_user && account_entry.account.friend_user.id == friend_deal.friend_deal.user.id
+          new_amount = minus_account_id == account_entry.account_id ? self.amount * -1 : self.amount
+          if account_entry.amount != new_amount
+            friend_deal_ids_to_be_cleared << friend_deal.id
+            break
+          end
+        end
+      end
+    end
+    return friend_deal_ids_to_be_cleared
+  end
+  
+  
   
   
 end

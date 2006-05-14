@@ -251,6 +251,7 @@ ul {
 
 .jump {
   width:2em;
+  text-align: right;
 }
 
 input.readonly {
