@@ -22,6 +22,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.is_friend(user1_id, user2_id)
+    return 2 == Friend.count(:conditions => ["(user_id = ? and friend_user_id = ? and friend_level > 0) or (user_id = ? and friend_user_id == ? and friend_level > 0)", user1_id, user2_id, user2_id, user1_id])
+  end
+
+
   def self.find_by_login_id(login_id)
     find(:first, :conditions => ["login_id = ? ", login_id])
   end

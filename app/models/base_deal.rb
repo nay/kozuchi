@@ -7,25 +7,12 @@ class BaseDeal < ActiveRecord::Base
              :exclusively_dependent => true,
              :order => "amount"
 
-  has_many   :friend_deals,
-             :class_name => 'FriendDeal',
-             :foreign_key => 'deal_id',
-             :dependent => true
   belongs_to :user
            
   attr_writer :insert_before
   attr_accessor :old_date
 
   def is_subordinate
-    return false
-  end
-
-  def friend_for(account_name)
-    for friend_deal in self.friend_deals
-      if friend_deal.friend_deal.user.login_id == account_name
-        return true
-      end
-    end
     return false
   end
   

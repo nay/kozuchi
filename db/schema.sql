@@ -29,9 +29,12 @@ create table account_rules (
   foreign key (associated_account_id) references accounts
 );
 
-/* --- account_pairs --*/
-drop table if exists account_pairs;
-create table account 
+/* --- deal_links --*/
+drop table if exists deal_links;
+create table deal_links (
+  id integer not null primary key autoincrement,
+  created_user_id integer /* not required, just for keep sql correct*/
+);
 
 /* --- accounts --- */
 drop table if exists accounts;
@@ -47,6 +50,7 @@ create table accounts (
 );
 
 /* -- friend_deals -- */
+/*
 drop table if exists friend_deals;
 create table friend_deals (
   id integer not null primary key autoincrement,
@@ -54,7 +58,7 @@ create table friend_deals (
   deal_id integer not null,
   friend_deal_id integer not null
 );
-
+*/
 
 /* --- deals --- */
 drop table if exists deals;
@@ -80,6 +84,7 @@ create table account_entries (
   deal_id integer not null,
   amount integer not null,
   balance integer,
+  friend_link_id integer,
   foreign key (account_id) references accounts,
   foreign key (deal_id) references deals, 
   foreign key (user_id) references users

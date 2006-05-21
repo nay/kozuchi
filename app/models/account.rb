@@ -47,6 +47,20 @@ class Account < ActiveRecord::Base
   RULE_ASSOCIATED_ASSET_TYPES = [
     ASSET_TYPES[1]
   ]
+
+  def partner_account
+    partner_account = self.partner_applying_account
+    p "applying_account = #{self.partner_applying_account}"
+    if partner_account
+      p "applied_account = #{self.partner_applied_account}"
+      if self.partner_applied_account && self.partner_applied_account.id == partner_account.id
+        p "applying == applied"
+        return partner_account if User.is_friend(self.user_id, partner_account.user_id)
+      end
+    end
+    return nil
+  end
+
   
   def self.get(user_id, account_id)
     return Account.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])
@@ -72,12 +86,12 @@ class Account < ActiveRecord::Base
   end
 
   
-  def friend_user
-    if self.account_type == ACCOUNT_ASSET && self.asset_type == ASSET_CREDIT
-      return User.find_friend_of(self.user_id, self.name)
-    end
-    nil
-  end
+#  def friend_user
+#    if self.account_type == ACCOUNT_ASSET && self.asset_type == ASSET_CREDIT
+#      return User.find_friend_of(self.user_id, self.name)
+#    end
+#    nil
+#  end
   
   def self.count_in_user(user_id, account_types = nil)
     if account_types

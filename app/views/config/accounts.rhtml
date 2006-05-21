@@ -47,7 +47,7 @@
             <% if !@account.associated_account_rules.empty? %>
               <span class="system">精算口座</span>
             <% end %>
-            <% if @account.friend_user %>
+            <% if @account.partner_account %>
               <span class="system">フレンド連動</span>
             <% end %>
           </td>

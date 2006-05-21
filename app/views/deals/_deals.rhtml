@@ -42,7 +42,7 @@
                   <%=deal.balance ? "残高確認" : deal.summary%>
                 </td>
               <% end %>
-              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || deal.friend_for(account_entry.account.name) %>
+              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.friend_link_id %>
                 <td class="account">
                   <%= account_entry.account.name %>
                 </td>
@@ -53,7 +53,7 @@
                   <% if deal.child_for(account_entry.account.id) %>
                     <%= link_to('→従',{:action => 'jump', :id => deal.child_for(account_entry.account.id).id}) %>
                   <% end %>
-                  <% if deal.friend_for(account_entry.account.name) %>
+                  <% if account_entry.friend_link_id %>
                     <span>友</span>
                   <% end %>
                 </td>

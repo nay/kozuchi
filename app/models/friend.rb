@@ -70,11 +70,11 @@ class Friend < ActiveRecord::Base
   end
   
   # このフレンドに自分の名前と同じ債権口座がある
-  def exists_my_account
-    if is_friend
-      return Account.find(:first, :conditions => ["user_id = ? and name = ? and account_type = ? and asset_type = ?", self.friend_user.id, self.user.login_id, Account::ACCOUNT_ASSET, Account::ASSET_CREDIT])
-    end
-  end
+#  def exists_my_account
+#    if is_friend
+#      return Account.find(:first, :conditions => ["user_id = ? and name = ? and account_type = ? and asset_type = ?", self.friend_user.id, self.user.login_id, Account::ACCOUNT_ASSET, Account::ASSET_CREDIT])
+#    end
+#  end
   
   def friend_status
     if @my_level < 0

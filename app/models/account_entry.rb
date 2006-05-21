@@ -3,8 +3,16 @@ class AccountEntry < ActiveRecord::Base
              :class_name => 'BaseDeal',
              :foreign_key => 'deal_id'
   belongs_to :account
+  belongs_to :friend_link,
+             :class_name => 'DealLink',
+             :foreign_key => 'friend_link_id'
   validates_presence_of :amount
   attr_accessor :balance_estimated, :unknown_amount
+
+  # フレンド連動があれば新しく作る
+  def before_create
+    create_friend_deal
+  end
   
   def self.balance_start(user_id, account_id, year, month)
     start_exclusive = Date.new(year, month, 1)
@@ -63,6 +71,37 @@ class AccountEntry < ActiveRecord::Base
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                              ) || 0)
     end
+  end
+
+  private
+  def create_friend_deal
+    return unless !friend_link_id # すでにある＝お手玉になる
+    p "create_friend_deal. account = #{account.name}"
+    partner_account = account.partner_account
+    return unless partner_account
+    p "partner_account = #{partner_account.name}"
+    partner_other_account = Account.find_default_asset(partner_account.user_id)
+    p "partner_other_account = #{partner_other_account.name}"
+    return unless partner_other_account
+    
+    new_link = friend_deal_link = DealLink.create(:created_user_id => account.user_id)
+    
+    self.friend_link_id = new_link.id
+    
+    p "going to create friend_deal."
+    friend_deal = Deal.new(
+              :minus_account_id => partner_account.id,
+              :minus_account_friend_link_id => new_link.id,
+              :plus_account_id => partner_other_account.id,
+              :amount => self.amount,
+              :user_id => partner_account.user_id,
+              :date => self.deal.date,
+              :summary => self.deal.summary,
+              :confirmed => false
+    )
+    friend_deal.save!
+    p "saved friend_deal #{friend_deal.id}"
+    
   end
 
 end
