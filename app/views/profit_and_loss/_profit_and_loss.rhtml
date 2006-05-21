@@ -13,7 +13,8 @@
         <% for summary in @expenses_summaries %>
           <tr>
             <td><%= summary.name %></td>
-            <td class="percentage"><%= @expenses_sum != 0 ? (summary.sum * 100/ @expenses_sum).to_i : 0%>%</td>
+            <td class="percentage"><%= @expenses_sum != 0 ?
+      (summary.sum * 100.0 / @expenses_sum).round : 0%>%</td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>
@@ -28,7 +29,8 @@
         <% for summary in @incomes_summaries %>
           <tr>
             <td><%= summary.name %></td>
-            <td class="percentage"><%= @incomes_sum != 0 ? (summary.sum * 100/ @incomes_sum).to_i : 0 %>%</td>
+            <td class="percentage"><%= @incomes_sum != 0 ?
+(summary.sum * 100.0 / @incomes_sum).round : 0 %>%</td>
             <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
           </tr>
         <% end %>
@@ -53,6 +55,41 @@
         </tr>
       </table>
       </td>  
+      </tr>
+      <tr>
+      <td class="inner_table" width="50%">
+<%
+  labels = ''
+  values = ''
+  for summary in @expenses_summaries
+     v = (@expenses_sum != 0 ? (summary.sum * 100.0 / @expenses_sum).round : 0)
+     values += v.to_s + ','
+     labels += summary.name + ','
+  end
+%>
+      <table class="book">
+        <tr>
+	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	</tr>
+      </table>
+      </td>
+      <td class="inner_table" width="50%">
+<%
+  labels = ''
+  values = ''
+  for summary in @incomes_summaries
+     v = (@incomes_sum != 0 ? (summary.sum * 100.0 / @incomes_sum).round : 0)
+     values += v.to_s + ','
+     labels += summary.name + ','
+  end
+%>
+      <table class="book">
+        <tr>
+	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	</tr>
+      </table>
+      </td>
+      </tr>
       </tr>
       </table>
 

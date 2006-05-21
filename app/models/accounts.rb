@@ -20,7 +20,8 @@ class Accounts
   
   def set_percentage
     each do |account|
-      account.percentage = @sum != 0 ? (100*account.balance/@sum).to_i : 0
+      account.percentage = 
+        @sum != 0 ? (100.0 * account.balance / @sum).round : 0
     end
   end
   

@@ -21,6 +21,19 @@
 </table>
 </div>
 
+<%
+  labels = ''
+  values = ''
+  @assets.plus.each do |account|
+    labels += account.name + ','
+    values += account.percentage.to_s + ','
+  end
+%>
+<% if labels.count(',') > 1 then %>
+<img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+<% end %>
+</div>
+
 <div class="bottom_box">
 <table class="book">
   <tr>
@@ -37,4 +50,15 @@
 <table class="book">
   <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
 </table>
-</div>
+
+<%
+  labels = ''
+  values = ''
+  @assets.minus.each do |account|
+    labels += account.name + ','
+    values += account.percentage.to_s + ','
+  end
+%>
+<% if labels.count(',') > 1 then %>
+<img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+<% end %>
