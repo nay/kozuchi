@@ -57,7 +57,6 @@
       </td>  
       </tr>
       <tr>
-      <td class="inner_table" width="50%">
 <%
   labels = ''
   values = ''
@@ -67,13 +66,16 @@
      labels += summary.name + ','
   end
 %>
+<% if labels.count(',') > 1 then %>
+      <td class="inner_table" width="50%">
       <table class="book">
         <tr>
 	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
 	</tr>
       </table>
       </td>
-      <td class="inner_table" width="50%">
+<% end %>
+
 <%
   labels = ''
   values = ''
@@ -83,12 +85,16 @@
      labels += summary.name + ','
   end
 %>
+<% if labels.count(',') > 1 then %>
+      <td class="inner_table" width="50%">
       <table class="book">
         <tr>
 	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
 	</tr>
       </table>
       </td>
+<% end %>
+
       </tr>
       </tr>
       </table>
