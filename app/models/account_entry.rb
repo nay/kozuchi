@@ -1,3 +1,4 @@
+# å£åº§ã¸ã®è¨˜å…¥ãƒ‡ãƒ¼ã‚¿ã‚¯ãƒ©ã‚¹
 class AccountEntry < ActiveRecord::Base
   belongs_to :deal,
              :class_name => 'BaseDeal',
@@ -9,10 +10,65 @@ class AccountEntry < ActiveRecord::Base
   validates_presence_of :amount
   attr_accessor :balance_estimated, :unknown_amount
 
-  # ƒtƒŒƒ“ƒh˜A“®‚ª‚ ‚ê‚ÎV‚µ‚­ì‚é
+  # â†“â†“  call back methods  â†“â†“
+
+  # æ–°è¦ä½œæˆæ™‚ï¼šãƒ•ãƒ¬ãƒ³ãƒ‰é€£å‹•ãŒã‚ã‚Œã°æ–°ã—ãä½œã‚‹
   def before_create
     create_friend_deal
   end
+
+  # æ›´æ–°æ™‚ï¼šãƒ•ãƒ¬ãƒ³ãƒ‰å–å¼•ãŒã‚ã‚Šã€æœªç¢ºå®šãªã‚‰æ›´æ–°ã™ã‚‹ã€‚ç¢ºå®šãªã‚‰é–¢ä¿‚ã‚’åˆ‡ã£ã¦æ–°ãŸã«ç™»éŒ²ã™ã‚‹ã€‚
+  # ãŠæ‰‹ç‰ã®ã‚±ãƒ¼ã‚¹ï¼šè‡ªåˆ†ãŒæœªç¢ºå®šã§æ›´æ–°ã•ã‚Œã¦ã„ã‚‹ã¨ãã¯ç¢ºå®Ÿã«ã“ã®å‡¦ç†ã®ç›¸æ‰‹ãªã®ã§ã¯ã˜ãã€‚ç¢ºå®šã§ã‚‚ friend_link ãŒãªã„ï¼ˆé–¢ä¿‚ãŒãã‚‰ã‚ŒãŸï¼‰ãªã‚‰ã¯ã˜ãã€‚
+  def before_update
+    p "before_update in account_entry #{self.id}:  friend_link = #{friend_link} friend_link_id = #{friend_link_id} deal.confirmed = #{deal.confirmed}"
+    return unless friend_link
+    return unless deal.confirmed
+    another_entry = friend_link.another(self.id)
+    return unless another_entry # nil when called from another_entry's before_destroy
+    friend_deal = another_entry.deal
+    if friend_deal.confirmed
+      p "before_update #{self.id}: friend_deal is confirmed"
+      another_entry.friend_link_id = nil
+      another_entry.save!
+      p "before_update #{self.id}: another_entry #{another_entry.id}'s friend_link_id is cleared."
+      friend_link.destroy
+      self.friend_link_id = nil
+      self.friend_link = nil
+      p "friend_link_id = #{self.friend_link_id}, friend_link = #{friend_link}"
+      create_friend_deal # ã™ã§ã«ãƒ•ãƒ¬ãƒ³ãƒ‰ã§ãªã‘ã‚Œã°ä½œã‚‰ã‚Œãªã„
+    else
+      partner_account = account.partner_account
+      partner_other_account = Account.find_default_asset(partner_account.user_id) if partner_account
+      
+      if partner_account && partner_other_account
+        friend_deal.attributes = {
+              :minus_account_id => partner_account.id,
+              :plus_account_id => partner_other_account.id,
+              :amount => self.amount,
+              :date => self.deal.date,
+              :summary => self.deal.summary,
+        }
+        friend_deal.save!
+      end
+    end
+  end
+  
+  def before_destroy
+    p "before_destroy in account_entry #{self.id}"
+    return unless friend_link
+    another_entry = friend_link.another(self.id)
+    if another_entry
+      friend_deal = another_entry.deal
+      p "before_destroy  #{self.id} : another_entry.friend_link = #{another_entry.friend_link.id} is going to be cleared."
+      another_entry.friend_link_id = nil
+      p "before_destroy #{self.id} : going to update another_entry #{another_entry.id}." 
+      another_entry.save!
+      friend_deal.destroy unless friend_deal.confirmed
+    end
+    friend_link.destroy
+  end
+
+  # â†‘â†‘  call back methods  â†‘â†‘
   
   def self.balance_start(user_id, account_id, year, month)
     start_exclusive = Date.new(year, month, 1)
@@ -21,27 +77,27 @@ class AccountEntry < ActiveRecord::Base
 
   def self.balance_at_the_start_of(user_id, account_id, start_exclusive)
   
-    # ŠúŒÀ‚æ‚è‘O‚ÌÅV‚Ìc‚Šm”Fî•ñ‚ğæ“¾‚·‚é
+    # æœŸé™ã‚ˆã‚Šå‰ã®æœ€æ–°ã®æ®‹é«˜ç¢ºèªæƒ…å ±ã‚’å–å¾—ã™ã‚‹
     entry = AccountEntry.find(:first,
                       :select => "et.*",
                       :conditions => ["et.user_id = ? and et.account_id = ? and dl.date < ? and et.balance is not null", user_id, account_id, start_exclusive],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id",
                       :order => "dl.date desc, dl.daily_seq")
-    # ŠúŒÀ‚æ‚è‘O‚Éc‚Šm”F‚ª‚È‚¢ê‡
+    # æœŸé™ã‚ˆã‚Šå‰ã«æ®‹é«˜ç¢ºèªãŒãªã„å ´åˆ
     if !entry
-      # ŠúŒÀ‚æ‚èŒã‚Éc‚Šm”F‚ª‚ ‚é‚©H
+      # æœŸé™ã‚ˆã‚Šå¾Œã«æ®‹é«˜ç¢ºèªãŒã‚ã‚‹ã‹ï¼Ÿ
       entry = AccountEntry.find(:first,
                       :select => "et.*",
                       :conditions => ["et.user_id = ? and et.account_id = ? and dl.date >= ? and et.balance is not null", user_id, account_id, start_exclusive],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id",
                       :order => "dl.date, dl.daily_seq")
-      # ŠúŒÀ‚æ‚èŒã‚É‚àc‚Šm”F‚ª‚È‚¯‚ê‚ÎAŠúŒÀˆÈ‘O‚ÌˆÙ“®‡Œv‚ğc‚‚Æ‚·‚éi‰Šúc‚‚O‚Æ‚İ‚È‚·jB‚È‚¯‚ê‚Î‚O‚Æ‚·‚éB
+      # æœŸé™ã‚ˆã‚Šå¾Œã«ã‚‚æ®‹é«˜ç¢ºèªãŒãªã‘ã‚Œã°ã€æœŸé™ä»¥å‰ã®ç•°å‹•åˆè¨ˆã‚’æ®‹é«˜ã¨ã™ã‚‹ï¼ˆåˆæœŸæ®‹é«˜ï¼ã¨ã¿ãªã™ï¼‰ã€‚ãªã‘ã‚Œã°ï¼ã¨ã™ã‚‹ã€‚
       if !entry
         return AccountEntry.sum("amount",
                       :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and dl.confirmed = ?", user_id, account_id, start_exclusive, true],
                       :joins => "as et inner join deals as dl on et.deal_id = dl.id"
                       ) || 0
-      # ŠúŒÀ‚æ‚èŒã‚Éc‚Šm”F‚ª‚ ‚ê‚ÎAŠúñ‚©‚çc‚Šm”F‚Ü‚Å‚ÌˆÙ“®•ª‚ğ‚»‚Ìc‚‚©‚çˆø‚¢‚½‚à‚Ì‚ğŠúñc‚‚Æ‚·‚é
+      # æœŸé™ã‚ˆã‚Šå¾Œã«æ®‹é«˜ç¢ºèªãŒã‚ã‚Œã°ã€æœŸé¦–ã‹ã‚‰æ®‹é«˜ç¢ºèªã¾ã§ã®ç•°å‹•åˆ†ã‚’ãã®æ®‹é«˜ã‹ã‚‰å¼•ã„ãŸã‚‚ã®ã‚’æœŸé¦–æ®‹é«˜ã¨ã™ã‚‹
       else
         return entry.balance - (AccountEntry.sum("amount",
                       :conditions => [
@@ -57,7 +113,7 @@ class AccountEntry < ActiveRecord::Base
                        ) || 0)
       end
       
-    # ŠúŒÀ‚æ‚è‘O‚ÌÅVc‚Šm”F‚ª‚ ‚ê‚ÎA‚»‚êˆÈ~‚ÌˆÙ“®‡Œv‚Æc‚‚ğ‘«‚µ‚½‚à‚Ì‚Æ‚·‚éB
+    # æœŸé™ã‚ˆã‚Šå‰ã®æœ€æ–°æ®‹é«˜ç¢ºèªãŒã‚ã‚Œã°ã€ãã‚Œä»¥é™ã®ç•°å‹•åˆè¨ˆã¨æ®‹é«˜ã‚’è¶³ã—ãŸã‚‚ã®ã¨ã™ã‚‹ã€‚
     else
       return entry.balance + (AccountEntry.sum("amount",
                              :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and (dl.date > ? or (dl.date =? and dl.daily_seq > ?)) and dl.confirmed = ?",
@@ -75,7 +131,8 @@ class AccountEntry < ActiveRecord::Base
 
   private
   def create_friend_deal
-    return unless !friend_link_id # ‚·‚Å‚É‚ ‚é‚¨è‹Ê‚É‚È‚é
+    p "create_friend_deal #{self.id} : friend_link_id = #{friend_link_id}"
+    return unless !friend_link_id # ã™ã§ã«ã‚ã‚‹ï¼ãŠæ‰‹ç‰ã«ãªã‚‹
     p "create_friend_deal. account = #{account.name}"
     partner_account = account.partner_account
     return unless partner_account
@@ -84,7 +141,7 @@ class AccountEntry < ActiveRecord::Base
     p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account
     
-    new_link = friend_deal_link = DealLink.create(:created_user_id => account.user_id)
+    new_link = DealLink.create(:created_user_id => account.user_id)
     
     self.friend_link_id = new_link.id
     

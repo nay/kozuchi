@@ -22,24 +22,26 @@ class Deal < BaseDeal
     return false
   end
 
+  # ↓↓  call back methods  ↓↓
+
   def before_save
     pre_before_save
   end
 
-  def after_create
-    p "after_create #{self.id}"
+  def after_save
+    p "after_save #{self.id}"
     create_relations
   end
   
   def before_update
-#    clear_friend_deals(get_friend_deal_ids_to_be_cleared)
-    clear_relations
-    create_relations
+    clear_entries_before_update    
+    children.clear
+#    create_relations
   end
 
   # Prepare sugar methods
   def after_find
-    p "after_find #{self.id}"
+#    p "after_find #{self.id}"
     set_old_date
     p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
 #    raise "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
@@ -51,26 +53,64 @@ class Deal < BaseDeal
   end
   
   def before_destroy
+    account_entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
     # フレンドリンクまたは本体までを消す
  #   clear_friend_deals
   end
   
+  def entry(account_id)
+    for entry in account_entries
+      return entry if entry.account_id.to_i == account_id.to_i
+    end
+    return nil
+  end
+
+  # ↑↑  call back methods  ↑↑
+  
   private
+
+  def clear_entries_before_update
+    for entry in account_entries
+      if @plus_account_id.to_i != entry.account_id.to_i && @minus_account_id.to_i != entry.account_id.to_i
+        p "plus_account_id = #{@plus_account_id} . minus_account_id = #{@minus_account_id}. this_entry_account_id = #{entry.account_id}" 
+        entry.destroy
+      end
+    end
+  end
 
   def clear_relations
     account_entries.clear
     children.clear
   end
+
+  def update_account_entry(is_minus)
+    if is_minus
+      entry_account_id = @minus_account_id
+      entry_amount = @amount.to_i*(-1)
+      entry_friend_link_id = @minus_account_friend_link_id
+    else
+      entry_account_id = @plus_account_id
+      entry_amount = @amount.to_i
+      entry_friend_link_id = nil
+    end
+    
+    entry = entry(entry_account_id)
+    if !entry
+      account_entries.create(:user_id => user_id, :account_id => entry_account_id, :friend_link_id => entry_friend_link_id, :amount => entry_amount)
+    else
+      if entry.amount != entry_amount
+        entry.amount = entry_amount
+        entry.save!
+      end
+    end
+  end
   
   def create_relations
+    # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
-    if @amount.to_i >= 0
-      account_entries.create(:user_id => user_id, :account_id => @minus_account_id, :friend_link_id => @minus_account_friend_link_id, :amount => @amount.to_i*(-1))
-    end
-    account_entries.create(:user_id => user_id, :account_id => @plus_account_id, :amount => @amount.to_i)
-    if @amount.to_i < 0
-      account_entries.create(:user_id => user_id, :account_id => @minus_account_id, :friend_link_id => @minus_account_friend_link_id, :amount => @amount.to_i*(-1))
-    end
+    update_account_entry(true) if @amount.to_i >= 0     # create minus
+    update_account_entry(false)                         # create plus
+    update_account_entry(true) if @amount.to_i < 0   # create_minus
 
     for i in 0..1
       account_rule = account_entries[i].account.account_rule
