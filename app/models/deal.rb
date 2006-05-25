@@ -134,34 +134,4 @@ class Deal < BaseDeal
     end
   end
   
-#  def clear_friend_deals(ids_to_be_cleared = nil)
-#    for friend_deal in friend_deals
-#      next if ids_to_be_cleared && !ids_to_be_cleared.find{|e| e==friend_deal.id}
-#      friend_real_deal = friend_deal.friend_deal
-#      # まずリンクを切る
-#      friend_deal.destroy # 相手方リンクも連動して削除される
-#      if !friend_real_deal.confirmed
-#        # 未確認なら、本体も削除する
-#        friend_real_deal.destroy
-#      end
-#    end
-#  end
-  
-#  def get_friend_deal_ids_to_be_cleared
-#    current = Deal.find(self.id) # 変更前オブジェクト
-#    friend_deal_ids_to_be_cleared = []
-#    for account_entry in current.account_entries
-#      for friend_deal in current.friend_deals
-#        if account_entry.account.friend_user && account_entry.account.friend_user.id == friend_deal.friend_deal.user.id
-#          new_amount = minus_account_id == account_entry.account_id ? self.amount * -1 : self.amount
-#          if account_entry.amount != new_amount
-#            friend_deal_ids_to_be_cleared << friend_deal.id
-#            break
-#          end
-#        end
-#      end
-#    end
-#    return friend_deal_ids_to_be_cleared
-#  end
-  
 end
