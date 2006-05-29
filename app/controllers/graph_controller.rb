@@ -22,7 +22,7 @@ class GraphController < ApplicationController
     pie.depth = 25
     pie.label_font = GRAPH_TT_FONT
     pie.label_size = GDChart::FONT_SIZE::SMALL
-    pie.label_ptsize = 10
+    pie.label_ptsize = 8
     pie.color     = colors
     pie.bg_color  = 0xFFFFFF
     pie.percent_labels = GDChart::Pie::PERCENT_TYPE::BELOW
