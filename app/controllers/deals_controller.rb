@@ -34,6 +34,37 @@ class DealsController < BookController
     render(:partial => "edit_balance", :layout => false)
   end
 
+  # 仕分け帳画面を初期表示するための処理
+  # パラメータ：年月、年月日、タブ（明細or残高）、選択行
+  def index
+    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
+    if @updated_deal
+      @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date
+    else
+      @target_month = session[:target_month]
+      @date = @target_month || DateBox.today
+      @target_month ||= DateBox.this_month
+    end
+    @tab_name = params[:tab_name] || 'deal'
+    
+    case @tab_name
+      when "deal"
+        prepare_select_deal_tab
+      else
+        prepare_select_balance_tab
+    end
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+  end
+
+  # 仕分け帳画面部分だけを更新するためのAjax対応処理
+  def update
+    @target_month = DateBox.new(params[:target_month])
+    today = DateBox.today
+    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
+    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    render(:partial => "deals", :layout => false)
+  end
+
   # ----- 編集実行系 --------------------------------------------------
 
   # タブシート内の「記入」ボタンが押されたときのアクション
@@ -66,36 +97,6 @@ class DealsController < BookController
 #    deal.destroy_deeply
     flash[:notice] = "#{deal_info} を削除しました。"
     redirect_to(:action => 'index')
-  end
-
-
-  # 仕分け帳画面を初期表示するための処理
-  # パラメータ：年月、年月日、タブ（明細or残高）、選択行
-  def index
-    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
-    if @updated_deal
-      @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month)
-    else
-      @target_month = session[:target_month]
-      @date = @target_month || DateBox.today
-      @target_month ||= DateBox.this_month
-    end
-    @tab_name = params[:tab_name] || 'deal'
-    
-    case @tab_name
-      when "deal"
-        prepare_select_deal_tab
-      else
-        prepare_select_balance_tab
-    end
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-  end
-
-  # 仕分け帳画面部分だけを更新するためのAjax対応処理
-  def update
-    @target_month = DateBox.new(params[:target_month])
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-    render(:partial => "deals", :layout => false)
   end
   
   # 確認処理
