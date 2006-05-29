@@ -30,7 +30,7 @@ class GraphController < ApplicationController
 
 
     require 'tempfile'
-    file = Tempfile.new('kozuchi_graph', 'tmp')
+    file = Tempfile.new('kozuchi_graph', "#{RAILS_ROOT}/tmp")
     file.close
     File.open(file.path, 'w+b') do |f|
       pie.out(300, 200, f, GDChart::Pie::TYPE_3D, values, labels)
