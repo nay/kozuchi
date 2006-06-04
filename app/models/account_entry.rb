@@ -27,11 +27,8 @@ class AccountEntry < ActiveRecord::Base
     return unless another_entry # nil when called from another_entry's before_destroy
     friend_deal = another_entry.deal
     if friend_deal.confirmed
-      p "before_update #{self.id}: friend_deal is confirmed"
-      another_entry.friend_link_id = nil
-      another_entry.save!
-      p "before_update #{self.id}: another_entry #{another_entry.id}'s friend_link_id is cleared."
       friend_link.destroy
+ # TODO: refresh
       self.friend_link_id = nil
       self.friend_link = nil
       p "friend_link_id = #{self.friend_link_id}, friend_link = #{friend_link}"
@@ -54,17 +51,8 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def before_destroy
-    p "before_destroy in account_entry #{self.id}"
+    p "before_destroy AccountEntry #{self.id}"
     return unless friend_link
-    another_entry = friend_link.another(self.id)
-    if another_entry
-      friend_deal = another_entry.deal
-      p "before_destroy  #{self.id} : another_entry.friend_link = #{another_entry.friend_link.id} is going to be cleared."
-      another_entry.friend_link_id = nil
-      p "before_destroy #{self.id} : going to update another_entry #{another_entry.id}." 
-      another_entry.save!
-      friend_deal.destroy unless friend_deal.confirmed
-    end
     friend_link.destroy
   end
 
@@ -133,8 +121,9 @@ class AccountEntry < ActiveRecord::Base
   def create_friend_deal
     p "create_friend_deal #{self.id} : friend_link_id = #{friend_link_id}"
     return unless !friend_link_id # すでにある＝お手玉になる
-    p "create_friend_deal. account = #{account.name}"
+    p "create_friend_deal. account = #{account.id}"
     partner_account = account.partner_account
+    p "partner_account = #{partner_account}"
     return unless partner_account
     p "partner_account = #{partner_account.name}"
     partner_other_account = Account.find_default_asset(partner_account.user_id)

@@ -114,6 +114,7 @@ class DealsController < BookController
     
     @target_month = DateBox.new('year' => deal.date.year, 'month' => deal.date.month)
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    @updated_deal = deal
     render(:partial => "deals", :layout => false)
   end
 
@@ -145,9 +146,10 @@ class DealsController < BookController
     if params[:deal][:id]
       deal = BaseDeal.get(params[:deal][:id].to_i, user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
-      
       deal.attributes = params[:deal]
-      
+      # 精算ルール以外の理由で未確認のものは確認にする
+      # モデルでやると相互作用による更新を見分けるのが大変なのでここでやる
+      deal.confirmed = true if !deal.confirmed && !deal.is_subordinate
     else
       deal = Deal.new(params[:deal])
       deal.user_id = user.id

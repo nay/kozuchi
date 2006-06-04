@@ -1,23 +1,24 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class DealTest < Test::Unit::TestCase
-#  fixtures :deals
-  fixtures :accounts
   fixtures :users
+  fixtures :accounts
 
-  def test_create_simple
+  # 取引保存時に、daily_seq が正しくつくことのテスト
+  def test_daily_seq
     user = User.find(1)
     assert user
     
-    deal = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
+    deal = Deal.new(:summary => "おにぎり",
+     :amount => "105",
+     :minus_account_id => "1",
+     :plus_account_id => "2",
+     :user_id => user.id
+    )
+    deal.date = Date.parse("2006/04/01");
+    deal.save!
 
-    # 追加
-    deal = Deal.create_or_update_simple(
-      deal,
-      user.id,
-      Date.parse("2006/04/01"), nil)
-
-    deal = Deal.find(1)
+    deal = Deal.find(deal.id)
     assert deal
     assert_equal user.id, deal.user_id
     assert_equal "おにぎり", deal.summary
@@ -33,58 +34,46 @@ class DealTest < Test::Unit::TestCase
     assert_equal 1, deal.daily_seq
 
     # 追加
-    deal2 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
-    deal2 = Deal.create_or_update_simple(
-      deal2,
-      user.id,
-      Date.parse("2006/04/01"), nil)
+    deal2 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01")})
+    deal2.save!
 
     assert_equal 2, deal2.daily_seq
-    
+
     #2の前に挿入
-    deal3 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
-    deal3 = Deal.create_or_update_simple(
-      deal3,
-      user.id,
-      Date.parse("2006/04/01"), deal2)
+    deal3 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01"), :insert_before => deal2})
+    deal3.save!
    
-   assert_equal 2, deal3.daily_seq
+    assert_equal 2, deal3.daily_seq
    
-   #dealがそのままでdeal2が3になることを確認
-   deal = Deal.find(deal.id)
-   assert_equal 1, deal.daily_seq
-   
-   deal2 = Deal.find(deal2.id)
-   assert_equal 3, deal2.daily_seq
-   
-    #日付違いを追加したら新規になることを確認
-    deal4 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
-    deal4 = Deal.create_or_update_simple(
-      deal4,
-      user.id,
-      Date.parse("2006/04/02"), nil)
-    assert_equal 1, deal4.daily_seq
+    #dealがそのままでdeal2が3になることを確認
+    deal = Deal.find(deal.id)
+    assert_equal 1, deal.daily_seq
     
+    deal2 = Deal.find(deal2.id)
+    assert_equal 3, deal2.daily_seq
+
+    #日付違いを追加したら新規になることを確認
+    deal4 = Deal.new(:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"))
+    deal4.save!
+    assert_equal 1, deal4.daily_seq
+
     #日付違いによる挿入がうまくいくことを確認
-    deal5 = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
-    deal5 = Deal.create_or_update_simple(
-      deal5,
-      user.id,
-      Date.parse("2006/04/02"), deal4)
+    deal5 = Deal.new(:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal4 )
+    deal5.save!
     assert_equal 1, deal5.daily_seq
     deal4 = Deal.find(deal4.id)
     assert_equal 2, deal4.daily_seq
+
     
     #日付と挿入ポイントがあっていないと例外が発生することを確認
     begin
-      dealx = Deal.new({:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2"})
-      Deal.create_or_update_simple(
-        dealx,
-        user.id,
-        Date.parse("2006/04/02"), deal)
+      dealx = Deal.new(:summary => "おにぎり", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal)
+      dealx.save!
       assert false
-    rescue ArgumentError
+    rescue Exception
       assert true
     end
+
   end
+  
 end

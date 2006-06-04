@@ -6,6 +6,10 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
+  def validate
+    errors.add(:minus_account_id, "同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
+  end
+
   # 自分の取引のなかに指定された口座IDが含まれるか
   def has_account(account_id)
     for entry in account_entries
@@ -26,6 +30,7 @@ class Deal < BaseDeal
 
   def before_save
     pre_before_save
+    
   end
 
   def after_save
@@ -36,7 +41,6 @@ class Deal < BaseDeal
   def before_update
     clear_entries_before_update    
     children.clear
-#    create_relations
   end
 
   # Prepare sugar methods
@@ -57,6 +61,8 @@ class Deal < BaseDeal
     # フレンドリンクまたは本体までを消す
  #   clear_friend_deals
   end
+
+  # ↑↑  call back methods  ↑↑
   
   def entry(account_id)
     for entry in account_entries
@@ -65,8 +71,6 @@ class Deal < BaseDeal
     return nil
   end
 
-  # ↑↑  call back methods  ↑↑
-  
   private
 
   def clear_entries_before_update
