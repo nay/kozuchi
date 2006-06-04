@@ -49,6 +49,14 @@ create table accounts (
   foreign key (user_id) references users
 );
 
+/* --- account_links --- */
+drop table if exists account_links;
+create table account_links (
+  id integer not null primary key autoincrement,
+  account_id integer not null,
+  connected_account_id integer not null
+);
+
 /* --- deals --- */
 drop table if exists deals;
 create table deals (
