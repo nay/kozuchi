@@ -9,6 +9,11 @@
       <span>さんの</span>
       <%= text_field('account', 'partner_account_name', :size => 16, :class => "text") %>
       <span>への記入を</span>
+      <select name="account[interactive]" id="account_interactive">
+        <option value="false">単方向</option>
+        <option value="true">双方向</option>
+      </select>
+      <span>で</span>
       <button type="submit">連動</button>
     <%= end_form_tag %>
   </div>
@@ -17,26 +22,52 @@
 <div class="bottom_box">
   <table class="masters">
     <tr>
-      <th colspan="2"><%= session[:user].login_id%>さんの設定</th>
-      <th colspan="3">フレンド設定</th>
-      <th rowspan="2">操作</th>
-    </tr>
-    <tr>
-      <th>種類</th>
-      <th>名称</th>
-      <th>ユーザー名</th>
-      <th>種類</th>
-      <th class="button_action">名称</th>
+      <th>連動元</th>
+      <th>関係</th>
+      <th>連動先</th>
+      <th>操作</th>
     </tr>
     <% for account in @accounts_with_partners %>
-      <tr>
-        <td><%= Account::account_types[account.account_type] %><%= "(#{Account::asset_types[account.asset_type]})" if account.asset_type %></td>
-        <td><%= account.name %></td>
-        <td><%= account.partner_applying_account.user.login_id %></td>
-        <td><%= Account::account_types[account.partner_applying_account.account_type] %><%= "(#{Account::asset_types[account.partner_applying_account.asset_type]})" if account.partner_applying_account.asset_type %></td>
-        <td><%= account.partner_applying_account.name %></td>
-        <td class="button_action"><%= button_to("解消", {:action => 'clear_account_partner', :id => account.id}, :class => 'button')%></td>
-      </tr>
+      <% count = 0 %>
+      <% for connected_account in account.connected_accounts %>
+        <tr>
+          <% if count == 0 %>
+            <td rowspan="<%= account.connected_or_associated_accounts_size%>"><%= account.name_with_asset_type %></td>
+          <% end %>
+          <td>
+            <span>→</span><br />
+            <% if !account.associated_accounts.empty? && account.associated_accounts.detect {|e| e.id == connected_account.id} %>
+              <span>←</span>
+            <% end %>
+          </td>
+          <td>
+              <%= connected_account.name_with_user %>
+          </td>
+          <td>
+              <%= button_to("解消", {:action => 'clear_account_partner', :id => account.id, :connected_account_id => connected_account.id}, :class => 'button')%>
+          </td>
+        </tr>
+        <% count += 1 %>
+      <% end %>
+      <% for connected_account in account.associated_accounts %>
+        <% next if account.connected_accounts.detect {|e| e.id == connected_account.id}%>
+        <tr>
+          <% if count == 0 %>
+            <td rowspan="<%= account.connected_or_associated_accounts_size%>"><%= account.name_with_asset_type %></td>
+          <% end %>
+          <td>
+            <span>←</span><br />
+          </td>
+          <td>
+              <%= connected_account.name_with_user %>
+          </td>
+          <td>
+              <span>×</span>
+          </td>
+        </tr>
+        <% count += 1 %>
+      <% end %>
+      
     <% end %>
   </table>
 </div>

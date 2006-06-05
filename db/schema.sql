@@ -52,7 +52,6 @@ create table accounts (
 /* --- account_links --- */
 drop table if exists account_links;
 create table account_links (
-  id integer not null primary key autoincrement,
   account_id integer not null,
   connected_account_id integer not null
 );

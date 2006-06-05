@@ -11,6 +11,18 @@ class Account < ActiveRecord::Base
              :class_name => 'Account',
              :foreign_key => 'partner_account_id'
   belongs_to :user
+
+  has_and_belongs_to_many :connected_accounts,
+                          :class_name => 'Account',
+                          :join_table => 'account_links',
+                          :foreign_key => 'connected_account_id',
+                          :association_foreign_key => 'account_id'
+
+  has_and_belongs_to_many :associated_accounts,
+                          :class_name => 'Account',
+                          :join_table => 'account_links',
+                          :foreign_key => 'account_id',
+                          :association_foreign_key => 'connected_account_id'
   
   attr_accessor :account_type_name, :balance, :percentage
   attr_reader :name_with_asset_type
@@ -103,6 +115,10 @@ class Account < ActiveRecord::Base
 
   def name_with_asset_type
     return "#{self.name}(#{@@asset_types[asset_type]||@@account_types[account_type]})"
+  end
+
+  def name_with_user
+    return "#{user.login_id} さんの #{name_with_asset_type}"
   end
 
   def self.account_types
@@ -214,6 +230,28 @@ class Account < ActiveRecord::Base
     end
     
     return ASSET_TYPES
+  end
+  
+  def add_connected_account(target_user_login_id, target_account_name, interactive = true)
+    friend_user = User.find_friend_of(self.user_id, target_user_login_id)
+    raise "no friend user" unless friend_user
+
+    connected_account = Account.get_by_name(friend_user.id, target_account_name)
+    raise "フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。" unless connected_account
+
+    raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
+    connected_accounts << connected_account
+    # interactive なら逆リンクもはる。すでにあったら黙ってパスする
+    associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
+    save!
+  end
+  
+  def connected_or_associated_accounts_size
+    size = connected_accounts.size
+    for account in associated_accounts
+      size += 1 unless connected_accounts.detect{|e| e.id == account.id}
+    end
+    return size
   end
   
   protected

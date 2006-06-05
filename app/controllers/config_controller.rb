@@ -300,7 +300,10 @@ class ConfigController < MainController
     for l in friend_links
       @friends << l.friend_user
     end
-    @accounts_with_partners = Account.find(:all, :conditions => ["user_id = ? and partner_account_id is not null", user.id])
+    @accounts_with_partners = []
+    for account in @accounts
+      @accounts_with_partners << account unless account.connected_accounts.empty? && account.associated_accounts.empty?
+    end
   end
   
   def update_account_partner
@@ -310,27 +313,17 @@ class ConfigController < MainController
     account = Account.get(user.id, account_id)
     raise "no account" unless account
     
-    partner_user = User.find_friend_of(user.id, params[:account][:partner_login_id])
-    raise "no partner user" unless partner_user
-
-    partner_account_name = params[:account][:partner_account_name]
-    if !partner_account_name || partner_account_name == ""
+    friend_user_login_id = params[:account][:partner_login_id]
+    target_account_name = params[:account][:partner_account_name]
+    if !target_account_name || target_account_name == ""
       flash_error("フレンドの口座名を指定してください")
       redirect_to(:action => 'friend_accounts')
       return
     end
+    interactive = params[:account][:interactive] == 'true'
 
-    partner_account = Account.get_by_name(partner_user.id, partner_account_name)
-    if !partner_account
-      flash_error("フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。")
-      redirect_to(:action => 'friend_accounts')
-      return
-    end
-    
-    account.partner_account_id = partner_account.id
-    begin
-      account.save!
-      flash_notice("#{account.name}のフレンド連動を更新しました。")
+    begin  
+      account.add_connected_account(friend_user_login_id, target_account_name, interactive)
     rescue => err
       if account.errors.empty?
         flash_error(err)
