@@ -1,0 +1,35 @@
+<div class="top_box">
+  <div class="form_box">
+      <p class="guide">
+        <span>受け皿設定を行うと、口座、費目、収入内訳を選択したときに相手の口座を選択状態にすることができます。また、取引連携で自動的に記入される場合の受け皿口座とすることができます。</span>
+      </p>
+  </div>
+</div>
+<%= render :partial => 'shared/information' %>
+<div class="bottom_box">
+  <table class="masters">
+    <tr>
+      <th>対象</th>
+      <th>受け皿口座</th>
+      <th>操作</th>
+    </tr>
+    <% for account in @accounts %>
+      <%= form_tag :action => 'update'%>
+      <tr>
+        <td><%= account.name_with_asset_type %></td>
+        <td>
+          <select name="account[partner_account_id]" id="account_partner_account_id" style="width:16em;"><% # todo セレクトボックス長さ %>
+            <option value="">-- 設定なし --</option>
+            <%= options_from_collection_for_select(
+              @partner_account_candidates[account], "id", "name_with_asset_type", account.partner_account_id) %>
+          </select>
+        </td>
+        <td>
+          <input type="hidden" name="account[id]" id="account_id" value="<%= account.id%>"/>
+          <button type="submit">更新</button>
+        </td>
+      </tr>
+    <%= end_form_tag %>
+    <% end %>
+  </table>
+</div>

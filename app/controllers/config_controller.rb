@@ -11,6 +11,7 @@ class ConfigController < MainController
     add_menu('精算ルール', {:controller => 'config',:action => 'account_rules'})
     add_menu('フレンド', {:controller => 'config',:action => 'friends'})
     add_menu('取引連動', {:controller => 'deal_links', :action => 'index'})
+    add_menu('受け皿', {:controller => 'partner_account', :action => 'index'})
     add_menu('カスタマイズ', {:controller => 'config',:action => 'preferences'})
     add_menu('プロフィール', {:controller => 'config',:action => 'profile'})
   end
@@ -49,8 +50,9 @@ class ConfigController < MainController
     begin
       new_account.save!
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
-    rescue
+    rescue => err
       flash_validation_errors(new_account)
+      flash_error(err)
     end
     redirect_to(:action => @actions[new_account.account_type])
   end

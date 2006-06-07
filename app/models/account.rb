@@ -17,6 +17,10 @@ class Account < ActiveRecord::Base
                           :join_table => 'account_links',
                           :foreign_key => 'account_id',
                           :association_foreign_key => 'connected_account_id'
+
+  belongs_to              :partner_account,
+                          :class_name => 'Account',
+                          :foreign_key => 'partner_account_id'
   
   attr_accessor :account_type_name, :balance, :percentage
   attr_reader :name_with_asset_type
@@ -230,23 +234,11 @@ class Account < ActiveRecord::Base
     if ACCOUNT_ASSET == account_type && ASSET_CREDIT_CARD != asset_type && ASSET_CREDIT != asset_type
       errors.add(:asset_type, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
-    # 連動設定（自分からの線と相手からの線の両方をチェック）で資産-資産、収入-支出、支出-収入でしかつながっていないことをチェック
-    case account_type
-      when ACCOUNT_ASSET
-        connectable_type = ACCOUNT_ASSET
-      when ACCOUNT_EXPENSE
-        connectable_type = ACCOUNT_INCOME
-      when ACCOUNT_INCOME
-        connectable_type = ACCOUNT_EXPENSE
+    # 連動設定のチェックは有効だがバリデーションエラーでもなぜかリンクは張られてしまうため連動追加メソッド側でチェック
+    # 受け皿口座が同じユーザーであることをチェック  TODO: ＵＩで制限しているため、単体テストにて確認したい
+    if partner_account
+      errors.add(:partner_account_id, "同じユーザーの口座しか受け皿口座に設定できません。") unless partner_account.user_id == self.user_id
     end
-    for c in connected_accounts
-      errors.add(:account_type, "#{c.name_with_user} との連携設定が不正です。口座同士か、収支・支出のペアでないと連携できません。") unless c.account_type == connectable_type
-    end
-    for c in associated_accounts
-      next if connected_accounts.detect{|e|e.id.to_i == c.id}
-      errors.add(:account_type, "#{c.name_with_user} との連携設定が不正です。口座同士か、収支・支出のペアでないと連携できません。") unless c.account_type == connectable_type
-    end
-    
   end
   
   def before_destroy
