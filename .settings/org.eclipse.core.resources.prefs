@@ -1,4 +1,4 @@
-#Mon Jun 05 06:31:23 JST 2006
+#Wed Jun 07 13:34:07 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -6,6 +6,7 @@ encoding//app/controllers/application.rb=UTF-8
 encoding//app/controllers/assets_controller.rb=UTF-8
 encoding//app/controllers/book_controller.rb=UTF-8
 encoding//app/controllers/config_controller.rb=UTF-8
+encoding//app/controllers/deal_links_controller.rb=UTF-8
 encoding//app/controllers/deals_controller.rb=UTF-8
 encoding//app/controllers/login_controller.rb=UTF-8
 encoding//app/controllers/main_controller.rb=UTF-8
@@ -38,10 +39,10 @@ encoding//app/views/assets/index.rhtml=UTF-8
 encoding//app/views/book/need_accounts.rhtml=UTF-8
 encoding//app/views/config/account_rules.rhtml=UTF-8
 encoding//app/views/config/accounts.rhtml=UTF-8
-encoding//app/views/config/friend_accounts.rhtml=UTF-8
 encoding//app/views/config/friends.rhtml=UTF-8
 encoding//app/views/config/preferences.rhtml=UTF-8
 encoding//app/views/config/profile.rhtml=UTF-8
+encoding//app/views/deal_links/index.rhtml=UTF-8
 encoding//app/views/deals/_deals.rhtml=UTF-8
 encoding//app/views/deals/_edit_balance.rhtml=UTF-8
 encoding//app/views/deals/_edit_deal.rhtml=UTF-8
@@ -54,6 +55,7 @@ encoding//app/views/shared/_calendar.rhtml=UTF-8
 encoding//app/views/shared/_footer.rhtml=UTF-8
 encoding//app/views/shared/_information.rhtml=UTF-8
 encoding//db/development_testdata.sql=UTF-8
+encoding//doc/design.txt=UTF-8
 encoding//public/javascripts/book.js=UTF-8
 encoding//public/stylesheets/book.css=UTF-8
 encoding//public/stylesheets/login.css=UTF-8

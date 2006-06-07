@@ -2,21 +2,18 @@ class ConfigController < MainController
   
   PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]
   
-  def sub_title(action_name)
-    menu_caption(action_name)
-  end
-  
   def initialize
     super('設定')
-    add_menu('口座', {:action => 'assets'}, :action)
-    add_menu('費目', {:action => 'expenses'}, :action)
-    add_menu('収入内訳', {:action => 'incomes'}, :action)
+    add_menu('口座', {:controller => 'config', :action => 'assets'})
+    add_menu('費目', {:controller => 'config',:action => 'expenses'})
+    add_menu('収入内訳', {:controller => 'config',:action => 'incomes'})
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
-    add_menu('精算ルール', {:action => 'account_rules'}, :action)
-    add_menu('フレンド', {:action => 'friends'}, :action)
-    add_menu('フレンド連動', {:action => 'friend_accounts'}, :action)
-    add_menu('カスタマイズ', {:action => 'preferences'}, :action)
-    add_menu('プロフィール', {:action => 'profile'}, :action)
+    add_menu('精算ルール', {:controller => 'config',:action => 'account_rules'})
+    add_menu('フレンド', {:controller => 'config',:action => 'friends'})
+    add_menu('取引連動', {:controller => 'deal_links', :action => 'index'})
+    add_menu('フレンド連動', {:controller => 'config',:action => 'friend_accounts'})
+    add_menu('カスタマイズ', {:controller => 'config',:action => 'preferences'})
+    add_menu('プロフィール', {:controller => 'config',:action => 'profile'})
   end
   
   def index
@@ -289,67 +286,6 @@ class ConfigController < MainController
     end
     
     redirect_to(:action => 'friends')
-  end
-
-
-  # 口座のフレンド連動設定
-  def friend_accounts
-    @accounts = Account.find_all(user.id, [Account::ACCOUNT_ASSET, Account::ACCOUNT_EXPENSE, Account::ACCOUNT_INCOME])
-    @friends = []
-    friend_links = user.friends(true)
-    for l in friend_links
-      @friends << l.friend_user
-    end
-    @accounts_with_partners = []
-    for account in @accounts
-      @accounts_with_partners << account unless account.connected_accounts.empty? && account.associated_accounts.empty?
-    end
-  end
-  
-  def update_account_partner
-    account_id = @params[:account] ? @params[:account][:id] : nil
-    raise "no account_id" unless account_id
-    
-    account = Account.get(user.id, account_id)
-    raise "no account" unless account
-    
-    friend_user_login_id = params[:account][:partner_login_id]
-    target_account_name = params[:account][:partner_account_name]
-    if !target_account_name || target_account_name == ""
-      flash_error("フレンドの口座名を指定してください")
-      redirect_to(:action => 'friend_accounts')
-      return
-    end
-    interactive = params[:account][:interactive] == 'true'
-
-    begin  
-      account.add_connected_account(friend_user_login_id, target_account_name, interactive)
-    rescue => err
-      if account.errors.empty?
-        flash_error(err)
-        flash_error(err.backtrace.to_s)
-      else
-        flash_validation_errors(account)
-      end
-    end
-    redirect_to(:action => 'friend_accounts')
-  end
-  
-  def clear_account_partner
-    p "clear_account_partner"
-    id = params[:id]
-    account = Account.get(user.id, id)
-    raise "no account" if !account
-    
-    account.partner_account_id = nil
-    begin
-      account.save!
-      flash_notice("#{account.name}のフレンド連動を解除しました。")
-    rescue => err
-      flash_error(err)
-      flash_error(err.backtrace.to_s)
-    end
-    redirect_to(:action => 'friend_accounts')
   end
   
 end

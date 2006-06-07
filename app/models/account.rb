@@ -59,6 +59,12 @@ class Account < ActiveRecord::Base
   RULE_ASSOCIATED_ASSET_TYPES = [
     ASSET_TYPES[1]
   ]
+  
+  # 連携設定 ------------------
+
+  def clear_connection(connected_account)
+    connected_accounts.delete(connected_account)
+  end
 
   def partner_account
     partner_account = self.partner_applying_account
@@ -97,14 +103,6 @@ class Account < ActiveRecord::Base
     )
   end
 
-  
-#  def friend_user
-#    if self.account_type == ACCOUNT_ASSET && self.asset_type == ASSET_CREDIT
-#      return User.find_friend_of(self.user_id, self.name)
-#    end
-#    nil
-#  end
-  
   def self.count_in_user(user_id, account_types = nil)
     if account_types
       return count(:conditions => ["user_id = ? and account_type in (?)", user_id, account_types.join(',')])
@@ -113,10 +111,14 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # 表示系 ---------------------
+
+  # 勘定名（勘定種類 or 資産種類)
   def name_with_asset_type
     return "#{self.name}(#{@@asset_types[asset_type]||@@account_types[account_type]})"
   end
 
+  # with_asset_type の前にユーザー名をつけたもの
   def name_with_user
     return "#{user.login_id} さんの #{name_with_asset_type}"
   end
