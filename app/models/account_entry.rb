@@ -117,6 +117,13 @@ class AccountEntry < ActiveRecord::Base
                              ) || 0)
     end
   end
+  
+  # リンクされたaccount_entry を返す
+  def linked_account_entry
+    return nil unless friend_link
+    return friend_link.another(self.id)
+  end
+  
 
   private
   
