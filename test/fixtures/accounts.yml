@@ -1,33 +1,30 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-cache:
+first_cache:
   id: 1
   user_id: 1
   name: åªã‡
   account_type: 1
   asset_type: 1
-food:
+first_food:
   id: 2
   user_id: 1
   name: êHîÔ
   account_type: 2
-second:
+first_second:
   id: 3
   user_id: 1
   name: second
   account_type: 1
   asset_type: 4
-  partner_account_id: 5
 second_cache:
   id: 4
   user_id: 2
   name: åªã‡
   account_type: 1
   asset_type: 1
-first:
+second_first:
   id: 5
   user_id: 2
   name: first
   account_type: 1
   asset_type: 4
-  partner_account_id: 3
-

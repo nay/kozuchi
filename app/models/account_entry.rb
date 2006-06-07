@@ -8,7 +8,7 @@ class AccountEntry < ActiveRecord::Base
              :class_name => 'DealLink',
              :foreign_key => 'friend_link_id'
   validates_presence_of :amount
-  attr_accessor :balance_estimated, :unknown_amount
+  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected
 
   # ↓↓  call back methods  ↓↓
 
@@ -34,11 +34,12 @@ class AccountEntry < ActiveRecord::Base
       p "friend_link_id = #{self.friend_link_id}, friend_link = #{friend_link}"
       create_friend_deal # すでにフレンドでなければ作られない
     else
-      partner_account = account.partner_account
+      partner_account = connected_account
       partner_other_account = Account.find_default_asset(partner_account.user_id) if partner_account
       
       if partner_account && partner_other_account
         friend_deal.attributes = {
+              :user_id => partner_account.user_id,
               :minus_account_id => partner_account.id,
               :plus_account_id => partner_other_account.id,
               :amount => self.amount,
@@ -118,14 +119,26 @@ class AccountEntry < ActiveRecord::Base
   end
 
   private
+  
+  def connected_account
+    c = self.account_to_be_connected ? account.connected_accounts.detect{|e| e.id == connected_account.id} : nil
+    if !c
+      c = account.connected_accounts.size == 1 ? account.connected_accounts[0] : nil
+    end
+    return c
+  end
+
+  # 新しく連携先取引を作成する
+  # connected_account が指定されていれば、それが連携対象となっていれば登録する
+  # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
   def create_friend_deal
     p "create_friend_deal #{self.id} : friend_link_id = #{friend_link_id}"
     return unless !friend_link_id # すでにある＝お手玉になる
     p "create_friend_deal. account = #{account.id}"
-    partner_account = account.partner_account
+    partner_account = connected_account
     p "partner_account = #{partner_account}"
     return unless partner_account
-    p "partner_account = #{partner_account.name}"
+    
     partner_other_account = Account.find_default_asset(partner_account.user_id)
     p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account

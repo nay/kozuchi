@@ -45,7 +45,6 @@ create table accounts (
   account_type integer not null,
   asset_type integer,
   sort_key integer,
-  partner_account_id integer,
   foreign key (user_id) references users
 );
 

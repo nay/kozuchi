@@ -4,6 +4,7 @@ class FriendDealTest < Test::Unit::TestCase
   fixtures :users
   fixtures :friends
   fixtures :accounts
+  fixtures :account_links
   
   # フレンド取引のテスト
   def test_not_confirmed

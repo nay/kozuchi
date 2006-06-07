@@ -4,12 +4,6 @@ class Account < ActiveRecord::Base
   has_many :associated_account_rules,
            :class_name => 'AccountRule',
            :foreign_key => 'associated_account_id'
-  belongs_to :partner_applying_account,
-             :class_name => 'Account',
-             :foreign_key => 'partner_account_id'
-  has_one    :partner_applied_account,
-             :class_name => 'Account',
-             :foreign_key => 'partner_account_id'
   belongs_to :user
 
   has_and_belongs_to_many :connected_accounts,
@@ -69,7 +63,7 @@ class Account < ActiveRecord::Base
     raise "no friend user" unless friend_user
 
     connected_account = Account.get_by_name(friend_user.id, target_account_name)
-    raise "フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。" unless connected_account
+    raise "フレンド #{partner_user.login_id} さんには #{target_account_name} がありません。" unless connected_account
 
     raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
     
@@ -84,20 +78,14 @@ class Account < ActiveRecord::Base
     connected_accounts.delete(connected_account)
   end
 
-  def partner_account
-    partner_account = self.partner_applying_account
-    p "applying_account = #{self.partner_applying_account}"
-    if partner_account
-      p "applied_account = #{self.partner_applied_account}"
-      if self.partner_applied_account && self.partner_applied_account.id == partner_account.id
-        p "applying == applied"
-        return partner_account if User.is_friend(self.user_id, partner_account.user_id)
-      end
+  def connected_or_associated_accounts_size
+    size = connected_accounts.size
+    for account in associated_accounts
+      size += 1 unless connected_accounts.detect{|e| e.id == account.id}
     end
-    return nil
+    return size
   end
 
-  
   def self.get(user_id, account_id)
     return Account.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])
   end
@@ -215,26 +203,6 @@ class Account < ActiveRecord::Base
     end
   end
   
-  def after_save
-    # とにかくセーブは行う。
-    # セーブした結果として、不整合が起きたら調整する
-    if self.partner_account_id
-    # 自分がpartner指定している以外の口座からpartner指定されていたら、指定されているリンクを解除する
-      Account.update_all("partner_account_id = null", ["partner_account_id = ? and id != ?", self.id, self.partner_account_id])
-      # 自分がpartner指定している口座から partner指定されていなかったら、空いていたら張る。空いていなければ例外
-      if !self.partner_applying_account(true).partner_account_id
-        partner_applying_account.partner_account_id = self.id
-        partner_applying_account.save!
-      else
-        # 自分以外のものとリンクが張られていたら例外を発生させる
-        raise "'#{self.partner_applying_account.user.login_id}'さんの'#{self.partner_applying_account.name}'はすでにほかの口座との連動が設定されています。" if self.partner_applying_account.partner_account_id != self.id
-        # 自分と張られている場合はなにもしない
-      end
-    else
-    # パートナー指定していなければ全部解除するだけ
-      Account.update_all("partner_account_id = null", ["partner_account_id = ?", self.id])
-    end
-  end
   
   # ルールとバインドできる口座種類か
   def rule_applicable
@@ -250,15 +218,6 @@ class Account < ActiveRecord::Base
     end
     
     return ASSET_TYPES
-  end
-  
-  
-  def connected_or_associated_accounts_size
-    size = connected_accounts.size
-    for account in associated_accounts
-      size += 1 unless connected_accounts.detect{|e| e.id == account.id}
-    end
-    return size
   end
   
   protected

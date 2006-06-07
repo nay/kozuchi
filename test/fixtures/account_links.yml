@@ -1,5 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 first:
-  id: 1
+  account_id: 3
+  connected_account_id: 5
 another:
-  id: 2
+  account_id: 5
+  connected_account_id: 3

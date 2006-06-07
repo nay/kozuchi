@@ -30,6 +30,7 @@
       <% if @account.account_type == 1%>
         <th>種別</th>
       <% end %>
+      <th>詳細</th>
       <th>並び順</th>
       <th>変更</th>
       <th>削除</th>
@@ -41,17 +42,19 @@
           <td>
             <%= select('account[]', 'asset_type',
                        @account.asset_type_options)%>
-            <% if @account.account_rule %>
-              <span class="system">精算ルール</span>
-            <% end %>
-            <% if !@account.associated_account_rules.empty? %>
-              <span class="system">精算口座</span>
-            <% end %>
-            <% if @account.partner_account %>
-              <span class="system">フレンド連動</span>
-            <% end %>
           </td>
         <% end %>
+        <td>
+          <% if @account.account_rule %>
+              <span class="system">精算ルール</span>
+          <% end %>
+          <% if !@account.associated_account_rules.empty? %>
+            <span class="system">精算口座</span>
+          <% end %>
+          <% if @account.connected_or_associated_accounts_size > 0 %>
+            <span class="system">取引連動</span>
+          <% end %>
+        </td>
         <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>
         <% if @account == @accounts.first %>
           <td rowspan="<%= @accounts.size %>" class="button_action"><button type="submit">変更</button></td>
