@@ -33,7 +33,7 @@ class DealLinksController < ConfigController
     interactive = params[:account][:interactive] == 'true'
 
     begin  
-      account.add_connected_account(friend_user_login_id, target_account_name, interactive)
+      account.connect(friend_user_login_id, target_account_name, interactive)
     rescue => err
       if account.errors.empty?
         flash_error(err)

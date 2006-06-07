@@ -46,6 +46,8 @@ class Account < ActiveRecord::Base
   
   @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権'}
 
+  @@connectable_type = {ACCOUNT_ASSET => ACCOUNT_ASSET, ACCOUNT_EXPENSE => ACCOUNT_INCOME, ACCOUNT_INCOME => ACCOUNT_EXPENSE}
+
   ASSET_TYPES = [
     [@@asset_types[ASSET_CACHE], ASSET_CACHE],
     [@@asset_types[ASSET_BANKING_FACILITY], ASSET_BANKING_FACILITY],
@@ -61,6 +63,22 @@ class Account < ActiveRecord::Base
   ]
   
   # 連携設定 ------------------
+
+  def connect(target_user_login_id, target_account_name, interactive = true)
+    friend_user = User.find_friend_of(self.user_id, target_user_login_id)
+    raise "no friend user" unless friend_user
+
+    connected_account = Account.get_by_name(friend_user.id, target_account_name)
+    raise "フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。" unless connected_account
+
+    raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
+    
+    raise "#{@@account_types[account_type]} には #{@@account_types[connected_account.account_type]} を連動できません。#{@@account_types[@@connectable_type[account_type]]} だけを連動することができます。" unless connected_account.account_type == @@connectable_type[account_type]
+    connected_accounts << connected_account
+    # interactive なら逆リンクもはる。すでにあったら黙ってパスする
+    associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
+    save!
+  end
 
   def clear_connection(connected_account)
     connected_accounts.delete(connected_account)
@@ -234,19 +252,6 @@ class Account < ActiveRecord::Base
     return ASSET_TYPES
   end
   
-  def add_connected_account(target_user_login_id, target_account_name, interactive = true)
-    friend_user = User.find_friend_of(self.user_id, target_user_login_id)
-    raise "no friend user" unless friend_user
-
-    connected_account = Account.get_by_name(friend_user.id, target_account_name)
-    raise "フレンド #{partner_user.login_id} さんには #{partner_account_name} がありません。" unless connected_account
-
-    raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
-    connected_accounts << connected_account
-    # interactive なら逆リンクもはる。すでにあったら黙ってパスする
-    associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
-    save!
-  end
   
   def connected_or_associated_accounts_size
     size = connected_accounts.size
@@ -266,6 +271,23 @@ class Account < ActiveRecord::Base
     if ACCOUNT_ASSET == account_type && ASSET_CREDIT_CARD != asset_type && ASSET_CREDIT != asset_type
       errors.add(:asset_type, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
+    # 連動設定（自分からの線と相手からの線の両方をチェック）で資産-資産、収入-支出、支出-収入でしかつながっていないことをチェック
+    case account_type
+      when ACCOUNT_ASSET
+        connectable_type = ACCOUNT_ASSET
+      when ACCOUNT_EXPENSE
+        connectable_type = ACCOUNT_INCOME
+      when ACCOUNT_INCOME
+        connectable_type = ACCOUNT_EXPENSE
+    end
+    for c in connected_accounts
+      errors.add(:account_type, "#{c.name_with_user} との連携設定が不正です。口座同士か、収支・支出のペアでないと連携できません。") unless c.account_type == connectable_type
+    end
+    for c in associated_accounts
+      next if connected_accounts.detect{|e|e.id.to_i == c.id}
+      errors.add(:account_type, "#{c.name_with_user} との連携設定が不正です。口座同士か、収支・支出のペアでないと連携できません。") unless c.account_type == connectable_type
+    end
+    
   end
   
   def before_destroy
