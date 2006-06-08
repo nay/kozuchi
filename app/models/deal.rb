@@ -1,6 +1,6 @@
 # 異動明細クラス。
 class Deal < BaseDeal
-  attr_accessor :minus_account_id, :plus_account_id, :amount, :minus_account_friend_link_id
+  attr_accessor :minus_account_id, :plus_account_id, :amount, :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
              :class_name => 'SubordinateDeal',
              :foreign_key => 'parent_deal_id',
@@ -87,20 +87,27 @@ class Deal < BaseDeal
     children.clear
   end
 
-  def update_account_entry(is_minus)
+  def update_account_entry(is_minus, is_first, deal_link_for_second)
+    deal_link_id_for_second = deal_link_for_second ? deal_link_for_second.id : nil
     if is_minus
       entry_account_id = @minus_account_id
       entry_amount = @amount.to_i*(-1)
       entry_friend_link_id = @minus_account_friend_link_id
+      entry_friend_link_id ||= deal_link_id_for_second if !is_first
+      another_entry_account = is_first ? Account.find(@plus_account_id) : nil
+      # second に上記をわたしても無害だが不要なため処理を省く
     else
       entry_account_id = @plus_account_id
       entry_amount = @amount.to_i
-      entry_friend_link_id = nil
+      entry_friend_link_id = @plus_account_friend_link_id
+      entry_friend_link_id ||= deal_link_id_for_second if !is_first
+      another_entry_account = is_first ? Account.find(@minus_account_id) : nil
+      # second に上記をわたしても無害だが不要なため処理を省く
     end
     
     entry = entry(entry_account_id)
     if !entry
-      account_entries.create(:user_id => user_id, :account_id => entry_account_id, :friend_link_id => entry_friend_link_id, :amount => entry_amount)
+      account_entries.create(:user_id => user_id, :account_id => entry_account_id, :friend_link_id => entry_friend_link_id, :amount => entry_amount, :another_entry_account => another_entry_account )
     else
       if entry.amount != entry_amount
         entry.amount = entry_amount
@@ -112,9 +119,10 @@ class Deal < BaseDeal
   def create_relations
     # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
-    update_account_entry(true) if @amount.to_i >= 0     # create minus
-    update_account_entry(false)                         # create plus
-    update_account_entry(true) if @amount.to_i < 0   # create_minus
+    entry = nil
+    entry = update_account_entry(true, true, nil) if @amount.to_i >= 0     # create minus
+    entry = update_account_entry(false, !entry, entry ? entry.new_plus_link : nil) # create plus
+    update_account_entry(true, false, entry.new_plus_link) if @amount.to_i < 0   # create_minus
 
     for i in 0..1
       account_rule = account_entries[i].account.account_rule

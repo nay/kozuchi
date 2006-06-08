@@ -8,7 +8,8 @@ class AccountEntry < ActiveRecord::Base
              :class_name => 'DealLink',
              :foreign_key => 'friend_link_id'
   validates_presence_of :amount
-  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected
+  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account
+  attr_reader :new_plus_link
 
   # ↓↓  call back methods  ↓↓
 
@@ -124,14 +125,26 @@ class AccountEntry < ActiveRecord::Base
     return friend_link.another(self.id)
   end
   
-
-  private
-  
   def connected_account
-    c = self.account_to_be_connected ? account.connected_accounts.detect{|e| e.id == connected_account.id} : nil
+    return AccountEntry.calc_connected_account(self.account, self.account_to_be_connected)
+  end
+  
+  def self.calc_connected_account(account, account_to_be_connected)
+    c = account_to_be_connected ? account.connected_accounts.detect{|e| e.id == connected_account.id} : nil
     if !c
       c = account.connected_accounts.size == 1 ? account.connected_accounts[0] : nil
     end
+    return c
+  end
+  
+  private
+
+  def connected_account_in_another_entry_other_than(another_account)
+    p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
+    return nil unless self.another_entry_account
+    c = AccountEntry.calc_connected_account(self.another_entry_account, nil) # todo to_be_connected. ignore? 
+    c = nil if c && (c.id == another_account.id || c.user.id != another_account.user.id)
+    p "returned #{c}"
     return c
   end
 
@@ -146,19 +159,27 @@ class AccountEntry < ActiveRecord::Base
     p "partner_account = #{partner_account}"
     return unless partner_account
     
-    partner_other_account = Account.find_default_asset(partner_account.user_id)
+    # 相方のentry の口座が渡されていれば、その連携先が同じユーザーでこのentryの連携先以外か調べる
+    partner_other_account = connected_account_in_another_entry_other_than(partner_account)
+    # ※相方の連携先がこの口座の連携先なら、default_assetを介して２つ作るままとする。
+    # 相方 entry の連携先もこれから作る Deal となるため、相方用 deal_link を用意する。
+    # この相方用 link は、相方処理のために取り出せるよう、インスタンス変数に格納しておく
+    @new_plus_link = partner_other_account ? DealLink.create(:created_user_id => account.user_id) : nil
+      
+    partner_other_account ||= Account.find_default_asset(partner_account.user_id)
     p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account
     
-    new_link = DealLink.create(:created_user_id => account.user_id)
+    new_minus_link = DealLink.create(:created_user_id => account.user_id)
     
-    self.friend_link_id = new_link.id
+    self.friend_link_id = new_minus_link.id
     
     p "going to create friend_deal."
     friend_deal = Deal.new(
               :minus_account_id => partner_account.id,
-              :minus_account_friend_link_id => new_link.id,
+              :minus_account_friend_link_id => new_minus_link.id,
               :plus_account_id => partner_other_account.id,
+              :plus_account_friend_link_id => @new_plus_link ? @new_plus_link.id : nil,
               :amount => self.amount,
               :user_id => partner_account.user_id,
               :date => self.deal.date,
