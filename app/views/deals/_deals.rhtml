@@ -53,7 +53,7 @@
                   <% if deal.child_for(account_entry.account.id) %>
                     <%= link_to('→従',{:action => 'jump', :id => deal.child_for(account_entry.account.id).id}) %>
                   <% end %>
-                  <% if account_entry.friend_link_id %>
+                  <% if account_entry.linked_account_entry %>
                     <span><%= account_entry.linked_account_entry.deal.user.login_id %></span>
                   <% end %>
                 </td>

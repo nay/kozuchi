@@ -31,6 +31,13 @@ class FriendDealTest < Test::Unit::TestCase
     # 相手が未確定な状態で金額を変更したら相手も変わる
     first_deal.attributes = {:amount => 1200}
     first_deal.save!
+
+    # 以前の相手は削除されている
+    assert !AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
+
+    # 作り直されるのでとりなおす
+    another_entry = first_second_entry.friend_link.another(first_second_entry.id)
+    friend_link = first_second_entry.friend_link # あとでつかう
     
     another_entry = AccountEntry.find(another_entry.id)
     assert_equal 1200*(-1), another_entry.amount 
@@ -67,8 +74,11 @@ class FriendDealTest < Test::Unit::TestCase
 
     # 相手を確定にする
     friend_deal = another_entry.deal
-    friend_deal.confirmed = true
-    friend_deal.save!
+    friend_deal.confirm
+    
+    friend_deal = another_entry.deal(true) # とりなおす
+    
+    assert friend_deal.confirmed
     
     assert friend_deal.entry(5).friend_link
     

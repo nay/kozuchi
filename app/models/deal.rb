@@ -9,6 +9,7 @@ class Deal < BaseDeal
   def validate
     errors.add(:minus_account_id, "同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
   end
+  
 
   # 自分の取引のなかに指定された口座IDが含まれるか
   def has_account(account_id)
@@ -75,6 +76,7 @@ class Deal < BaseDeal
 
   def clear_entries_before_update
     for entry in account_entries
+      # この取引の勘定でなくなっていたら、entryを消す
       if @plus_account_id.to_i != entry.account_id.to_i && @minus_account_id.to_i != entry.account_id.to_i
         p "plus_account_id = #{@plus_account_id} . minus_account_id = #{@minus_account_id}. this_entry_account_id = #{entry.account_id}" 
         entry.destroy
@@ -107,13 +109,22 @@ class Deal < BaseDeal
     
     entry = entry(entry_account_id)
     if !entry
-      account_entries.create(:user_id => user_id, :account_id => entry_account_id, :friend_link_id => entry_friend_link_id, :amount => entry_amount, :another_entry_account => another_entry_account )
+      entry = account_entries.create(:user_id => user_id,
+                :account_id => entry_account_id,
+                :friend_link_id => entry_friend_link_id,
+                :amount => entry_amount,
+                :another_entry_account => another_entry_account)
     else
-      if entry.amount != entry_amount
+      # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
+      # entry.save がされるということは、リンクが消されて新しくDeal が作られるということを意味する。
+      if entry_amount != entry.amount || self.old_date != self.date
         entry.amount = entry_amount
+        entry.another_entry_account = another_entry_account
+        entry.friend_link_id = deal_link_id_for_second if !is_first && deal_link_id_for_second
         entry.save!
       end
     end
+    return entry
   end
   
   def create_relations

@@ -59,6 +59,11 @@ class BaseDeal < ActiveRecord::Base
   def set_old_date
     @old_date = self.date
   end
+  
+  def confirm
+    BaseDeal.update_all("confirmed = 't'", "id = #{self.id}") # todo sqlite3 boolean
+    # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
+  end
 
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。

@@ -17,49 +17,40 @@ class AccountEntry < ActiveRecord::Base
   def before_create
     create_friend_deal
   end
-
-  # 更新時：フレンド取引があり、未確定なら更新する。確定なら関係を切って新たに登録する。
-  # お手玉のケース：自分が未確定で更新されているときは確実にこの処理の相手なのではじく。確定でも friend_link がない（関係がきられた）ならはじく。
+  
   def before_update
-    p "before_update in account_entry #{self.id}:  friend_link = #{friend_link} friend_link_id = #{friend_link_id} deal.confirmed = #{deal.confirmed}"
-    return unless friend_link
-    return unless deal.confirmed
-    another_entry = friend_link.another(self.id)
-    return unless another_entry # nil when called from another_entry's before_destroy
-    friend_deal = another_entry.deal
-    if friend_deal.confirmed
-      friend_link.destroy
- # TODO: refresh
-      self.friend_link_id = nil
-      self.friend_link = nil
-      p "friend_link_id = #{self.friend_link_id}, friend_link = #{friend_link}"
-      create_friend_deal # すでにフレンドでなければ作られない
-    else
-      partner_account = connected_account
-      partner_other_account = Account.find_default_asset(partner_account.user_id) if partner_account
-      
-      if partner_account && partner_other_account
-        friend_deal.attributes = {
-              :user_id => partner_account.user_id,
-              :minus_account_id => partner_account.id,
-              :plus_account_id => partner_other_account.id,
-              :amount => self.amount,
-              :date => self.deal.date,
-              :summary => self.deal.summary,
-        }
-        friend_deal.save!
-      end
-    end
+    # リンクがあれば切る
+    clear_friend_deal
+    # 作る
+    create_friend_deal
   end
   
   def before_destroy
     p "before_destroy AccountEntry #{self.id}"
-    return unless friend_link
-    friend_link.destroy
+    clear_friend_deal
   end
 
   # ↑↑  call back methods  ↑↑
   
+  # friend_deal とのリンクを消す。相手が未確定なら相手自身も消す。
+  # 消したあとまた作られないようにstaticメソッドをつかう。
+  def clear_friend_deal
+    return unless friend_link
+    another_entry = friend_link.another(self.id)
+    friend_deal = another_entry.deal if another_entry
+    
+    # リンクを消す。
+    AccountEntry.update_all("friend_link_id = null", "friend_link_id = #{self.friend_link_id}")
+    DealLink.delete(self.friend_link_id)
+  
+    # このオブジェクトの状態更新
+    self.friend_link_id = nil
+    self.friend_link = nil
+    
+    # 相手があり、未確定なら相手も消す。連動して配下のentryをけすため destroy
+    friend_deal.destroy if friend_deal && !friend_deal.confirmed
+  end
+
   def self.balance_start(user_id, account_id, year, month)
     start_exclusive = Date.new(year, month, 1)
     return balance_at_the_start_of(user_id, account_id, start_exclusive)
@@ -165,6 +156,7 @@ class AccountEntry < ActiveRecord::Base
     # 相方 entry の連携先もこれから作る Deal となるため、相方用 deal_link を用意する。
     # この相方用 link は、相方処理のために取り出せるよう、インスタンス変数に格納しておく
     @new_plus_link = partner_other_account ? DealLink.create(:created_user_id => account.user_id) : nil
+    p "new_plus_link = #{@new_plus_link}"
       
     partner_other_account ||= Account.find_default_asset(partner_account.user_id)
     p "partner_other_account = #{partner_other_account.name}"
