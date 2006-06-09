@@ -37,7 +37,11 @@ class FriendDealTest < Test::Unit::TestCase
 
     # ì‚è’¼‚³‚ê‚é‚Ì‚Å‚Æ‚è‚È‚¨‚·
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
+    assert another_entry
+    
     friend_link = first_second_entry.friend_link # ‚ ‚Æ‚Å‚Â‚©‚¤
+    assert friend_link
+    friend_link_id = friend_link.id
     
     another_entry = AccountEntry.find(another_entry.id)
     assert_equal 1200*(-1), another_entry.amount 
@@ -46,8 +50,7 @@ class FriendDealTest < Test::Unit::TestCase
     first_deal.destroy
     another_entry = AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
     assert !another_entry
-    friend_link = DealLink.find(:first, :conditions => "id = #{friend_link.id}")
-    assert !friend_link
+    assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
     
   end
   

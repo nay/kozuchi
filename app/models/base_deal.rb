@@ -62,20 +62,20 @@ class BaseDeal < ActiveRecord::Base
   
   def confirm
     BaseDeal.update_all("confirmed = 't'", "id = #{self.id}") # todo sqlite3 boolean
-    # save ‚É‚·‚é‚ÆƒŠƒ“ƒN‚Ü‚Å‰e‹¿‚ª‚ ‚éBŠm’è‚Í’Pƒ‚ÉŠm’èƒtƒ‰ƒO‚¾‚¯‚ğ•Ï‚¦‚é‚×‚«‚È‚Ì‚Å‚±‚Ì‚æ‚¤‚É‚µ‚½B
+    # save ã«ã™ã‚‹ã¨ãƒªãƒ³ã‚¯ã¾ã§å½±éŸ¿ãŒã‚ã‚‹ã€‚ç¢ºå®šã¯å˜ç´”ã«ç¢ºå®šãƒ•ãƒ©ã‚°ã ã‘ã‚’å¤‰ãˆã‚‹ã¹ããªã®ã§ã“ã®ã‚ˆã†ã«ã—ãŸã€‚
   end
 
-  # daily_seq ‚ğƒZƒbƒg‚·‚éB
-  # super.before_save ‚Å‚ÍŒÄ‚Ño‚¹‚È‚¢‚½‚ß‚Ğ‚Æ‚Ü‚¸‚±‚Ì•û®‚ÅB
+  # daily_seq ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
+  # super.before_save ã§ã¯å‘¼ã³å‡ºã›ãªã„ãŸã‚ã²ã¨ã¾ãšã“ã®æ–¹å¼ã§ã€‚
   def pre_before_save
     self.daily_seq = nil if self.date != @old_date
   
-    # ”Ô†‚ª“ü‚Á‚Ä‚¢‚ê‚Î‚»‚Ì‚Ü‚Ü
+    # ç•ªå·ãŒå…¥ã£ã¦ã„ã‚Œã°ãã®ã¾ã¾
     return if self.daily_seq
 
-    # ‘}“üæ‚ªw’è‚³‚ê‚Ä‚¢‚ê‚Î‘}“ü   
+    # æŒ¿å…¥å…ˆãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°æŒ¿å…¥   
     if @insert_before
-      # “ú•t‚ªˆá‚Á‚½‚ç—áŠO
+      # æ—¥ä»˜ãŒé•ã£ãŸã‚‰ä¾‹å¤–
       raise "An inserting point should be in the same date with the target." if @insert_before.date != self.date
 
       Deal.connection.update(
@@ -83,7 +83,7 @@ class BaseDeal < ActiveRecord::Base
       )
       self.daily_seq = @insert_before.daily_seq;
 
-    # ‘}“üæ‚ªw’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎV‹K
+    # æŒ¿å…¥å…ˆãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°æ–°è¦
     else
       max = BaseDeal.maximum(:daily_seq,
         :conditions => ["user_id = ? and date = ?",
