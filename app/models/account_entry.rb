@@ -121,7 +121,7 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def self.calc_connected_account(account, account_to_be_connected)
-    c = account_to_be_connected ? account.connected_accounts.detect{|e| e.id == connected_account.id} : nil
+    c = account_to_be_connected ? account.connected_accounts.detect{|e| e.id == account_to_be_connected.id} : nil
     if !c
       c = account.connected_accounts.size == 1 ? account.connected_accounts[0] : nil
     end
@@ -157,7 +157,11 @@ class AccountEntry < ActiveRecord::Base
     # この相方用 link は、相方処理のために取り出せるよう、インスタンス変数に格納しておく
     @new_plus_link = partner_other_account ? DealLink.create(:created_user_id => account.user_id) : nil
     p "new_plus_link = #{@new_plus_link}"
-      
+    
+    # 二重接続でない場合の相方口座としては、先方ユーザーにおける受け皿設定があればそれを利用する。
+    partner_other_account ||= partner_account.partner_account
+    
+    # それもなければ適当な資産口座を割り当てる。
     partner_other_account ||= Account.find_default_asset(partner_account.user_id)
     p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account

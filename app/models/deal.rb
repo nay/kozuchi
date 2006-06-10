@@ -118,6 +118,10 @@ class Deal < BaseDeal
       # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
       # entry.save がされるということは、リンクが消されて新しくDeal が作られるということを意味する。
       if entry_amount != entry.amount || self.old_date != self.date
+        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
+        if entry.linked_account_entry
+          entry.account_to_be_connected = entry.linked_account_entry.account
+        end
         entry.amount = entry_amount
         entry.another_entry_account = another_entry_account
         entry.friend_link_id = deal_link_id_for_second if !is_first && deal_link_id_for_second

@@ -225,7 +225,7 @@ table.masters {
   vertical-align: top;
 }
 
-tr.unconfirmed td {
+tr.unconfirmed td, span.unconfirmed  {
   color: gray;
 }
 span.system, span.system_button {
