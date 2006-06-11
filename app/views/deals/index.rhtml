@@ -1,6 +1,7 @@
     <%= render (:partial => "shared/calendar") %>
     <div id="edit_box" class="middle_box">
-      <%= start_form_tag (:action => 'submit_tab') %>
+      <% #start_form_tag (:action => 'submit_tab') %>
+      <form action="<%= url_for(:action => 'submit_tab')%>" method="post" onSubmit="if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_amount') != null && $('deal_amount').value == '') {alert('金額を入力してください。');return false;}if ($('deal_balance') != null && $('deal_balance').value == '') {alert('残高を入力してください。');return false;}return true;">
         <div id="datebox">
           <%= text_field("date", "year", {:size => "4", :maxlength => "4"}) %>
           <%= text_field("date", "month", :size => "2", :maxlength => "2") %>
@@ -9,7 +10,8 @@
         <div id="tabwindow">
           <%= render :partial => ('edit_'+@tab_name) %>
         </div>
-      <%=end_form_tag%>
+      </form>
+      <% #end_form_tag%>
     </div>
 
     <div id="book" class="bottom_box">

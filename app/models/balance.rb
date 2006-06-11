@@ -1,6 +1,13 @@
 # 残高確認記入行クラス
 class Balance < BaseDeal
   attr_accessor :account_id, :balance
+  
+  validates_presence_of :balance, :message => '残高を入力してください。'
+
+  def before_validation
+    # もし金額にカンマが入っていたら正規化する
+    @balance = @balance.gsub(/,/,'')
+  end
 
   def before_save
     pre_before_save

@@ -8,7 +8,7 @@ class BaseDeal < ActiveRecord::Base
              :order => "amount"
 
   belongs_to :user
-           
+
   attr_writer :insert_before
   attr_accessor :old_date
 
