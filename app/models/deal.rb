@@ -6,8 +6,14 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
+  def before_validation
+    # もし金額にカンマが入っていたら正規化する
+    @amount = @amount.gsub(/,/,'')
+  end
+
   def validate
     errors.add(:minus_account_id, "同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
+    errors.add(:amount, "金額が0となっています。") if @amount.to_i == 0
   end
   
 
@@ -31,7 +37,6 @@ class Deal < BaseDeal
 
   def before_save
     pre_before_save
-    
   end
 
   def after_save
@@ -138,13 +143,16 @@ class Deal < BaseDeal
     entry = update_account_entry(true, true, nil) if @amount.to_i >= 0     # create minus
     entry = update_account_entry(false, !entry, entry ? entry.new_plus_link : nil) # create plus
     update_account_entry(true, false, entry.new_plus_link) if @amount.to_i < 0   # create_minus
+    
+    account_entries(true)
 
     for i in 0..1
-      account_rule = account_entries[i].account.account_rule
+      account_rule = account_entries[i].account.account_rule(true)
+      p "create_relations in deal #{self.id}: entry #{i} : account_id = #{account_entries[i].account.id} : account_rule = #{account_rule}"
       # 精算ルールに従って従属行を用意する
       if account_rule
         # どこからからルール適用口座への異動額
-        new_amount = account_entries[0].account_id == account_rule.account_id ? account_entries[0].amount : account_entries[1].amount
+        new_amount = account_entries[i].amount
         # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
         if (Account::ASSET_CREDIT_CARD == account_rule.account.asset_type && new_amount < 0) ||(Account::ASSET_CREDIT == account_rule.account.asset_type && new_amount > 0)
           children.create(
