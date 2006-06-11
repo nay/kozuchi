@@ -14,6 +14,15 @@ class User < ActiveRecord::Base
             :foreign_key => 'friend_user_id',
             :dependent => true
 
+  # 双方向に指定level以上のフレンドを返す
+  def interactive_friends(level)
+    # TODO 効率悪い
+    friend_users = []
+    for l in friends
+      friend_users << l.friend_user if l.friend_level >= level && l.friend_user.friends.detect{|e|e.friend_user_id == self.id && e.friend_level >= level}
+    end
+    return friend_users
+  end
 
   def self.find_friend_of(user_id, login_id)
     if 2 == Friend.count(:joins => "as fr inner join users as us on ((fr.user_id = us.id and fr.friend_user_id = #{user_id}) or (fr.user_id = #{user_id} and fr.friend_user_id = us.id))",

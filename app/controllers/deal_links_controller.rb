@@ -4,11 +4,7 @@ class DealLinksController < ConfigController
   # 取引連動初期表示画面
   def index
     @accounts = Account.find_all(user.id, [Account::ACCOUNT_ASSET, Account::ACCOUNT_EXPENSE, Account::ACCOUNT_INCOME])
-    @friends = []
-    friend_links = user.friends(true)
-    for l in friend_links
-      @friends << l.friend_user
-    end
+    @friends = user.interactive_friends(1)
     @accounts_with_partners = []
     for account in @accounts
       @accounts_with_partners << account unless account.connected_accounts.empty? && account.associated_accounts.empty?
