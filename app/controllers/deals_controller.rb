@@ -1,5 +1,14 @@
 class DealsController < BookController 
 
+  def rescue_action(exception)
+    flash_error(exception.to_s)
+    logger.error(exception.to_s)
+    for b in exception.backtrace
+      logger.error(b)
+    end
+    redirect_to(:action => 'index')
+  end
+
   # ----- 入力画面表示系 -----------------------------------------------
 
   # 指定された行にジャンプするアクション
@@ -71,21 +80,17 @@ class DealsController < BookController
   def submit_tab
     @date = DateBox.new(params[:date])
     options = {:action => 'index', :tab_name => params[:tab_name]}
-    begin
-      if "deal" == params[:tab_name]
-        deal = save_deal
-        options.store("deal[minus_account_id]", deal.minus_account_id)
-        options.store("deal[plus_account_id]", deal.plus_account_id)
-      else
-        deal = save_balance
-        # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
-      end
-      session[:target_month] = @date
-      flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
-      options.store("updated_deal_id", deal.id)
-    rescue => err
-      flash[:notice] = "エラーが発生したため記入できませんでした。" + err + err.backtrace.to_s
+    if "deal" == params[:tab_name]
+      deal = save_deal
+      options.store("deal[minus_account_id]", deal.minus_account_id)
+      options.store("deal[plus_account_id]", deal.plus_account_id)
+    else
+      deal = save_balance
+      # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
     end
+    session[:target_month] = @date
+    flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
+    options.store("updated_deal_id", deal.id)
     redirect_to(options)
   end
 
@@ -94,7 +99,6 @@ class DealsController < BookController
     deal = BaseDeal.find(params[:id])
     deal_info = format_deal(deal)
     deal.destroy
-#    deal.destroy_deeply
     flash[:notice] = "#{deal_info} を削除しました。"
     redirect_to(:action => 'index')
   end

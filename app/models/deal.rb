@@ -12,8 +12,8 @@ class Deal < BaseDeal
   end
 
   def validate
-    errors.add(:minus_account_id, "同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
-    errors.add(:amount, "金額が0となっています。") if @amount.to_i == 0
+    errors.add_to_base("同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
+    errors.add_to_base("金額が0となっています。") if @amount.to_i == 0
   end
   
 

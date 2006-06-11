@@ -1,7 +1,5 @@
       <!-- 通信欄-->
-      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
-        <div id="notice"><%=@flash[:notice]%></div>
-      <% end %>
+      <%= render(:partial => "shared/information") %>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>

@@ -4,6 +4,12 @@ class ApplicationController < ActionController::Base
   before_filter :set_charset
   before_filter :set_ssl
 
+  def rescue_action_in_public(exception)
+    p "rescue"
+    redirect_to(:controller => 'deals', :action => 'index')
+  end
+  
+
   def set_ssl
     if KOZUCHI_SSL
       request.env["HTTPS"] = "on"
@@ -18,6 +24,9 @@ class ApplicationController < ActionController::Base
   end
   
   def flash_error(message)
+    # TODO: validation error で Validation Failed が出るのを防ぐ
+    message = message.gsub(/Validation failed: /, '')
+  
     flash[:errors] ||= []
     flash[:errors] << message
   end
