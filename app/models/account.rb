@@ -224,7 +224,25 @@ class Account < ActiveRecord::Base
     return ASSET_TYPES
   end
   
+  # 口座の初期設定を行う
+  def self.create_default_accounts(user_id)
+    # 口座
+    create_accounts(user_id, ACCOUNT_ASSET, ['現金'], 1, ASSET_CACHE)
+    # 支出
+    create_accounts(user_id, ACCOUNT_EXPENSE, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
+    # 収入
+    create_accounts(user_id, ACCOUNT_INCOME, ['給料', '賞与', '利子・配当', '贈与'] )
+  end
+  
   protected
+  def self.create_accounts(user_id, account_type, names, sort_key_start = 1, asset_type = nil)
+    sort_key = sort_key_start
+    for name in names
+      create(:user_id => user_id, :name => name, :account_type => account_type, :asset_type => asset_type, :sort_key => sort_key)
+      sort_key += 1
+    end
+  end
+  
   def validate
     # asset_type が金融機関でないのに、精算口座として使われていてはいけない。
     if ACCOUNT_ASSET == account_type && ASSET_BANKING_FACILITY != asset_type

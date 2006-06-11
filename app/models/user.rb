@@ -46,6 +46,7 @@ class User < ActiveRecord::Base
   end
   def after_create
     @password = nil
+    Account.create_default_accounts(self.id)
   end
   
   private
