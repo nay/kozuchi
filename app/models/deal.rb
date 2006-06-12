@@ -8,7 +8,7 @@ class Deal < BaseDeal
 
   def before_validation
     # もし金額にカンマが入っていたら正規化する
-    @amount = @amount.gsub(/,/,'')
+    @amount = @amount.gsub(/,/,'') if @amount.class == String
   end
 
   def validate
