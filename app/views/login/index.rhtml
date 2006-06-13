@@ -4,13 +4,12 @@
     <title>小槌</title>
     <%= render :partial => "shared/html_header" %>
     <%= stylesheet_link_tag 'login' %>
-    <script type="text/javascript">
-//<![CDATA[
+    <%= javascript_tag <<-END
 window.onload = function() {
 	document.getElementById("user_login_id").focus();
 }
-//]]>
-    </script>
+END
+ %>
   </head>
   <body>
     <!-- header -->
