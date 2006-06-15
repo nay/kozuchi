@@ -62,6 +62,7 @@
   values = ''
   for summary in @expenses_summaries
      v = (@expenses_sum != 0 ? (summary.sum * 100.0 / @expenses_sum).round : 0)
+     next if v == 100 || v == 0
      values += v.to_s + ','
      labels += summary.name + ','
   end
@@ -81,6 +82,7 @@
   values = ''
   for summary in @incomes_summaries
      v = (@incomes_sum != 0 ? (summary.sum * 100.0 / @incomes_sum).round : 0)
+     next if v == 100 || v == 0
      values += v.to_s + ','
      labels += summary.name + ','
   end
@@ -155,6 +157,3 @@
       </td>
     </tr>
   </table>
-
-    　　
-      

@@ -1,5 +1,6 @@
 class GraphController < ApplicationController 
   GRAPH_TT_FONT = '/usr/local/share/fonts/sazanami-mincho.ttf'
+  verify :params => [:labels, :values]
 
   def pie
     labels = params[:labels].split(',')

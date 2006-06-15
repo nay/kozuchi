@@ -25,6 +25,7 @@
   labels = ''
   values = ''
   @assets.plus.each do |account|
+    next if account.percentage == 100 || account.percentage == 0
     labels += account.name + ','
     values += account.percentage.to_s + ','
   end
@@ -55,6 +56,7 @@
   labels = ''
   values = ''
   @assets.minus.each do |account|
+    next if account.percentage == 100 || account.percentage == 0
     labels += account.name + ','
     values += account.percentage.to_s + ','
   end
