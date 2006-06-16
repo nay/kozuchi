@@ -6,7 +6,7 @@ class Balance < BaseDeal
 
   def before_validation
     # もし金額にカンマが入っていたら正規化する
-    @balance = @balance.gsub(/,/,'')  if @amount.class == String
+    @balance = @balance.gsub(/,/,'')  if @balance.class == String
   end
 
   def before_save
