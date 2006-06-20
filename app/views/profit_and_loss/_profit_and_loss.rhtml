@@ -44,19 +44,6 @@
           <td>支出合計</td>
           <td class="amount"><%= number_with_delimiter(@expenses_sum)%></td>
         </tr>
-      </table>
-      </td>
-      <td class="inner_table" width="50%">
-      <!-- 収入合計 -->
-      <table class="book">
-        <tr>
-          <td>収入合計</td>
-          <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
-        </tr>
-      </table>
-      </td>  
-      </tr>
-      <tr>
 <%
   labels = ''
   values = ''
@@ -68,15 +55,19 @@
   end
 %>
 <% if labels.count(',') > 1 then %>
-      <td class="inner_table" width="50%">
-      <table class="book">
-        <tr>
-	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
-	</tr>
+       <tr>
+	     <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	   </tr>
+<% end %>
       </table>
       </td>
-<% end %>
-
+      <td class="inner_table" width="50%">
+      <!-- 収入合計 -->
+      <table class="book">
+        <tr>
+          <td>収入合計</td>
+          <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
+        </tr>
 <%
   labels = ''
   values = ''
@@ -88,14 +79,15 @@
   end
 %>
 <% if labels.count(',') > 1 then %>
-      <td class="inner_table" width="50%">
-      <table class="book">
         <tr>
-	 <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
-	</tr>
-      </table>
-      </td>
+	      <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	    </tr>
 <% end %>
+      </table>
+      </td>  
+      </tr>
+      <tr>
+
 
       </tr>
       </tr>
