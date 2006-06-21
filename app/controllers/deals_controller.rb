@@ -118,6 +118,14 @@ class DealsController < BookController
     render(:partial => "deals", :layout => false)
   end
 
+  # 新規編集でサマリが編集されたときにくるAjaxメソッド
+  def update_patterns
+    summary_key = request.raw_post
+    @patterns = Deal.search_by_summary(user.id, summary_key, 5)
+    p "patterns.size = #{@patterns.size}"
+    render(:partial => 'patterns')
+  end
+
 
   private
 
@@ -131,12 +139,14 @@ class DealsController < BookController
       Account.find_all(session[:user].id, [1,2]), false
      )
      @deal ||= Deal.new(params[:deal])
+    @patterns = [] # 入力支援    
   end
   
   def prepare_select_balance_tab
     @accounts_for_balance = Account.find_all(session[:user].id, [1])
     @deal ||=  Balance.new
   end
+
 
   # ----- 編集実行系 --------------------------------------------------
 

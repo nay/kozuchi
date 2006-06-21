@@ -20,7 +20,7 @@
       <% else %>
         <%= text_field("deal", "summary", :size => "40") %>
       <% end %>
-      <br />
+      <span id="patterns"><%= render :partial => "patterns" %></span>
       <%= text_field("deal", "amount", :size => "8", :disabled => @deal.is_subordinate, :class => @deal.is_subordinate ? 'readonly' : '') %>
       <span>円</span>
       <span id="account_minus">
@@ -43,7 +43,10 @@
         <% end %>
       </span>
       <button type="submit">記入</button>
+
+
     </div>
+
     <% if @deal.date %>
       <script>
         $('date_year').value = '<%=@deal.date.year%>'
@@ -52,4 +55,25 @@
       </script>
     <% end %>
 
+    <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :url => {:action => 'update_patterns'})%>
+
+    <%= javascript_tag <<-END
+      function setEditDeal(summary, amount, minus_account_id, plus_account_id) {
+        $('deal_amount').value = amount;
+        selectList('deal_account_minus_id', minus_account_id);
+        selectList('deal_account_plus_id', plus_account_id);
+        $('deal_summary').value = summary;
+      }
+    
+      function selectList(name, value) {
+        for (i = 0; i < $(name).options.length; i++) {
+          if ($(name).options[i].value == value) {
+            $(name).options.selectedIndex = i;
+            return;
+          }
+        }
+      }
+    
+END
+    %>
     

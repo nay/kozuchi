@@ -15,7 +15,29 @@ class Deal < BaseDeal
     errors.add_to_base("同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
     errors.add_to_base("金額が0となっています。") if @amount.to_i == 0
   end
-  
+
+  # summary の前方一致で検索する
+  def self.search_by_summary(user_id, summary_key, limit)
+    begin
+    return [] if summary_key.empty?
+    # まず summary と 日付(TODO: created_at におきかえたい)のセットを返す
+    p "search_by_summary : summary_key = #{summary_key}"
+    results = find_by_sql("select summary as summary, max(date) as date from deals where user_id = #{user_id} and type='Deal' and summary like '#{summary_key}%' group by summary limit #{limit}")
+    p "results.size = #{results.size}"
+    return [] if results.size == 0
+    conditions = ""
+    for r in results
+      conditions += " or " unless conditions.empty?
+      conditions += "(summary = '#{r.summary}' and date = '#{r.date}')"
+    end
+    p conditions
+    return Deal.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
+    rescue => err
+    p err
+    p err.backtrace
+    return []
+    end
+  end
 
   # 自分の取引のなかに指定された口座IDが含まれるか
   def has_account(account_id)

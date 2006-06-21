@@ -27,7 +27,6 @@ class AccountGroup
       groups << assets if assets
       groups << incomes if incomes
     end
-    p groups.to_s
     return groups
   end
   

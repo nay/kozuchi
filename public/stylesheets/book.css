@@ -18,6 +18,12 @@
   margin-top: 8px;
 }
 
+/* 選択可能エリア */
+.clickable_text {
+  border: 1px outset gold;
+  background-color: lightyellow;
+}
+
 /* 反転エリア */
 #header, #header *, #user_and_today {
   background-color: darkgoldenrod;
