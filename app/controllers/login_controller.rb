@@ -1,6 +1,6 @@
 class LoginController < ApplicationController
   before_filter :authorize, :except => :index
-  layout false
+  layout 'login'
   
   def index
     if request.get?
@@ -17,6 +17,7 @@ class LoginController < ApplicationController
     else
       flash[:notice] = "ログインに失敗しました。"
       @user.password = ""
+      redirect_to(:action => 'index') # post でなくするため
     end
   end
 
@@ -29,4 +30,5 @@ class LoginController < ApplicationController
       flash[:notice] = "ログアウトしました。"
       redirect_to(:action => "login")
   end
+  
 end

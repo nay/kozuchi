@@ -34,6 +34,10 @@ body {
   margin:10px;
   text-align: center;
 }
+#login_field table tr td input {
+  width: 8em;
+}
+
 #application_name {
   font-weight: bold;
   font-size: 1.8em;

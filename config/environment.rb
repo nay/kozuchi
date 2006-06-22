@@ -57,4 +57,7 @@ end
 
 KOZUCHI_SSL = false
 
-
+# USER_MANAGEMENT_TYPE
+#   open : Anybody can make new user.
+#   closed : Admin function only.
+KOZUCHI_USER_MANAGEMENT_TYPE = 'open'

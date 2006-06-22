@@ -1,0 +1,34 @@
+<%= render :partial => "shared/doctype" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>小槌</title>
+    <%= render :partial => "shared/html_header" %>
+    <%= stylesheet_link_tag 'login' %>
+    <%= javascript_include_tag "prototype" %>
+    <%= javascript_tag <<-END
+window.onload = function() {
+	document.getElementById("user_login_id").focus();
+}
+END
+ %>
+  </head>
+  <body>
+    <!-- header -->
+    <div id="login_title">
+      <span>Web家計簿</span><br/>
+      <span id="application_name">小槌</span>
+      <%= image_tag("/images/kozuchi.png", :size => "48x48")%>
+    </div>
+    <!-- 通信欄-->
+    <% if @flash[:notice] %>
+      <div id="login_message"><%=@flash[:notice]%></div>
+    <% end %>
+    
+    <%= @content_for_layout %>
+
+    <!-- footer -->
+    <%= render :partial => "shared/footer" %>
+  </body>
+</html>
+
+

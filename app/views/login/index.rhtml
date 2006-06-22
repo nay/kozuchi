@@ -1,43 +1,22 @@
-<%= render :partial => "shared/doctype" %>
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>小槌</title>
-    <%= render :partial => "shared/html_header" %>
-    <%= stylesheet_link_tag 'login' %>
-    <%= javascript_tag <<-END
-window.onload = function() {
-	document.getElementById("user_login_id").focus();
-}
-END
- %>
-  </head>
-  <body>
-    <!-- header -->
-    <div id="login_title">
-      <span>Web家計簿</span><br/>
-      <span id="application_name">小槌</span>
-      <%= image_tag("/images/kozuchi.png", :size => "48x48")%>
-    </div>
-    <!-- 通信欄-->
-    <% if @flash[:notice] %>
-      <div id="login_message"><%=@flash[:notice]%></div>
-    <% end %>
-
     <%= form_tag %>
       <div id="login_field">
-        <label>ログインID</label>
-        <%= text_field("user", "login_id", :size => 10) %>
-        <br />
-        <label>パスワード</label>
-        <%= password_field("user", "password", :size => 10) %>
-        <br />
-        <button type="submit" id="login_button"><span>ログイン</span></button>
+        <table>
+          <tr>
+            <th>ログインID</th>
+            <td><%= text_field("user", "login_id") %></td>
+          </tr>
+          <tr>
+            <th>パスワード</th>
+            <td><%= password_field("user", "password") %></td>
+          </tr>
+        </table>
+        <button type="submit" id="login_button" onClick="if ($F('user_login_id')=='') {alert('ログインIDを入力してください。');return false;} if ($F('user_password')=='') {alert('パスワードを入力してください。');return false;} return true;"><span>ログイン</span></button>
       </div>
     <%=end_form_tag%>
-
-    <!-- footer -->
-    <%= render :partial => "shared/footer" %>
-  </body>
-</html>
-
+    
+    <% if KOZUCHI_USER_MANAGEMENT_TYPE == 'open' %>
+      <div style="text-align:center;margin:16px;">
+        <a href="#">新しいユーザーを登録する</a>
+      </div>
+    <% end %>
 
