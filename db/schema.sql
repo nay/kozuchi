@@ -1,9 +1,22 @@
 /* --- users --- */
 drop table if exists users;
-create table users (
-  id integer not null primary key autoincrement,
-  login_id varchar (16) not null unique,
-  hashed_password char (40) not null
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY NOT NULL,
+  login varchar(80) DEFAULT '' NOT NULL,
+  salted_password varchar(40) DEFAULT '' NOT NULL,
+  email varchar(60) DEFAULT '' NOT NULL,
+  firstname varchar(40),
+  lastname varchar(40),
+  salt varchar(40) DEFAULT '' NOT NULL,
+  verified integer DEFAULT 0,
+  role varchar(40),
+  security_token varchar(40),
+  token_expiry datetime,
+  created_at datetime,
+  updated_at datetime,
+  logged_in_at datetime,
+  deleted integer DEFAULT 0,
+  delete_after datetime
 );
 
 /* --- friends --- */
