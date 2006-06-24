@@ -1,5 +1,6 @@
+# old
 class LoginController < ApplicationController
-  before_filter :authorize, :except => :index
+#  before_filter :authorize, :except => :index
   layout 'login'
   
   def index

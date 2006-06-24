@@ -1,0 +1,23 @@
+<%= javascript_tag <<-END
+window.onload = function() {
+	document.getElementById("user_login").focus();
+}
+END
+ %>
+
+<div title="<%= title_helper %>" class="form">
+
+  <div class="form-padding">
+    <%= start_form_tag :action => 'login'  %>
+      <table>
+        <%= form_input :text_field, "ログインID", "login", :size => 30 %>
+        <%= form_input :password_field, "パスワード", "password", :size => 30 %>
+      </table>
+
+      <div class="button-bar">
+        <%= submit_tag 'ログイン', :onclick => "if ($F('user_login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('user_password')=='') {alert('パスワードを入力してください。'); return false;}" %><br /><br />
+        <%= link_to 'ユーザー登録', :action => 'signup' %> |
+        <%= link_to 'パスワードを忘れたとき', :action => 'forgot_password' %>      </div>
+    <%= end_form_tag %>
+  </div>
+</div>

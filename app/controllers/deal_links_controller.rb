@@ -1,5 +1,7 @@
 # 取引連動設定のコントローラ
-class DealLinksController < ConfigController
+class DealLinksController < ApplicationController
+  include ExpertConfigMenues
+  layout 'main'
 
   # 取引連動初期表示画面
   def index

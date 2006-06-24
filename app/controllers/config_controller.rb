@@ -1,20 +1,8 @@
-class ConfigController < MainController
+class ConfigController < ApplicationController
+  include ConfigMenues
+  layout 'main'
   
-  PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]
-  
-  def initialize
-    super('設定')
-    add_menu('口座', {:controller => 'config', :action => 'assets'})
-    add_menu('費目', {:controller => 'config',:action => 'expenses'})
-    add_menu('収入内訳', {:controller => 'config',:action => 'incomes'})
-    @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
-    add_menu('精算ルール', {:controller => 'config',:action => 'account_rules'})
-    add_menu('フレンド', {:controller => 'config',:action => 'friends'})
-    add_menu('取引連動', {:controller => 'deal_links', :action => 'index'})
-    add_menu('受け皿', {:controller => 'partner_account', :action => 'index'})
-    add_menu('カスタマイズ', {:controller => 'config',:action => 'preferences'})
-    add_menu('プロフィール', {:controller => 'config',:action => 'profile'})
-  end
+  PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]  
   
   def index
     redirect_to(:action => "assets")

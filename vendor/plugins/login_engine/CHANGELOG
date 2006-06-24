@@ -1,0 +1,22 @@
+= v1.0.2
+* Added version
+* Removed errant requires no longer needed (murray.steele@gmail.com, Ticket #156, Ticket #157, Ticket #158)
+# Removed documentation/rake tasks that refer the schema.rb (Ticket #155)
+# Verified cannot be assigned via URL parameters. If more security is required, users should override the signup action itself (Ticket #169)
+# Minor view/flash message cleanup
+# Authentication by token now respects primary key prefixes (Ticket #140)
+
+= v1.0.1
+ * Added CHANGELOG
+ * Changed wording for when password forgotten to 'reset', rather than 'retrieve'. (snowblink@gmail.com)
+ * Fixed new location of engines testing extensions. (lazyatom@gmail.com)
+ * Removed schema.db from Login Engine; migrations should be used instead. (snowblink@gmail.com)
+ * Updated User Controller tests to parse the user_id and email out of the URL in the email body. (snowblink@gmail.com)
+ * Ticket #89 (lazyatom@gmail.com) User creation halts the after_save callback chain.
+ * Ticket #97 (dcorbin@machturtle.com) The forgotten_password view generates invalid HTML
+ * Ticket #112 (segabor@gmail.com) Authentication system will break even on successful login
+ * Added simple email validation to the User model. (snowblink@gmail.com)
+   This should also take care of the unit test failures detailed in Ticket #114 (morris@wolfman.com)
+ * Ticket #118 (augustz@augustz.com) SVN source for login_engine not found
+ * Ticket #119 (Goynang) Unit tests for engines fail after default install
+ * Ticket #126 (lazyatom@gmail.com) Add install.rb to login engine

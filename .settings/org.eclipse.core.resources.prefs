@@ -1,19 +1,15 @@
-#Thu Jun 22 15:51:50 JST 2006
+#Fri Jun 23 15:33:58 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
 encoding//app/controllers/application.rb=UTF-8
 encoding//app/controllers/assets_controller.rb=UTF-8
-encoding//app/controllers/book_controller.rb=UTF-8
 encoding//app/controllers/config_controller.rb=UTF-8
 encoding//app/controllers/deal_links_controller.rb=UTF-8
 encoding//app/controllers/deals_controller.rb=UTF-8
 encoding//app/controllers/login_controller.rb=UTF-8
-encoding//app/controllers/main_controller.rb=UTF-8
 encoding//app/controllers/partner_account_controller.rb=UTF-8
 encoding//app/controllers/profit_and_loss_controller.rb=UTF-8
-encoding//app/controllers/test_controller.rb=UTF-8
-encoding//app/helpers/book_helper.rb=UTF-8
 encoding//app/models/account.rb=UTF-8
 encoding//app/models/account_entry.rb=UTF-8
 encoding//app/models/account_link.rb=UTF-8
@@ -29,7 +25,6 @@ encoding//app/models/deal_link.rb=UTF-8
 encoding//app/models/friend.rb=UTF-8
 encoding//app/models/menu.rb=UTF-8
 encoding//app/models/subordinate_deal.rb=UTF-8
-encoding//app/models/user.rb=UTF-8
 encoding//app/views/account_deals/_account_deals.rhtml=UTF-8
 encoding//app/views/account_deals/_account_options.rhtml=UTF-8
 encoding//app/views/admin/deals/_deals.rhtml=UTF-8

@@ -1,13 +1,16 @@
-class DealsController < BookController 
+class DealsController < ApplicationController
+  include BookMenues
+  layout 'main'
+  before_filter :check_account
 
-  def rescue_action(exception)
-    flash_error(exception.to_s)
-    logger.error(exception.to_s)
-    for b in exception.backtrace
-      logger.error(b)
-    end
-    redirect_to(:action => 'index')
-  end
+#  def rescue_action(exception)
+#    flash_error(exception.to_s)
+#    logger.error(exception.to_s)
+#    for b in exception.backtrace
+#      logger.error(b)
+#    end
+#    redirect_to(:action => 'index')
+#  end
 
   # ----- 入力画面表示系 -----------------------------------------------
 
@@ -132,10 +135,10 @@ class DealsController < BookController
   # ----- 入力画面表示系 -----------------------------------------------
   # 記入エリアの準備
   def prepare_select_deal_tab
-    @accounts_minus = BookHelper::AccountGroup.groups(
+    @accounts_minus = ApplicationHelper::AccountGroup.groups(
       Account.find_all(session[:user].id, [1,3]), true
      )
-    @accounts_plus = BookHelper::AccountGroup.groups(
+    @accounts_plus = ApplicationHelper::AccountGroup.groups(
       Account.find_all(session[:user].id, [1,2]), false
      )
      @deal ||= Deal.new(params[:deal])

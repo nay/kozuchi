@@ -2,10 +2,6 @@
 
 
 /* ============== 共通情報　=============== */
-* {
-  margin: 0;
-  padding: 0;
-}
 
 /* 上下の margin に関する汎用部品 */
 .top_box {
@@ -33,7 +29,7 @@
 }
 
 /* 線で囲んだエリア */
-#sidebar .menu {
+#sidebar .side_menu {
   border: 2px solid darkgoldenrod;
   padding: 4px;
 }
@@ -43,18 +39,6 @@
   border: 2px solid darkgoldenrod;
   padding: 4px;
   background-color: gold;
-}
-
-
-/* general input fields padding */
-input, select {
-  padding: 0px 1px;
-  font-size: 100%;
-  margin: 4px;
-}
-option {
-  font-size: 90%;
-  padding: 2px;
 }
 
 /* number fields */
@@ -72,18 +56,6 @@ input.number, #datebox input, #deal_amount, #deal_balance {
 /* 大きな文字 */
 span.large {
   font-size: 1.3em;
-}
-
-button, .button {
-  white-space: nowrap;
-  text-decoration: none;
-  border: 4px outset goldenrod;
-  background-color: goldenrod;
-  color: black;
-  font-weight: bold;
-  padding: 1px 4px;
-  font-size: 100%;
-  margin: 4px;
 }
 
 .window {
@@ -301,6 +273,9 @@ body {
 #header_menu {
   float: right;
 }
+#header_menu .current {
+  color: white;
+}
 /* -------- sidebar -------*/
 #sidebar {
   clear: both;
@@ -308,10 +283,18 @@ body {
   width: 13%;
 }
 
-#sidebar .menu {
+.side_menu, .side_menu_current {
   white-space: nowrap;
   margin: 8px 0px;
   overflow: hidden;
+  border: 2px solid darkgoldenrod;
+  padding: 4px;
+  font-weight: bold;
+}
+
+.side_menu_current {
+  background-color: darkgoldenrod;
+  color: white;
 }
 
 /* -------- contents -------*/
@@ -372,28 +355,6 @@ body {
   clear:both;
 }
 
-/*　------ メッセージ欄 ------- */
-#notice {
-  padding: 8px;
-  background-color: gold;
-}
-
-#errors {
-  padding: 8px;
-  background-color: orange;
-}
-
-/* -------- footer -------*/
-#footer {
-  clear: both;
-  margin-top: 16px;
-  border-bottom:1px dashed darkgoldenrod;
-  color:darkgoldenrod;
-  text-align:right;
-  font-size:small;
-  padding-bottom:2px;
-  padding-top:16px;
-}
 /* ================ 機能別 =================== */
 
 /* ------ 口座別出納：口座選択欄 --------*/

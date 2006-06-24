@@ -1,4 +1,7 @@
-class AssetsController < BookController
+class AssetsController < ApplicationController
+  include BookMenues
+  layout 'main'
+  before_filter :check_account
 
   def index
     @target_month = session[:target_month]

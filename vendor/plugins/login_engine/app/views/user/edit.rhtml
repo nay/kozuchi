@@ -1,0 +1,23 @@
+<div title="<%= title_helper %>" class="form">
+  <h3>Edit user</h3>
+
+  <%= error_messages_for 'user' %>
+
+    <%= start_form_tag :action => 'edit' %>
+      <%= render_partial 'edit', :user => @user, :submit => true %>
+    <%= end_form_tag %>
+    <br/>
+    <%= start_form_tag :action => 'change_password' %>
+      <%= hidden_field_tag "back_to", "edit" %>
+      <%= render_partial 'password', :submit => true %>
+    <%= end_form_tag %>
+
+    <%= start_form_tag :action => 'delete' %>
+      <div class="user_delete">
+        <%= hidden_field 'user', 'form', :value => 'delete' %>
+
+        <%= form_input :submit_button, 'Delete Account' %>
+      </div>
+    <%= end_form_tag %>
+  </div>
+</div>

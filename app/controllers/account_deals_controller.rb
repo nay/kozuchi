@@ -1,4 +1,7 @@
-class AccountDealsController < BookController 
+class AccountDealsController < ApplicationController 
+  include BookMenues
+  layout 'main'
+  before_filter :check_account
 
   # 口座別出納
   def index

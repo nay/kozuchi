@@ -1,0 +1,56 @@
+@charset "utf-8";
+
+* {
+  margin:0;
+  padding:0;
+}
+
+/* general input fields padding */
+
+input, select {
+  padding: 0px 1px;
+  font-size: 100%;
+  margin: 4px;
+}
+
+option {
+  font-size: 90%;
+  padding: 2px;
+}
+
+
+/*　------ メッセージ欄 ------- */
+#notice {
+  padding: 8px;
+  background-color: gold;
+}
+
+#errors {
+  padding: 8px;
+  background-color: orange;
+}
+
+/* ------ ボタン ---------- */
+button, input.button, td.button input {
+  white-space: nowrap;
+  text-decoration: none;
+  border: 4px outset goldenrod;
+  background-color: goldenrod;
+  color: black;
+  font-weight: bold;
+  padding: 1px 4px;
+  font-size: 100%;
+  margin: 4px;
+}
+
+/* -------- footer -------*/
+#footer {
+  clear: both;
+  margin-top: 16px;
+  border-bottom:1px dashed darkgoldenrod;
+  color:darkgoldenrod;
+  text-align:right;
+  font-size:small;
+  padding-bottom:2px;
+  padding-top:16px;
+}

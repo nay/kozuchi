@@ -1,4 +1,7 @@
-class ProfitAndLossController < BookController 
+class ProfitAndLossController < ApplicationController 
+  include BookMenues
+  layout 'main'
+  before_filter :check_account
 
   # 収支表
   def index

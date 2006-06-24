@@ -5,6 +5,7 @@
       <%= controller.title %> - <%= controller.sub_title(controller.action_name) || controller.action_name %> 
     </title>
     <%= render :partial => "shared/html_header" %>
+    <%= stylesheet_link_tag 'common' %>
     <%= stylesheet_link_tag 'book' %>
     <%= javascript_include_tag "prototype" %>
     <%= javascript_include_tag "book" %>
@@ -23,11 +24,23 @@
       <div id="header_menu">
         <% if controller.title != "家計簿" %>
           <%= link_to("家計簿", :controller => "deals", :action => 'index') %>
+        <% else %>
+          <span class="current">家計簿</span>
         <% end %>
-        <% if controller.title != "設定" %>
-          <%= link_to("設定", :controller => "config", :action => "index") %>
+        <span> | </span>
+        <% if controller.title != "基本設定" %>
+          <%= link_to("基本設定", :controller => "config", :action => "index") %>
+        <% else %>
+          <span class="current">基本設定</span>
         <% end %>
-        <%= link_to("ログアウト", :controller => "login", :action => "logout") %>
+        <span> | </span>
+        <% if controller.title != "高度な設定" %>
+          <%= link_to("高度な設定", :controller => "expert_config", :action => "index") %>
+        <% else %>
+          <span class="current">高度な設定</span>
+        <% end %>
+        <span> | </span>
+        <%= link_to("ログアウト", :controller => "user", :action => "logout") %>
       </div>
     </div>
     <div id="sidebar">
@@ -37,7 +50,13 @@
       </div>
       <!-- menu -->
       <% for menu in controller.menues %>
-        <div class="menu" class="middle_box"><%= link_to(menu.caption, menu.options) %></div>
+        <div class="side_menu<%= '_current' if controller.sub_title(controller.action_name) == menu.caption%>">
+          <% if controller.sub_title(controller.action_name) == menu.caption %>
+            <span><%= menu.caption %></span>
+          <% else %>
+            <%= link_to(menu.caption, menu.options) %>
+          <% end %>
+        </div>
       <% end %>
     </div>
     <!-- contents -->

@@ -1,4 +1,4 @@
-
+# old
 class AdminController < ApplicationController
 
   def edit_user

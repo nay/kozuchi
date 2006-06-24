@@ -1,4 +1,6 @@
-class PartnerAccountController < ConfigController
+class PartnerAccountController < ApplicationController
+  include ExpertConfigMenues
+  layout 'main'
 
   # 受け皿初期画面
   def index

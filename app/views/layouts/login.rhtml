@@ -3,14 +3,9 @@
   <head>
     <title>小槌</title>
     <%= render :partial => "shared/html_header" %>
+    <%= stylesheet_link_tag 'common' %>
     <%= stylesheet_link_tag 'login' %>
     <%= javascript_include_tag "prototype" %>
-    <%= javascript_tag <<-END
-window.onload = function() {
-	document.getElementById("user_login_id").focus();
-}
-END
- %>
   </head>
   <body>
     <!-- header -->
@@ -20,11 +15,10 @@ END
       <%= image_tag("/images/kozuchi.png", :size => "48x48")%>
     </div>
     <!-- 通信欄-->
-    <% if @flash[:notice] %>
-      <div id="login_message"><%=@flash[:notice]%></div>
-    <% end %>
-    
-    <%= @content_for_layout %>
+    <div style="text-align: center;">
+      <%= render(:partial => "shared/information") %>
+      <%= @content_for_layout %>
+    </div>
 
     <!-- footer -->
     <%= render :partial => "shared/footer" %>
