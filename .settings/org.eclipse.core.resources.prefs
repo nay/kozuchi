@@ -1,4 +1,4 @@
-#Fri Jun 23 15:33:58 JST 2006
+#Sat Jun 24 10:52:10 JST 2006
 eclipse.preferences.version=1
 encoding//app/controllers/account_deals_controller.rb=UTF-8
 encoding//app/controllers/admin_controller.rb=UTF-8
@@ -7,7 +7,6 @@ encoding//app/controllers/assets_controller.rb=UTF-8
 encoding//app/controllers/config_controller.rb=UTF-8
 encoding//app/controllers/deal_links_controller.rb=UTF-8
 encoding//app/controllers/deals_controller.rb=UTF-8
-encoding//app/controllers/login_controller.rb=UTF-8
 encoding//app/controllers/partner_account_controller.rb=UTF-8
 encoding//app/controllers/profit_and_loss_controller.rb=UTF-8
 encoding//app/models/account.rb=UTF-8
