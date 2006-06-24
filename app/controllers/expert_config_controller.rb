@@ -15,7 +15,7 @@ class ExpertConfigController < ApplicationController
     @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
     @creatable = false
     @rule = AccountRule.new
-    @day_options = ConfigController.day_options
+    @day_options = ExpertConfigController.day_options
     @payment_term_months = PAYMENT_TERM_MONTHS
     if @accounts_to_be_applied.size == 0
       @explanation = "新たに精算ルールを登録できる口座（クレジットカード、債権）はありません。"
