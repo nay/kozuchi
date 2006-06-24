@@ -41,8 +41,10 @@ class User < ActiveRecord::Base
   def self.find_by_login_id(login_id)
     find(:first, :conditions => ["login = ? ", login_id])
   end
-
- 
-
+  
+  protected
+  def after_create
+    Account.create_default_accounts(self.id)
+  end
 end
 
