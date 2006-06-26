@@ -1,10 +1,10 @@
 <%= render :partial => "shared/doctype" %>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
+    <%= render :partial => "shared/html_header" %>
     <title>
       <%= controller.title %> - <%= controller.sub_title(controller.action_name) || controller.action_name %> 
     </title>
-    <%= render :partial => "shared/html_header" %>
     <%= stylesheet_link_tag 'common' %>
     <%= stylesheet_link_tag 'book' %>
     <%= javascript_include_tag "prototype" %>

@@ -404,3 +404,20 @@ body {
 }
 
 
+.table_block {
+  clear: both;
+}
+
+.table_block .left {
+  width: 50%;
+  float: left;
+}
+
+.table_block .right {
+  width: 50%;
+  float: right;
+}
+
+.table_block table {
+}
+

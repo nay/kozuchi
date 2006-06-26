@@ -1,62 +1,57 @@
-<div id="assets_sum" class="result">
-  <span>資産合計</span>　
-  <span class="amount"><%= number_with_delimiter(@assets.sum) %></span>円
+<div class="table_block">
+  <div id="assets_sum" class="result">
+    <span>資産合計</span>　
+    <span class="amount"><%= number_with_delimiter(@assets.sum) %></span>円
+  </div>
 </div>
 
-<div class="middle_box">
-<table>
-<tr>
+<div class="table_block">
+  <div class="left">
+    <table class="book">
+      <tr>
+        <th>正の資産</th><th></th><th class="amount">期末残高</th>
+      </tr>
+      <% @assets.plus.each do |account| %>
+      <tr>
+        <td><%= account.name %></td>
+        <td class="percentage"><%= account.percentage %>%</td>
+        <td class="amount"><%= number_with_delimiter(account.balance) %></td>
+      </tr>
+     <% end %>
+   </table>
+   <table class="book">
+     <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.plus.sum) %></td></tr>
+   </table>
+  </div>
 
-<td class="inner_table" width="70%">
-<table class="book">
-  <tr>
-    <th>正の資産</th><th></th><th class="amount">期末残高</th>
-  </tr>
-  <% @assets.plus.each do |account| %>
-    <tr>
-      <td><%= account.name %></td>
-      <td class="percentage"><%= account.percentage %>%</td>
-      <td class="amount"><%= number_with_delimiter(account.balance) %></td>
-    </tr>
-  <% end %>
-</table>
-<table class="book">
-  <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.plus.sum) %></td></tr>
-</table>
-</td>
-
-<td class="graph" width="30%">
-  <%= pie_graph(@assets.plus, 'percentage', 'name') %>
-</td>
-</tr>
-</table>
+  <div class="right"><div class="graph">
+    <%= pie_graph(@assets.plus, 'percentage', 'name') %>
+  </div></div>
 </div>
 
 
-<div class="bottom_box">
-<table>
-<tr>
+<div class="table_block">
+  <div class="left">
+    <table class="book">
+      <tr>
+        <th>負の資産</th><th></th><th class="amount">期末残高</th>
+      </tr>
+      <% @assets.minus.each do |account| %>
+      <tr>
+        <td><%= account.name %></td>
+        <td class="percentage"><%= account.percentage %>%</td>
+        <td class="amount"><%= number_with_delimiter(account.balance) %></td>
+      </tr>
+      <% end %>
+    </table>
+    <table class="book">
+      <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
+    </table>
+  </div>
 
-<td class="inner_table" width="70%">
-<table class="book">
-  <tr>
-    <th>負の資産</th><th></th><th class="amount">期末残高</th>
-  </tr>
-  <% @assets.minus.each do |account| %>
-    <tr>
-      <td><%= account.name %></td>
-      <td class="percentage"><%= account.percentage %>%</td>
-      <td class="amount"><%= number_with_delimiter(account.balance) %></td>
-    </tr>
-  <% end %>
-</table>
-<table class="book">
-  <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
-</table>
-</td>
-<td class="graph" width="30%">
-  <%= pie_graph(@assets.minus, 'percentage', 'name') %>
-</td>
-</tr>
-</table>
+  <div class="right">
+    <div class="graph">
+      <%= pie_graph(@assets.minus, 'percentage', 'name') %>
+    </div>
+  </div>
 </div>
