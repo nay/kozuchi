@@ -56,7 +56,7 @@
 %>
 <% if labels.count(',') > 1 then %>
        <tr>
-	     <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	     <td rowspan="2"><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
 	   </tr>
 <% end %>
       </table>
@@ -80,7 +80,7 @@
 %>
 <% if labels.count(',') > 1 then %>
         <tr>
-	      <td><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
+	      <td rowspan="2"><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
 	    </tr>
 <% end %>
       </table>
