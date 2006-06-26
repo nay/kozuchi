@@ -37,6 +37,8 @@
 %>
 <% if labels.count(',') > 1 then %>
 <img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+<% else %>
+  <span>グラフは２つ以上の項目があるときに表示されます。</span>
 <% end %>
 </td>
 </tr>
@@ -78,6 +80,8 @@
 %>
 <% if labels.count(',') > 1 then %>
 <img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+<% else %>
+  <span>グラフは２つ以上の項目があるときに表示されます。</span>
 <% end %>
 </td>
 </tr>
