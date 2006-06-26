@@ -9,7 +9,6 @@ module ConfigMenues
     add_menu('費目', {:controller => 'config',:action => 'expenses'})
     add_menu('収入内訳', {:controller => 'config',:action => 'incomes'})
     @actions = {1 => 'assets', 2 => 'expenses', 3 => 'incomes'}
-    add_menu('カスタマイズ', {:controller => 'config',:action => 'preferences'})
     add_menu('プロフィール', {:controller => 'user',:action => 'edit'})
   end
 

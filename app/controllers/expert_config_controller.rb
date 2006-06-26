@@ -159,5 +159,24 @@ class ExpertConfigController < ApplicationController
     
     redirect_to(:action => 'friends')
   end
+
+  # カスタマイズ （個人的好みによる設定） ----------------------------------------------------------------
+  def preferences
+    @preferences = Preferences.get(user.id)
+  end
+  
+  def update_preferences
+    preferences = Preferences.get(user.id)
+    preferences.attributes = params[:preferences]
+    begin
+      preferences.save!
+      session[:user] = User.find(user.id)
+      flash_notice("更新しました。")
+    rescue
+      flash_validation_errors(preferences)
+    end
+    redirect_to(:action => 'preferences')
+  end
+
   
 end

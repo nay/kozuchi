@@ -73,24 +73,6 @@ class ConfigController < ApplicationController
     redirect_to(:action => @actions[account_type])
   end
   
-  # カスタマイズ （個人的好みによる設定） ----------------------------------------------------------------
-  def preferences
-    @preferences = Preferences.get(user.id)
-  end
-  
-  def update_preferences
-    preferences = Preferences.get(user.id)
-    preferences.attributes = params[:preferences]
-    begin
-      preferences.save!
-      session[:user] = User.find(user.id)
-      flash_notice("更新しました。")
-    rescue
-      flash_validation_errors(preferences)
-    end
-    redirect_to(:action => 'preferences')
-  end
-
   private
   def load_accounts(account_type)
     @account = Account.new
