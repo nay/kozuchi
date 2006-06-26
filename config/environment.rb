@@ -64,8 +64,8 @@ KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
 
 module LoginEngine
   config :salt, "koban"
-  config :email_from, "webmaster@kozuchi.com"
-  config :admin_email, "admin@kozuchi.com"
+  config :email_from, "kozuchi@goas.no-ip.org"
+  config :admin_email, "kozuchi@goas.no-ip.org"
   config :app_name, "小槌"
   config :changeable_fields, ['lastname', 'firstname', 'login', 'email']
   config :mail_charset, "iso-2022-jp"
