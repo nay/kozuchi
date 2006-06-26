@@ -4,6 +4,10 @@
 </div>
 
 <div class="middle_box">
+<table>
+<tr>
+
+<td>
 <table class="book">
   <tr>
     <th>正の資産</th><th></th><th class="amount">期末残高</th>
@@ -19,8 +23,9 @@
 <table class="book">
   <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.plus.sum) %></td></tr>
 </table>
-</div>
+</td>
 
+<td class="graph" style="width:300px;">
 <%
   labels = ''
   values = ''
@@ -33,9 +38,17 @@
 <% if labels.count(',') > 1 then %>
 <img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
 <% end %>
+</td>
+</tr>
+</table>
 </div>
 
+
 <div class="bottom_box">
+<table>
+<tr>
+
+<td>
 <table class="book">
   <tr>
     <th>負の資産</th><th></th><th class="amount">期末残高</th>
@@ -51,6 +64,8 @@
 <table class="book">
   <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
 </table>
+</td>
+<td class="graph" style="width:300px">
 
 <%
   labels = ''
@@ -64,3 +79,7 @@
 <% if labels.count(',') > 1 then %>
 <img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
 <% end %>
+</td>
+</tr>
+</table>
+</div>
