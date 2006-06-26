@@ -45,6 +45,20 @@
           <td>支出合計</td>
           <td class="amount"><%= number_with_delimiter(@expenses_sum)%></td>
         </tr>
+      </table>
+      </td>
+      <td class="inner_table" width="50%">
+      <!-- 収入合計 -->
+      <table class="book">
+        <tr>
+          <td>収入合計</td>
+          <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
+        </tr>
+      </table>
+      </td>  
+      </tr>
+      <tr>
+      <td class="inner_table" width="50%">
 <%
   labels = ''
   values = ''
@@ -55,20 +69,14 @@
      labels += summary.name + ','
   end
 %>
-<% if labels.count(',') > 1 then %>
-       <tr>
-	     <td colspan="2"><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
-	   </tr>
-<% end %>
-      </table>
+     <% if labels.count(',') > 1 then %>
+       <img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+     <% else %>
+       <span>グラフは２つ以上の項目があるときに表示されます。</span>
+     <% end %>
+
       </td>
       <td class="inner_table" width="50%">
-      <!-- 収入合計 -->
-      <table class="book">
-        <tr>
-          <td>収入合計</td>
-          <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
-        </tr>
 <%
   labels = ''
   values = ''
@@ -80,15 +88,12 @@
   end
 %>
 <% if labels.count(',') > 1 then %>
-        <tr>
-	      <td colspan="2"><img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" /></td>
-	    </tr>
+　　　　　　　<img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
+<% else %>
+       <span>グラフは２つ以上の項目があるときに表示されます。</span>
 <% end %>
-      </table>
-      </td>  
-      </tr>
-      <tr>
-      <td>test</td>
+
+      </td>
 
 
       </tr>
