@@ -1,26 +1,26 @@
-      <!-- 通信欄-->
-      <% if @flash[:notice] || @flash[:notice].to_s != ""%>
-        <div id="notice"><%=@flash[:notice]%></div>
-      <% end %>
+<!-- 通信欄-->
+<% if @flash[:notice] || @flash[:notice].to_s != ""%>
+  <div id="notice"><%=@flash[:notice]%></div>
+<% end %>
 
 <div class="table_block">
-<div class="left">
-      <!-- 支出一覧 -->
-      <table class="book">
+  <div class="left">
+    <!-- 支出一覧 -->
+    <table class="book">
+      <tr>
+        <th colspan="2">支出</th>
+      </tr>
+      <% for summary in @expenses_summaries %>
         <tr>
-          <th colspan="2">支出</th>
+          <td><%= summary.name %></td>
+          <td class="percentage"><%= @expenses_sum != 0 ?
+          (summary.sum * 100.0 / @expenses_sum).round : 0%>%</td>
+          <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
         </tr>
-        <% for summary in @expenses_summaries %>
-          <tr>
-            <td><%= summary.name %></td>
-            <td class="percentage"><%= @expenses_sum != 0 ?
-      (summary.sum * 100.0 / @expenses_sum).round : 0%>%</td>
-            <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
-          </tr>
-        <% end %>
-      </table>
-</div>
-<div class="right">
+      <% end %>
+    </table>
+  </div>
+  <div class="right">
       <!-- 収入一覧 -->
       <table class="book">
         <tr>
@@ -107,7 +107,9 @@
           <% end %>
         </table>
     </div>
+  </div>
 
+  <div class="table_block">
     <div class="left">
         <table class="book">
           <tr>
@@ -124,5 +126,5 @@
             <td class="amount">+<%= number_with_delimiter(@assets_plus_sum)%></td>
           </tr>
         </table>
-  </div>
+    </div>
   </div>
