@@ -277,6 +277,17 @@ body {
   margin-bottom: 8px;
   border: 4px double darkgoldenrod;
 }
+#home_icon {
+  margin: 0;
+  padding: 0;
+  float:left;
+}
+#home_icon img {
+  padding: 0;
+  margin: 0;
+  height: 2em;
+  width: 2em;
+}
 #header_title {
   float: left;
 }

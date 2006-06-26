@@ -13,10 +13,12 @@
     <%= javascript_include_tag "effects" %>
   </head>
   <body>
-    <a name="top" />
+    <a name="top"></a>
     <div id="page">
-    <!-- header -->
     <div id="header">
+      <div id="home_icon">
+        <%= link_to(image_tag("/images/izumo_kozuchi.png", :border => 0), :controller => 'user', :action => 'home') %>
+      </div>
       <div id="header_title">
         <span class="large"><%= controller.title %></span>
         <span> - <%= controller.sub_title(controller.action_name) || controller.action_name %></span>
