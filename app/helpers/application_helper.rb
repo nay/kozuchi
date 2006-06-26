@@ -38,6 +38,8 @@ module ApplicationHelper
         url = url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values)
         return '<img src="' + url + ' />"'
       else
+        p "values = #{values}"
+        p "labels = #{labels}"
         return '<span>グラフは２つ以上の項目があるときに表示されます。</span>'
       end
     rescue => err
