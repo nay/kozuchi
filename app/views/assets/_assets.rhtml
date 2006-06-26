@@ -7,7 +7,7 @@
 <table>
 <tr>
 
-<td>
+<td class="inner_table" width="70%">
 <table class="book">
   <tr>
     <th>正の資産</th><th></th><th class="amount">期末残高</th>
@@ -25,7 +25,7 @@
 </table>
 </td>
 
-<td class="graph" style="width:300px;">
+<td class="graph" width="30%">
 <%
   labels = ''
   values = ''
@@ -50,7 +50,7 @@
 <table>
 <tr>
 
-<td>
+<td class="inner_table" width="70%">
 <table class="book">
   <tr>
     <th>負の資産</th><th></th><th class="amount">期末残高</th>
@@ -67,7 +67,7 @@
   <tr><td colspan="2">合計</td><td class="amount"><%= number_with_delimiter(@assets.minus.sum) %></td></tr>
 </table>
 </td>
-<td class="graph" style="width:300px">
+<td class="graph" width="30%">
 
 <%
   labels = ''
