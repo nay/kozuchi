@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   def login_id
     self.login
   end
-
+  
   # 双方向に指定level以上のフレンドを返す
   def interactive_friends(level)
     # TODO 効率悪い
@@ -43,8 +43,10 @@ class User < ActiveRecord::Base
   end
   
   protected
+  
   def after_create
+    create_preferences()
     Account.create_default_accounts(self.id)
   end
+  
 end
-

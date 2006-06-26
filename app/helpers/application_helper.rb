@@ -7,6 +7,7 @@ module ApplicationHelper
   end
   
   def user_color_style
+    return '' unless session[:user] && session[:user].preferences
     bgcolor = session[:user].preferences.color
     return '' unless bgcolor;
     style_content = "background-color: #{bgcolor};"
