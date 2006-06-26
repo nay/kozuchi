@@ -31,7 +31,7 @@ module ApplicationHelper
         end
         next if percentage == 100 || percentage == 0
         values += percentage.to_s + ','
-        labels += r.method(name_method).call
+        labels += r.method(name_method).call + ','
       end
     
       if labels.count(',') > 1
