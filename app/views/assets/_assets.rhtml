@@ -69,21 +69,6 @@
 </td>
 <td class="graph" width="30%">
   <%= pie_graph(@assets.minus, 'percentage', 'name') %>
-
-<%
-  labels = ''
-  values = ''
-  @assets.minus.each do |account|
-    next if account.percentage == 100 || account.percentage == 0
-    labels += account.name + ','
-    values += account.percentage.to_s + ','
-  end
-%>
-<% if labels.count(',') > 1 then %>
-<img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
-<% else %>
-  <span>グラフは２つ以上の項目があるときに表示されます。</span>
-<% end %>
 </td>
 </tr>
 </table>
