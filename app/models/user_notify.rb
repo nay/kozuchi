@@ -34,10 +34,13 @@ class UserNotify < ActionMailer::Base
     setup_email(user)
 
     # Email header info
-    @subject += "Forgotten password notification"
+#    @subject += "Forgotten password notification"
+    @subject += "パスワード再発行のお知らせ"
+    @subject = base64(@subject)
 
     # Email body substitutions
-    @body["name"] = "#{user.firstname} #{user.lastname}"
+    # @body["name"] = "#{user.firstname} #{user.lastname}"
+    @body["name"] = "#{user.lastname} #{user.firstname}"
     @body["login"] = user.login
     @body["url"] = url || LoginEngine.config(:app_url).to_s
     @body["app_name"] = LoginEngine.config(:app_name).to_s

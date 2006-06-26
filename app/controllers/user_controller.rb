@@ -18,6 +18,7 @@ class UserController < ApplicationController
   # by the login_required method, they should be sent back to the page they were
   # trying to access. If not, they will be sent to "/user/home".
   def login
+    reset_session
     return if generate_blank
     @user = User.new(params[:user])
     if session[:user] = User.authenticate(params[:user][:login], params[:user][:password])
@@ -75,18 +76,16 @@ class UserController < ApplicationController
     redirect_to :action => 'login'
   end
 
-  def change_password
-    if generate_filled_in(:layout => 'main')
-#      render(:layout => 'main')
-      return
-    end
-#    return if generate_filled_in
-    if do_change_password_for(@user)
-      # since sometimes we're changing the password from within another action/template...
-      #redirect_to :action => params[:back_to] if params[:back_to]
-      redirect_back_or_default :action => 'change_password'
-    end
-  end
+  # メニューからはプロファイルのみ
+#  def change_password
+#    return if generate_filled_in(:layout => 'main')
+##    return if generate_filled_in
+#    if do_change_password_for(@user)
+#      # since sometimes we're changing the password from within another action/template...
+#      #redirect_to :action => params[:back_to] if params[:back_to]
+#      redirect_back_or_default :action => 'change_password'
+#    end
+#  end
 
   protected
     def do_change_password_for(user)
@@ -119,7 +118,8 @@ class UserController < ApplicationController
     # Always redirect if logged in
     if user?
       flash[:message] = 'You are currently logged in. You may change your password now.'
-      redirect_to :action => 'change_password'
+#      redirect_to :action => 'change_password'
+      redirect_to :action => 'edit'
       return
     end
 
@@ -135,24 +135,28 @@ class UserController < ApplicationController
 
     # Handle the :post
     if params[:user][:email].empty?
-      flash.now[:warning] = 'Please enter a valid email address.'
+#      flash.now[:warning] = 'Please enter a valid email address.'
+      flash_error('正しいEメールアドレスを入力してください。')
     elsif (user = User.find_by_email(params[:user][:email])).nil?
-      flash.now[:warning] = "We could not find a user with the email address #{params[:user][:email]}"
+      flash_error("メールアドレス #{params[:user][:email]} に該当するユーザーは登録されていません。")
     else
       begin
         User.transaction(user) do
           key = user.generate_security_token
-          url = url_for(:action => 'change_password', :user_id => user.id, :key => key)
+#          url = url_for(:action => 'change_password', :user_id => user.id, :key => key)
+          url = url_for(:action => 'edit', :user_id => user.id, :key => key)
           UserNotify.deliver_forgot_password(user, url)
-          flash[:notice] = "Instructions on resetting your password have been emailed to #{params[:user][:email]}"
-        end  
+#          flash[:notice] = "Instructions on resetting your password have been emailed to #{params[:user][:email]}"
+          flash_notice("パスワード再設定のための情報を #{params[:user][:email]}　へ送信しました。")
+        end
         unless user?
           redirect_to :action => 'login'
           return
         end
         redirect_back_or_default :action => 'home'
       rescue
-        flash.now[:warning] = "Your password could not be emailed to #{params[:user][:email]}"
+#        flash.now[:warning] = "Your password could not be emailed to #{params[:user][:email]}"
+        flash_error("パスワード再設定のための情報を #{params[:user][:email]} へ送信できませんでした。申し訳ありませんが管理者へご確認ください。")
       end
     end
   end
