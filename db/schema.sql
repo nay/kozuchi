@@ -104,5 +104,6 @@ drop table if exists preferences;
 create table preferences (
   id integer not null primary key autoincrement,
   user_id integer not null,
-  deals_scroll_height varchar(20)
+  deals_scroll_height varchar(20),
+  color varchar(32)
 );

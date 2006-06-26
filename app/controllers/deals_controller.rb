@@ -2,6 +2,7 @@ class DealsController < ApplicationController
   include BookMenues
   layout 'main'
   before_filter :check_account
+  include ApplicationHelper
 
 #  def rescue_action(exception)
 #    flash_error(exception.to_s)
@@ -57,6 +58,8 @@ class DealsController < ApplicationController
       @date = @target_month || DateBox.today
       @target_month ||= DateBox.this_month
     end
+    today = DateBox.today
+    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
     @tab_name = params[:tab_name] || 'deal'
     
     case @tab_name

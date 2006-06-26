@@ -5,6 +5,17 @@ module ApplicationHelper
   def format_date(date)
     date.strftime('%Y/%m/%d')
   end
+  
+  def user_color_style
+    bgcolor = session[:user].preferences.color
+    return '' unless bgcolor;
+    style_content = "background-color: #{bgcolor};"
+    return 'style="'+style_content+'"'
+  end
+  
+  def format_deal(deal)
+    return "記入 #{deal.date}-#{deal.daily_seq}"
+  end
 
 class AccountGroup
   attr_reader :name, :accounts
@@ -46,8 +57,5 @@ class AccountGroup
   end
 end
 
-def format_deal(deal)
-  return "記入 #{deal.date}-#{deal.daily_seq}"
-end
 
 end

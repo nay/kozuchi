@@ -30,7 +30,6 @@ class Deal < BaseDeal
       conditions += " or " unless conditions.empty?
       conditions += "(summary = '#{r.summary}' and date = '#{r.date}')"
     end
-    p conditions
     return Deal.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
     rescue => err
     p err
