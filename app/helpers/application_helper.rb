@@ -36,7 +36,7 @@ module ApplicationHelper
     
       if labels.count(',') > 1
         url = url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values)
-        return '<img src="' + url + '" />'
+        return '<img width="300" height="200" src="' + url + '" />'
       else
         return '<span>グラフは２つ以上の項目があるときに表示されます。</span>'
       end
