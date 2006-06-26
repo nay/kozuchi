@@ -59,30 +59,11 @@
       </tr>
       <tr>
       <td class="graph" width="50%">
-
         <%= pie_graph(@expenses_summaries, nil, 'name', 'sum', @expenses_sum)%>
-
       </td>
       <td class="graph" width="50%">
-<%
-  labels = ''
-  values = ''
-  for summary in @incomes_summaries
-     v = (@incomes_sum != 0 ? (summary.sum * 100.0 / @incomes_sum).round : 0)
-     next if v == 100 || v == 0
-     values += v.to_s + ','
-     labels += summary.name + ','
-  end
-%>
-<% if labels.count(',') > 1 then %>
-　　　　　　　<img src="<%= url_for(:controller=>'graph', :action=>'pie', :labels=>labels, :values=>values) %>" />
-<% else %>
-       <span>グラフは２つ以上の項目があるときに表示されます。</span>
-<% end %>
-
+        <%= pie_graph(@incomes_summaries, nil, 'name', 'sum', @incomes_sum) %>
       </td>
-
-
       </tr>
       </tr>
       </table>
