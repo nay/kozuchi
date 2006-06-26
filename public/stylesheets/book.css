@@ -203,6 +203,16 @@ table.masters {
   vertical-align: top;
 }
 
+.graph {
+  vertical-align: middle;
+  text-align: center;
+  border: 2px solid darkgoldenrod;
+  color: darkgoldenrod;
+  font-weight: bold;
+  background-color: whilte;
+}
+
+
 tr.unconfirmed td, span.unconfirmed  {
   color: gray;
 }
