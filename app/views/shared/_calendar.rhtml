@@ -12,7 +12,7 @@
     </div>
 
 <%= javascript_tag <<-END
-      select_month(<%=@target_month.year%>,<%=@target_month.month%>, false);
+      select_month(#{@target_month.year},#{@target_month.month}, false);
 END
 %>
     
