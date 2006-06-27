@@ -73,6 +73,7 @@ span.large {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
   width:100%;
+/*  width: 18em; */
 }
 
 .book_header {
@@ -93,11 +94,11 @@ span.large {
 .book .updated_line td {
   background-color: pink;
 }
-.book td {
+.book td, .book tbody tr td {
   padding: 2px;
   background-color: white;
 }
-.book_header th {
+.book_header th, .book_header tbody tr th {
   padding: 2px;
   background-color: goldenrod;
   text-align: center;
@@ -404,20 +405,20 @@ body {
 }
 
 
+.table_first {
+}
+
 .table_block {
   clear: both;
 }
 
 .table_block .left {
-  width: 50%;
+  width: 49.5%;
   float: left;
 }
 
 .table_block .right {
-  width: 50%;
+  width: 49.5%;
   float: right;
-}
-
-.table_block table {
 }
 
