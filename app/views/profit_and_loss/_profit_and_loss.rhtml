@@ -11,46 +11,45 @@
         <th colspan="2">支出</th>
       </tr>
       <% for summary in @expenses_summaries %>
-        <tr>
-          <td><%= summary.name %></td>
-          <td class="percentage"><%= @expenses_sum != 0 ?
+      <tr>
+        <td><%= summary.name %></td>
+        <td class="percentage"><%= @expenses_sum != 0 ?
           (summary.sum * 100.0 / @expenses_sum).round : 0%>%</td>
-          <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
-        </tr>
+        <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
+      </tr>
       <% end %>
     </table>
   </div>
   <div class="right">
-      <!-- 収入一覧 -->
+    <!-- 収入一覧 -->
       <table class="book">
         <tr>
           <th colspan="2">収入</th>
         </tr>
         <% for summary in @incomes_summaries %>
-          <tr>
-            <td><%= summary.name %></td>
-            <td class="percentage"><%= @incomes_sum != 0 ?
-(summary.sum * 100.0 / @incomes_sum).round : 0 %>%</td>
-            <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
-          </tr>
+        <tr>
+          <td><%= summary.name %></td>
+          <td class="percentage"><%= @incomes_sum != 0 ?
+        (summary.sum * 100.0 / @incomes_sum).round : 0 %>%</td>
+          <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
+        </tr>
         <% end %>
-      </table>
+    </table>
+  </div>
 </div>
-</div>
-
 
 <div class="table_block">
-<div class="left">
-      <!-- 支出合計 -->
-      <table class="book">
-        <tr>
-          <td>支出合計</td>
-          <td class="amount"><%= number_with_delimiter(@expenses_sum)%></td>
-        </tr>
-      </table>
-</div>
+  <div class="left">
+    <!-- 支出合計 -->
+    <table class="book">
+      <tr>
+        <td>支出合計</td>
+        <td class="amount"><%= number_with_delimiter(@expenses_sum)%></td>
+      </tr>
+    </table>
+  </div>
 
-<div class="right">
+  <div class="right">
       <!-- 収入合計 -->
       <table class="book">
         <tr>
@@ -58,73 +57,72 @@
           <td class="amount"><%= number_with_delimiter(@incomes_sum)%></td>
         </tr>
       </table>
-</div>
-</div>
-
-  <div class="table_block">
-      <div class="left"><div class="graph">
-        <%= pie_graph(@expenses_summaries, nil, 'name', 'sum', @expenses_sum) %>
-      </div></div>
-      <div class="right"><div class="graph">
-        <%= pie_graph(@incomes_summaries, nil, 'name', 'sum', @incomes_sum) %>
-      </div></div>
   </div>
+</div>
 
-  <div class="table_block">
+<div class="table_block">
+  <div class="left"><div class="graph">
+    <%= pie_graph(@expenses_summaries, nil, 'name', 'sum', @expenses_sum) %>
+  </div></div>
+  <div class="right"><div class="graph">
+    <%= pie_graph(@incomes_summaries, nil, 'name', 'sum', @incomes_sum) %>
+  </div></div>
+</div>
+
+<div class="table_block">
   <div class="result">
     <div class="<%= @profit >= 0 ? "profit" : "loss" %>">
       <span><%= @profit >= 0 ? "利益" : "損失" %>合計</span>
       <span class="amount"><%= number_with_delimiter(@profit.abs)%>円</span>
     </div>
   </div>
-  </div>
+</div>
 
-  <!-- 資産の増減 -->
-  <div class="table_block">
-    <div class="left">
-        <table class="book">
-          <tr>
-            <th colspan="2">資産減少</th>
-          </tr>
-          <% for summary in @asset_minus_summaries %>
-            <tr>
-              <td><%= summary.account.name %></td>
-              <td class="amount">-<%= number_with_delimiter(summary.diff.abs)%></td>
-            </tr>
-          <% end %>
-        </table>
-    </div>
-    <div class="right">
-        <table class="book">
-          <tr>
-            <th colspan="2">資産増加</th>
-          </tr>
-          <% for summary in @asset_plus_summaries %>
-            <tr>
-              <td><%= summary.account.name %></td>
-              <td class="amount">+<%= number_with_delimiter(summary.diff)%></td>
-            </tr>
-          <% end %>
-        </table>
-    </div>
+<!-- 資産の増減 -->
+<div class="table_block">
+  <div class="left">
+    <table class="book">
+      <tr>
+        <th colspan="2">資産減少</th>
+      </tr>
+      <% for summary in @asset_minus_summaries %>
+      <tr>
+        <td><%= summary.account.name %></td>
+        <td class="amount">-<%= number_with_delimiter(summary.diff.abs)%></td>
+      </tr>
+      <% end %>
+    </table>
   </div>
-
-  <div class="table_block">
-    <div class="left">
-        <table class="book">
-          <tr>
-            <td>減少合計</td>
-            <td class="amount">-<%= number_with_delimiter(@assets_minus_sum.abs)%></td>
-          </tr>
-        </table>
-    </div>
-
-    <div class="right">
-        <table class="book">
-          <tr>
-            <td>増加合計</td>
-            <td class="amount">+<%= number_with_delimiter(@assets_plus_sum)%></td>
-          </tr>
-        </table>
-    </div>
+  <div class="right">
+    <table class="book">
+      <tr>
+        <th colspan="2">資産増加</th>
+      </tr>
+      <% for summary in @asset_plus_summaries %>
+      <tr>
+        <td><%= summary.account.name %></td>
+        <td class="amount">+<%= number_with_delimiter(summary.diff)%></td>
+      </tr>
+      <% end %>
+    </table>
   </div>
+</div>
+
+<div class="table_block">
+  <div class="left">
+    <table class="book">
+      <tr>
+        <td>減少合計</td>
+        <td class="amount">-<%= number_with_delimiter(@assets_minus_sum.abs)%></td>
+      </tr>
+    </table>
+  </div>
+  <div class="right">
+    <table class="book">
+      <tr>
+        <td>増加合計</td>
+        <td class="amount">+<%= number_with_delimiter(@assets_plus_sum)%></td>
+      </tr>
+    </table>
+  </div>
+</div>
