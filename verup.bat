@@ -11,3 +11,5 @@ svn copy http://localhost:9000/repos-inside/kozuchi/trunk http://localhost:9000/
 :END
 
 echo done
+
+rem test update
