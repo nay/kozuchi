@@ -15,10 +15,10 @@ class ApplicationController < ActionController::Base
     session[:user]
   end
 
-  def rescue_action_in_public(exception)
-    p "rescue"
-    redirect_to(:controller => 'deals', :action => 'index')
-  end
+#  def rescue_action_in_public(exception)
+#    p "rescue"
+#    redirect_to(:controller => 'deals', :action => 'index')
+#  end
   
 
   def set_ssl
