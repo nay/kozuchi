@@ -20,8 +20,8 @@ class User < ActiveRecord::Base
   def interactive_friends(level)
     # TODO 効率悪い
     friend_users = []
-    for l in friends
-      friend_users << l.friend_user if l.friend_level >= level && l.friend_user.friends.detect{|e|e.friend_user_id == self.id && e.friend_level >= level}
+    for l in friends(true)
+      friend_users << l.friend_user if l.friend_level >= level && l.friend_user.friends(true).detect{|e|e.friend_user_id == self.id && e.friend_level >= level}
     end
     return friend_users
   end

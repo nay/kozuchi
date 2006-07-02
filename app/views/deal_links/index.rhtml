@@ -1,21 +1,25 @@
 <div class="top_box">
   <div class="form_box">
-    <%= form_tag :action => 'connect_account'%>
-      <%= session[:user].login_id %>
-      <span>さんの</span>
-      <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
-      <span>への記入と、<br />
-      <%= collection_select('account', 'partner_login_id', @friends, :login_id, :login_id) %>
-      <span>さんの</span>
-      <%= text_field('account', 'partner_account_name', :size => 16, :class => "text") %>
-      <span>への記入を</span>
-      <select name="account[interactive]" id="account_interactive">
-        <option value="false">単方向</option>
-        <option value="true">双方向</option>
-      </select>
-      <span>で</span>
-      <button type="submit">連動</button>
-    <%= end_form_tag %>
+    <% if @friends.size > 0%>
+      <%= form_tag :action => 'connect_account'%>
+        <%= session[:user].login_id %>
+        <span>さんの</span>
+        <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
+        <span>への記入と、<br />
+        <%= collection_select('account', 'partner_login_id', @friends, :login_id, :login_id) %>
+        <span>さんの</span>
+        <%= text_field('account', 'partner_account_name', :size => 16, :class => "text") %>
+        <span>への記入を</span>
+        <select name="account[interactive]" id="account_interactive">
+          <option value="false">単方向</option>
+          <option value="true">双方向</option>
+        </select>
+        <span>で</span>
+        <button type="submit">連動</button>
+      <%= end_form_tag %>
+    <% else %>
+     <p class="guide">取引連動機能を利用するには、フレンドが必要です。フレンド登録を申請し、お友達に承認をもらってください。</p>
+    <% end %>
     <p class="guide">
       <span>あなたの口座（費目/収入内訳）とフレンドの口座（収入内訳/費目）を関連づけます。関連づけを通じて、家計簿を記入したときに、自動的に相手の家計簿にも対応する記入が書き込まれるようになります。</span>
       <br />
