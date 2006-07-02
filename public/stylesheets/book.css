@@ -380,7 +380,8 @@ body {
 
 /* ------ 口座別出納：口座選択欄 --------*/
 #account_options {
-  text-align: right;
+}
+#account_options select {
 }
 
 
