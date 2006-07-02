@@ -20,8 +20,15 @@
 }
 
 /* 反転エリア */
-#header, #header *, #user_and_today {
+#header, #header * {
   background-color: darkgoldenrod;
+  color: gold;
+  font-weight: bold;
+  padding: 4px;
+}
+
+#user_and_today {
+  background-color: indigo;
   color: gold;
   font-weight: bold;
   padding: 4px;
