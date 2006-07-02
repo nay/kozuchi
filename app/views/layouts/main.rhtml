@@ -24,23 +24,13 @@
         <span> - <%= controller.sub_title(controller.action_name) || controller.action_name %></span>
       </div>
       <div id="header_menu">
-        <% if controller.title != "家計簿" %>
-          <%= link_to("家計簿", :controller => "deals", :action => 'index') %>
-        <% else %>
-          <span class="current">家計簿</span>
-        <% end %>
+        <%= header_menu("家計簿", :controller => "deals", :action => 'index')%>
         <span> | </span>
-        <% if controller.title != "基本設定" %>
-          <%= link_to("基本設定", :controller => "config", :action => "index") %>
-        <% else %>
-          <span class="current">基本設定</span>
-        <% end %>
+        <%= header_menu("基本設定", :controller => "config", :action => "index") %>
         <span> | </span>
-        <% if controller.title != "高度な設定" %>
-          <%= link_to("高度な設定", :controller => "expert_config", :action => "index") %>
-        <% else %>
-          <span class="current">高度な設定</span>
-        <% end %>
+        <%= header_menu("高度な設定", :controller => "expert_config", :action => "index") %>
+        <span> | </span>
+        <%= header_menu("ヘルプ", :controller => "help", :action => "index") %>
         <span> | </span>
         <%= link_to("ログアウト", :controller => "user", :action => "logout") %>
       </div>

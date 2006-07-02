@@ -24,7 +24,7 @@ body {
 
 h3 {
   text-align: center;
-  margin: 16px;
+  margin-top: 1em;
 }
 
 .form-padding {
@@ -61,7 +61,7 @@ h3 {
 
 div.description {
   text-align: left;
-  padding: 0px 10em;
+  padding: 1em 2em;
 }
 
 .description p {
@@ -70,6 +70,7 @@ div.description {
 
 h4 {
   margin: 0.5em 0;
+  border-bottom: 1px dotted goldenrod;
 }
 
 
@@ -93,4 +94,10 @@ h4 {
   background-color: goldenrod;
   color:black;
   font-weight: bold;
+}
+
+#features {
+  margin: 1em 6em;
+  border: 2px dotted darkgoldenrod;
+  background-color: white;
 }

@@ -1,6 +1,5 @@
 @charset "utf-8";
 
-
 /* ============== 共通情報　=============== */
 
 /* 上下の margin に関する汎用部品 */
@@ -421,4 +420,33 @@ body {
   width: 49.5%;
   float: right;
 }
+/* ==== ヘルプ用　======= */
+div.description {
+  border: 2px dotted darkgoldenrod;
+  background-color: white;
+  text-align: left;
+  padding: 0.8em 1.2em;
+}
 
+.description p {
+  margin-left: 1em;
+}
+
+div.paragraph {
+  padding-left: 2em;
+  margin: 1em;
+}
+
+h3 {
+  color: darkgoldenrod;
+}
+
+h4 {
+  margin: 0.5em 0.2em;
+  border-bottom: 1px dotted goldenrod;
+}
+
+p.example {
+  padding: 0.2em 0;
+  font-style: italic;
+}

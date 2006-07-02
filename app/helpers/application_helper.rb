@@ -2,6 +2,14 @@
 module ApplicationHelper
   include LoginEngine
   
+  def header_menu(menu_title, url_options)
+    if controller.title != menu_title
+      link_to(menu_title, url_options)
+    else
+      '<span class="current">' + menu_title + '</span>'
+    end
+  end
+  
   def format_date(date)
     date.strftime('%Y/%m/%d')
   end
