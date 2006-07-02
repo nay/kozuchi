@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
 #    p "rescue"
 #    redirect_to(:controller => 'deals', :action => 'index')
 #  end
-  
 
   def set_ssl
     if KOZUCHI_SSL
@@ -27,23 +26,27 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def flash_validation_errors(obj)
-    flash[:errors] ||= []
+  def flash_validation_errors(obj, now = false)
+    f = now ? flash.now : flash
+    
+    f[:errors] ||= []
     obj.errors.each do |attr, msg|
-      flash[:errors] << msg
+      f[:errors] << msg
     end
   end
   
-  def flash_error(message)
+  def flash_error(message, now = false)
     # TODO: validation error で Validation Failed が出るのを防ぐ
     message = message.gsub(/Validation failed: /, '')
-  
-    flash.now[:errors] ||= []
-    flash.now[:errors] << message
+    
+    f = now ? flash.now : flash
+    f[:errors] ||= []
+    f[:errors] << message
   end
   
-  def flash_notice(message)
-    flash[:notice] = message
+  def flash_notice(message, now = false)
+    f = now ? flash.now : flash
+    f[:notice] = message
   end
 
 #  def authorize

@@ -18,7 +18,7 @@ class UserController < ApplicationController
   # by the login_required method, they should be sent back to the page they were
   # trying to access. If not, they will be sent to "/user/home".
   def login
-    reset_session
+    reset_session if session[:user]
     return if generate_blank
     @user = User.new(params[:user])
     if session[:user] = User.authenticate(params[:user][:login], params[:user][:password])
@@ -51,20 +51,20 @@ class UserController < ApplicationController
         if @user.save
           key = @user.generate_security_token
           url = url_for(:action => 'home', :user_id => @user.id, :key => key)
-          flash[:notice] = '登録は正常に受け付けられました。'
+          msg = '登録は正常に受け付けられました。'
           if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
             UserNotify.deliver_signup(@user, params[:user][:password], url)
-            flash[:notice] << ' 登録確認メールを確認して登録処理を完了してください。'
+            flash_notice(msg + '登録確認メールを確認して登録処理を完了してください。')
           else
-            flash[:notice] << ' ログインしてください。'
+            flash_notice(msg + 'ログインしてください。')
           end
           redirect_to :action => 'login'
         end
       end
     rescue Exception => e
-      flash.now[:notice] = nil
-      flash.now[:warning] = 'Error creating account: confirmation email not sent'
-      flash_error("アカウント作成時にエラーが発生しました。（登録確認メールは送られていません。）")
+      flash_notice(nil, true)
+#      flash.now[:warning] = 'Error creating account: confirmation email not sent'
+      flash_error("アカウント作成時にエラーが発生しました。（登録確認メールは送られていません。）", true)
       logger.error "Unable to send confirmation E-Mail:"
       logger.error e
     end
@@ -179,7 +179,8 @@ class UserController < ApplicationController
           end
         end
       rescue
-        flash.now[:warning] = "ユーザープロフィールを更新できませんでした。"
+        flash_error("ユーザープロフィールを更新できませんでした。", true)
+#        flash.now[:warning] = "ユーザープロフィールを更新できませんでした。"
       end
     end
   
