@@ -34,13 +34,12 @@ class BaseDeal < ActiveRecord::Base
 
   def self.get_for_month(user_id, datebox)
     BaseDeal.find(:all,
-                  :include => :account_entries,
                   :conditions => [
-                    "deals.user_id = ? and deals.date >= ? and deals.date < ?",
+                    "user_id = ? and date >= ? and date < ?",
                     user_id,
                     datebox.start_inclusive,
                     datebox.end_exclusive],
-                  :order => "deals.date, deals.daily_seq")
+                  :order => "date, daily_seq")
   end
 
   def self.get_for_account(user_id, account_id, datebox)
