@@ -37,7 +37,10 @@ class ApplicationController < ActionController::Base
   
   def flash_error(message, now = false)
     # TODO: validation error で Validation Failed が出るのを防ぐ
-    message = message.gsub(/Validation failed: /, '')
+    begin
+      message = message.gsub(/Validation failed: /, '')
+    rescue
+    end
     
     f = now ? flash.now : flash
     f[:errors] ||= []

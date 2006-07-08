@@ -84,20 +84,25 @@ class DealsController < ApplicationController
 
   # タブシート内の「記入」ボタンが押されたときのアクション
   def submit_tab
-    @date = DateBox.new(params[:date])
     options = {:action => 'index', :tab_name => params[:tab_name]}
-    if "deal" == params[:tab_name]
-      deal = save_deal
-      options.store("deal[minus_account_id]", deal.minus_account_id)
-      options.store("deal[plus_account_id]", deal.plus_account_id)
-    else
-      deal = save_balance
-      # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
-    end
-    session[:target_month] = @date
-    flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
-    options.store("updated_deal_id", deal.id)
-    redirect_to(options)
+    begin
+      @date = DateBox.new(params[:date])
+      if "deal" == params[:tab_name]
+        deal = save_deal
+        options.store("deal[minus_account_id]", deal.minus_account_id)
+        options.store("deal[plus_account_id]", deal.plus_account_id)
+      else
+        deal = save_balance
+        # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
+      end
+      session[:target_month] = @date
+      flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
+      options.store("updated_deal_id", deal.id)
+      redirect_to(options)
+    rescue => err
+      flash_error(err.to_s)
+      redirect_to(options)
+   end
   end
 
   # 取引の削除を受け付ける
