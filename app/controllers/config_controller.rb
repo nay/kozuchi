@@ -31,7 +31,7 @@ class ConfigController < ApplicationController
       flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
     rescue => err
       flash_validation_errors(new_account)
-      flash_error(err.to_s) unless new_account.errors.empty
+      flash_error(err.to_s) unless new_account.errors.empty?
     end
     redirect_to(:action => @actions[new_account.account_type])
   end
