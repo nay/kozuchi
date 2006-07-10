@@ -1,5 +1,8 @@
 class ActionController::Base
   def rescue_action_in_public(exception)
+    return if exception.kind_of?( ActionController::RoutingError )
+    return if exception.kind_of?( ActionController::UnknownAction )
+
     ExceptionMailer.deliver_emergency(exception)
 
     redirect_to(:controller => 'user', :action => 'home')

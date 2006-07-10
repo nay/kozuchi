@@ -34,6 +34,10 @@ class << Dispatcher
     rescue Object => exception
       begin
         ActionController::Base.process_with_exception(request, response, exception).out
+      rescue ActionController::RoutingError
+        # pass
+      rescue ActionController::UnknownAction
+        # pass
       rescue
         # The rescue action above failed also, probably for the same reason
         # the original action failed.  Do something simple which is unlikely
