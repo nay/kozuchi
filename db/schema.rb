@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 1) do
 
   create_table "account_entries", :force => true do |t|
     t.column "user_id", :integer, :null => false
@@ -36,8 +36,9 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column "partner_account_id", :integer
   end
 
-# Could not dump table "deal_links" because of following StandardError
-#   Unknown type '' for column 'created_user_id'
+  create_table "deal_links", :force => true do |t|
+    t.column "created_user_id", :integer
+  end
 
   create_table "deals", :force => true do |t|
     t.column "type", :string, :limit => 20, :null => false
@@ -49,12 +50,6 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column "parent_deal_id", :integer
   end
 
-  create_table "friend_deals", :force => true do |t|
-    t.column "user_id", :integer, :null => false
-    t.column "deal_id", :integer, :null => false
-    t.column "friend_deal_id", :integer, :null => false
-  end
-
   create_table "friends", :force => true do |t|
     t.column "user_id", :integer, :null => false
     t.column "friend_user_id", :integer, :null => false
@@ -64,17 +59,8 @@ ActiveRecord::Schema.define(:version => 0) do
   create_table "preferences", :force => true do |t|
     t.column "user_id", :integer, :null => false
     t.column "deals_scroll_height", :string, :limit => 20
+    t.column "color", :string, :limit => 32
   end
-
-# Could not dump table "sqlite_sequence" because of following StandardError
-#   Unknown type '' for column 'name'
-
-  create_table "user2s", :force => true do |t|
-    t.column "login_id", :string, :limit => 16, :null => false
-    t.column "hashed_password", :string, :limit => 40, :null => false
-  end
-
-  add_index "user2s", ["login_id"], :name => "sqlite_autoindex_user2s_1", :unique => true
 
   create_table "users", :force => true do |t|
     t.column "login", :string, :limit => 80, :default => "", :null => false
@@ -87,11 +73,11 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column "role", :string, :limit => 40
     t.column "security_token", :string, :limit => 40
     t.column "token_expiry", :datetime
-    t.column "created_at", :datetime
+    t.column "cerated_at", :datetime
     t.column "updated_at", :datetime
     t.column "logged_in_at", :datetime
     t.column "deleted", :integer, :default => 0
-    t.column "delete_after", :datetime
+    t.column "deleted_after", :datetime
   end
 
 end
