@@ -38,9 +38,9 @@
       <th>変更</th><th>削除</th>
     </tr>
     <% for rule in @rules %>
+      <tr>
       <%= form_tag :action => 'update_account_rule'%>
       <input type="hidden" name="rule[id]" id="rule_id" value="<%= rule.id %>"/><% # hidden_field だとはいらない %>
-      <tr>
         <td>
           <%= rule.account.name %>
         </td>
@@ -66,10 +66,10 @@
           </select>
         </td>
         <td class="button_action"><button type="submit">変更</button></td>
+        <%=end_form_tag%>
         <td class="button_action"><%= button_to("削除", {:action => "delete_account_rule", :id => rule.id}, :class => 'button') %></td>
       </tr>
       
-    <%=end_form_tag%>
     <% end %>
   </table>
 </div>
