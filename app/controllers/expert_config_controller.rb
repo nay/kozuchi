@@ -12,7 +12,7 @@ class ExpertConfigController < ApplicationController
   def account_rules
     @rules = AccountRule.find_all(session[:user].id)
     @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
-    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [2])
+    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [Account::ASSET_BANKING_FACILITY])
     @creatable = false
     @rule = AccountRule.new
     @day_options = ExpertConfigController.day_options
@@ -44,7 +44,7 @@ class ExpertConfigController < ApplicationController
     begin
       rule.save!
       flash[:notice] = "#{rule.account.name}に精算ルールを登録しました。"
-    rescue RecordInvalid => error
+    rescue ActiveRecord::RecordInvalid => error
       flash[:notice] = "#{rule.account.name}に精算ルールを登録できませんでした。#{error}"
     end
     redirect_to(:action => 'account_rules')

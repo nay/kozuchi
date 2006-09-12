@@ -43,6 +43,8 @@ class AccountRule < ActiveRecord::Base
 
 
   def validate
+    # 対象口座と精算口座が同じであってはならない
+#    errors.add(:associated_account_id, "適用対象と精算口座に同じ口座は設定できません。") unless self.account_id != self.associated_account_id
     # 支払い月が当月の場合は、締め日＜＝支払日である必要がある。
     if self.payment_term_months == 0
       errors.add(:payment_day, "当月に精算する場合は、締日以降の精算日を指定してください。") unless (closing_day != 0 && self.closing_day <= payment_day ) || payment_day == 0
