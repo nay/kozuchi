@@ -1,0 +1,8 @@
+<% if defined?(GOOGLE_ANALYTICS_CODE) then %>
+<%= javascript_include_tag 'http://www.google-analytics.com/urchin.js'%>
+<%= javascript_tag <<-END
+  _uacct = "UA-#{GOOGLE_ANALYTICS_CODE}";
+  urchinTracker();
+END
+%>
+<% end %>

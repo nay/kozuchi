@@ -62,6 +62,8 @@ KOZUCHI_SSL = false
 #   closed : Admin function only.
 KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
 
+# GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
+
 module LoginEngine
   config :salt, "koban"
   config :email_from, "kozuchi@goas.no-ip.org"
