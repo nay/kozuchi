@@ -1,7 +1,7 @@
     <div class="tabbuttons">
-      <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
+      <div class="tab"><%= link_to_remote("残高", {:update => "tabwindow", :url => {:action => 'select_balance_tab'}}, {:tabindex => '20'}) %></div>
       <% if @deal.id %>
-        <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
+        <div class="tab"><%= link_to_remote("明細", {:update => "tabwindow", :url => {:action => 'select_deal_tab'}}, {:tabindex => '20'}) %></div>
       <% end %>
       <div class="selectedtab">
         <% if @deal.id %>
@@ -18,16 +18,16 @@
       <% if @deal.is_subordinate %>
         <input type="text" disabled="true" class="readonly" value="<%= @deal.summary %>" size="40"/>
       <% else %>
-        <%= text_field("deal", "summary", :size => "40") %>
+        <%= text_field("deal", "summary", {:size => "40", :tabindex => '10'}) %>
       <% end %>
       <span id="patterns"><%= render :partial => "patterns" %></span>
-      <%= text_field("deal", "amount", :size => "8", :disabled => @deal.is_subordinate, :class => @deal.is_subordinate ? 'readonly' : '') %>
+      <%= text_field("deal", "amount", {:size => "8", :disabled => @deal.is_subordinate, :class => @deal.is_subordinate ? 'readonly' : '', :tabindex => '11'}) %>
       <span>円</span>
       <span id="account_minus">
         <% if @deal.is_subordinate && @deal.parent_for(@deal.minus_account_id)%>
-          <input type="text" disabled="true" class="readonly" value="<%= Account.find(@deal.minus_account_id).name %>"/>
+          <input type="text" disabled="true" class="readonly" value="<%= Account.find(@deal.minus_account_id).name %>" tabindex="12" />
         <% else %>
-          <select name="deal[minus_account_id]" id="deal_account_minus_id">
+          <select name="deal[minus_account_id]" id="deal_account_minus_id" tabindex="12">
             <%= option_groups_from_collection_for_select(@accounts_minus, :accounts, :name, :id, :name, @deal.minus_account_id.to_i)%>
           </select>
         <% end %>
@@ -35,14 +35,14 @@
       →
       <span id="account_plus">
         <% if @deal.is_subordinate && @deal.parent_for(@deal.plus_account_id)%>
-          <input type="text" disabled="true" class="readonly" value="<%= Account.find(@deal.plus_account_id).name %>"/>
+          <input type="text" disabled="true" class="readonly" value="<%= Account.find(@deal.plus_account_id).name %>" tabindex="13"/>
         <% else %>
-          <select name="deal[plus_account_id]" id="deal_account_plus_id">
+          <select name="deal[plus_account_id]" id="deal_account_plus_id" tabindex="13">
           <%= option_groups_from_collection_for_select(@accounts_plus, :accounts, :name, :id, :name, @deal.plus_account_id.to_i)%>
           </select>
         <% end %>
       </span>
-      <button type="submit">記入</button>
+      <button type="submit" tabindex="14">記入</button>
 
 
     </div>

@@ -1,6 +1,6 @@
     <div class="tabbuttons">
       <% if @deal.id %>
-        <div class="tab"><%= link_to_remote("残高", :update => "tabwindow", :url => {:action => 'select_balance_tab'}) %></div>
+        <div class="tab"><%= link_to_remote("残高", {:update => "tabwindow", :url => {:action => 'select_balance_tab'}}, {:tabindex => '20'}) %></div>
       <% end %>
       <div class="selectedtab">
         <% if @deal.id %>
@@ -10,13 +10,13 @@
          <div>残高</div>
         <% end %>
       </div>
-      <div class="tab"><%= link_to_remote("明細", :update => "tabwindow", :url => {:action => 'select_deal_tab'}) %></div>
+      <div class="tab"><%= link_to_remote("明細", {:update => "tabwindow", :url => {:action => 'select_deal_tab'}}, {:tabindex => '21'}) %></div>
     </div>
     <div class="tabsheet">
-      <input type="hidden" name="tab_name" value="balance"/>
-      <%= collection_select("deal", "account_id", @accounts_for_balance, :id, :name) %>
-      <label>残高:</label><%= text_field("deal","balance", :size => "8")%>円
-      <button type="submit">記入</button>
+      <input type="hidden" name="tab_name" value="balance" />
+      <%= collection_select("deal", "account_id", @accounts_for_balance, :id, :name, {}, {:tabindex => '10'}) %>
+      <label>残高:</label><%= text_field("deal", "balance", :size => "8", :tabindex => "11")%>円
+      <button type="submit" tabindex="12">記入</button>
     </div>
     <% if @deal.date %>
       <script>
