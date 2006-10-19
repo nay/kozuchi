@@ -14,11 +14,11 @@ class InitialSchema < ActiveRecord::Migration
       t.column "role", :string, :limit => 40
       t.column "security_token", :string, :limit => 40
       t.column "token_expiry", :datetime
-      t.column "cerated_at", :timestamp
+      t.column "created_at", :timestamp
       t.column "updated_at", :timestamp
       t.column "logged_in_at", :timestamp
       t.column "deleted", :integer, :default => 0
-      t.column "deleted_after", :timestamp
+      t.column "delete_after", :timestamp
     end
 
     # friends
