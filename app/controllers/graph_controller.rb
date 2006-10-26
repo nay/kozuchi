@@ -1,5 +1,5 @@
 class GraphController < ApplicationController 
-  GRAPH_TT_FONT = '/usr/local/share/fonts/sazanami-mincho.ttf'
+  ::GRAPH_TT_FONT = '/usr/local/share/fonts/sazanami-mincho.ttf' unless defined?( ::GRAPH_TT_FONT )
   verify :params => [:labels, :values]
 
   def pie
