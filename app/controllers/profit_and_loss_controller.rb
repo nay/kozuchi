@@ -1,6 +1,7 @@
 class ProfitAndLossController < ApplicationController 
   include BookMenues
   layout 'main'
+  helper :graph
   before_filter :check_account
 
   # 収支表

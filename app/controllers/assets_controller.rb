@@ -1,6 +1,7 @@
 class AssetsController < ApplicationController
   include BookMenues
   layout 'main'
+  helper :graph
   before_filter :check_account
 
   def index
