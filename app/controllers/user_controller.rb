@@ -67,6 +67,8 @@ class UserController < ApplicationController
       flash_error("アカウント作成時にエラーが発生しました。（登録確認メールは送られていません。）", true)
       logger.error "Unable to send confirmation E-Mail:"
       logger.error e
+      logger.error e.backtrace
+      p e.backtrace
     end
   end
 
@@ -86,6 +88,13 @@ class UserController < ApplicationController
 #      redirect_back_or_default :action => 'change_password'
 #    end
 #  end
+
+  def change_password
+    return if generate_filled_in
+    do_change_password_for(@user) # 成功してもしなくても同じ遷移にした
+    # since sometimes we're changing the password from within another action/template...
+    redirect_back_or_default :action => 'change_password'
+  end
 
   protected
     def do_change_password_for(user)

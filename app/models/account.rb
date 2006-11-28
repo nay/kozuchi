@@ -158,8 +158,10 @@ class Account < ActiveRecord::Base
     binded_accounts.each do |e|
       binded_account_ids << e["account_id"]
     end
+    not_in_binded_accounts = binded_account_ids.empty? ? "" : " and id not in(#{binded_account_ids.join(',')})"
+    
     find(:all,
-     :conditions => ["user_id = ? and account_type = ? and asset_type in (?, ?) and id not in(#{binded_account_ids.join(',')})",
+     :conditions => ["user_id = ? and account_type = ? and asset_type in (?, ?)#{not_in_binded_accounts}",
         user_id,
         ACCOUNT_ASSET,
         ASSET_CREDIT_CARD,

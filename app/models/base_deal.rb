@@ -11,6 +11,8 @@ class BaseDeal < ActiveRecord::Base
 
   attr_writer :insert_before
   attr_accessor :old_date
+  
+  include ModelHelper
 
   def is_subordinate
     return false
@@ -61,7 +63,7 @@ class BaseDeal < ActiveRecord::Base
   end
   
   def confirm
-    BaseDeal.update_all("confirmed = 't'", "id = #{self.id}") # todo sqlite3 boolean
+    BaseDeal.update_all("confirmed = #{boolean_to_s(true)}", "id = #{self.id}")
     # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
   end
 
