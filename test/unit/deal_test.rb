@@ -4,12 +4,12 @@ class DealTest < Test::Unit::TestCase
   fixtures :users
   fixtures :accounts
 
-  # Žæˆø•Û‘¶Žž‚ÉAdaily_seq ‚ª³‚µ‚­‚Â‚­‚±‚Æ‚ÌƒeƒXƒg
+  # å–å¼•ä¿å­˜æ™‚ã«ã€daily_seq ãŒæ­£ã—ãã¤ãã“ã¨ã®ãƒ†ã‚¹ãƒˆ
   def test_daily_seq
     user = User.find(1)
     assert user
     
-    deal = Deal.new(:summary => "‚¨‚É‚¬‚è",
+    deal = Deal.new(:summary => "ãŠã«ãŽã‚Š",
      :amount => "105",
      :minus_account_id => "1",
      :plus_account_id => "2",
@@ -21,7 +21,7 @@ class DealTest < Test::Unit::TestCase
     deal = Deal.find(deal.id)
     assert deal
     assert_equal user.id, deal.user_id
-    assert_equal "‚¨‚É‚¬‚è", deal.summary
+    assert_equal "ãŠã«ãŽã‚Š", deal.summary
     assert_equal 4, deal.date.month
     assert_equal 2006, deal.date.year
     assert_equal 2, deal.account_entries.size
@@ -33,41 +33,41 @@ class DealTest < Test::Unit::TestCase
     assert_equal deal.account_entries[1].deal_id, 1
     assert_equal 1, deal.daily_seq
 
-    # ’Ç‰Á
-    deal2 = Deal.new({:summary => "‚¨‚É‚¬‚è", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01")})
+    # è¿½åŠ 
+    deal2 = Deal.new({:summary => "ãŠã«ãŽã‚Š", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01")})
     deal2.save!
 
     assert_equal 2, deal2.daily_seq
 
-    #2‚Ì‘O‚É‘}“ü
-    deal3 = Deal.new({:summary => "‚¨‚É‚¬‚è", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01"), :insert_before => deal2})
+    #2ã®å‰ã«æŒ¿å…¥
+    deal3 = Deal.new({:summary => "ãŠã«ãŽã‚Š", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/01"), :insert_before => deal2})
     deal3.save!
    
     assert_equal 2, deal3.daily_seq
    
-    #deal‚ª‚»‚Ì‚Ü‚Ü‚Ådeal2‚ª3‚É‚È‚é‚±‚Æ‚ðŠm”F
+    #dealãŒãã®ã¾ã¾ã§deal2ãŒ3ã«ãªã‚‹ã“ã¨ã‚’ç¢ºèª
     deal = Deal.find(deal.id)
     assert_equal 1, deal.daily_seq
     
     deal2 = Deal.find(deal2.id)
     assert_equal 3, deal2.daily_seq
 
-    #“ú•tˆá‚¢‚ð’Ç‰Á‚µ‚½‚çV‹K‚É‚È‚é‚±‚Æ‚ðŠm”F
-    deal4 = Deal.new(:summary => "‚¨‚É‚¬‚è", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"))
+    #æ—¥ä»˜é•ã„ã‚’è¿½åŠ ã—ãŸã‚‰æ–°è¦ã«ãªã‚‹ã“ã¨ã‚’ç¢ºèª
+    deal4 = Deal.new(:summary => "ãŠã«ãŽã‚Š", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"))
     deal4.save!
     assert_equal 1, deal4.daily_seq
 
-    #“ú•tˆá‚¢‚É‚æ‚é‘}“ü‚ª‚¤‚Ü‚­‚¢‚­‚±‚Æ‚ðŠm”F
-    deal5 = Deal.new(:summary => "‚¨‚É‚¬‚è", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal4 )
+    #æ—¥ä»˜é•ã„ã«ã‚ˆã‚‹æŒ¿å…¥ãŒã†ã¾ãã„ãã“ã¨ã‚’ç¢ºèª
+    deal5 = Deal.new(:summary => "ãŠã«ãŽã‚Š", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal4 )
     deal5.save!
     assert_equal 1, deal5.daily_seq
     deal4 = Deal.find(deal4.id)
     assert_equal 2, deal4.daily_seq
 
     
-    #“ú•t‚Æ‘}“üƒ|ƒCƒ“ƒg‚ª‚ ‚Á‚Ä‚¢‚È‚¢‚Æ—áŠO‚ª”­¶‚·‚é‚±‚Æ‚ðŠm”F
+    #æ—¥ä»˜ã¨æŒ¿å…¥ãƒã‚¤ãƒ³ãƒˆãŒã‚ã£ã¦ã„ãªã„ã¨ä¾‹å¤–ãŒç™ºç”Ÿã™ã‚‹ã“ã¨ã‚’ç¢ºèª
     begin
-      dealx = Deal.new(:summary => "‚¨‚É‚¬‚è", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal)
+      dealx = Deal.new(:summary => "ãŠã«ãŽã‚Š", :amount => "105", :minus_account_id => "1", :plus_account_id => "2", :user_id => user.id, :date => Date.parse("2006/04/02"), :insert_before => deal)
       dealx.save!
       assert false
     rescue Exception

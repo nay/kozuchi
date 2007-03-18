@@ -6,11 +6,11 @@ class FriendDealTest < Test::Unit::TestCase
   fixtures :accounts
   fixtures :account_links
   
-  # ƒtƒŒƒ“ƒhæˆø‚ÌƒeƒXƒg
+  # ãƒ•ãƒ¬ãƒ³ãƒ‰å–å¼•ã®ãƒ†ã‚¹ãƒˆ
   def test_not_confirmed
-    # ì¬
+    # ä½œæˆ
     first_deal = Deal.new(
-      :summary => 'second ‚Ö‘İ‚µ‚½',
+      :summary => 'second ã¸è²¸ã—ãŸ',
       :amount => 1000,
       :minus_account_id => 1,
       :plus_account_id => 3,
@@ -22,31 +22,31 @@ class FriendDealTest < Test::Unit::TestCase
 
     first_second_entry = first_deal.entry(3)
     assert first_second_entry.friend_link
-    friend_link = first_second_entry.friend_link # ‚ ‚Æ‚Å‚Â‚©‚¤
+    friend_link = first_second_entry.friend_link # ã‚ã¨ã§ã¤ã‹ã†
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
     assert_equal 2, another_entry.user_id 
     assert_equal 5, another_entry.account_id
     assert 1000*(-1), another_entry.amount
     
-    # ‘Šè‚ª–¢Šm’è‚Èó‘Ô‚Å‹àŠz‚ğ•ÏX‚µ‚½‚ç‘Šè‚à•Ï‚í‚é
+    # ç›¸æ‰‹ãŒæœªç¢ºå®šãªçŠ¶æ…‹ã§é‡‘é¡ã‚’å¤‰æ›´ã—ãŸã‚‰ç›¸æ‰‹ã‚‚å¤‰ã‚ã‚‹
     first_deal.attributes = {:amount => 1200}
     first_deal.save!
 
-    # ˆÈ‘O‚Ì‘Šè‚Ííœ‚³‚ê‚Ä‚¢‚é
+    # ä»¥å‰ã®ç›¸æ‰‹ã¯å‰Šé™¤ã•ã‚Œã¦ã„ã‚‹
     assert !AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
 
-    # ì‚è’¼‚³‚ê‚é‚Ì‚Å‚Æ‚è‚È‚¨‚·
+    # ä½œã‚Šç›´ã•ã‚Œã‚‹ã®ã§ã¨ã‚ŠãªãŠã™
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
     assert another_entry
     
-    friend_link = first_second_entry.friend_link # ‚ ‚Æ‚Å‚Â‚©‚¤
+    friend_link = first_second_entry.friend_link # ã‚ã¨ã§ã¤ã‹ã†
     assert friend_link
     friend_link_id = friend_link.id
     
     another_entry = AccountEntry.find(another_entry.id)
     assert_equal 1200*(-1), another_entry.amount 
     
-    # ‘Šè‚ª–¢Šm’è‚Èó‘Ô‚Åíœ‚µ‚½‚ç‘Šè‚ÍÁ‚¦‚é
+    # ç›¸æ‰‹ãŒæœªç¢ºå®šãªçŠ¶æ…‹ã§å‰Šé™¤ã—ãŸã‚‰ç›¸æ‰‹ã¯æ¶ˆãˆã‚‹
     first_deal.destroy
     another_entry = AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
     assert !another_entry
@@ -55,9 +55,9 @@ class FriendDealTest < Test::Unit::TestCase
   end
   
   def test_confirmed
-    # ì¬
+    # ä½œæˆ
     first_deal = Deal.new(
-      :summary => 'second ‚ÉØ‚è‚½',
+      :summary => 'second ã«å€Ÿã‚ŠãŸ',
       :amount => 1000,
       :minus_account_id => 3,
       :plus_account_id => 1,
@@ -69,32 +69,32 @@ class FriendDealTest < Test::Unit::TestCase
 
     first_second_entry = first_deal.entry(3)
     assert first_second_entry.friend_link
-    friend_link_id = first_second_entry.friend_link.id # ‚ ‚Æ‚Å‚Â‚©‚¤
+    friend_link_id = first_second_entry.friend_link.id # ã‚ã¨ã§ã¤ã‹ã†
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
     assert_equal 2, another_entry.user_id 
     assert_equal 5, another_entry.account_id
     assert 1000, another_entry.amount
 
-    # ‘Šè‚ğŠm’è‚É‚·‚é
+    # ç›¸æ‰‹ã‚’ç¢ºå®šã«ã™ã‚‹
     friend_deal = another_entry.deal
     friend_deal.confirm
     
-    friend_deal = another_entry.deal(true) # ‚Æ‚è‚È‚¨‚·
+    friend_deal = another_entry.deal(true) # ã¨ã‚ŠãªãŠã™
     
     assert friend_deal.confirmed
     
     assert friend_deal.entry(5).friend_link
     
-    # •ÏX‚µ‚½‚çAV‚µ‚¢‘Šè‚ª‚Å‚«‚éB‹Œ‘Šè‚ÍƒŠƒ“ƒN‚ª‚«‚ê‚éB
+    # å¤‰æ›´ã—ãŸã‚‰ã€æ–°ã—ã„ç›¸æ‰‹ãŒã§ãã‚‹ã€‚æ—§ç›¸æ‰‹ã¯ãƒªãƒ³ã‚¯ãŒãã‚Œã‚‹ã€‚
     first_deal.attributes = {:amount => 1200}
     first_deal.save!
     
     friend_deal = Deal.find(friend_deal.id)
-    assert !friend_deal.entry(5).friend_link # ƒŠƒ“ƒN‚ª‚«‚ê‚½‚Í‚¸B
+    assert !friend_deal.entry(5).friend_link # ãƒªãƒ³ã‚¯ãŒãã‚ŒãŸã¯ãšã€‚
     
     assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
     
-    # V‚µ‚¢‘Šè‚ª‚Å‚«‚½‚Í‚¸B
+    # æ–°ã—ã„ç›¸æ‰‹ãŒã§ããŸã¯ãšã€‚
     first_second_entry = first_deal.entry(3)
     new_friend_link = first_second_entry.friend_link
     
@@ -106,12 +106,12 @@ class FriendDealTest < Test::Unit::TestCase
     assert new_another_entry
     assert_equal 1200, new_another_entry.amount
     
-    # V‚µ‚¢‘Šè‚ğŠm’è‚É‚·‚é
+    # æ–°ã—ã„ç›¸æ‰‹ã‚’ç¢ºå®šã«ã™ã‚‹
     new_friend_deal = new_another_entry.deal
     new_friend_deal.confirmed = true
     new_friend_deal.save!
     
-    # V‚µ‚¢‘Šè‚ğíœ‚·‚é‚Æ©•ª‚ÌƒŠƒ“ƒN‚Í‚«‚¦‚é‚ª©•ª‚Íc‚é
+    # æ–°ã—ã„ç›¸æ‰‹ã‚’å‰Šé™¤ã™ã‚‹ã¨è‡ªåˆ†ã®ãƒªãƒ³ã‚¯ã¯ããˆã‚‹ãŒè‡ªåˆ†ã¯æ®‹ã‚‹
     new_friend_deal.destroy
     
     first_deal = Deal.find(first_deal.id)

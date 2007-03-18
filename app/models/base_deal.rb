@@ -81,7 +81,7 @@ class BaseDeal < ActiveRecord::Base
       raise "An inserting point should be in the same date with the target." if @insert_before.date != self.date
 
       Deal.connection.update(
-        "update deals set daily_seq = daily_seq +1 where user_id == #{self.user_id} and date == '#{self.date.strftime('%Y-%m-%d')}' and ( daily_seq > #{@insert_before.daily_seq}  or (daily_seq == #{@insert_before.daily_seq} and id >= #{@insert_before.id}));"
+        "update deals set daily_seq = daily_seq +1 where user_id = #{self.user_id} and date = '#{self.date.strftime('%Y-%m-%d')}' and ( daily_seq > #{@insert_before.daily_seq}  or (daily_seq = #{@insert_before.daily_seq} and id >= #{@insert_before.id}));"
       )
       self.daily_seq = @insert_before.daily_seq;
 

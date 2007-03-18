@@ -25,3 +25,4 @@ ActionMailer::Base.server_settings = {
   :domain => "kozuchi.com",
   :port => 25
 }
+

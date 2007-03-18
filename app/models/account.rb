@@ -202,7 +202,6 @@ class Account < ActiveRecord::Base
 
   # account_type, asset_type, account_rule の整合性をあわせる
   def before_save
-    p "before_save #{self.id}"
     # asset_type が credit 系でなければ、自分が適用対象として紐づいている rule があれば削除
     if self.asset_type != ASSET_CREDIT_CARD && self.asset_type != ASSET_CREDIT
       self.account_rule = nil
