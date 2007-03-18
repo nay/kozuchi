@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <% if flash[:notice] %>
+      <div><%= flash[:notice]%></div>
+    <% end %>
+    <%= start_form_tag(:action => 'login')%>
+      <table>
+        <tr>
+          <td>ID</td><td><%= text_field('admin_user', 'name')%></td>
+        </tr>
+        <tr>
+          <td>パスワード</td><td><%= password_field('admin_user', 'password')%></td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= submit_tag('ログイン') %></td>
+      </table>
+    <%= end_form_tag %>
+  </body>
+</html>
