@@ -2,12 +2,33 @@
 <div class="top_box">
   <%= form_tag :action => 'update_preferences'%>
     <div class="form_box">
-      <label>ユーザーカラー（#ff0000, red など）</label>
-      <%= text_field('preferences', 'color', :size => 20)%>
-      <p class="guide">左上のユーザー表示色を変更できます。</p>
-      <br />
-      <label>仕訳帳のスクロールバーの高さ</label>
-      <%= text_field('preferences', 'deals_scroll_height', :size => 10) %> 例：200px
+      <table class="form_fields">
+        <tr>
+          <th>ユーザーカラー（#ff0000, red など）</th>
+          <td>
+            <%= text_field('preferences', 'color', :size => 20)%>
+          </td>
+          <td>
+            <p class="guide">左上のユーザー表示色を変更できます。</p>
+          </td>
+        </tr>
+        <tr>
+          <th>仕訳帳のスクロールバーの高さ</th>
+          <td>
+            <%= text_field('preferences', 'deals_scroll_height', :size => 10) %> 例：200px
+          </td>
+        </tr>
+        <tr>
+          <th>オプション</th>
+          <td>
+            <%= check_box('preferences', 'business_use') %>事業利用
+          </td>
+          <td>
+            <p class="guide">事業利用にチェックすると、資本金の概念が導入されます。チェックを外すと、資本金口座は債権口座に自動変更されます。</p>
+          </td>
+        </tr>
+      </table>
+      
       <div class="buttons_line"><button type="submit">カスタマイズ設定を更新</button></div>
     </div>
   <%=end_form_tag%>

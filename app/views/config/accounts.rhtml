@@ -9,7 +9,7 @@
           <% if @account.account_type == 1%>
             <label>種別</label>
             <%= select('account', 'asset_type',
-                       Account.asset_types.invert)%>
+                       Account.asset_types(session[:user].preferences.business_use?).invert)%>
           <% end %>
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
         </td>

@@ -39,10 +39,13 @@ class Account < ActiveRecord::Base
   ASSET_BANKING_FACILITY = 2
   ASSET_CREDIT_CARD = 3
   ASSET_CREDIT = 4
+  ASSET_CAPITAL_FUND = 5
+
+  # TODO: わかりにくいので何とかしたい
 
   @@account_types = {ACCOUNT_ASSET => '口座', ACCOUNT_EXPENSE => '支出', ACCOUNT_INCOME => '収入'}
   
-  @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権'}
+  @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権', ASSET_CAPITAL_FUND => '資本金'}
 
   @@connectable_type = {ACCOUNT_ASSET => ACCOUNT_ASSET, ACCOUNT_EXPENSE => ACCOUNT_INCOME, ACCOUNT_INCOME => ACCOUNT_EXPENSE}
 
@@ -50,7 +53,8 @@ class Account < ActiveRecord::Base
     [@@asset_types[ASSET_CACHE], ASSET_CACHE],
     [@@asset_types[ASSET_BANKING_FACILITY], ASSET_BANKING_FACILITY],
     [@@asset_types[ASSET_CREDIT_CARD], ASSET_CREDIT_CARD],
-    [@@asset_types[ASSET_CREDIT], ASSET_CREDIT]
+    [@@asset_types[ASSET_CREDIT], ASSET_CREDIT],
+    [@@asset_types[ASSET_CAPITAL_FUND], ASSET_CAPITAL_FUND]
   ]
   RULE_APPLICABLE_ASSET_TYPES = [
     ASSET_TYPES[2],
@@ -137,8 +141,8 @@ class Account < ActiveRecord::Base
     @@account_types
   end
 
-  def self.asset_types
-    @@asset_types
+  def self.asset_types(business_use = false)
+    business_use ? @@asset_types : @@asset_types.reject{|key, value| key == ASSET_CAPITAL_FUND}
   end
 
   def self.get_account_type_name(account_type)
@@ -216,13 +220,14 @@ class Account < ActiveRecord::Base
   
   def asset_type_options
     if self.account_rule
-      return RULE_APPLICABLE_ASSET_TYPES
+      options = RULE_APPLICABLE_ASSET_TYPES
+    elsif !associated_account_rules.empty?
+      options = RULE_ASSOCIATED_ASSET_TYPES
+    else
+      options = ASSET_TYPES
     end
-    if !associated_account_rules.empty?
-      return RULE_ASSOCIATED_ASSET_TYPES
-    end
-    
-    return ASSET_TYPES
+    # TODO: とてもわかりにくいのでなんとかしたい
+    user.preferences.business_use? ? options : options.reject{|v| v[0] == @@asset_types[ASSET_CAPITAL_FUND]}
   end
   
   # 口座の初期設定を行う

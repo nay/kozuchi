@@ -47,6 +47,14 @@
   background-color: gold;
 }
 
+/* フォーム内テーブル */
+.form_box table.form_fields th {
+  text-align: left;
+  vertical-align: top;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
 /* number fields */
 input.number, #datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;
