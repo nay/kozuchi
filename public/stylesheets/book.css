@@ -436,6 +436,27 @@ body {
   width: 49.5%;
   float: right;
 }
+
+/* ==== 貸借対照表 ==== */
+table.balance_sheet {
+  width: 100%;
+}
+table.balance_sheet tr td {
+  width: 50%;
+  vertical-align: top;
+}
+table.balance_sheet table.details {
+  width: 100%;
+  background-color: darkgoldenrod;
+}
+table.balance_sheet table.details th {
+  background-color: goldenrod;
+}
+table.balance_sheet table.details td {
+  background-color: white;
+}
+
+
 /* ==== ヘルプ用　======= */
 div.description {
   border: 2px dotted darkgoldenrod;

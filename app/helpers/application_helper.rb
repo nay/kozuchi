@@ -25,6 +25,17 @@ module ApplicationHelper
   def format_deal(deal)
     return "記入 #{deal.date}-#{deal.daily_seq}"
   end
+  
+  # 帳簿系表示ヘルパー
+  # 一行を表示する　(table.book の下で呼ばれることを前提とする)
+  def book_line(contents = {})
+    string = "<tr>\n"
+    string += "<td>#{contents[:name]}</td>\n" if contents[:name]
+    string += "<td class='percentage'>#{contents[:percentage]}%</td>\n" if contents[:percentage]
+    string += "<td class='amount'>#{number_with_delimiter(contents[:amount])}</td>\n" if contents[:amount]
+    string += "</tr>\n"
+    string
+  end
 
   class AccountGroup
     attr_reader :name, :accounts

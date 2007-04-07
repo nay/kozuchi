@@ -52,13 +52,6 @@ class ApplicationController < ActionController::Base
     f[:notice] = message
   end
 
-#  def authorize
-#    unless session[:user]
-#      flash[:notice] = "ログインしてください。"
-#      p "authorize"
-#      redirect_to(:controller => 'login', :action => 'index')
-#    end
-#  end
 
   def check_account
     if user
@@ -69,9 +62,20 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  
   protected
   def set_charset
     @headers["Content-Type"] = 'text/html; charset=utf-8'
   end
+  
+  # @target_month と @date をセットする
+  def prepare_date
+    @target_month = session[:target_month]
+    @date = @target_month || DateBox.today
+    @target_month ||= DateBox.this_month
+  end
+  
+  def load_user
+    @user = session[:user]
+  end
+  
 end
