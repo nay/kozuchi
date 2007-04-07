@@ -63,19 +63,28 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+  # -------------------- 汎用処理 ------------------------------------------------------
+  
   def set_charset
     @headers["Content-Type"] = 'text/html; charset=utf-8'
   end
   
   # @target_month と @date をセットする
   def prepare_date
-    @target_month = session[:target_month]
+    @target_month = DateBox.new(params[:target_month]) if params[:target_month]
+    @target_month ||= session[:target_month]
     @date = @target_month || DateBox.today
     @target_month ||= DateBox.this_month
   end
   
   def load_user
     @user = session[:user]
+  end
+
+  # @target_month をもとにして資産の残高を計算する
+  def load_assets
+    date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
+    @assets = AccountsBalanceReport.new(Account.find_all(session[:user].id, [1]), date)
   end
   
 end
