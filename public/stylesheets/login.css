@@ -13,6 +13,7 @@ body {
   padding-bottom: 4px;
   font-size: 1.4em;
   vertical-align: middle;
+  margin-bottom: 16px;
 }
 
 #login_message {
