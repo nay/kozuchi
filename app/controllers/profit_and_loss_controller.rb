@@ -2,19 +2,9 @@ class ProfitAndLossController < ApplicationController
   include BookMenues
   layout 'main'
   helper :graph
-  before_filter :check_account
+  before_filter :check_account, :prepare_date, :prepare_update_profit_and_loss
 
-  # 収支表
-  def index
-    @target_month = session[:target_month]
-    @date = @target_month || DateBox.today
-    @target_month ||= DateBox.this_month
-    prepare_update_profit_and_loss
-  end
-  
   def update
-    @target_month = DateBox.new(params[:target_month])
-    prepare_update_profit_and_loss
     render(:partial => "profit_and_loss", :layout => false)
   end
   
