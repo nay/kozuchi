@@ -14,8 +14,8 @@ class ApplicationController < ActionController::Base
   # -- login_engine overwrite
   def access_denied
     redirect_to :controller => "/user", :action => "login"
-    false
-  end  
+    false # なぜかもともとこれがなかったorz
+  end
 
 
   def user
