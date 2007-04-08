@@ -2,7 +2,7 @@
       <% if @flash[:notice] || @flash[:notice].to_s != ""%>
         <div id="notice"><%=@flash[:notice]%></div>
       <% end %>
-      <div class="title"><%= "#{@date.year}年#{@date.month}月の" %>出納一覧</div>
+      <div class="title"><%= "#{Account.find(@account_id).name}の出納一覧（#{@date.year}年#{@date.month}月）" %></div>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>
