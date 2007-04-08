@@ -1,20 +1,10 @@
 class AccountDealsController < ApplicationController 
   include BookMenues
   layout 'main'
-  before_filter :check_account
+  before_filter :check_account, :prepare_date, :prepare_update_account_deals
 
-  # 口座別出納
-  def index
-    @target_month = session[:target_month]
-    @date = @target_month || DateBox.today
-    @target_month ||= DateBox.this_month
-    prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
-  end
-  
   # 月を選択して口座別出納を表示しなおす  
   def update
-    @target_month = DateBox.new(params[:target_month])
-    prepare_update_account_deals  # 帳簿を更新　成功したら月をセッション格納
     render(:partial => "account_deals", :layout => false)
   end
   
@@ -26,7 +16,7 @@ class AccountDealsController < ApplicationController
     @accounts = Account.find_all(session[:user].id, [1])
     
     if @accounts.size == 0
-      raise Exception("口座が１つもありません")
+      raise "口座が１つもありません"
     end
     if !params[:account] || !params[:account][:id]
       @account_id = @accounts.first.id

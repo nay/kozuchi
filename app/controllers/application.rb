@@ -11,6 +11,13 @@ class ApplicationController < ActionController::Base
   before_filter :set_charset
   before_filter :set_ssl
 
+  # -- login_engine overwrite
+  def access_denied
+    redirect_to :controller => "/user", :action => "login"
+    false
+  end  
+
+
   def user
     session[:user]
   end
