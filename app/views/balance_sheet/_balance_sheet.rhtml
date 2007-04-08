@@ -1,6 +1,4 @@
-<div>
-<%= "#{@date.year}年#{@date.month}月末日の貸借対照表"%>
-</div>
+<div class="title"><%= "#{@date.year}年#{@date.month}月末日の貸借対照表"%></div>
 <div class="table_block">
 
   <div class="left">
@@ -41,16 +39,16 @@
       </table>
     <% end %>
   </div>
-  <div class="table_block">
-    <div class="left">
-      <table class="book">
+</div>
+<div class="table_block">
+  <div class="left">
+    <table class="book">
+      <%= book_line(:name => "", :amount => @assets.plus.sum) %>
+    </table>
+  </div>
+  <div class="right">
+    <table class="book">
         <%= book_line(:name => "", :amount => @assets.plus.sum) %>
-      </table>
-    </div>
-    <div class="right">
-      <table class="book">
-        <%= book_line(:name => "", :amount => @assets.plus.sum) %>
-      </table>
-    </div>
+    </table>
   </div>
 </div>

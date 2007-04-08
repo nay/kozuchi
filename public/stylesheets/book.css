@@ -86,7 +86,7 @@ span.large {
 .book {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
-  width:100%;
+/*  width:100%; */ /* all_media で指定 */
 /*  width: 18em; */
 }
 
@@ -121,19 +121,8 @@ th.scroll_space {
   width: 0.6em;
 }
 
-.number, .amount, .percentage {
-  text-align:right;
-}
-
-td.percentage {
-  width: 3em;
-}
-
 td.number, th.number {
   width: 20px;
-}
-td.amount, th.amount {
-  width: 70px;
 }
 
 td.date, th.date {
@@ -340,6 +329,12 @@ body {
   padding-left: 4px;
 }
 
+#contents .title {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
 /** カレンダー **/
 
 #calendar * {
@@ -423,19 +418,6 @@ body {
 .table_first {
 }
 
-.table_block {
-  clear: both;
-}
-
-.table_block .left {
-  width: 49.5%;
-  float: left;
-}
-
-.table_block .right {
-  width: 49.5%;
-  float: right;
-}
 
 /* ==== 貸借対照表 ==== */
 table.balance_sheet {

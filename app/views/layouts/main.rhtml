@@ -6,7 +6,9 @@
       <%= controller.title %> - <%= controller.sub_title(controller.action_name) || controller.action_name %> 
     </title>
     <%= stylesheet_link_tag 'common' %>
+    <%= stylesheet_link_tag 'all_media', :media => :all %>
     <%= stylesheet_link_tag 'book' %>
+    <%= stylesheet_link_tag 'print', :media => :print %>
     <%= javascript_include_tag "prototype" %>
     <%= javascript_include_tag "book" %>
     <%= javascript_include_tag "dragdrop" %>

@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+/* 画面・印刷で両方使う設定 */
+
+.book {
+  width: 100%;
+}
+
+.table_block {
+  clear: both;
+}
+
+.table_block .left {
+  width: 49.5%;
+  float: left;
+}
+
+.table_block .right {
+  width: 49.5%;
+  float: right;
+}
+
+.number, .amount, .percentage {
+  text-align:right;
+}
+
+td.percentage {
+  width: 3em;
+}
+
+td.amount, th.amount {
+  width: 70px;
+}

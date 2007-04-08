@@ -1,0 +1,51 @@
+@charset "utf-8";
+
+/* ===============  印刷用スタイルシート ======================= */
+
+/* 共通部品 */
+
+table.book {
+  border-collapse: collapse;
+}
+table.book td {
+  border: 1px solid black;
+}
+table.book th {
+  border: 1px solid black;
+  background-color: black;
+  color:white;
+}
+
+
+
+/* 特定部品 */
+
+#contents .title {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+div#header {
+  display: none;
+}
+
+div#sidebar {
+  display: none;
+}
+
+div#calendar {
+  display: none;
+}
+
+div#edit_box {
+  display: none;
+}
+
+#footer {
+  margin-top: 16px;
+  text-align:right;
+  font-size:small;
+  padding-bottom:2px;
+  padding-top:16px;
+}
