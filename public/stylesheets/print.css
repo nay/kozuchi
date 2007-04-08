@@ -43,7 +43,7 @@ div#sidebar {
   display: none;
 }
 
-div#calendar {
+div#calendar_form {
   display: none;
 }
 
@@ -59,6 +59,3 @@ div#edit_box {
   padding-top:16px;
 }
 
-#month_form {
-  display: none;
-}

@@ -2,7 +2,7 @@ class AccountDealsController < ApplicationController
   include BookMenues
   layout 'main'
   before_filter :check_account, :prepare_date, :prepare_update_account_deals
-
+  
   # 月を選択して口座別出納を表示しなおす  
   def update
     render(:partial => "account_deals", :layout => false)
@@ -15,9 +15,8 @@ class AccountDealsController < ApplicationController
   # todo 
     @accounts = Account.find_all(session[:user].id, [1])
     
-    if @accounts.size == 0
-      raise "口座が１つもありません"
-    end
+    raise "口座が１つもありません" if @accounts.size == 0
+
     if !params[:account] || !params[:account][:id]
       @account_id = @accounts.first.id
     else
