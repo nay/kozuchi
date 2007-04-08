@@ -28,6 +28,8 @@ class Account < ActiveRecord::Base
                         :message => "名前を定義してください。"
   validates_presence_of :account_type
   validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
+
+  # TODO: 口座種別、資産種別見直し中。Model中では Symbol で持つようにして文字列でDBに格納。Symbol → 名前はここで面倒を見るが基本的にメソッドで変換する。ビジネスモードで呼び方を変える。
   
   # 口座種別値
   ACCOUNT_ASSET = 1

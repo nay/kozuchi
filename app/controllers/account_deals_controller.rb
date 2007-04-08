@@ -1,7 +1,7 @@
 class AccountDealsController < ApplicationController 
   include BookMenues
   layout 'main'
-  before_filter :check_account, :prepare_date, :prepare_update_account_deals
+  before_filter :load_user, :check_account, :prepare_date, :prepare_update_account_deals
   
   # 月を選択して口座別出納を表示しなおす  
   def update
@@ -13,7 +13,7 @@ class AccountDealsController < ApplicationController
   # 口座別出納　表示準備
   def prepare_update_account_deals
   # todo 
-    @accounts = Account.find_all(session[:user].id, [1])
+    @accounts = Account.find_all(@user.id, [1])
     
     raise "口座が１つもありません" if @accounts.size == 0
 
