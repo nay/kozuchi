@@ -4,6 +4,14 @@
 
 /* 共通部品 */
 
+table.book_header {
+  border-collapse: collapse;
+  border-bottom: 4px double black;
+}
+table.book_header th {
+  border: 1px solid black;
+}
+
 table.book {
   border-collapse: collapse;
 }
@@ -12,10 +20,11 @@ table.book td {
 }
 table.book th {
   border: 1px solid black;
-  background-color: black;
-  color:white;
 }
 
+.action {
+  display: none;
+}
 
 
 /* 特定部品 */
@@ -48,4 +57,8 @@ div#edit_box {
   font-size:small;
   padding-bottom:2px;
   padding-top:16px;
+}
+
+#month_form {
+  display: none;
 }

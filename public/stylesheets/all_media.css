@@ -2,6 +2,11 @@
 
 /* 画面・印刷で両方使う設定 */
 
+.book_header {
+  width: 100%;
+}
+
+
 .book {
   width: 100%;
 }
@@ -30,4 +35,16 @@ td.percentage {
 
 td.amount, th.amount {
   width: 70px;
+}
+
+td.date, th.date {
+  width: 80px;
+}
+
+td.number, th.number {
+  width: 20px;
+}
+
+td.account, th.account {
+  width: 100px;
 }

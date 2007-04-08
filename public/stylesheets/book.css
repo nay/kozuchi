@@ -93,7 +93,7 @@ span.large {
 .book_header {
   background-color: goldenrod;
   border: 1px solid darkgoldenrod;
-  width:100%;
+  /* width:100%; */ /* all_media で指定 */
 }
 
 .scroll_box {
@@ -121,13 +121,6 @@ th.scroll_space {
   width: 0.6em;
 }
 
-td.number, th.number {
-  width: 20px;
-}
-
-td.date, th.date {
-  width: 80px;
-}
 
 td.action, th.action {
   width: 2.5em;
@@ -140,9 +133,6 @@ td.button_action, th.button_action {
 }
 
 
-td.account, th.account {
-  width: 100px;
-}
 
 .balance_line td {
   color: blue;
