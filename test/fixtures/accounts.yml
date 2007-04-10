@@ -2,13 +2,13 @@
 first_cache:
   id: 1
   user_id: 1
-  name: Œ»‹à
+  name: ç¾é‡‘
   account_type: 1
   asset_type: 1
 first_food:
   id: 2
   user_id: 1
-  name: H”ï
+  name: é£Ÿè²»
   account_type: 2
 first_second:
   id: 3
@@ -19,7 +19,7 @@ first_second:
 second_cache:
   id: 4
   user_id: 2
-  name: Œ»‹à
+  name: ç¾é‡‘
   account_type: 1
   asset_type: 1
 second_first:
