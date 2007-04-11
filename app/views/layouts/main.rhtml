@@ -1,9 +1,15 @@
 <%= render :partial => "shared/doctype" %>
+
+      <% # とりあえず毎回作る %>
+      <% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name) %>
+      <% title = menu_tree ? menu_tree.name : controller.class.controller_name %>
+      <% sub_title = current_menu ? current_menu.name : controller.action_name %>
+
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
     <%= render :partial => "shared/html_header" %>
     <title>
-      <%= controller.title %> - <%= controller.sub_title(controller.action_name) || controller.action_name %> 
+      <%= title %> - <%= sub_title %> 
     </title>
     <%= stylesheet_link_tag 'common' %>
     <%= stylesheet_link_tag 'all_media', :media => :all %>
@@ -23,19 +29,20 @@
         <%= link_to(image_tag("/images/izumo_kozuchi.png", :border => 0, :width => 32, :height => 32), :controller => 'user', :action => 'home') %>
       </div>
       <div id="header_title">
-        <span class="large"><%= controller.title %></span>
-        <span> - <%= controller.sub_title(controller.action_name) || controller.action_name %></span>
+        <span class="large"><%= title %></span>
+        <span> - <%= sub_title %></span>
       </div>
       <div id="header_menu">
-        <%= header_menu("家計簿", :controller => "deals", :action => 'index')%>
-        <span> | </span>
-        <%= header_menu("基本設定", :controller => "config", :action => "index") %>
-        <span> | </span>
-        <%= header_menu("高度な設定", :controller => "expert_config", :action => "index") %>
-        <span> | </span>
-        <%= header_menu("ヘルプ", :controller => "help", :action => "index") %>
-        <span> | </span>
-        <%= link_to("ログアウト", :controller => "user", :action => "logout") %>
+        <% h_menues = header_menues%>
+        <% for menu in h_menues %>
+          <% if menu_tree && menu.name != menu_tree.name %>
+            <%= link_to(menu.name, menu.url_option)%>
+          <% else %>
+            <span class="current"><%= menu.name %></span>
+          <% end %>
+          <% break if menu == h_menues.last %>
+          <span> | </span>
+        <% end %>
       </div>
     </div>
     <div id="sidebar">
@@ -44,14 +51,16 @@
         <%= format_date(Time.now) %>
       </div>
       <!-- menu -->
-      <% for menu in controller.menues %>
-        <div class="side_menu<%= '_current' if controller.sub_title(controller.action_name) == menu.caption%>">
-          <% if controller.sub_title(controller.action_name) == menu.caption %>
-            <span><%= menu.caption %></span>
+      <% if menu_tree %>
+      <% for menu in menu_tree %>
+        <div class="side_menu<%= '_current' if menu == current_menu %>">
+          <% if menu == current_menu %>
+            <span><%= menu.name %></span>
           <% else %>
-            <%= link_to(menu.caption, menu.options) %>
+            <%= link_to(menu.name, url_for(menu.url_option)) %>
           <% end %>
         </div>
+      <% end %>
       <% end %>
     </div>
     <!-- contents -->

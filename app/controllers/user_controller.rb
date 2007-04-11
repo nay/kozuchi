@@ -1,5 +1,4 @@
 class UserController < ApplicationController
-  include ConfigMenues
   model   :user
   layout  'login'
 

@@ -1,5 +1,4 @@
 class BalanceSheetController < ApplicationController
-  include BookMenues
   layout 'main'
   
   before_filter :prepare_date, :load_user, :load_assets

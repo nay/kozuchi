@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
             :class_name => 'Friend',
             :foreign_key => 'friend_user_id',
             :dependent => true
+  has_many  :accounts,
+            :dependent => true
 
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
   def login_id

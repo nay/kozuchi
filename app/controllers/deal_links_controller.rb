@@ -1,6 +1,5 @@
 # 取引連動設定のコントローラ
 class DealLinksController < ApplicationController
-  include ExpertConfigMenues
   layout 'main'
 
   # 取引連動初期表示画面

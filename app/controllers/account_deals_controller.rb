@@ -1,5 +1,4 @@
 class AccountDealsController < ApplicationController 
-  include BookMenues
   layout 'main'
   before_filter :load_user, :check_account, :prepare_date, :prepare_update_account_deals
   

@@ -1,5 +1,4 @@
 class DealsController < ApplicationController
-  include BookMenues
   layout 'main'
   before_filter :check_account
   include ApplicationHelper

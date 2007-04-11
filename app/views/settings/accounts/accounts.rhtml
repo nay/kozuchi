@@ -1,5 +1,5 @@
 <div class="form_box">
-  <%= form_tag :action => 'create_account'%>
+  <%= form_tag :action => 'create'%>
     <table>
       <tr>
         <td>
@@ -22,7 +22,7 @@
 <!-- 通信欄-->
 <%= render :partial => 'shared/information' %>
 <div class="bottom_box">
-  <%= form_tag :action => 'update_accounts'%>
+  <%= form_tag :action => 'update'%>
   <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
   <table class="masters" width="100%">
     <tr>
@@ -61,7 +61,7 @@
         <% end %>
         <td class="button_action">
           <% if @account.associated_account_rules.empty? %>
-            <button onClick="location.href='<%=url_for(:action => "delete_account", :id => @account.id, :account_type => @account.account_type)%>'">削除</button>
+            <button onClick="location.href='<%=url_for(:action => "delete", :id => @account.id, :account_type => @account.account_type)%>'">削除</button>
           <% else %>
             <span>×</span>
           <% end %>

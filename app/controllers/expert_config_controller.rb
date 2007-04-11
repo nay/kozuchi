@@ -1,5 +1,4 @@
 class ExpertConfigController < ApplicationController
-  include ExpertConfigMenues
   layout 'main'
   
   PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]  

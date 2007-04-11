@@ -1,6 +1,5 @@
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
-  include HelpMenues
   layout 'main'
   
   # 特徴
