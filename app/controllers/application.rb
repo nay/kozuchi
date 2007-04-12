@@ -93,6 +93,11 @@ class ApplicationController < ActionController::Base
     date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
     @assets = AccountsBalanceReport.new(Account.find_all(session[:user].id, [1]), date)
   end
+  
+  def error_not_found
+    redirect_to :controller => 'open', :action => 'not_found'
+    false
+  end
 
   
 end

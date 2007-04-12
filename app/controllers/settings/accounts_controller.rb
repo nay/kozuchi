@@ -5,7 +5,9 @@ class Settings::AccountsController < ApplicationController
   
   protected
 
+  # 新しい勘定を作成する
   def create
+    return error_not_found unless request.post?
     account = @user.accounts.build(params[:account])
     if account.save
       flash[:notice]="#{account.account_type_name} '#{account.name}' を登録しました。"
@@ -56,7 +58,7 @@ class Settings::AccountsController < ApplicationController
     @account = Account.new
     @account.account_type = account_type
     @accounts = Account.find_all(session[:user].id, [@account.account_type])
-    render(:action => "../accounts/accounts")
+    render(:action => "../shared/accounts")
   end
   
   private
