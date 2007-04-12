@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+  include TermHelper
   has_one :account_rule,
           :dependent => true
   has_many :associated_account_rules,
@@ -66,6 +67,21 @@ class Account < ActiveRecord::Base
     ASSET_TYPES[1]
   ]
   
+  ACCOUNT_TYPE_SYMBOL = [:asset, :expense, :income]
+  
+  def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
+    ACCOUNT_TYPE_SYMBOL[self.account_type_code-1]
+  end
+  
+  # リファクタリングのため用意
+  def account_type
+    self.account_type_code
+  end
+
+  def asset_type
+    self.asset_type_code
+  end
+  
   # 連携設定 ------------------
 
   def connect(target_user_login_id, target_account_name, interactive = true)
@@ -107,21 +123,21 @@ class Account < ActiveRecord::Base
   def self.find_credit(user_id, name)
       return Account.find(
         :first,
-        :conditions => ["user_id = ? and name = ? and account_type = ? and asset_type = ?", user_id, name, Account::ACCOUNT_ASSET, Account::ASSET_CREDIT]
+        :conditions => ["user_id = ? and name = ? and account_type_code = ? and asset_type_code = ?", user_id, name, Account::ACCOUNT_ASSET, Account::ASSET_CREDIT]
      )
   end
   
   def self.find_default_asset(user_id)
     return Account.find(
       :first,
-      :conditions => ["user_id = ? and account_type = ?", user_id, Account::ACCOUNT_ASSET],
+      :conditions => ["user_id = ? and account_type_code = ?", user_id, Account::ACCOUNT_ASSET],
       :order => "sort_key"
     )
   end
 
   def self.count_in_user(user_id, account_types = nil)
     if account_types
-      return count(:conditions => ["user_id = ? and account_type in (?)", user_id, account_types.join(',')])
+      return count(:conditions => ["user_id = ? and account_type_code in (?)", user_id, account_types.join(',')])
     else
       return count(:conditions => ["user_id = ?", user_id])
     end
@@ -167,7 +183,7 @@ class Account < ActiveRecord::Base
     not_in_binded_accounts = binded_account_ids.empty? ? "" : " and id not in(#{binded_account_ids.join(',')})"
     
     find(:all,
-     :conditions => ["user_id = ? and account_type = ? and asset_type in (?, ?)#{not_in_binded_accounts}",
+     :conditions => ["user_id = ? and account_type_code = ? and asset_type_code in (?, ?)#{not_in_binded_accounts}",
         user_id,
         ACCOUNT_ASSET,
         ASSET_CREDIT_CARD,
@@ -183,7 +199,7 @@ class Account < ActiveRecord::Base
       end
       account_types += type.to_s
     end
-    conditions = "user_id = ? and account_type in (#{account_types})"
+    conditions = "user_id = ? and account_type_code in (#{account_types})"
     if asset_types
       condition = "";
       asset_types.each do |t|
@@ -192,7 +208,7 @@ class Account < ActiveRecord::Base
         end
         condition += t.to_s
       end
-      conditions += " and asset_type in (#{condition})"
+      conditions += " and asset_type_code in (#{condition})"
     end
     Account.find(:all,
                  :conditions => [conditions, user_id],

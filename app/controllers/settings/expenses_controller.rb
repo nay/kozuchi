@@ -1,9 +1,10 @@
 class Settings::ExpensesController < Settings::AccountsController
 
-  public :create, :delete, :update
+  public :index, :create, :delete, :update
 
-  def index
-    load_accounts(2)
+  protected
+  def account_type
+    :expense
   end
 
 end

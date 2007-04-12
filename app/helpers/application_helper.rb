@@ -2,6 +2,8 @@
 module ApplicationHelper
   include LoginEngine
   
+  include TermHelper
+  
   def header_menu(menu_title, url_options)
     if controller.title != menu_title
       link_to(menu_title, url_options)

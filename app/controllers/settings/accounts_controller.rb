@@ -1,5 +1,6 @@
 class Settings::AccountsController < ApplicationController
   layout 'main'
+  include TermHelper
   
   before_filter :load_user
   
@@ -41,23 +42,31 @@ class Settings::AccountsController < ApplicationController
     
     redirect_to(:action => 'index')
   end
-  
+
+  # 複数の勘定を同時に更新する 
   def update
-    account_type = params[:account_type].to_i
-    account_type_name = Account.get_account_type_name(account_type)
-    # todo 悪意ある post によってuser_id と一致しない危険性がちょっと気になる。
-    p params[:account].keys.to_s
-    p params[:account].values.to_s
-    Account.update(params[:account].keys, params[:account].values)
-    flash[:notice]="すべての#{account_type_name}を変更しました。"
+    # ユーザーIDに属する以外は無視する
+    # (TODO: user_id が保護されていることを確認)
+    begin
+      Account.transaction do
+        for account in @user.accounts
+          next unless params[:account][account.id.to_s]
+          account.attributes = (params[:account][account.id.to_s])
+          account.save!
+        end
+      end
+      flash[:notice]="すべての#{term self.account_type}を変更しました。"
+    rescue => err
+      flash[:notice]="#{term self.account_type}を変更できませんでした。"
+    end
+    @user.accounts(true)
     
-    redirect_to(:action => 'index')
+    redirect_to_index
   end
   
-  def load_accounts(account_type)
-    @account = Account.new
-    @account.account_type = account_type
-    @accounts = Account.find_all(session[:user].id, [@account.account_type])
+  def index
+    @account_type = self.account_type # symbol
+    @accounts = @user.accounts.select{|a|a.account_type_symbol == account_type}
     render(:action => "../shared/accounts")
   end
   

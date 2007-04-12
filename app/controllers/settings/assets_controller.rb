@@ -1,11 +1,11 @@
 class Settings::AssetsController < Settings::AccountsController
   layout 'main'
   
-  public :create, :delete, :update
+  public :index, :create, :delete, :update
   
-  def index
-    #資産口座の一覧をロードする    
-    load_accounts(1)
+  protected
+  def account_type
+    :asset
   end
 
 end

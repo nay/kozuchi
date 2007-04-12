@@ -5,15 +5,15 @@
         <td>
           <%= hidden_field("account", "account_type_name")%>
           <%= hidden_field("account", "account_type")%>
-          <label><%=@account.account_type_name%>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
-          <% if @account.account_type == 1%>
+          <label><%= term @account_type %>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
+          <% if @account_type == :asset %>
             <label>種別</label>
             <%= select('account', 'asset_type',
-                       Account.asset_types(session[:user].preferences.business_use?).invert)%>
+                       Account.asset_types(@user.preferences.business_use?).invert)%>
           <% end %>
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
         </td>
-        <td><button type="submit">新しい<%=@account.account_type_name%>を追加</button></td>
+        <td><button type="submit">新しい<%= term @account_type %>を追加</button></td>
       </tr>
     </table>
     <p class="guide">※並び順が小さいものほど上に表示されます。</p>
@@ -23,11 +23,10 @@
 <%= render :partial => 'shared/information' %>
 <div class="bottom_box">
   <%= form_tag :action => 'update'%>
-  <input type="hidden" name="account_type" value="<%=@account.account_type%>"/>
   <table class="masters" width="100%">
     <tr>
-      <th><%=@account.account_type_name%>名</th>
-      <% if @account.account_type == 1%>
+      <th><%= term @account_type %>名</th>
+      <% if @account_type == :asset %>
         <th>種別</th>
       <% end %>
       <th>詳細</th>
@@ -38,9 +37,9 @@
     <% for @account in @accounts %>
       <tr>
         <td><%= text_field("account[]", "name", :class => "text") %></td>
-        <% if @account.account_type == 1%>
+        <% if @account_type == :asset %>
           <td>
-            <%= select('account[]', 'asset_type',
+            <%= select('account[]', 'asset_type_code',
                        @account.asset_type_options)%>
           </td>
         <% end %>
