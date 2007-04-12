@@ -1,8 +1,8 @@
 class Settings::AccountsController < ApplicationController
   layout 'main'
   
-  # TODO: ここで直接呼ばれたくない。hide_actionsだと子孫からも呼べなくなる。routes.rbマターかなぁ。
-  
+  protected
+
   def create
     new_account = Account.new(params[:account])
     new_account.user_id = session[:user].id
@@ -53,7 +53,6 @@ class Settings::AccountsController < ApplicationController
     redirect_to(:action => 'index')
   end
   
-  protected
   def load_accounts(account_type)
     @account = Account.new
     @account.account_type = account_type
