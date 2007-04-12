@@ -1,19 +1,18 @@
 class Settings::AccountsController < ApplicationController
   layout 'main'
   
+  before_filter :load_user
+  
   protected
 
   def create
-    new_account = Account.new(params[:account])
-    new_account.user_id = session[:user].id
-    begin
-      new_account.save!
-      flash[:notice]="#{new_account.account_type_name} '#{new_account.name}' を登録しました。"
-    rescue => err
-      flash_validation_errors(new_account)
-      flash_error(err.to_s) if new_account.errors.empty?
+    account = @user.accounts.build(params[:account])
+    if account.save
+      flash[:notice]="#{account.account_type_name} '#{account.name}' を登録しました。"
+    else
+      flash_validation_errors(account)
     end
-    redirect_to(:action => 'index')
+    redirect_to_index    
   end
   
   def delete
@@ -58,6 +57,11 @@ class Settings::AccountsController < ApplicationController
     @account.account_type = account_type
     @accounts = Account.find_all(session[:user].id, [@account.account_type])
     render(:action => "../accounts/accounts")
+  end
+  
+  private
+  def redirect_to_index
+    redirect_to(:action => 'index')
   end
 
 end
