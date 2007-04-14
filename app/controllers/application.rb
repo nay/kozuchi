@@ -85,6 +85,7 @@ class ApplicationController < ActionController::Base
   end
   
   def load_user
+    # TODO: いずれ session には　user_id だけをのせ、毎回取得する仕組みにする
     @user = session[:user]
   end
 
