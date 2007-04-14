@@ -9,8 +9,9 @@ class Settings::AccountsController < ApplicationController
   # 新しい勘定を作成する
   def create
     return error_not_found unless request.post?
-    account = @user.accounts.build(params[:account])
+    account = Account.new(params[:account]) {|a| a.user_id = @user.id, a.account_type_symbol = self.account_type}
     if account.save
+      @user.accounts(true)
       flash[:notice]="#{account.account_type_name} '#{account.name}' を登録しました。"
     else
       flash_validation_errors(account)
@@ -18,29 +19,28 @@ class Settings::AccountsController < ApplicationController
     redirect_to_index    
   end
   
+  # 指定された勘定を削除する
   def delete
-    account_type = params[:account_type].to_i
-    account_type_name = Account.get_account_type_name(account_type)
-    target_account = Account.find(:first, :conditions => "id = #{params[:id]} and user_id = #{session[:user].id}")
-    if !target_account
-      flash[:notice]="指定された#{account_type_name}がみつかりません。"
-      redirect_to(:action => 'index')
-      return
+    unless params[:id]
+      flash[:notice] = "#{term self.account_type}が指定されていません。"
+      return redirect_to_index
     end
-    # 使われていたら消せない
-    if AccountEntry.find(:first, :conditions => "account_id = #{target_account.id}")
-      flash[:notice]="#{account_type_name} '#{target_account.name}' はすでに使われているため削除できません。"
-      redirect_to(:action => 'index')
-      return
-    end
+      
     begin
-      target_account.destroy
-      flash[:notice]="#{account_type_name} '#{target_account.name}' を削除しました。"
+      target_account = @user.accounts.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => err
+      flash[:notice]="指定された#{term self.account_type}がみつかりません。"
+      return redirect_to_index
+    end
+
+    begin
+      @user.accounts.delete(target_account)
+      flash[:notice]="#{term self.account_type} '#{target_account.name}' を削除しました。"
     rescue => err
       flash[:errors]= [err.message]
     end
     
-    redirect_to(:action => 'index')
+    redirect_to_index
   end
 
   # 複数の勘定を同時に更新する 

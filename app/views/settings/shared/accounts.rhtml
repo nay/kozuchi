@@ -3,12 +3,10 @@
     <table>
       <tr>
         <td>
-          <%= hidden_field("account", "account_type_name")%>
-          <%= hidden_field("account", "account_type")%>
           <label><%= term @account_type %>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
           <% if @account_type == :asset %>
             <label>種別</label>
-            <%= select('account', 'asset_type',
+            <%= select('account', 'asset_type_code',
                        Account.asset_types(@user.preferences.business_use?).invert)%>
           <% end %>
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
@@ -60,7 +58,7 @@
         <% end %>
         <td class="button_action">
           <% if @account.associated_account_rules.empty? %>
-            <button onClick="location.href='<%=url_for(:action => "delete", :id => @account.id, :account_type => @account.account_type)%>'">削除</button>
+            <button onClick="location.href='<%=url_for(:action => "delete", :id => @account.id)%>'">削除</button>
           <% else %>
             <span>×</span>
           <% end %>

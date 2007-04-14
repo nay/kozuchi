@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
                         :message => "名前を定義してください。"
   validates_presence_of :account_type
   validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
-
+  
   # TODO: 口座種別、資産種別見直し中。Model中では Symbol で持つようにして文字列でDBに格納。Symbol → 名前はここで面倒を見るが基本的にメソッドで変換する。ビジネスモードで呼び方を変える。
   
   # 口座種別値
@@ -70,7 +70,12 @@ class Account < ActiveRecord::Base
   ACCOUNT_TYPE_SYMBOL = [:asset, :expense, :income]
   
   def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
+    raise "#{self.id} #{self.name}には account_type_code がありません" unless self.account_type_code
     ACCOUNT_TYPE_SYMBOL[self.account_type_code-1]
+  end
+  
+  def account_type_symbol=(symbol)
+    self.account_type_code = ACCOUNT_TYPE_SYMBOL.index(symbol) + 1
   end
   
   # リファクタリングのため用意
@@ -93,7 +98,7 @@ class Account < ActiveRecord::Base
 
     raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
     
-    raise "#{@@account_types[account_type]} には #{@@account_types[connected_account.account_type]} を連動できません。#{@@account_types[@@connectable_type[account_type]]} だけを連動することができます。" unless connected_account.account_type == @@connectable_type[account_type]
+    raise "#{@@account_types[account_type]} には #{@@account_types[connected_account.account_type]} を連動できません。#{@@account_types[@@connectable_type[account_type]]} だけを連動することができます。" unless connected_account.account_type_code == @@connectable_type[account_type]
     connected_accounts << connected_account
     # interactive なら逆リンクもはる。すでにあったら黙ってパスする
     associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
@@ -284,10 +289,11 @@ class Account < ActiveRecord::Base
   end
   
   def before_destroy
+    # 使われていたら消せない
+    raise "#{account_type_name} '#{target_account.name}' はすでに使われているため削除できません。" if AccountEntry.find(:first, :conditions => "account_id = #{self.id}")
     # 精算口座として使われていたら削除できない
-    if !associated_account_rules.empty?
-      raise "「#{name}」は精算口座として使われているため削除できません。"
-    end
+    raise "「#{name}」は精算口座として使われているため削除できません。" unless associated_account_rules.empty?
+
   end
     
 end
