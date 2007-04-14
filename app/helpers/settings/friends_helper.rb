@@ -1,0 +1,2 @@
+module Settings::FriendsHelper
+end
