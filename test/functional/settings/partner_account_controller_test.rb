@@ -1,12 +1,12 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 require 'partner_account_controller'
 
 # Re-raise errors caught by the controller.
-class PartnerAccountController; def rescue_action(e) raise e end; end
+class Settings::PartnerAccountController; def rescue_action(e) raise e end; end
 
-class PartnerAccountControllerTest < Test::Unit::TestCase
+class Settings::PartnerAccountControllerTest < Test::Unit::TestCase
   def setup
-    @controller = PartnerAccountController.new
+    @controller = Settings::PartnerAccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
   end

@@ -1,11 +1,11 @@
-class PartnerAccountController < ApplicationController
+class Settings::PartnerAccountController < ApplicationController
   layout 'main'
 
   before_filter :load_user
 
   # 受け皿初期画面
   def index
-    @accounts = @user.accounts
+    @accounts = @user.accounts(true)
     assets = []
     for account in @accounts
       assets << account if account.account_type == Account::ACCOUNT_ASSET

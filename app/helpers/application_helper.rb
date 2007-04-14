@@ -123,7 +123,7 @@ module ApplicationHelper
         t.add_menu('精算ルール', :controller => '/expert_config',:action => 'account_rules')
         t.add_menu('フレンド', :controller => '/expert_config',:action => 'friends')
         t.add_menu('取引連動',:controller => '/settings/deal_links', :action => 'index')
-        t.add_menu('受け皿', :controller => '/partner_account', :action => 'index')
+        t.add_menu('受け皿', :controller => '/settings/partner_account', :action => 'index')
         t.add_menu('カスタマイズ', :controller => '/settings/preferences',:action => 'index')
       }
       
