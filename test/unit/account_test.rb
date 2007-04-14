@@ -1,10 +1,22 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class AccountTest < Test::Unit::TestCase
-  #fixtures :accounts
+  fixtures :users
+  fixtures :friends
+  fixtures :accounts
+  fixtures :account_links
 
-  # Replace this with your real tests.
-  def test_truth
-    assert true
+  # tests partner account error
+  def test_wrong_partner_account
+    account = Account.find(1)
+    wrong_partner_account = Account.find(4)
+    account.partner_account_id = wrong_partner_account.id
+    is_error = false
+    begin
+      account.save!
+    rescue
+      is_error = true
+    end
+    assert is_error
   end
 end

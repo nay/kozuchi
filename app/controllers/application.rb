@@ -89,9 +89,10 @@ class ApplicationController < ActionController::Base
   end
 
   # @target_month をもとにして資産の残高を計算する
+  # TODO: 先に @user が用意されている前提
   def load_assets
     date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
-    @assets = AccountsBalanceReport.new(Account.find_all(session[:user].id, [1]), date)
+    @assets = AccountsBalanceReport.new(@user.accounts.types_in(:asset), date)
   end
   
   def error_not_found

@@ -3,28 +3,28 @@ first_cache:
   id: 1
   user_id: 1
   name: 現金
-  account_type: 1
-  asset_type: 1
+  account_type_code: 1
+  asset_type_code: 1
 first_food:
   id: 2
   user_id: 1
   name: 食費
-  account_type: 2
+  account_type_code: 2
 first_second:
   id: 3
   user_id: 1
   name: second
-  account_type: 1
-  asset_type: 4
+  account_type_code: 1
+  asset_type_code: 4
 second_cache:
   id: 4
   user_id: 2
   name: 現金
-  account_type: 1
-  asset_type: 1
+  account_type_code: 1
+  asset_type_code: 1
 second_first:
   id: 5
   user_id: 2
   name: first
-  account_type: 1
-  asset_type: 4
+  account_type_code: 1
+  asset_type_code: 4

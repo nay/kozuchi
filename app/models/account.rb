@@ -68,6 +68,7 @@ class Account < ActiveRecord::Base
   ]
   
   ACCOUNT_TYPE_SYMBOL = [:asset, :expense, :income]
+  ASSET_TYPE_SYMBOL = [:cache, :banking_facility, :credit_card, :credit, :capital_fund]
   
   def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
     raise "#{self.id} #{self.name}には account_type_code がありません" unless self.account_type_code
@@ -75,7 +76,19 @@ class Account < ActiveRecord::Base
   end
   
   def account_type_symbol=(symbol)
-    self.account_type_code = ACCOUNT_TYPE_SYMBOL.index(symbol) + 1
+    pos = ACCOUNT_TYPE_SYMBOL.index(symbol)
+    raise "unknown account type symbol #{symbol}" unless pos
+    self.account_type_code = pos + 1
+    self.asset_type_code = nil if symbol != :asset
+  end
+  
+  def asset_type_symbol
+    return nil if !self.asset_type_code || self.asset_type_code <= 0
+    ASSET_TYPE_SYMBOL[self.asset_type_code-1]
+  end
+  
+  def asset_type_symbol=(symbol)
+    self.asset_type_code = ASSET_TYPE_SYMBOL.index(symbol) + 1
   end
   
   # リファクタリングのため用意

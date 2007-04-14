@@ -25,7 +25,7 @@ class Settings::AccountsController < ApplicationController
       flash[:notice] = "#{term self.account_type}が指定されていません。"
       return redirect_to_index
     end
-      
+
     begin
       target_account = @user.accounts.find(params[:id])
     rescue ActiveRecord::RecordNotFound => err

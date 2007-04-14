@@ -12,7 +12,16 @@ class User < ActiveRecord::Base
             :dependent => true
   has_many  :accounts,
             :dependent => true,
-            :order => 'sort_key'
+            :order => 'sort_key' do
+              # 指定した account_type のものだけを抽出する
+              def types_in(*account_types)
+                self.select{|a| account_types.include?(a.account_type_symbol)}
+              end
+              # 指定した asset_type のものだけを抽出する
+              def asset_types_in(*asset_types)
+                self.select{|a| a.account_type_symbol == :asset && asset_types.include?(a.asset_type_symbol)}
+              end
+            end
 
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
   def login_id
