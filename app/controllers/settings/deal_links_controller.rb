@@ -1,12 +1,12 @@
 # 取引連動設定のコントローラ
-class DealLinksController < ApplicationController
+class Settings::DealLinksController < ApplicationController
   layout 'main'
 
   before_filter :load_user
 
   # 取引連動初期表示画面
   def index
-    @accounts = @user.accounts
+    @accounts = @user.accounts(true)
     @friends = user.interactive_friends(1)
     @accounts_with_partners = []
     for account in @accounts

@@ -122,7 +122,7 @@ module ApplicationHelper
       menues.create_menu_tree('高度な設定') {|t|
         t.add_menu('精算ルール', :controller => '/expert_config',:action => 'account_rules')
         t.add_menu('フレンド', :controller => '/expert_config',:action => 'friends')
-        t.add_menu('取引連動',:controller => '/deal_links', :action => 'index')
+        t.add_menu('取引連動',:controller => '/settings/deal_links', :action => 'index')
         t.add_menu('受け皿', :controller => '/partner_account', :action => 'index')
         t.add_menu('カスタマイズ', :controller => '/settings/preferences',:action => 'index')
       }
