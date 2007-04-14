@@ -1,6 +1,6 @@
 class DealsController < ApplicationController
   layout 'main'
-  before_filter :check_account
+  before_filter :check_account, :load_user
   include ApplicationHelper
 
 #  def rescue_action(exception)
@@ -143,17 +143,17 @@ class DealsController < ApplicationController
   # 記入エリアの準備
   def prepare_select_deal_tab
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      Account.find_all(session[:user].id, [1,3]), true
+      @user.accounts.types_in(:asset, :income), true
      )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      Account.find_all(session[:user].id, [1,2]), false
+      @user.accounts.types_in(:asset, :expense), false
      )
      @deal ||= Deal.new(params[:deal])
     @patterns = [] # 入力支援    
   end
   
   def prepare_select_balance_tab
-    @accounts_for_balance = Account.find_all(session[:user].id, [1])
+    @accounts_for_balance = @user.accounts.types_in(:asset)
     @deal ||=  Balance.new
   end
 

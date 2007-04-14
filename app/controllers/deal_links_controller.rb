@@ -2,9 +2,11 @@
 class DealLinksController < ApplicationController
   layout 'main'
 
+  before_filter :load_user
+
   # 取引連動初期表示画面
   def index
-    @accounts = Account.find_all(user.id, [Account::ACCOUNT_ASSET, Account::ACCOUNT_EXPENSE, Account::ACCOUNT_INCOME])
+    @accounts = @user.accounts
     @friends = user.interactive_friends(1)
     @accounts_with_partners = []
     for account in @accounts

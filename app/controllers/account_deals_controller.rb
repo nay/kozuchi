@@ -11,10 +11,9 @@ class AccountDealsController < ApplicationController
 
   # 口座別出納　表示準備
   def prepare_update_account_deals
-  # todo 
-    @accounts = Account.find_all(@user.id, [1])
+    @accounts = @user.accounts.types_in(:asset)
     
-    raise "口座が１つもありません" if @accounts.size == 0
+    raise "口座が１つもありません" if @accounts.empty?
 
     if !params[:account] || !params[:account][:id]
       @account_id = @accounts.first.id

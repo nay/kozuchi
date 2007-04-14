@@ -208,30 +208,6 @@ class Account < ActiveRecord::Base
         ASSET_CREDIT],
      :order => 'sort_key')
   end
-  
-  def self.find_all(user_id, types, asset_types = nil)
-    account_types = "";
-    types.each do |type|
-      if account_types != ""
-        account_types += ","
-      end
-      account_types += type.to_s
-    end
-    conditions = "user_id = ? and account_type_code in (#{account_types})"
-    if asset_types
-      condition = "";
-      asset_types.each do |t|
-        if condition != ""
-          condition += ","
-        end
-        condition += t.to_s
-      end
-      conditions += " and asset_type_code in (#{condition})"
-    end
-    Account.find(:all,
-                 :conditions => [conditions, user_id],
-                 :order => "sort_key")
-  end
 
   # 口座別計算メソッド
   

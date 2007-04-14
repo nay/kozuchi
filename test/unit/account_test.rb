@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class AccountTest < Test::Unit::TestCase
+  self.use_instantiated_fixtures  = false
   fixtures :users
   fixtures :friends
   fixtures :accounts

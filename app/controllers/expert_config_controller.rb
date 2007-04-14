@@ -1,6 +1,8 @@
 class ExpertConfigController < ApplicationController
   layout 'main'
   
+  before_filter :load_user
+  
   PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]  
   
   def index
@@ -11,7 +13,7 @@ class ExpertConfigController < ApplicationController
   def account_rules
     @rules = AccountRule.find_all(session[:user].id)
     @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
-    @accounts_to_be_associated = Account.find_all(session[:user].id, [1], [Account::ASSET_BANKING_FACILITY])
+    @accounts_to_be_associated = @user.accounts.asset_types_in(:banking_facility)
     @creatable = false
     @rule = AccountRule.new
     @day_options = ExpertConfigController.day_options

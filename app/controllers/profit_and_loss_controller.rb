@@ -1,7 +1,7 @@
 class ProfitAndLossController < ApplicationController 
   layout 'main'
   helper :graph
-  before_filter :check_account, :prepare_date, :prepare_update_profit_and_loss
+  before_filter :load_user, :check_account, :prepare_date, :prepare_update_profit_and_loss
 
   def update
     render(:partial => "profit_and_loss", :layout => false)
@@ -17,21 +17,21 @@ class ProfitAndLossController < ApplicationController
      :group => 'account_id',
      :conditions => ["dl.date >= ? and dl.date < ? and dl.confirmed = ?", start_inclusive, end_exclusive, true],
      :joins => "as et inner join deals as dl on dl.id = et.deal_id")
-    expense_accounts = Account.find_all(session[:user].id, [2])
+    expense_accounts = @user.accounts.types_in(:expense)
     @expenses_summaries = []
     for account in expense_accounts
       @expenses_summaries << AccountSummary.new(account, values[account.id] || 0)
     end
     # 収入項目ごとの合計を得る
     @incomes_summaries = []
-    income_accounts = Account.find_all(session[:user].id, [3])
+    income_accounts = @user.accounts.types_in(:income)
     for account in income_accounts
       @incomes_summaries << AccountSummary.new(account, values[account.id] ? values[account.id]*-1: 0)
     end
     
     # 各資産口座のその月の不明金の合計（プラスかマイナスかはわからない。不明収入と不明支出は相殺する。）を得る
     # TODO 同じ account_summaries でも口座増減と不明金は意味が違い気持ちがわるい
-    asset_accounts = Account.find_all(session[:user].id, [1])
+    asset_accounts = @user.accounts.types_in(:asset)
     @asset_plus_summaries = []
     @asset_minus_summaries = []
     for account in asset_accounts
