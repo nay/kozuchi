@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-require 'partner_account_controller'
+require 'settings/partner_account_controller'
 
 # Re-raise errors caught by the controller.
 class Settings::PartnerAccountController; def rescue_action(e) raise e end; end
