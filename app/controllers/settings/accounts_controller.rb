@@ -2,13 +2,14 @@ class Settings::AccountsController < ApplicationController
   layout 'main'
   include TermHelper
   
+  before_filter :require_post, :only => [:create]
+  
   before_filter :load_user
   
   protected
 
   # 新しい勘定を作成する
   def create
-    return error_not_found unless request.post?
     account = Account.new(params[:account]) {|a| a.user_id = @user.id, a.account_type_symbol = self.account_type}
     if account.save
       @user.accounts(true)

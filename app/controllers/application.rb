@@ -99,6 +99,12 @@ class ApplicationController < ActionController::Base
     redirect_to :controller => 'open', :action => 'not_found'
     false
   end
+  
+  # post でない場合は error_not_found にする
+  def require_post
+    return error_not_found unless request.post?
+    true
+  end
 
   
 end
