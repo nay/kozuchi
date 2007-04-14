@@ -10,7 +10,9 @@ class Settings::AccountsController < ApplicationController
 
   # 新しい勘定を作成する
   def create
-    account = Account.new(params[:account]) {|a| a.user_id = @user.id, a.account_type_symbol = self.account_type}
+    account = Account.new(params[:account])
+    account.user_id = @user.id
+    account.account_type_symbol = self.account_type
     if account.save
       @user.accounts(true)
       flash[:notice]="#{account.account_type_name} '#{account.name}' を登録しました。"

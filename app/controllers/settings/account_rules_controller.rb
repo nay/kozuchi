@@ -1,22 +1,18 @@
-class ExpertConfigController < ApplicationController
+class Settings::AccountRulesController < ApplicationController
   layout 'main'
   
   before_filter :load_user
   
   PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]  
   
-  def index
-    redirect_to(:action => "account_rules")
-  end  
-  
   # 精算ルールのメンテナンス -----------------------------------------------------------------------
-  def account_rules
+  def index
     @rules = AccountRule.find_all(session[:user].id)
     @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
     @accounts_to_be_associated = @user.accounts.asset_types_in(:banking_facility)
     @creatable = false
     @rule = AccountRule.new
-    @day_options = ExpertConfigController.day_options
+    @day_options = self.class.day_options
     @payment_term_months = PAYMENT_TERM_MONTHS
     if @accounts_to_be_applied.size == 0
       @explanation = "新たに精算ルールを登録できる口座（クレジットカード、債権）はありません。"
@@ -48,7 +44,7 @@ class ExpertConfigController < ApplicationController
     rescue ActiveRecord::RecordInvalid => error
       flash[:notice] = "#{rule.account.name}に精算ルールを登録できませんでした。#{error}"
     end
-    redirect_to(:action => 'account_rules')
+    redirect_to(:action => 'index')
   end
   
   def delete_account_rule
@@ -60,7 +56,7 @@ class ExpertConfigController < ApplicationController
     else
       flash[:notice] = "精算ルールを削除できません。"
     end
-    redirect_to(:action => 'account_rules')
+    redirect_to(:action => 'index')
   end
   
   def update_account_rule
@@ -79,8 +75,7 @@ class ExpertConfigController < ApplicationController
       flash_error("指定された精算ルール( #{params[:rule][:id]} )が見つかりません。 ")
     end
   
-    redirect_to(:action => 'account_rules')
+    redirect_to(:action => 'index')
   end
-  
   
 end
