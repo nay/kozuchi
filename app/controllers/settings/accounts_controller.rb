@@ -70,7 +70,7 @@ class Settings::AccountsController < ApplicationController
   def index
     @account_type = self.account_type # symbol
     @accounts = @user.accounts.select{|a|a.account_type_symbol == account_type}
-    render(:action => "../shared/accounts")
+    render(:template => "settings/shared/accounts")
   end
   
   private
