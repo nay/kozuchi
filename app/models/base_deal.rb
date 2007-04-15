@@ -14,6 +14,14 @@ class BaseDeal < ActiveRecord::Base
   
   include ModelHelper
 
+  # entry に対するブロックを渡してもらい、条件に当てはまる entry の amount の合計を返す。
+  def amount_if_entry
+    entries = account_entries.select{|e| yield e}
+    sum = 0
+    entries.each{|e| sum += e.amount}
+    sum
+  end
+
   def is_subordinate
     return false
   end
@@ -57,6 +65,25 @@ class BaseDeal < ActiveRecord::Base
     
     )
   end
+
+  # start_date から end_dateまでの、accounts に関連するデータを取得する。
+  def self.get_for_accounts(user_id, start_date, end_date, accounts)
+    raise "no user_id" unless user_id
+    raise "no start_date" unless start_date
+    raise "no end" unless end_date
+    raise "no accounts" unless accounts
+    BaseDeal.find(:all,
+                 :select => "distinct dl.*",
+                  :conditions => ["dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
+                    user_id,
+                    accounts.map{|a| a.id},
+                    start_date,
+                    end_date +1 ],
+                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
+                  :order => "dl.date, dl.daily_seq"
+    )
+  end
+  
 
   def set_old_date
     @old_date = self.date

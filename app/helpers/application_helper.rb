@@ -3,7 +3,26 @@ module ApplicationHelper
   include LoginEngine
   
   include TermHelper
+
+  def format_year(year)
+    "#{year}年"
+  end
+  def format_month(month)
+    "#{month}月"
+  end
+  def format_day(day)
+    "#{day}日"
+  end
   
+  WEEKDAY_SHORTNAMES = ['日', '月', '火', '水', '木', '金', '土']
+  def format_wday(wday)
+    "（#{WEEKDAY_SHORTNAMES[wday]}）"
+  end
+  
+  def format_date_full(date)
+    format_year(date.year) + format_month(date.month) + format_day(date.day) + format_wday(date.wday)
+  end
+   
   def header_menu(menu_title, url_options)
     if controller.title != menu_title
       link_to(menu_title, url_options)
@@ -106,6 +125,7 @@ module ApplicationHelper
 
       menues.create_menu_tree('家計簿') {|t|
         t.add_menu('仕訳帳', :controller => '/deals', :action => 'index')
+        t.add_menu('日めくり', :controller => '/daily_booking', :action => 'index')
         t.add_menu('口座別出納', :controller => '/account_deals', :action => 'index')
         t.add_menu('収支表', :controller => '/profit_and_loss', :action => 'index')
         t.add_menu('資産表', :controller => '/assets', :action => 'index')

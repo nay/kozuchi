@@ -212,6 +212,7 @@ class Account < ActiveRecord::Base
   # 口座別計算メソッド
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
+  # TODO: 格納したくない。返り値の利用でいい人はそうして。
   def balance_before(date)
     @balance = AccountEntry.balance_at_the_start_of(self.user_id, self.id, date)
   end

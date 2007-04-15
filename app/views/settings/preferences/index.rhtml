@@ -24,7 +24,16 @@
             <%= check_box('preferences', 'business_use') %>事業利用
           </td>
           <td>
-            <p class="guide">事業利用にチェックすると、資本金の概念が導入されます。チェックを外すと、資本金口座は債権口座に自動変更されます。</p>
+            <p class="guide">「事業利用」にチェックすると、資本金の概念が導入されます。チェックを外すと、資本金口座は債権口座に自動変更されます。</p>
+          </td>
+        </tr>
+        <tr>
+          <th>日めくり機能</th>
+          <td>
+              <%= check_box('preferences', 'use_daily_booking') %>日めくりを利用
+           </td>
+          <td>
+            <p class="guide">「日めくりを利用」をチェックすると、日めくり画面が利用できます。不要な場合はチェックを外してください。</p>
           </td>
         </tr>
       </table>

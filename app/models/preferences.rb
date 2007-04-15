@@ -7,8 +7,10 @@ class Preferences < ActiveRecord::Base
   def self.get(user_id)
     return find(:first, :conditions => ["user_id = ?", user_id]) || Preferences.new(:user_id => user_id)
   end
+
   
   protected
+  
   # セーブ後、事業利用フラグがオフの場合は特殊な処置をする
   def after_save
     unless self.business_use?
@@ -16,6 +18,5 @@ class Preferences < ActiveRecord::Base
       Account.update_all("asset_type_code = #{Account::ASSET_CREDIT}", "asset_type_code = #{Account::ASSET_CAPITAL_FUND}")
     end
   end
-  
   
 end

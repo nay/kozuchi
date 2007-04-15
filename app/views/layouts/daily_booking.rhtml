@@ -1,0 +1,52 @@
+      <% # とりあえず毎回作る %>
+      <% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name) %>
+      <% title = menu_tree ? menu_tree.name : controller.class.controller_name %>
+      <% sub_title = current_menu ? current_menu.name : controller.action_name %>
+
+<%= render :partial => "shared/doctype" %>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+  <head>
+    <%= render :partial => "shared/html_header" %>
+    <%= stylesheet_link_tag 'daily_booking' %>
+    
+  </head>
+
+
+  <body>
+    <div id="page" style="background-color:#eeeeee; padding:1em;">
+
+    <%= yield %>
+
+      <div id="header_menu">
+        <% h_menues = header_menues%>
+        <% for menu in h_menues %>
+          <% if menu_tree && menu.name != menu_tree.name %>
+            <%= link_to(menu.name, menu.url_option)%>
+          <% else %>
+            <span class="current"><%= menu.name %></span>
+          <% end %>
+          <% break if menu == h_menues.last %>
+          <span> | </span>
+        <% end %>
+      </div>
+
+    <div id="sidebar">
+      <% if menu_tree %>
+      <% for menu in menu_tree %>
+          <% if menu == current_menu %>
+            <span><%= menu.name %></span>
+          <% else %>
+            <%= link_to(menu.name, url_for(menu.url_option)) %>
+          <% end %>
+      <% end %>
+      <% end %>
+    </div>
+    
+    <div style="font-size:small">※この機能はテスト運用中です</div>
+    
+
+
+    </div>
+
+  </body>
+</html>

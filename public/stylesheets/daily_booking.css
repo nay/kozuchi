@@ -1,0 +1,41 @@
+#daily_booking #book {
+  background-color:white;
+  border-radius:10px;
+  -moz-border-radius:10px;
+  border:1px solid #dddddd;
+  padding: 2px;
+  width: 600px;
+  text-align: center;
+}
+#daily_booking #book table{
+  width: 100%;
+}
+#daily_booking #book .title {
+  font-size: 120%;
+  margin: 10px;
+}
+#daily_booking #book #summary {
+  margin: 10px;
+}
+#daily_booking #book #summary th {
+  text-align: right;
+}
+#daily_booking #book #summary td {
+  text-align: left;
+}
+#daily_booking #book #details {
+  border: 1px solid #eeeeee;
+  border-collapse: collapse;
+}
+#daily_booking #book #details th {
+  background-color: #cccccc;
+  color: white;
+}
+#daily_booking #book #details td {
+  border-top: 1px dotted #eeeeee;
+}
+#daily_booking #book #details .amount {
+  text-align: right;
+}
+
+
