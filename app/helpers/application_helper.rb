@@ -107,10 +107,9 @@ module ApplicationHelper
   end
   
   def header_menu
-    menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name)
     content = "<div id=\"header_menu\">"
     for menu in Menues.header_menues
-      if menu_tree && menu.name != menu_tree.name
+      if @menu_tree && menu.name != @menu_tree.name
         content += link_to(menu.name, menu.url_option)
       else
         content += "<span class=\"current\">#{menu.name}</span>"

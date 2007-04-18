@@ -1,8 +1,3 @@
-      <% # とりあえず毎回作る %>
-      <% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name) %>
-      <% title = menu_tree ? menu_tree.name : controller.class.controller_name %>
-      <% sub_title = current_menu ? current_menu.name : controller.action_name %>
-
 <%= render :partial => "shared/doctype" %>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
@@ -16,16 +11,16 @@
     <div id="page">
 
       <div style="float:left">
-        <div id="title"><%= title %> - <%= sub_title %></div>
+        <div id="title"><%= @title %> - <%= @sub_title %></div>
       </div>
       <%= header_menu %>
       <div style="clear:float;"></div>
       
 
     <div id="sidebar">
-      <% if menu_tree %>
-      <% for menu in menu_tree %>
-          <% if menu == current_menu %>
+      <% if @menu_tree %>
+      <% for menu in @menu_tree %>
+          <% if menu == @current_menu %>
             <span><%= menu.name %></span>
           <% else %>
             <%= link_to(menu.name, url_for(menu.url_option)) %>

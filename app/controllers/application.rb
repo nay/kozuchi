@@ -11,6 +11,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_charset
   before_filter :set_ssl
 
+
+
   # -- login_engine overwrite
   def access_denied
     redirect_to :controller => "/user", :action => "login"
@@ -71,6 +73,13 @@ class ApplicationController < ActionController::Base
 
   protected
   # -------------------- 汎用処理 ------------------------------------------------------
+
+  def load_menues
+    @menu_tree, @current_menu = ApplicationHelper::Menues.side_menues.load(:controller => "/" + self.class.controller_path, :action => self.action_name)
+    @title = @menu_tree ? @menu_tree.name : self.class.controller_name
+    @sub_title = @current_menu ? @current_menu.name : self.action_name
+  end
+
   
   def set_charset
     @headers["Content-Type"] = 'text/html; charset=utf-8'
