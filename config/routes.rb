@@ -22,6 +22,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
+  map.connect ':controller/:year/:month/:day', :action => 'index', :requirements => {:controller => /^daily_booking$/}
   
   map.connect '*any', :controller => 'open', :action => 'not_found'
 end

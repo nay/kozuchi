@@ -1,10 +1,16 @@
+@charset "utf-8";
+
+#daily_booking {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
 #daily_booking #book {
   background-color:white;
   border-radius:10px;
   -moz-border-radius:10px;
   border:1px solid #dddddd;
   padding: 2px;
-  width: 600px;
+  width: 540px;
   text-align: center;
 }
 #daily_booking #book table{

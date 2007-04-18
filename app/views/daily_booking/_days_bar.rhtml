@@ -9,7 +9,9 @@
             <% c = '#444444' %>
           <% end %>
           <% bg = @date.day == day ? 'white' : '#eeeeee' %>
-          <div style="padding: 1px; text-align:right;color: <%= c %>;background-color: <%= bg%>; font-size:small;"><%= day%><%= format_wday(wday) %></div>
+          <div style="padding: 1px; text-align:right;color: <%= c %>;background-color: <%= bg%>; font-size:small;">
+            <%= link_to(day.to_s + format_wday(wday), {:action => 'index', :year => @date.year, :month => @date.month, :day => day}, :style => "color: #{c};background-color: #{bg}; font-size:small; text-decoration:none;")%>
+          </div>
           <% wday += 1 %>
           <% wday = 0 if wday > 6%>
         <% end %>

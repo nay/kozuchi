@@ -105,6 +105,19 @@ module ApplicationHelper
   def header_menues
     Menues.header_menues
   end
+  
+  def header_menu
+    menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name)
+    content = "<div id=\"header_menu\">"
+    for menu in Menues.header_menues
+      if menu_tree && menu.name != menu_tree.name
+        content += link_to(menu.name, menu.url_option)
+      else
+        content += "<span class=\"current\">#{menu.name}</span>"
+      end
+    end
+    content += "</div>"
+  end
 
   # メニュー設定
   # カスタマイズを許す可能性がある（少なくとも利用モードで表現が変わる）のでユーザー毎にオブジェクトを作れる感じに
