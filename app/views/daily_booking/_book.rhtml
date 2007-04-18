@@ -43,25 +43,39 @@
                 <% left_entry = nil %>
                 <% right_entry = target_entry %>
               <% end %>
-            <% end%>
-            <tr>
-              <td><%= deal.daily_seq %></td><td><%= deal.summary%></td><td><%= sub_summary %></td>
-              <% if target_entry.account_id == @account.id %>
-                <td class="amount"><%= number_with_delimiter(left_entry.amount * -1) if left_entry %></td>
-                <td class="amount"><%= number_with_delimiter(right_entry.amount) if right_entry %></td>
-                <td class="amount"><%= number_with_delimiter(balance) %></td>
-              <% else %>
-                <% if left_entry %>
-                  <td class="amount">* <%= number_with_delimiter(left_entry.amount * -1)%></td>
-                  <td style="amount"><span style="font-size:80%;"><%= left_entry.account.name%>から</span></td>
+              <tr>
+                <td><%= deal.daily_seq %></td><td class="summary"><%= deal.summary%></td><td><%= sub_summary %></td>
+                <% if target_entry.account_id == @account.id %>
+                  <td class="amount"><%= number_with_delimiter(left_entry.amount * -1) if left_entry %></td>
+                  <td class="amount"><%= number_with_delimiter(right_entry.amount) if right_entry %></td>
+                  <td class="amount"><%= number_with_delimiter(balance) %></td>
                 <% else %>
-                  <td class="amount"><span style="font-size:80%;"><%= right_entry.account.name%>へ</span></td>
-                  <td class="amount">* <%= number_with_delimiter(right_entry.amount)%></td>
+                  <% if left_entry %>
+                    <td class="amount">* <%= number_with_delimiter(left_entry.amount * -1)%></td>
+                    <td style="amount"><span style="font-size:80%;"><%= left_entry.account.name%>から</span></td>
+                  <% else %>
+                    <td class="amount"><span style="font-size:80%;"><%= right_entry.account.name%>へ</span></td>
+                    <td class="amount">* <%= number_with_delimiter(right_entry.amount)%></td>
+                  <% end %>
+                  <td>-</td>
                 <% end %>
-                <td>-</td>
-              <% end %>
-            </tr>
+              </tr>
+            <% else # 残高 %>
+              <tr>
+                <td><%= deal.daily_seq%></td><td colspan="2" class="summary">残高記入</td>
+                <td />
+                <td />
+                <% balance = deal.account_entries[0].balance %>
+                <td class="amount"><%= number_with_delimiter(balance) %></td>
+              </tr>
+            <% end %>
           <% end %>
+            <tr>
+            <td colspan="3"></td>
+            <td></td>
+            <td></td>
+            <td class="amount"><%= number_with_delimiter(balance) %></td>
+            </tr>
         </table>
       <% end %>
 

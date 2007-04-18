@@ -43,5 +43,8 @@
 #daily_booking #book #details .amount {
   text-align: right;
 }
+#daily_booking #book #details .summary {
+  text-align: left;
+}
 
 
