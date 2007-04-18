@@ -84,6 +84,17 @@ class BaseDeal < ActiveRecord::Base
     )
   end
   
+  def self.exists?(user_id, date)
+    !BaseDeal.find(:first,
+                 :select => "dl.id",
+                  :conditions => ["dl.user_id = ? and dl.date >= ? and dl.date < ?",
+                    user_id,
+                    date,
+                    date +1 ],
+                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id"
+    ).nil?
+  end
+  
 
   def set_old_date
     @old_date = self.date

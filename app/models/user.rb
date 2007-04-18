@@ -60,6 +60,10 @@ class User < ActiveRecord::Base
     BaseDeal.get_for_accounts(self.id, start_date, end_date, accounts)
   end
   
+  def deal_exists?(date)
+    BaseDeal.exists?(self.id, date)
+  end
+  
   protected
   
   def after_create

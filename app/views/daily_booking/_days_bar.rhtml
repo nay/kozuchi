@@ -1,5 +1,6 @@
         <% last_day = Time.days_in_month(@date.month, @date.year) %>
         <% wday = Date.new(@date.year, @date.month, @date.day).wday %>
+        <table>
         <% for day in 1..last_day %>
           <% if wday == 0 %>
             <% c = 'red' %>
@@ -9,9 +10,17 @@
             <% c = '#444444' %>
           <% end %>
           <% bg = @date.day == day ? 'white' : '#eeeeee' %>
-          <div style="padding: 1px; text-align:right;color: <%= c %>;background-color: <%= bg%>; font-size:small;">
+          <tr>
+          <td style="padding: 1px; text-align:right;color: <%= c %>;background-color: <%= bg%>; font-size:small;">
             <%= link_to(day.to_s + format_wday(wday), {:action => 'index', :year => @date.year, :month => @date.month, :day => day}, :style => "color: #{c};background-color: #{bg}; font-size:small; text-decoration:none;")%>
-          </div>
+          </td>
+          <td style="vertical-align:middle; font-size:small;">
+          <% if @user.deal_exists?(Date.new(@date.year, @date.month, day)) %>
+          *
+          <% end %>
+          </td>
+          </tr>
           <% wday += 1 %>
           <% wday = 0 if wday > 6%>
         <% end %>
+        </table>
