@@ -1,6 +1,8 @@
         <% last_day = Time.days_in_month(@date.month, @date.year) %>
         <% wday = Date.new(@date.year, @date.month, @date.day).wday %>
         <table>
+        <% prev_month = @date << 1 %>
+        <tr><td style="font-size:small;"><%= link_to format_month(prev_month.month) + 'へ', :action => 'index', :year => prev_month.year, :month => prev_month.month, :day => Time.days_in_month(prev_month.month, prev_month.year) %></td><td></td></tr>
         <% for day in 1..last_day %>
           <% if wday == 0 %>
             <% c = 'red' %>
@@ -23,4 +25,6 @@
           <% wday += 1 %>
           <% wday = 0 if wday > 6%>
         <% end %>
+        <% next_month = @date >> 1 %>
+        <tr><td style="font-size:small;"><%= link_to format_month(next_month.month) + 'へ', :action => 'index', :year => next_month.year, :month => next_month.month, :day => 1 %></td><td></td></tr>
         </table>
