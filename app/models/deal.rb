@@ -6,6 +6,25 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
+  # 移行中
+  # 借方（資産の増加、費用の発生、負債・資本の減少、収益の取消し）にくる記入。
+  # 小槌では、これらはすべて 金額がプラスであることで表現される。
+  has_many   :left_entries,
+             :class_name => 'AccountEntry',
+             :foreign_key => 'deal_id',
+             :dependent => :destroy,
+             :conditions => 'amount >= 0',
+             :include => :account
+
+  # 貸方（資産の減少、負債の増加、資本の増加、収益の発生、費用の取消）
+  # 小槌では、これらはすべて 金額がマイナスであることで表現される
+  has_many   :right_entries,
+             :class_name => 'AccountEntry',
+             :foreign_key => 'deal_id',
+             :dependent => :destroy,
+             :conditions => 'amount < 0',
+             :include => :account
+
   def before_validation
     # もし金額にカンマが入っていたら正規化する
     @amount = @amount.gsub(/,/,'') if @amount.class == String

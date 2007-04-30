@@ -4,8 +4,29 @@ class DealTest < Test::Unit::TestCase
   fixtures :users
   fixtures :accounts
 
+  # 借方、貸方の entry が正しくとれることのテスト
+  def test_left_right_entry
+    user = User.find(1)
+    assert user
+    # 現金から食費へ
+    deal = Deal.new(:summary => "おにぎり",
+     :amount => "105",
+#     :minus_account_id => "1",
+#     :plus_account_id => "2",
+     :user_id => user.id
+    )
+    deal.right_entries.build(:account_id => 1)
+    deal.left_entries.build(:account_id => 2)
+    deal.date = Date.parse("2006/04/01");
+    deal.save!
+    assert_equal(1, deal.left_entries.size)
+    assert_equal 2, deal.left_entries[0].account_id # 費用が増えた＝借方
+    assert_equal 1, deal.right_entries[0].account_id # 現金が減った＝貸方
+  end
+
   # 取引保存時に、daily_seq が正しくつくことのテスト
   def test_daily_seq
+    Deal.delete_all
     user = User.find(1)
     assert user
     
@@ -25,12 +46,12 @@ class DealTest < Test::Unit::TestCase
     assert_equal 4, deal.date.month
     assert_equal 2006, deal.date.year
     assert_equal 2, deal.account_entries.size
-    assert_equal deal.account_entries[0].account_id, 1
-    assert_equal deal.account_entries[0].amount, -105
-    assert_equal deal.account_entries[0].deal_id, 1
-    assert_equal deal.account_entries[1].account_id, 2
-    assert_equal deal.account_entries[1].amount, 105
-    assert_equal deal.account_entries[1].deal_id, 1
+    assert_equal 1, deal.account_entries[0].account_id
+    assert_equal 105 * -1, deal.account_entries[0].amount
+    assert_equal deal.id, deal.account_entries[0].deal_id
+    assert_equal 2, deal.account_entries[1].account_id
+    assert_equal 105, deal.account_entries[1].amount
+    assert_equal deal.id, deal.account_entries[1].deal_id
     assert_equal 1, deal.daily_seq
 
     # 追加
