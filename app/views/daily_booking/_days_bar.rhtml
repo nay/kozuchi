@@ -1,5 +1,5 @@
         <% last_day = Time.days_in_month(@date.month, @date.year) %>
-        <% wday = Date.new(@date.year, @date.month, @date.day).wday %>
+        <% wday = Date.new(@date.year, @date.month, 1).wday %>
         <table>
         <% prev_month = @date << 1 %>
         <tr><td style="font-size:small;"><%= link_to format_month(prev_month.month) + 'へ', :action => 'index', :year => prev_month.year, :month => prev_month.month, :day => Time.days_in_month(prev_month.month, prev_month.year) %></td><td></td></tr>
