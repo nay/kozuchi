@@ -4,8 +4,8 @@ class SubordinateDeal < Deal
              :class_name => 'Deal',
              :foreign_key => 'parent_deal_id'
 
-  def is_subordinate
-    return true
+  def subordinate?
+    true
   end
 
   def parent_for(account_id)

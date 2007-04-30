@@ -169,7 +169,7 @@ class DealsController < ApplicationController
       deal.attributes = params[:deal]
       # 精算ルール以外の理由で未確認のものは確認にする
       # モデルでやると相互作用による更新を見分けるのが大変なのでここでやる
-      deal.confirmed = true if !deal.confirmed && !deal.is_subordinate
+      deal.confirmed = true if !deal.confirmed && !deal.subordinate?
     else
       deal = Deal.new(params[:deal])
       deal.user_id = user.id

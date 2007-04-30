@@ -24,6 +24,9 @@ class DailyBookingController < ApplicationController
     @total_income *= -1
     @total_expense = 0
     @deals.each{|d| @total_expense += d.amount_if_entry{|e| e.account.account_type_symbol == :expense}}
+
+    # 編集の準備
+    @deal = Deal.new
   end
 
 

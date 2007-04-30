@@ -22,10 +22,10 @@ class BaseDeal < ActiveRecord::Base
     sum
   end
 
-  def is_subordinate
-    return false
+  def subordinate?
+    false
   end
-  
+
   def parent_for(account_id)
     return nil
   end

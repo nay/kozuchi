@@ -1,15 +1,28 @@
 <div id="daily_booking">
 
+
+  <div style="float:left; width: 32%;">
+    <%# 新規追加欄 %>
+    <div id="new_deal" style="border: 1px solid #aaaaaa; margin: 4px;">
+      <div>新規追加</div>
+      <%= text_field('deal', 'summary', :size => 30)%><br />
+      <%= text_field('deal', 'amount', :size => "8") %><span>円</span>
+
+
+    </div>
   
-  <div style="float:right;">
+  </div>
+
+  <div style="float:left; width: 55%; margin: 4px;">
+    <%= render :partial => 'book' %>
+  </div>
+
+  
+  <div style="float:left; width: 6%; margin: 4px;">
     <%= render :partial => 'days_bar' %>
   </div>
 
-  <div style="float:right;">
-    <%= render :partial => 'book' %>
-  </div>
     
-  <div style="font-size:small">※この機能はテスト運用中です</div>
 
       
   <div style="clear:right;">
