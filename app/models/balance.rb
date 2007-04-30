@@ -9,10 +9,6 @@ class Balance < BaseDeal
     @balance = @balance.gsub(/,/,'')  if @balance.class == String
   end
 
-  def before_save
-    pre_before_save
-  end
-
   def before_create
     self.summary = ""
     create_entry

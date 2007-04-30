@@ -9,7 +9,7 @@ class Deal < BaseDeal
   # 移行中
   # 借方（資産の増加、費用の発生、負債・資本の減少、収益の取消し）にくる記入。
   # 小槌では、これらはすべて 金額がプラスであることで表現される。
-  has_many   :left_entries,
+  has_many   :debtor_entries,
              :class_name => 'AccountEntry',
              :foreign_key => 'deal_id',
              :dependent => :destroy,
@@ -18,7 +18,7 @@ class Deal < BaseDeal
 
   # 貸方（資産の減少、負債の増加、資本の増加、収益の発生、費用の取消）
   # 小槌では、これらはすべて 金額がマイナスであることで表現される
-  has_many   :right_entries,
+  has_many   :creditor_entries,
              :class_name => 'AccountEntry',
              :foreign_key => 'deal_id',
              :dependent => :destroy,
@@ -74,10 +74,6 @@ class Deal < BaseDeal
   end
 
   # ↓↓  call back methods  ↓↓
-
-  def before_save
-    pre_before_save
-  end
 
   def after_save
     p "after_save #{self.id}"

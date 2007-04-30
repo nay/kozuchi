@@ -13,6 +13,8 @@ class BaseDeal < ActiveRecord::Base
   attr_accessor :old_date
   
   include ModelHelper
+  
+  before_save :set_daily_seq
 
   # entry に対するブロックを渡してもらい、条件に当てはまる entry の amount の合計を返す。
   def amount_if_entry
@@ -105,9 +107,11 @@ class BaseDeal < ActiveRecord::Base
     # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
   end
 
+
+  protected
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。
-  def pre_before_save
+  def set_daily_seq
     self.daily_seq = nil if self.date != @old_date
   
     # 番号が入っていればそのまま
@@ -135,5 +139,6 @@ class BaseDeal < ActiveRecord::Base
     end
     
   end
+
   
 end
