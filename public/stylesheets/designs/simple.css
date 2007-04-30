@@ -14,11 +14,14 @@
   color: #eeeeee;
   margin: 4px;
 }
+
 #sidebar {
   text-align: center;
   padding: 2px;
   background-color: #eeeee;
   color: gray;
+  width: 90%;
+  margin: 1px;
 }
 #sidebar a {
   margin: 4px;
@@ -28,4 +31,9 @@
   padding: 2px;
   color: yellow;
   font-weight: bold;
+  background-color: #aaaaaa;
+}
+
+#daily_calendar a {
+  color: #444444;
 }

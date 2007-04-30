@@ -3,6 +3,7 @@
 #daily_booking {
   padding-top: 4px;
   padding-bottom: 4px;
+  width: 100%;
 }
 #daily_booking #book {
   background-color:white;
@@ -47,4 +48,7 @@
   text-align: left;
 }
 
-
+/* カレンダー */
+#daily_calendar {
+  font-size: small;
+}

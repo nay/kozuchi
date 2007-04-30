@@ -10,11 +10,7 @@
   <body>
     <div id="page">
 
-      <div style="float:left">
-        <div id="title"><%= @title %> - <%= @sub_title %></div>
-      </div>
-      <%= header_menu %>
-      <div style="clear:float;"></div>
+      <%= render :partial => 'shared/header_menu' %>    
       
 
     <div id="sidebar">
@@ -31,9 +27,6 @@
 
 
     <%= yield %>
-
-    
-
 
     </div>
 
