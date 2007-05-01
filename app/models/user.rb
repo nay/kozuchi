@@ -64,6 +64,13 @@ class User < ActiveRecord::Base
     BaseDeal.exists?(self.id, date)
   end
   
+  # このユーザーが使える asset_type (symbol) リストを返す
+  def available_asset_types
+    asset_types = Account::ASSET_TYPE_ATTRIBUTES.clone
+    asset_types.delete_if{|key, value| value[:business_only] } unless preferences.business_use?
+    asset_types
+  end
+  
   protected
   
   def after_create

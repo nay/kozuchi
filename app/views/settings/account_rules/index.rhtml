@@ -45,7 +45,7 @@
           <%= rule.account.name %>
         </td>
         <td>
-          <%= Account.asset_types[rule.account.asset_type] %>
+          <%= rule.account.asset_type_name %>
         </td>
         <td>
           <select name="rule[associated_account_id]">

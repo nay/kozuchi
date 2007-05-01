@@ -16,18 +16,6 @@ first_second:
   name: second
   account_type_code: 1
   asset_type_code: 4
-first_credit_card:
-  id: 6
-  user_id: 1
-  name: カード
-  account_type_code: 1
-  asset_type_code: 3
-first_bank:
-  id: 7
-  user_id: 1
-  name: 銀行
-  account_type_code: 1
-  asset_type_code: 2
 second_cache:
   id: 4
   user_id: 2
@@ -40,3 +28,22 @@ second_first:
   name: first
   account_type_code: 1
   asset_type_code: 4
+first_credit_card:
+  id: 6
+  user_id: 1
+  name: カード
+  account_type_code: 1
+  asset_type_code: 3
+first_bank:
+  id: 7
+  user_id: 1
+  name: 銀行
+  account_type_code: 1
+  asset_type_code: 2
+first_bonus:
+  id: 8
+  user_id: 1
+  name: ボーナス
+  account_type_code: 3
+
+  

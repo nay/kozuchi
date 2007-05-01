@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
                           :class_name => 'Account',
                           :foreign_key => 'partner_account_id'
   
-  attr_accessor :account_type_name, :balance, :percentage
+  attr_accessor :balance, :percentage
   attr_reader :name_with_asset_type
   validates_presence_of :name,
                         :message => "名前を定義してください。"
@@ -68,7 +68,23 @@ class Account < ActiveRecord::Base
   ]
   
   ACCOUNT_TYPE_SYMBOL = [:asset, :expense, :income]
+  ACCOUNT_TYPE_ATTRIBUTES = {
+    :asset =>   {:code => 1, :name => '口座',    :short_name => '口座'},
+    :expense => {:code => 2, :name => '費目',    :short_name => '支出'},
+    :income =>  {:code => 3, :name => '収入内訳', :short_name => '収入'}
+  }
   ASSET_TYPE_SYMBOL = [:cache, :banking_facility, :credit_card, :credit, :capital_fund]
+  ASSET_TYPE_ATTRIBUTES = {
+    :cache            =>   {:code => 1, :name => '現金'},
+    :banking_facility =>   {:code => 2, :name => '金融機関口座'},
+    :credit_card      =>   {:code => 3, :name => 'クレジットカード'},
+    :credit           =>   {:code => 4, :name => '債権'},
+    :capital_fund     =>   {:code => 5, :name => '資本金', :business_only => true}
+  }
+  
+  def self.account_type
+    ACCOUNT_TYPE_ATTRIBUTES
+  end
   
   def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
     raise "#{self.id} #{self.name}には account_type_code がありません" unless self.account_type_code
@@ -161,11 +177,25 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # 表示系 ---------------------
+  # 表示系 （エラーにも登場するので model に持たせる）---------------------
+  
+  # 資産なら資産口座種類、それ以外なら短い口座種類名を返す。
+  def type_shortname
+    asset_type_name||account_type_shortname
+  end
+  
+  # 資産口座種類名を返す。資産口座でなければnilを返す。
+  def asset_type_name
+    begin
+      return ASSET_TYPE_ATTRIBUTES[asset_type_symbol][:name]
+    rescue
+      return nil
+    end
+  end
 
   # 勘定名（勘定種類 or 資産種類)
   def name_with_asset_type
-    return "#{self.name}(#{@@asset_types[asset_type]||@@account_types[account_type]})"
+    "#{self.name}(#{type_shortname})"
   end
 
   # with_asset_type の前にユーザー名をつけたもの
@@ -177,17 +207,12 @@ class Account < ActiveRecord::Base
     @@account_types
   end
 
-  def self.asset_types(business_use = false)
-    business_use ? @@asset_types : @@asset_types.reject{|key, value| key == ASSET_CAPITAL_FUND}
-  end
-
-  def self.get_account_type_name(account_type)
-    account_type_names = {1 => "口座", 2 => "費目", 3 => "収入内訳"}
-    account_type_names[account_type]
-  end
-
   def account_type_name
-    @account_type_name ||= Account.get_account_type_name(self.account_type)
+    ACCOUNT_TYPE_ATTRIBUTES[account_type_symbol][:name]
+  end
+  
+  def account_type_shortname
+    ACCOUNT_TYPE_ATTRIBUTES[account_type_symbol][:short_name]
   end
   
   # rule の親になっていない account (credit系) を探す

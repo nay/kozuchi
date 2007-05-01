@@ -6,8 +6,8 @@
           <label><%= term @account_type %>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
           <% if @account_type == :asset %>
             <label>種別</label>
-            <%= select('account', 'asset_type_code',
-                       Account.asset_types(@user.preferences.business_use?).invert)%>
+            <%= select('account', 'asset_type_code', 
+            @user.available_asset_types.map{|key, value| [value[:name], value[:code]]}.sort{|a, b| a[1] <=> b[1]}) %>
           <% end %>
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
         </td>
