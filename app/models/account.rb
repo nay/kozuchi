@@ -46,8 +46,6 @@ class Account < ActiveRecord::Base
 
   # TODO: わかりにくいので何とかしたい
 
-  @@account_types = {ACCOUNT_ASSET => '口座', ACCOUNT_EXPENSE => '支出', ACCOUNT_INCOME => '収入'}
-  
   @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権', ASSET_CAPITAL_FUND => '資本金'}
 
   ASSET_TYPES = [
@@ -262,7 +260,7 @@ class Account < ActiveRecord::Base
       options = ASSET_TYPES
     end
     # TODO: とてもわかりにくいのでなんとかしたい
-    user.preferences.business_use? ? options : options.reject{|v| v[0] == @@asset_types[ASSET_CAPITAL_FUND]}
+    user.preferences(true).business_use? ? options : options.reject{|v| v[0] == self.class.asset_type[:capital_fund][:name]}
   end
   
   # 口座の初期設定を行う
