@@ -293,11 +293,11 @@ class Account < ActiveRecord::Base
   
   def validate
     # asset_type が金融機関でないのに、精算口座として使われていてはいけない。
-    if ACCOUNT_ASSET == account_type && ASSET_BANKING_FACILITY != asset_type
+    if account_type_symbol == :asset && asset_type_symbol != :banking_facility
       errors.add(:asset_type_code, "精算口座として精算ルールで使用されています。") unless AccountRule.find_associated_with(id).empty?
     end
     # asset_type が債権でもクレジットカードでもないのに、精算ルールを持っていてはいけない。
-    if ACCOUNT_ASSET == account_type && ASSET_CREDIT_CARD != asset_type && ASSET_CREDIT != asset_type
+    if :asset == account_type_symbol && :credit_card != asset_type_symbol && :credit != asset_type_symbol
       errors.add(:asset_type_code, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
     # 連動設定のチェックは有効だがバリデーションエラーでもなぜかリンクは張られてしまうため連動追加メソッド側でチェック

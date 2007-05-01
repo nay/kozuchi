@@ -65,7 +65,7 @@ class ApplicationController < ActionController::Base
   def check_account
     if user
       # 資産口座が1つ以上あり、全部で２つ以上の口座がないとダメ
-      if Account.count_in_user(user.id, [Account::ACCOUNT_ASSET])< 1 || Account.count_in_user(user.id) < 2
+      if user.accounts.types_in(:asset).size < 1 || user.accounts.size < 2
         render("book/need_accounts")
       end
     end
