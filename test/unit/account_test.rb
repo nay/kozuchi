@@ -16,6 +16,9 @@ class AccountTest < Test::Unit::TestCase
 #    end
 #  end
 
+  def test_default_asset
+    assert_equal 1, Account.find_default_asset(1).id
+  end
 
   def test_name_with_asset_type
     assert_equal '現金(現金)', Account.find(1).name_with_asset_type

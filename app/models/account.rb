@@ -50,8 +50,6 @@ class Account < ActiveRecord::Base
   
   @@asset_types = {ASSET_CACHE => '現金', ASSET_BANKING_FACILITY => '金融機関口座', ASSET_CREDIT_CARD => 'クレジットカード', ASSET_CREDIT => '債権', ASSET_CAPITAL_FUND => '資本金'}
 
-  @@connectable_type = {ACCOUNT_ASSET => ACCOUNT_ASSET, ACCOUNT_EXPENSE => ACCOUNT_INCOME, ACCOUNT_INCOME => ACCOUNT_EXPENSE}
-
   ASSET_TYPES = [
     [@@asset_types[ASSET_CACHE], ASSET_CACHE],
     [@@asset_types[ASSET_BANKING_FACILITY], ASSET_BANKING_FACILITY],
@@ -59,6 +57,7 @@ class Account < ActiveRecord::Base
     [@@asset_types[ASSET_CREDIT], ASSET_CREDIT],
     [@@asset_types[ASSET_CAPITAL_FUND], ASSET_CAPITAL_FUND]
   ]
+  #TODO: なくしたい
   RULE_APPLICABLE_ASSET_TYPES = [
     ASSET_TYPES[2],
     ASSET_TYPES[3],
@@ -76,8 +75,8 @@ class Account < ActiveRecord::Base
   ASSET_TYPE_SYMBOL = [:cache, :banking_facility, :credit_card, :credit, :capital_fund]
   ASSET_TYPE_ATTRIBUTES = {
     :cache            =>   {:code => 1, :name => '現金'},
-    :banking_facility =>   {:code => 2, :name => '金融機関口座'},
-    :credit_card      =>   {:code => 3, :name => 'クレジットカード'},
+    :banking_facility =>   {:code => 2, :name => '金融機関口座', :rule_applicable => true},
+    :credit_card      =>   {:code => 3, :name => 'クレジットカード', :rule_applicable => true},
     :credit           =>   {:code => 4, :name => '債権'},
     :capital_fund     =>   {:code => 5, :name => '資本金', :business_only => true}
   }
@@ -172,7 +171,7 @@ class Account < ActiveRecord::Base
   def self.find_default_asset(user_id)
     return Account.find(
       :first,
-      :conditions => ["user_id = ? and account_type_code = ?", user_id, Account::ACCOUNT_ASSET],
+      :conditions => ["user_id = ? and account_type_code = ?", user_id, account_type[:asset][:code]],
       :order => "sort_key"
     )
   end
@@ -232,9 +231,9 @@ class Account < ActiveRecord::Base
     find(:all,
      :conditions => ["user_id = ? and account_type_code = ? and asset_type_code in (?, ?)#{not_in_binded_accounts}",
         user_id,
-        ACCOUNT_ASSET,
-        ASSET_CREDIT_CARD,
-        ASSET_CREDIT],
+        account_type[:asset][:code],
+        asset_type[:credit_card][:code],
+        asset_type[:credit][:code]],
      :order => 'sort_key')
   end
 
@@ -252,12 +251,6 @@ class Account < ActiveRecord::Base
     if self.asset_type != ASSET_CREDIT_CARD && self.asset_type != ASSET_CREDIT
       self.account_rule = nil
     end
-  end
-  
-  
-  # ルールとバインドできる口座種類か
-  def rule_applicable
-    return ACCOUNT_ASSET == account_type && (ASSET_CREDIT_CARD == asset_type || ASSET_CREDIT == asset_type)
   end
   
   def asset_type_options

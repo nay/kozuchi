@@ -8,12 +8,12 @@ class Settings::PartnerAccountController < ApplicationController
     @accounts = @user.accounts(true)
     assets = []
     for account in @accounts
-      assets << account if account.account_type == Account::ACCOUNT_ASSET
+      assets << account if account.account_type_symbol == :asset
     end
     @partner_account_candidates = {}
     for account in @accounts
       # 自分が口座以外なら assets をそのまま利用
-      if account.account_type != Account::ACCOUNT_ASSET
+      if account.account_type_symbol != :asset
         @partner_account_candidates[account] = assets
       # 自分が口座なら、自分を除くassets を作って利用
       else
