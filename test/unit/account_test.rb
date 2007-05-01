@@ -12,6 +12,11 @@ class AccountTest < Test::Unit::TestCase
     assert_equal '食費(支出)', Account.find(2).name_with_asset_type
     assert_equal 'ボーナス(収入)', Account.find(8).name_with_asset_type
   end
+  
+  def test_create_default_accounts
+    Account.delete_all('user_id = 2')
+    Account.create_default_accounts(2)
+  end
 
   # tests partner account error
   def test_wrong_partner_account
