@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class DealTest < Test::Unit::TestCase
   fixtures :users
   fixtures :accounts
-
+  
   # 借方、貸方の entry が正しくとれることのテスト
   def test_left_right_entry
     user = User.find(1)

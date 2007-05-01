@@ -78,6 +78,7 @@ class Deal < BaseDeal
   def after_save
     p "after_save #{self.id}"
     create_relations
+    create_children
   end
   
   def before_update
@@ -182,9 +183,12 @@ class Deal < BaseDeal
     
     account_entries(true)
 
+  end
+  
+  def create_children
     for i in 0..1
       account_rule = account_entries[i].account.account_rule(true)
-      p "create_relations in deal #{self.id}: entry #{i} : account_id = #{account_entries[i].account.id} : account_rule = #{account_rule}"
+      p "create_children in deal #{self.id}: entry #{i} : account_id = #{account_entries[i].account.id} : account_rule = #{account_rule}"
       # 精算ルールに従って従属行を用意する
       if account_rule
         # どこからからルール適用口座への異動額
