@@ -13,9 +13,13 @@ class AccountTest < Test::Unit::TestCase
     assert_equal 'ボーナス(収入)', Account.find(8).name_with_asset_type
   end
   
+  # デフォルト口座登録がエラーなく動くことを確認する
   def test_create_default_accounts
     Account.delete_all('user_id = 2')
     Account.create_default_accounts(2)
+    assert_equal 1, User.find(2).accounts.types_in(:asset).size
+    assert_equal 17, User.find(2).accounts.types_in(:expense).size
+    assert_equal 4, User.find(2).accounts.types_in(:income).size
   end
 
   # tests partner account error

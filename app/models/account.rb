@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
   attr_reader :name_with_asset_type
   validates_presence_of :name,
                         :message => "名前を定義してください。"
-  validates_presence_of :account_type
+  validates_presence_of :account_type_code
   validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
   
   # TODO: 口座種別、資産種別見直し中。Model中では Symbol で持つようにして文字列でDBに格納。Symbol → 名前はここで面倒を見るが基本的にメソッドで変換する。ビジネスモードで呼び方を変える。
@@ -282,7 +282,7 @@ class Account < ActiveRecord::Base
   def self.create_accounts(user_id, account_type, names, sort_key_start = 1, asset_type = nil)
     sort_key = sort_key_start
     for name in names
-      create(:user_id => user_id, :name => name, :account_type => account_type, :asset_type => asset_type, :sort_key => sort_key)
+      create(:user_id => user_id, :name => name, :account_type_code => account_type, :asset_type_code => asset_type, :sort_key => sort_key)
       sort_key += 1
     end
   end
@@ -290,11 +290,11 @@ class Account < ActiveRecord::Base
   def validate
     # asset_type が金融機関でないのに、精算口座として使われていてはいけない。
     if ACCOUNT_ASSET == account_type && ASSET_BANKING_FACILITY != asset_type
-      errors.add(:asset_type, "精算口座として精算ルールで使用されています。") unless AccountRule.find_associated_with(id).empty?
+      errors.add(:asset_type_code, "精算口座として精算ルールで使用されています。") unless AccountRule.find_associated_with(id).empty?
     end
     # asset_type が債権でもクレジットカードでもないのに、精算ルールを持っていてはいけない。
     if ACCOUNT_ASSET == account_type && ASSET_CREDIT_CARD != asset_type && ASSET_CREDIT != asset_type
-      errors.add(:asset_type, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
+      errors.add(:asset_type_code, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
     # 連動設定のチェックは有効だがバリデーションエラーでもなぜかリンクは張られてしまうため連動追加メソッド側でチェック
     # 受け皿口座が同じユーザーであることをチェック  TODO: ＵＩで制限しているため、単体テストにて確認したい
