@@ -6,25 +6,6 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
-  # 移行中
-  # 借方（資産の増加、費用の発生、負債・資本の減少、収益の取消し）にくる記入。
-  # 小槌では、これらはすべて 金額がプラスであることで表現される。
-  has_many   :debtor_entries,
-             :class_name => 'AccountEntry',
-             :foreign_key => 'deal_id',
-             :dependent => :destroy,
-             :conditions => 'amount >= 0',
-             :include => :account
-
-  # 貸方（資産の減少、負債の増加、資本の増加、収益の発生、費用の取消）
-  # 小槌では、これらはすべて 金額がマイナスであることで表現される
-  has_many   :creditor_entries,
-             :class_name => 'AccountEntry',
-             :foreign_key => 'deal_id',
-             :dependent => :destroy,
-             :conditions => 'amount < 0',
-             :include => :account
-
   def before_validation
     # もし金額にカンマが入っていたら正規化する
     @amount = @amount.gsub(/,/,'') if @amount.class == String
@@ -88,15 +69,19 @@ class Deal < BaseDeal
 
   # Prepare sugar methods
   def after_find
-#    p "after_find #{self.id}"
     set_old_date
     p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
 #    raise "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
     return unless account_entries.size == 2
     
-    @minus_account_id = account_entries[0].account_id
-    @plus_account_id = account_entries[1].account_id
-    @amount = account_entries[1].amount
+    for et in account_entries
+      if et.amount >= 0
+        @plus_account_id = et.account_id
+        @amount = et.amount
+      else
+        @minus_account_id = et.account_id
+      end
+    end
   end
   
   def before_destroy
