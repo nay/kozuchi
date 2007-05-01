@@ -17,9 +17,16 @@ class AccountTest < Test::Unit::TestCase
   def test_create_default_accounts
     Account.delete_all('user_id = 2')
     Account.create_default_accounts(2)
-    assert_equal 1, User.find(2).accounts.types_in(:asset).size
-    assert_equal 17, User.find(2).accounts.types_in(:expense).size
-    assert_equal 4, User.find(2).accounts.types_in(:income).size
+    user = User.find(2)
+    assert_equal 1, user.accounts.types_in(:asset).size
+    a = user.accounts.types_in(:asset)[0]
+    assert_equal '現金', a.name
+    assert_equal 1, a.sort_key
+    assert_equal 17, user.accounts.types_in(:expense).size
+    a = user.accounts.types_in(:expense)[16]
+    assert_equal '自動車関連費', a.name
+    assert_equal 17, a.sort_key
+    assert_equal 4, user.accounts.types_in(:income).size
   end
 
   # tests partner account error

@@ -86,6 +86,10 @@ class Account < ActiveRecord::Base
     ACCOUNT_TYPE_ATTRIBUTES
   end
   
+  def self.asset_type
+    ASSET_TYPE_ATTRIBUTES
+  end
+  
   def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
     raise "#{self.id} #{self.name}には account_type_code がありません" unless self.account_type_code
     ACCOUNT_TYPE_SYMBOL[self.account_type_code-1]
@@ -271,18 +275,18 @@ class Account < ActiveRecord::Base
   # 口座の初期設定を行う
   def self.create_default_accounts(user_id)
     # 口座
-    create_accounts(user_id, ACCOUNT_ASSET, ['現金'], 1, ASSET_CACHE)
+    create_accounts(user_id, :asset, ['現金'], 1, :cache)
     # 支出
-    create_accounts(user_id, ACCOUNT_EXPENSE, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
+    create_accounts(user_id, :expense, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
     # 収入
-    create_accounts(user_id, ACCOUNT_INCOME, ['給料', '賞与', '利子・配当', '贈与'] )
+    create_accounts(user_id, :income, ['給料', '賞与', '利子・配当', '贈与'] )
   end
   
   protected
   def self.create_accounts(user_id, account_type, names, sort_key_start = 1, asset_type = nil)
     sort_key = sort_key_start
     for name in names
-      create(:user_id => user_id, :name => name, :account_type_code => account_type, :asset_type_code => asset_type, :sort_key => sort_key)
+      create(:user_id => user_id, :name => name, :account_type_code => Account.account_type[account_type][:code], :asset_type_code => asset_type ? Account.asset_type[asset_type][:code] : nil, :sort_key => sort_key)
       sort_key += 1
     end
   end
