@@ -7,7 +7,7 @@ class UserTest < Test::Unit::TestCase
   def test_accounts_types_in
     assert_equal 4, @test_user_1.accounts.types_in(:asset).size
     assert_equal 0, @test_user_1.accounts.types_in.size
-    assert_equal 3, @test_user_1.accounts.types_in(:asset, :expense).size
+    assert_equal 5, @test_user_1.accounts.types_in(:asset, :expense).size
   end
   
   def test_accounts_asset_types_in
