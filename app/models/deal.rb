@@ -6,6 +6,8 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
+  after_save :create_relations, :create_children
+
   def before_validation
     # もし金額にカンマが入っていたら正規化する
     @amount = @amount.gsub(/,/,'') if @amount.class == String
@@ -56,12 +58,6 @@ class Deal < BaseDeal
 
   # ↓↓  call back methods  ↓↓
 
-  def after_save
-    p "after_save #{self.id}"
-    create_relations
-    create_children
-  end
-  
   def before_update
     clear_entries_before_update    
     children.clear
