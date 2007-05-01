@@ -69,9 +69,9 @@ class Account < ActiveRecord::Base
   
   ACCOUNT_TYPE_SYMBOL = [:asset, :expense, :income]
   ACCOUNT_TYPE_ATTRIBUTES = {
-    :asset =>   {:code => 1, :name => '口座',    :short_name => '口座'},
-    :expense => {:code => 2, :name => '費目',    :short_name => '支出'},
-    :income =>  {:code => 3, :name => '収入内訳', :short_name => '収入'}
+    :asset =>   {:code => 1, :name => '口座',    :short_name => '口座',  :connectable => :asset},
+    :expense => {:code => 2, :name => '費目',    :short_name => '支出',  :connectable => :income},
+    :income =>  {:code => 3, :name => '収入内訳', :short_name => '収入',  :connectable => :expense}
   }
   ASSET_TYPE_SYMBOL = [:cache, :banking_facility, :credit_card, :credit, :capital_fund]
   ASSET_TYPE_ATTRIBUTES = {
@@ -88,6 +88,10 @@ class Account < ActiveRecord::Base
   
   def self.asset_type
     ASSET_TYPE_ATTRIBUTES
+  end
+  
+  def account_type_connectable
+    ACCOUNT_TYPE_ATTRIBUTES[self.account_type_symbol][:connectable]
   end
   
   def account_type_symbol # _symbol はリファクタリング終了後に名前変更予定
@@ -131,7 +135,7 @@ class Account < ActiveRecord::Base
 
     raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
     
-    raise "#{@@account_types[account_type]} には #{@@account_types[connected_account.account_type]} を連動できません。#{@@account_types[@@connectable_type[account_type]]} だけを連動することができます。" unless connected_account.account_type_code == @@connectable_type[account_type]
+    raise "#{account_type_name} には #{connected_account.account_type_name} を連動できません。#{self.class.account_type[account_type_connectable][:name]} だけを連動することができます。" unless connected_account.account_type_code == @@connectable_type[account_type]
     connected_accounts << connected_account
     # interactive なら逆リンクもはる。すでにあったら黙ってパスする
     associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
@@ -205,10 +209,6 @@ class Account < ActiveRecord::Base
   # with_asset_type の前にユーザー名をつけたもの
   def name_with_user
     return "#{user.login_id} さんの #{name_with_asset_type}"
-  end
-
-  def self.account_types
-    @@account_types
   end
 
   def account_type_name

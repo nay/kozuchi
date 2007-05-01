@@ -7,6 +7,16 @@ class AccountTest < Test::Unit::TestCase
   fixtures :accounts
   fixtures :account_links
 
+  # 不正な connect で例外が正しくでることをテストする
+  # TODO: そこまでいかない・・・
+#  def test_wrong_connect
+#    account = Account.find(1)
+#    assert_raise(RuntimeError) do
+#      account.connect(2, '食費')
+#    end
+#  end
+
+
   def test_name_with_asset_type
     assert_equal '現金(現金)', Account.find(1).name_with_asset_type
     assert_equal '食費(支出)', Account.find(2).name_with_asset_type
