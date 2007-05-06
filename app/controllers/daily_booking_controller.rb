@@ -20,10 +20,10 @@ class DailyBookingController < ApplicationController
     
     # 取引の中の収入、支出を集計する
     @total_income = 0
-    @deals.each{|d| @total_income += d.amount_if_entry{|e| e.account.account_type_symbol == :income}}
+    @deals.each{|d| @total_income += d.amount_if_entry{|e| e.account.type_in? :income}}
     @total_income *= -1
     @total_expense = 0
-    @deals.each{|d| @total_expense += d.amount_if_entry{|e| e.account.account_type_symbol == :expense}}
+    @deals.each{|d| @total_expense += d.amount_if_entry{|e| e.account.type_in? :expense}}
 
     # 編集の準備
     @deal = Deal.new
@@ -36,7 +36,7 @@ class DailyBookingController < ApplicationController
   end
   
   def load_account
-    @account = Account.find_default_asset(@user.id)
+    @account = @user.default_asset
     unless @account
       render(:template => 'daily_booking/no_account')
       return false

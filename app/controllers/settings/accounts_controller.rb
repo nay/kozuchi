@@ -10,12 +10,17 @@ class Settings::AccountsController < ApplicationController
 
   # 新しい勘定を作成する
   def create
-    account = Account.new(params[:account])
+    if self.account_type == :asset
+      account_class = Account::Asset.types.detect{|a| a.asset_name == params[:account][:type]}
+      raise "Unknown account type #{params[:account][:type]} in #{Account::Asset.types}" unless account_class
+    else
+      account_class = self.account_type == :expense ? Expense : Income
+    end
+    account = account_class.new(params[:account])
     account.user_id = @user.id
-    account.account_type_symbol = self.account_type
     if account.save
       @user.accounts(true)
-      flash[:notice]="#{account.account_type_name} '#{account.name}' を登録しました。"
+      flash[:notice]="#{account_class.type_name} '#{account.name}' を登録しました。"
     else
       flash_validation_errors(account)
     end
@@ -51,7 +56,7 @@ class Settings::AccountsController < ApplicationController
     # ユーザーIDに属する以外は無視する
     # (TODO: user_id が保護されていることを確認)
     begin
-      Account.transaction do
+      Account::Base.transaction do
         for account in @user.accounts
           next unless params[:account][account.id.to_s]
           account.attributes = (params[:account][account.id.to_s])
@@ -69,7 +74,7 @@ class Settings::AccountsController < ApplicationController
   
   def index
     @account_type = self.account_type # symbol
-    @accounts = @user.accounts.select{|a|a.account_type_symbol == account_type}
+    @accounts = @user.accounts.select{|a|a.type_in? account_type}
     render(:template => "settings/shared/accounts")
   end
   

@@ -34,7 +34,7 @@
               <% # 明細、左欄、右欄を用意する %>
               <% target_entry = deal.account_entries.detect{|e| e.account_id == @account.id} %>
               <% balance += target_entry.amount if target_entry %>
-              <% target_entry ||= deal.account_entries.detect{|e| e.account.account_type_symbol == :asset}%>
+              <% target_entry ||= deal.account_entries.detect{|e| e.account.type_in? :asset}%>
               <% sub_summary = deal.account_entries.detect{|e| e != target_entry}.account.name %>
               <% if target_entry.amount <= 0 %>
                 <% left_entry = target_entry %>

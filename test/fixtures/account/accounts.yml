@@ -3,53 +3,47 @@ first_cache:
   id: 1
   user_id: 1
   name: 現金
-  account_type_code: 1
-  asset_type_code: 1
+  type: Cache
 first_food:
   id: 2
   user_id: 1
   name: 食費
-  account_type_code: 2
+  type: Expense
 first_second:
   id: 3
   user_id: 1
   name: second
-  account_type_code: 1
-  asset_type_code: 4
+  type: Credit
 second_cache:
   id: 4
   user_id: 2
   name: 現金
-  account_type_code: 1
-  asset_type_code: 1
+  type: Cache
 second_first:
   id: 5
   user_id: 2
   name: first
-  account_type_code: 1
-  asset_type_code: 4
+  type: Credit
 first_credit_card:
   id: 6
   user_id: 1
   name: カード
-  account_type_code: 1
-  asset_type_code: 3
+  type: CreditCard
 first_bank:
   id: 7
   user_id: 1
   name: 銀行
-  account_type_code: 1
-  asset_type_code: 2
+  type: BankingFacility
 first_bonus:
   id: 8
   user_id: 1
   name: ボーナス
-  account_type_code: 3
+  type: Income
 second_food:
   id: 9
   user_id: 2
   name: 食費
-  account_type_code: 2
+  type: Expense
 
 
   

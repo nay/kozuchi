@@ -23,7 +23,7 @@ class AccountDealsController < ApplicationController
     begin
       deals = BaseDeal.get_for_account(user.id, @account_id, @target_month)
       @account_entries = Array.new();
-      @balance_start = AccountEntry.balance_start(session[:user].id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
+      @balance_start = AccountEntry.balance_start(@user.id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
       balance_estimated = @balance_start
       for deal in deals do
         for account_entry in deal.account_entries do

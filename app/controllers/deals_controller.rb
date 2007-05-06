@@ -98,9 +98,9 @@ class DealsController < ApplicationController
       flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
       options.store("updated_deal_id", deal.id)
       redirect_to(options)
-    rescue => err
-      flash_error(err.to_s)
-      redirect_to(options)
+#    rescue => err
+#      flash_error(err.to_s)
+#      redirect_to(options)
    end
   end
 
@@ -208,7 +208,7 @@ class DealsController < ApplicationController
     # todo preference のロード整備
     @deals_scroll_height = user.preferences ? user.preferences.deals_scroll_height : nil
     begin
-      @deals = BaseDeal.get_for_month(session[:user].id, @target_month)
+      @deals = BaseDeal.get_for_month(@user.id, @target_month)
       session[:target_month] = @target_month
     rescue Exception
       flash[:notice] = "不正な日付です。 " + @target_month.to_s

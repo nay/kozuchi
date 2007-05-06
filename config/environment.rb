@@ -7,7 +7,8 @@ $KCODE = 'u'
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-# RAILS_GEM_VERSION = '1.1.2'
+ RAILS_GEM_VERSION = '1.1.2'
+# RAILS_GEM_VERSION = '1.2.3'
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')

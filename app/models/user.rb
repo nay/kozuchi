@@ -11,17 +11,19 @@ class User < ActiveRecord::Base
             :foreign_key => 'friend_user_id',
             :dependent => true
   has_many  :accounts,
+            :class_name => 'Account::Base',
             :dependent => true,
             :order => 'sort_key' do
               # 指定した account_type のものだけを抽出する
               def types_in(*account_types)
-                self.select{|a| account_types.include?(a.account_type_symbol)}
-              end
-              # 指定した asset_type のものだけを抽出する
-              def asset_types_in(*asset_types)
-                self.select{|a| a.account_type_symbol == :asset && asset_types.include?(a.asset_type_symbol)}
+                account_types = account_types.flatten
+                self.select{|a| account_types.detect{|t| a.type_in?(t)} }
               end
             end
+
+  def default_asset
+    accounts.types_in(:asset).first
+  end
 
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
   def login_id
@@ -64,18 +66,16 @@ class User < ActiveRecord::Base
     BaseDeal.exists?(self.id, date)
   end
   
-  # このユーザーが使える asset_type (symbol) リストを返す
+  # このユーザーが使える asset_type (Class) リストを返す
   def available_asset_types
-    asset_types = Account::ASSET_TYPE_ATTRIBUTES.clone
-    asset_types.delete_if{|key, value| value[:business_only] } unless preferences.business_use?
-    asset_types
+    Account::Asset.types.find_all{|type| !type.business_only? || preferences.business_use? }
   end
   
   protected
   
   def after_create
     create_preferences()
-    Account.create_default_accounts(self.id)
+    Account::Base.create_default_accounts(self.id)
   end
   
 end

@@ -17,12 +17,13 @@ class UserController < ApplicationController
   # by the login_required method, they should be sent back to the page they were
   # trying to access. If not, they will be sent to "/user/home".
   def login
-    reset_session if session[:user]
+    reset_session if session[:user_id]
     return if generate_blank
     @user = User.new(params[:user])
-    if session[:user] = User.authenticate(params[:user][:login], params[:user][:password])
-      session[:user].logged_in_at = Time.now
-      session[:user].save
+    if u = User.authenticate(params[:user][:login], params[:user][:password])
+      session[:user_id] = u.id
+      u.logged_in_at = Time.now
+      u.save
 #      flash[:notice] = 'Login successful'
 #      redirect_to_stored_or_default :action => 'home'
       redirect_to_stored_or_default :controller => 'deals', :action => 'index'
@@ -72,7 +73,6 @@ class UserController < ApplicationController
   end
 
   def logout
-#    session[:user] = nil
     reset_session
     redirect_to :action => 'login'
   end
@@ -282,6 +282,6 @@ class UserController < ApplicationController
   # returns the user object this method should act upon; only really
   # exists for other engines operating on top of this one to redefine...
   def get_user_to_act_on
-    @user = session[:user]
+    @user = User.find(session[:user_id])
   end
 end

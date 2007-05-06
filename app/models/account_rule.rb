@@ -1,8 +1,10 @@
 class AccountRule < ActiveRecord::Base
   belongs_to :associated_account,
-             :class_name => 'Account',
+             :class_name => 'Account::Base',
              :foreign_key => 'associated_account_id'
-  belongs_to :account
+  belongs_to :account,
+             :class_name => 'Account::Base',
+             :foreign_key => 'account_id'
 
   # 元となる取引に対して、精算予定日を計算する
   def payment_date(date)

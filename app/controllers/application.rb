@@ -4,8 +4,57 @@ require 'login_engine'
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
   include LoginEngine
+  
+    # login_required filter. add 
+    #
+    #   before_filter :login_required
+    #
+    # if the controller should be under any rights management. 
+    # for finer access control you can overwrite
+    #   
+    #   def authorize?(user)
+    # 
+    def login_required
+      p "login_required sesison[:user_id] = #{session[:user_id]}"
+      if not protect?(action_name)
+        return true  
+      end
+
+      if user? and authorize?(User.find(session[:user_id]))
+        return true
+      end
+
+      # store current location so that we can 
+      # come back after the user logged in
+      store_location
+  
+      # call overwriteable reaction to unauthorized access
+      access_denied
+    end
+    def user?
+      # First, is the user already authenticated?
+      return true if not session[:user_id].nil?
+
+      # If not, is the user being authenticated by a token?
+      id = params[:user_id]
+      key = params[:key]
+      if id and key
+        u = User.authenticate_by_token(id, key)
+        session[:user_id] = u.id if u
+        return true if not session[:user_id].nil?
+      end
+
+      # Everything failed
+      return false
+    end
+  
+    # Returns the current user from the session, if any exists
+    def current_user
+      User.find(session[:user_id].to_i)
+    end
+
   helper :user
-  model :user
+  model :user, 'account/base', 'account/asset', 'account/income'
   
   before_filter :login_required
   before_filter :set_charset
@@ -21,7 +70,7 @@ class ApplicationController < ActionController::Base
 
 
   def user
-    session[:user]
+    User.find(session[:user_id])
   end
 
 #  def rescue_action_in_public(exception)
@@ -95,7 +144,7 @@ class ApplicationController < ActionController::Base
   
   def load_user
     # TODO: いずれ session には　user_id だけをのせ、毎回取得する仕組みにする
-    @user = session[:user]
+    @user = User.find(session[:user_id])
   end
 
   # @target_month をもとにして資産の残高を計算する

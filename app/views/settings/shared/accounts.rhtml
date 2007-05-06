@@ -6,8 +6,8 @@
           <label><%= term @account_type %>名</label><%= text_field("account", "name", :size => 16, :class => "text") %>
           <% if @account_type == :asset %>
             <label>種別</label>
-            <%= select('account', 'asset_type_code', 
-            @user.available_asset_types.map{|key, value| [value[:name], value[:code]]}.sort{|a, b| a[1] <=> b[1]}) %>
+            <%= select('account', 'type', 
+            @user.available_asset_types.map{|type| [type.asset_name, type.asset_name]}) %>
           <% end %>
           <label>並び順</label><%= text_field("account", "sort_key", :size => 2, :class => "amount") %>
         </td>
@@ -37,19 +37,21 @@
         <td><%= text_field("account[]", "name", :class => "text") %></td>
         <% if @account_type == :asset %>
           <td>
-            <%= select('account[]', 'asset_type_code',
+            <%= select('account[]', 'asset_name',
                        @account.asset_type_options)%>
           </td>
         <% end %>
         <td>
-          <% if @account.account_rule %>
-              <span class="system">精算ルール</span>
-          <% end %>
-          <% if !@account.associated_account_rules.empty? %>
-            <span class="system">精算口座</span>
-          <% end %>
-          <% if @account.connected_or_associated_accounts_size > 0 %>
-            <span class="system">取引連動</span>
+          <% if @account_type == :asset %>
+            <% if @account.account_rule %>
+                <span class="system">精算ルール</span>
+            <% end %>
+            <% if !@account.associated_account_rules.empty? %>
+              <span class="system">精算口座</span>
+            <% end %>
+            <% if @account.connected_or_associated_accounts_size > 0 %>
+              <span class="system">取引連動</span>
+            <% end %>
           <% end %>
         </td>
         <td><%= text_field("account[]", "sort_key", :size => 2, :class => 'number') %></td>
@@ -57,7 +59,8 @@
           <td rowspan="<%= @accounts.size %>" class="button_action"><button type="submit">変更</button></td>
         <% end %>
         <td class="button_action">
-          <% if @account.associated_account_rules.empty? %>
+          <% # TODO: 削除できるものをとるメソッドをつくろう %>
+          <% if @account_type != :asset || @account.associated_account_rules.empty? %>
             <button onClick="location.href='<%=url_for(:action => "delete", :id => @account.id)%>'">削除</button>
           <% else %>
             <span>×</span>

@@ -35,10 +35,10 @@ class ProfitAndLossController < ApplicationController
     @asset_plus_summaries = []
     @asset_minus_summaries = []
     for account in asset_accounts
-      balance_start = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, start_inclusive) # 期首残高
+      balance_start = AccountEntry.balance_at_the_start_of(@user.id, account.id, start_inclusive) # 期首残高
       p "balance_start = #{balance_start}"
       
-      balance_end = AccountEntry.balance_at_the_start_of(session[:user].id, account.id, end_exclusive) # 期末残高
+      balance_end = AccountEntry.balance_at_the_start_of(@user.id, account.id, end_exclusive) # 期末残高
       p "balance_end = #{balance_end}"
 
       diff = balance_end - balance_start

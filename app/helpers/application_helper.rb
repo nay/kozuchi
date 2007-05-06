@@ -4,6 +4,19 @@ module ApplicationHelper
   
   include TermHelper
 
+  def account_options(user, account_type)
+    options = ''
+    accounts = user.accounts.types_in(account_type)
+    unless accounts.empty?
+      options += "<optgroup label='#{accounts.first.class.type_name}'>"
+      for account in accounts
+        options += "<option value='#{account.id}'>#{account.name}</option>"
+      end
+      options += "</optgroup>"
+    end
+    options
+  end
+
   def format_year(year)
     "#{year}年"
   end
@@ -36,8 +49,14 @@ module ApplicationHelper
   end
   
   def user_color_style
-    return '' unless session[:user] && session[:user].preferences
-    bgcolor = session[:user].preferences.color
+    # TODO: なんとかしたい
+    begin
+      user = User.find(session[:user_id])
+    rescue
+      user = nil
+    end
+    return '' unless user && user.preferences
+    bgcolor = user.preferences.color
     return '' unless bgcolor;
     style_content = "background-color: #{bgcolor};"
     return 'style="'+style_content+'"'
@@ -61,17 +80,17 @@ module ApplicationHelper
   class AccountGroup
     attr_reader :name, :accounts
 
+    # TODO: きれいにしたい
     def self.groups(accounts, is_asc)
       groups = []
       for account in accounts do
-        case account.account_type
-        when 1
+        if account.kind_of?(Account::Asset)
           assets = AccountGroup.new("口座") if !assets
           assets << account
-        when 2
+        elsif account.kind_of?(Account::Expense)
           expenses = AccountGroup.new("費目") if !expenses
           expenses << account
-        when 3
+        else
           incomes = AccountGroup.new("収入内訳") if !incomes
           incomes << account
         end

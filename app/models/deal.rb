@@ -119,14 +119,14 @@ class Deal < BaseDeal
       entry_amount = @amount.to_i*(-1)
       entry_friend_link_id = @minus_account_friend_link_id
       entry_friend_link_id ||= deal_link_id_for_second if !is_first
-      another_entry_account = is_first ? Account.find(@plus_account_id) : nil
+      another_entry_account = is_first ? Account::Base.find(@plus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     else
       entry_account_id = @plus_account_id
       entry_amount = @amount.to_i
       entry_friend_link_id = @plus_account_friend_link_id
       entry_friend_link_id ||= deal_link_id_for_second if !is_first
-      another_entry_account = is_first ? Account.find(@minus_account_id) : nil
+      another_entry_account = is_first ? Account::Base.find(@minus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     end
     
@@ -168,6 +168,7 @@ class Deal < BaseDeal
   
   def create_children
     for i in 0..1
+      next unless account_entries[i].account.kind_of? Account::Asset
       account_rule = account_entries[i].account.account_rule(true)
       p "create_children in deal #{self.id}: entry #{i} : account_id = #{account_entries[i].account.id} : account_rule = #{account_rule}"
       # 精算ルールに従って従属行を用意する
@@ -175,7 +176,7 @@ class Deal < BaseDeal
         # どこからからルール適用口座への異動額
         new_amount = account_entries[i].amount
         # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
-        if (Account::ASSET_CREDIT_CARD == account_rule.account.asset_type && new_amount < 0) ||(Account::ASSET_CREDIT == account_rule.account.asset_type && new_amount > 0)
+        if (account_rule.account.kind_of?(Account::CreditCard) && new_amount < 0) ||(account_rule.account.kind_of?(Account::Credit) && new_amount > 0)
           children.create(
             :minus_account_id => account_rule.account_id,
             :plus_account_id => account_rule.associated_account_id,

@@ -10,7 +10,7 @@ class AccountsBalanceReport
     @minus = Accounts.new
     @capital_fund = Accounts.new
     accounts.each do |account|
-      if account.asset_type == Account::ASSET_CAPITAL_FUND
+      if account.kind_of? Account::CapitalFund
         account.balance_before(date) # 残高を計算しておく
         @capital_fund << account
       elsif account.balance_before(date) >= 0

@@ -3,7 +3,9 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :deal,
              :class_name => 'BaseDeal',
              :foreign_key => 'deal_id'
-  belongs_to :account
+  belongs_to :account,
+             :class_name => 'Account::Base',
+             :foreign_key => 'account_id'
   belongs_to :friend_link,
              :class_name => 'DealLink',
              :foreign_key => 'friend_link_id'
@@ -162,7 +164,7 @@ class AccountEntry < ActiveRecord::Base
     partner_other_account ||= partner_account.partner_account
     
     # それもなければ適当な資産口座を割り当てる。
-    partner_other_account ||= Account.find_default_asset(partner_account.user_id)
+    partner_other_account ||= partner_account.user.default_asset
     p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account
     

@@ -7,9 +7,9 @@ class Settings::AccountRulesController < ApplicationController
   
   # 精算ルールのメンテナンス -----------------------------------------------------------------------
   def index
-    @rules = AccountRule.find_all(session[:user].id)
-    @accounts_to_be_applied = Account.find_rule_free(session[:user].id)
-    @accounts_to_be_associated = @user.accounts.asset_types_in(:banking_facility)
+    @rules = AccountRule.find_all(@user.id)
+    @accounts_to_be_applied = Account::Asset.find_rule_free(@user.id)
+    @accounts_to_be_associated = @user.accounts.types_in(:banking_facility)
     @creatable = false
     @rule = AccountRule.new
     @day_options = self.class.day_options
@@ -36,7 +36,7 @@ class Settings::AccountRulesController < ApplicationController
   
   def create_account_rule
     rule = AccountRule.new(params[:rule])
-    rule.user_id = session[:user].id
+    rule.user_id = @user.id
     p rule.account_id
     begin
       rule.save!
@@ -48,7 +48,7 @@ class Settings::AccountRulesController < ApplicationController
   end
   
   def delete_account_rule
-    target = AccountRule.get(session[:user].id, params[:id].to_i)
+    target = AccountRule.get(@user.id, params[:id].to_i)
     if target
       target_account_name = target.account.name
       target.destroy

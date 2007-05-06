@@ -2,7 +2,7 @@
   <div class="form_box">
     <% if @friends.size > 0%>
       <%= form_tag :action => 'connect_account'%>
-        <%= session[:user].login_id %>
+        <%= @user.login_id %>
         <span>さんの</span>
         <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
         <span>への記入と、<br />

@@ -19,7 +19,7 @@ class Settings::DealLinksController < ApplicationController
     account_id = @params[:account] ? @params[:account][:id] : nil
     raise "no account_id" unless account_id
     
-    account = Account.get(user.id, account_id)
+    account = Account::Base.get(user.id, account_id)
     raise "no account" unless account
     
     friend_user_login_id = params[:account][:partner_login_id]
@@ -46,10 +46,10 @@ class Settings::DealLinksController < ApplicationController
 
   # 連動設定の解除  
   def clear_connection
-    account = Account.get(user.id, params[:id])
+    account = Account::Base.get(user.id, params[:id])
     raise "no account" if !account
     
-    connected_account = Account.find(params[:connected_account_id])
+    connected_account = Account::Base.find(params[:connected_account_id])
     account.clear_connection(connected_account)
     flash_notice("#{account.name_with_asset_type} と #{connected_account.name_with_user} の取引連動設定を解除しました。")
     redirect_to(:action => 'index')

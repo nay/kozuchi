@@ -8,7 +8,7 @@ class AccountSummary
   end
   
   def name
-    @account.account_type_symbol == :asset ? "不明金(#{@account.name})" : @account.name  
+    @account.type_in?(:asset) ? "不明金(#{@account.name})" : @account.name
   end
   
   def self.get_sum(summaries)

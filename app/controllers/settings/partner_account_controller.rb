@@ -8,12 +8,12 @@ class Settings::PartnerAccountController < ApplicationController
     @accounts = @user.accounts(true)
     assets = []
     for account in @accounts
-      assets << account if account.account_type_symbol == :asset
+      assets << account if account.type_in? :asset
     end
     @partner_account_candidates = {}
     for account in @accounts
       # 自分が口座以外なら assets をそのまま利用
-      if account.account_type_symbol != :asset
+      unless account.type_in?(:asset)
         @partner_account_candidates[account] = assets
       # 自分が口座なら、自分を除くassets を作って利用
       else
@@ -28,7 +28,7 @@ class Settings::PartnerAccountController < ApplicationController
   #更新
   def update
     account_id = params[:account][:id]
-    account = Account.get(user.id, account_id.to_i)
+    account = Account::Base.get(user.id, account_id.to_i)
     partner_account_id = params[:account][:partner_account_id]
     raise "error" if partner_account_id == nil
     p "partner_account_id = #{partner_account_id}"
