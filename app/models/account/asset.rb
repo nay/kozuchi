@@ -8,20 +8,17 @@ class Account::Asset < Account::Base
   
   def self.type_name(name = nil)
     return Asset.type_name if self != Asset
-    return @type_name unless name
-    @type_name = name
+    super
   end
 
   def self.short_name(short_name = nil)
     return Asset.short_name if self != Asset
-    return @short_name unless short_name
-    @short_name = short_name
+    super
   end
   
   def self.connectable_type(clazz = nil)
     return Asset.connectable_type if self != Asset
-    return @connectable_type unless clazz
-    @connectable_type = clazz
+    super
   end
 
   def self.asset_name(asset_name = nil)
@@ -59,7 +56,7 @@ class Account::Asset < Account::Base
            :class_name => 'AccountRule',
            :foreign_key => 'associated_account_id'
 
-  validate :validates_rule_associated, :validates_rule_applicable
+  validate :validates_partner_account, :validates_rule_associated, :validates_rule_applicable
   before_destroy :assert_rule_not_associated
 
 

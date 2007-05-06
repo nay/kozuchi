@@ -27,7 +27,7 @@ class UserTest < Test::Unit::TestCase
   end
   
   def test_available_asset_types
-    assert_equal 4, assert_equal @test_user_1.available_asset_types.size
+    assert_equal 4, @test_user_1.available_asset_types.size
   end
 
 end

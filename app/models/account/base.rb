@@ -26,6 +26,7 @@ class Account::Base < ActiveRecord::Base
   def self.inherited(subclass)
     @types ||= []
     @types << subclass unless @types.include?(subclass)
+    super
   end
   
   def self.type_order(order = nil)
