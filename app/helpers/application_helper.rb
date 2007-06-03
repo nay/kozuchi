@@ -4,6 +4,13 @@ module ApplicationHelper
   
   include TermHelper
 
+  # optgroup を使わずに口座を選ばせるリストを表示する
+  def select_account(object, method, account_type, with_asset_type = true, options = {}, html_options = {})
+    accounts = @user.accounts.types_in(account_type)
+    select(object, method, accounts.collect{|a| [with_asset_type ?  a.name_with_asset_type : a.name, a.id] }, options, html_options)
+  end
+
+
   def account_options(user, account_type)
     options = ''
     accounts = user.accounts.types_in(account_type)
@@ -144,6 +151,7 @@ module ApplicationHelper
     def self.header_menues
       t = MenuTree.new
       t.add_menu('家計簿', :controller => "/deals", :action => 'index')
+      t.add_menu('精算', :controller => '/settlements', :action => 'new')
       t.add_menu('基本設定', :controller => "/settings/assets", :action => "index")
       t.add_menu('高度な設定', :controller => "/settings/account_rules", :action => "index")
       t.add_menu('ヘルプ', :controller => "/help", :action => "index")
@@ -161,6 +169,11 @@ module ApplicationHelper
         t.add_menu('収支表', :controller => '/profit_and_loss', :action => 'index')
         t.add_menu('資産表', :controller => '/assets', :action => 'index')
         t.add_menu('貸借対照表', :controller => '/balance_sheet', :action => 'index')
+      }
+      
+      menues.create_menu_tree('精算') {|t|
+        t.add_menu('新しい精算', :controller => '/settlements', :action => 'new')
+        t.add_menu('一覧', :controller => '/settlements', :action => 'index')
       }
       
       menues.create_menu_tree('基本設定') {|t|

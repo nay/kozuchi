@@ -1,0 +1,15 @@
+preference_1:
+  id: 1
+  user_id: 1
+  deals_scroll_height: 
+  color: 
+  business_use: 0
+  use_daily_booking: 1
+preference_2:
+  id: 2
+  user_id: 2
+  deals_scroll_height: 
+  color: 
+  business_use: 1
+  use_daily_booking: 1
+  

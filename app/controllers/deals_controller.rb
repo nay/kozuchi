@@ -1,6 +1,6 @@
 class DealsController < ApplicationController
   layout 'main'
-  before_filter :check_account, :load_user
+  before_filter :load_user, :check_account
   include ApplicationHelper
 
 #  def rescue_action(exception)
