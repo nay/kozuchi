@@ -1,12 +1,19 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ChildDealTest < Test::Unit::TestCase
+  self.use_instantiated_fixtures  = true
   fixtures :users
-  fixtures :accounts
+  fixtures 'account/accounts'.to_sym
+  set_fixture_class  "account/accounts".to_sym => 'account/base'
   fixtures :account_rules
 
   # 精算ルールがあるとき、従属行が新しく作られ、更新時は作り直されることをテストする
   def test_create
+    # なぜかuse_instantiated_fixturesが効かない
+    @first_credit_card = Account::Base.find(6)
+    @first_food = Account::Base.find(2)
+    @first_bank = Account::Base.find(7)
+    
     deal = Deal.new(:user_id => 1, :summary => 'カードで食事', :minus_account_id => @first_credit_card.id, :plus_account_id => @first_food.id, :amount => 3200, :date => Date.today)
     deal.save!
     assert_equal 1, deal.children.size

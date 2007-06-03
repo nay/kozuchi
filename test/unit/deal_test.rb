@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class DealTest < Test::Unit::TestCase
   fixtures :users
-  fixtures 'account/base'.to_sym
+  fixtures 'account/accounts'.to_sym
   set_fixture_class  "account/accounts".to_sym => 'account/base'
   
   

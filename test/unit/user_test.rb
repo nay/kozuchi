@@ -2,9 +2,14 @@ require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/../../app/helpers/application_helper'
 
 class UserTest < Test::Unit::TestCase
-  fixtures :users, "account/accounts"
+  fixtures :users, "account/accounts", :preferences
   set_fixture_class  "account/accounts".to_sym => 'account/base'
   include ApplicationHelper
+  
+  def set_up
+    @test_user_1 = User.find(1)  
+    @test_user_2 = User.find(2)  
+  end
 
   # account.types_in が正しく動作することのテスト
   def test_accounts_types_in
@@ -28,6 +33,7 @@ class UserTest < Test::Unit::TestCase
   
   def test_available_asset_types
     assert_equal 4, @test_user_1.available_asset_types.size
+    assert_equal 5, @test_user_2.available_asset_types.size
   end
 
 end
