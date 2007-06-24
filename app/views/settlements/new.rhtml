@@ -10,16 +10,7 @@
       <th>期間</th>
       <td>
         <div><%= select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)%> ～ <%= select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true) %> <button onClick="<%= change_condition%>">表示内容を更新</button></div>
-        <p class="guide">※期間は取引を絞り込むためのもので、精算内容には記入されません。</p>
       </td>
-    </tr>
-    <tr>
-      <th>摘要</th>
-      <td><%= text_field('settlement', 'name')%></td>
-    </tr>
-    <tr>
-      <th>特記事項</th>
-      <td><%= text_area('settlement', 'description', :rows => 3)%></td>
     </tr>
   </table>
 </div>  

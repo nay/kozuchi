@@ -9,6 +9,7 @@ class SettlementsController < ApplicationController
   # 新しい精算口座を作る
   def new
     @settlement.account = @credit_accounts.first
+    @settlement.name = "#{@settlement.account.name}の精算"
   
     @start_date = Date.today << 1
     @start_date = Date.new(@start_date.year, @start_date.month, 1)
@@ -26,6 +27,7 @@ class SettlementsController < ApplicationController
     @start_date = to_date(params[:start_date])
     @end_date = to_date(params[:end_date])
     @settlement.account = @user.accounts.find(params[:settlement][:account_id])
+    @settlement.name = "#{@settlement.account.name}の精算"
 
     load_deals
     @selected_deals.delete_if{|d| params["s_#{d.id}".to_sym] != "1"} unless params[:clear_selection]
@@ -37,6 +39,7 @@ class SettlementsController < ApplicationController
     @settlement = Settlement.new
     @settlement.user_id = @user.id
     @settlement.attributes = params[:settlement]
+    @settlement.result_date = to_date(params[:result_date])
     # params から s_ ではじまるkeyをすべてとってIDとして扱う
     selected_deal_ids = params.keys.find_all{|key| key.match(/^s_[0-9]*/)}.map{|key| key[2,key.length-2].to_i}
     
@@ -90,14 +93,14 @@ class SettlementsController < ApplicationController
   end
   
   def load_settlement
-    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entries => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
     return error_not_found unless @settlement
   end
   
   private
   def load_deals
     # TODO: 残高や不明金があると話がややこしい。とりあえず、債権には残高を記入できなかったと思うのでそのまま進める。
-    @entries = AccountEntry.find(:all, :include => :deal, :conditions => ["deals.user_id = ? and account_id = ? and deals.date >= ? and deals.date <= ? and settlement_id is null and result_settlement_id is null", @user.id, @settlement.account.id, @start_date, @end_date], :order => "deals.date, deals.daily_seq")
+    @entries = AccountEntry.find(:all, :include => :deal, :conditions => ["deals.user_id = ? and account_id = ? and deals.date >= ? and deals.date <= ? and settlement_id is null and result_settlement_id is null and balance is null", @user.id, @settlement.account.id, @start_date, @end_date], :order => "deals.date, deals.daily_seq")
     @deals = @entries.map{|e| e.deal}
     @selected_deals = Array.new(@deals)
   end

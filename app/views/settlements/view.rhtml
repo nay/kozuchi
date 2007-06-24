@@ -15,7 +15,8 @@
       <td><%= format_date @settlement.created_at %></td>
     </tr>
   </table>
-  
+
+  <h3>精算対象</h3>  
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
@@ -25,6 +26,16 @@
         <%= display_account_entry(target_entry)%>
       </tr>
     <% end %>
+  </table>
+
+  <h3>精算結果</h3>
+  <table class="book">
+    <tr>
+      <%= display_account_entry_header %>
+    </tr>
+    <tr>
+      <%= display_account_entry(@settlement.result_entry)%>
+    </tr>
   </table>
 
 </div>
