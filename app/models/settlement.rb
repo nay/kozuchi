@@ -5,13 +5,15 @@ class Settlement < ActiveRecord::Base
            :class_name => 'AccountEntry',
            :foreign_key => 'settlement_id',
            :include => :deal,
-           :order => 'deals.date, deals.daily_seq'
+           :order => 'deals.date, deals.daily_seq',
+           :dependent => :nullify
 
   has_many :result_entries,
            :class_name => 'AccountEntry',
            :foreign_key => 'result_settlement_id',
            :include => :deal,
-           :order => 'deals.date, deals.daily_seq'
+           :order => 'deals.date, deals.daily_seq',
+           :dependent => :nullify
 
   def result_amount
   end

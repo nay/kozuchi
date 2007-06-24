@@ -2,7 +2,8 @@
 class SettlementsController < ApplicationController
   layout 'main'
   before_filter :load_user
-  before_filter :check_credit_account, :except => [:view]
+  before_filter :check_credit_account, :except => [:view, :delete]
+  before_filter :load_settlement, :only => [:view, :delete]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
 
   # 新しい精算口座を作る
@@ -64,9 +65,13 @@ class SettlementsController < ApplicationController
   
   # 1件を表示する
   def view
-    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entries => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
-    return error_not_found unless @settlement
     render :layout => false
+  end
+  
+  # 1件を削除する
+  def delete
+    @settlement.destroy
+    redirect_to :action => 'index'
   end
   
   protected
@@ -82,6 +87,11 @@ class SettlementsController < ApplicationController
       render :action => 'no_credit_account'
       return false
     end
+  end
+  
+  def load_settlement
+    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entries => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+    return error_not_found unless @settlement
   end
   
   private
