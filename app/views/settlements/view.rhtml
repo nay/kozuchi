@@ -26,6 +26,9 @@
         <%= display_account_entry(target_entry)%>
       </tr>
     <% end %>
+    <tr>
+      <td colspan="6"><%= link_to '立替精算依頼書', {:action => 'print_form'}, :popup => true %></td>
+    </tr>
   </table>
 
   <h3>精算結果</h3>

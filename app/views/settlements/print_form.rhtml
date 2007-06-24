@@ -1,0 +1,82 @@
+<html>
+  <style>
+    .print_form th, .print_form td {
+      border: 1px solid black;
+     }
+    .date {
+      width: 10em;
+    }
+    .number {
+      width: 3em;
+    }
+    .amount {
+      width: 10em;
+      text-align: right;
+    }
+    @media print {
+      .no_print {
+        display: none;
+      }
+    }
+  </style>
+<body>
+<div>
+  <h1 style="text-align: center; font-size: 150%;">立替費用精算依頼書</h1>
+  <div style="text-align:right">
+  <table style="border-collapse: collapse;">
+    <tr>
+      <th style="white-space:nowrap;">申請日付</th><td style="width:6em; border-bottom: 1px solid black;"></td>
+      <th style="padding-left:1em;white-space:nowrap;">所属</th><td style="width:6em; border-bottom: 1px solid black;"></td>
+      <th style="padding-left:1em;white-space:nowrap;">申請者</th><td style="width:12em; border-bottom: 1px solid black;"></td>
+      <td>印</td>
+      <th style="padding-left:1em;white-space:nowrap;">上長承認</th><td style="width:12em; border-bottom: 1px solid black;"><td>印</td>
+    </tr>
+  </table>
+  </div>
+  <br />
+  <table style="width:100%; border-collapse: collapse; border: 2px solid black;" class="print_form">
+    <tr>
+      <th class="date">日付</th>
+      <th>目的・理由・内容等</th>
+      <th>領収<br/>連番</th>
+      <th>金額</th>
+    </tr>
+    <% sum = 0 %>
+    <% payed_sum = 0 %>
+    <% for entry in @settlement.target_entries %>
+      <% if entry.amount > 0 %>
+        <% payed_sum += entry.amount %>
+      <% else %>
+        <% sum += (entry.amount * (-1))%>
+      <tr>
+        <td class="date"><%= format_date entry.deal.date %></td>
+        <td><%= h entry.deal.summary %></td>
+        <td class="number"> </td>
+        <td class="amount">￥<%= number_with_delimiter(entry.amount * (-1)) %></td>
+      </tr>
+      <% end %>
+    <% end %>
+  </table>
+  <div style="text-align: right;">
+  <table style="border-collapse:collapse; border:2px solid black;" class="print_form">
+    <tr>
+      <th colspan="4" style="text-align:right;">小計</th>
+      <td class="amount">￥<%= number_with_delimiter sum %></td>
+    </tr>
+    <tr>
+      <th colspan="4" style="text-align:right;">既仮払金</th>
+      <td class="amount">￥<%= number_with_delimiter payed_sum %></td>
+    </tr>
+    <tr>
+      <th colspan="4" style="text-align:right;">合計</th>
+      <td class="amount">￥<%= number_with_delimiter(sum - payed_sum) %></td>
+    </tr>
+  </table>
+  </div>
+</div>
+<div style="text-align:center;" class="no_print">
+  <br />
+  <%= link_to '閉じる', {}, :onClick => "window.close();" %>
+</div>
+</body>
+</html>
