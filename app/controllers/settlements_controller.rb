@@ -1,7 +1,8 @@
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   layout 'main'
-  before_filter :load_user, :check_credit_account
+  before_filter :load_user
+  before_filter :check_credit_account, :except => [:view]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
 
   # 新しい精算口座を作る
@@ -61,6 +62,13 @@ class SettlementsController < ApplicationController
     @settlements = Settlement.find(:all, :conditions => ["user_id = ?", @user.id], :order => 'id')
   end
   
+  # 1件を表示する
+  def view
+    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entries => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+    return error_not_found unless @settlement
+    render :layout => false
+  end
+  
   protected
   
   def new_settlement
@@ -79,7 +87,7 @@ class SettlementsController < ApplicationController
   private
   def load_deals
     # TODO: 残高や不明金があると話がややこしい。とりあえず、債権には残高を記入できなかったと思うのでそのまま進める。
-    @entries = AccountEntry.find(:all, :include => :deal, :conditions => ["deals.user_id = ? and account_id = ? and deals.date >= ? and deals.date <= ? and settlement_id is null", @user.id, @settlement.account.id, @start_date, @end_date], :order => "deals.date, deals.daily_seq")
+    @entries = AccountEntry.find(:all, :include => :deal, :conditions => ["deals.user_id = ? and account_id = ? and deals.date >= ? and deals.date <= ? and settlement_id is null and result_settlement_id is null", @user.id, @settlement.account.id, @start_date, @end_date], :order => "deals.date, deals.daily_seq")
     @deals = @entries.map{|e| e.deal}
     @selected_deals = Array.new(@deals)
   end

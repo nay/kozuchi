@@ -1,6 +1,6 @@
 <% change_condition = remote_function(:update => 'settlement_details', :url => {:action => 'change_condition'}, :with => 'Form.serialize(\'settlement_conditions\')') %>
 <div><%= format_date(@start_date)%>から <%= format_date(@end_date)%>の <%= @settlement.account.name %> の未精算取引 は 全<%= @deals.size %>件あります。</div>
-<% unless @deals.empty? %>
+<% unless @entries.empty? %>
 <div>
   <table class="book">
     <tr>
@@ -13,24 +13,18 @@
     </tr>
     <% debtor_sum = 0 %>
     <% creditor_sum = 0 %>
-    <% for deal in @deals %>
-      <% entry = deal.account_entries.detect{|e| e.account_id.to_s != @settlement.account.id.to_s}%>
-      <% selected = @selected_deals.include?(deal) %>
+    <% for entry in @entries %>
+      <% selected = @selected_deals.include?(entry.deal) %>
       <% style = selected ? "" : "style=\"background-color: #dddddd;\""%>
       <tr>
         <td <%= style%>>
-          <%= check_box_tag("s_#{deal.id}", "1", selected, :onClick => change_condition)%>
+          <%= check_box_tag("s_#{entry.deal.id}", "1", selected, :onClick => change_condition)%>
         </td>
-        <td class="date" <%= style%>><%= format_date(deal.date) %></td>
-        <td class="number" <%= style%>><%= deal.daily_seq %></td>
-        <td class="summary" <%= style%>><%= deal.id %><%= h deal.summary %></td>
-        <td class="account" <%= style%>><%= entry.account.name%></td>
-        <td class="amount" <%= style%>><%= number_with_delimiter(entry.amount) if entry.amount >= 0 %></td>
-        <td class="amount" <%= style%>><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 %></td>
+        <%= display_account_entry entry, style%>
       </tr>
       <% if selected %>
-        <% debtor_sum += entry.amount if entry.amount >= 0 %>
-        <% creditor_sum += entry.amount.abs if entry.amount < 0 %>
+        <% debtor_sum += entry.amount if entry.amount < 0 %>
+        <% creditor_sum += entry.amount.abs if entry.amount >= 0 %>
       <% end %>
     <% end %>
     <tr>

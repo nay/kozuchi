@@ -1,0 +1,30 @@
+<div>
+  <div><%= link_to '一覧に戻る', :action => 'index' %></div>
+  <br />
+  <table>
+    <tr>
+      <th>精算データ名</th>
+      <td><%= h @settlement.name %></td>
+    </tr>
+    <tr>
+      <th>精算対象口座</th>
+      <td><%= h @settlement.account.name %></td>
+    </tr>
+    <tr>
+      <th>登録日時</th>
+      <td><%= format_date @settlement.created_at %></td>
+    </tr>
+  </table>
+  
+  <table class="book">
+    <tr>
+      <%= display_account_entry_header %>
+    </tr>
+    <% for target_entry in @settlement.target_entries %>
+      <tr>
+        <%= display_account_entry(target_entry)%>
+      </tr>
+    <% end %>
+  </table>
+
+</div>

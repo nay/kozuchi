@@ -4,6 +4,30 @@ module ApplicationHelper
   
   include TermHelper
 
+  # 口座に注目したときの表記
+  def display_account_entry(entry, style = nil)
+    e = entry.another_account_entry
+    <<EOS
+      <td class="date" #{style}>#{format_date e.deal.date}</td>
+      <td class="number" #{style}>#{e.deal.daily_seq}</td>
+      <td class="summary" #{style}>#{h e.deal.summary}</td>
+      <td class="account" #{style}>#{h e.account.name}</td>
+      <td class="amount" #{style}>#{number_with_delimiter(e.amount) if e.amount >= 0}</td>
+      <td class="amount" #{style}>#{number_with_delimiter(e.amount.abs) if e.amount < 0}</td>
+EOS
+  end
+  def display_account_entry_header
+    <<EOS
+      <th class="date">年月日</th>
+      <th> </th>
+      <th class="summary">摘要</th>
+      <th class="account"></th>
+      <th>出金</th>
+      <th>入金</th>
+EOS
+  end
+
+
   # optgroup を使わずに口座を選ばせるリストを表示する
   def select_account(object, method, account_type, with_asset_type = true, options = {}, html_options = {})
     accounts = @user.accounts.types_in(account_type)

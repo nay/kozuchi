@@ -13,6 +13,10 @@ class AccountEntry < ActiveRecord::Base
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account
   attr_reader :new_plus_link
 
+  def another_account_entry
+    deal.another_account_entry(self)
+  end
+
   # ↓↓  call back methods  ↓↓
 
   # 新規作成時：フレンド連動があれば新しく作る

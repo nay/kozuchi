@@ -1,4 +1,4 @@
-<div>
+<div id="settlements">
   <% if @settlements.empty? %>
    <p>精算データはありません。</p>
   <% else %>
@@ -10,6 +10,7 @@
         <th>対象取引数</th>
         <th>精算額</th>
         <th>登録日時</th>
+        <th>詳細</th>
       </tr>
       <% for s in @settlements %>
         <tr>
@@ -18,6 +19,7 @@
           <td><%= s.target_entries.size %></td>
           <td></td>
           <td><%= format_date s.created_at %></td>
+          <td><%= link_to_remote '詳細', :update => 'settlements', :url => {:action => 'view', :id => s.id} %></td>
         </tr>
       <% end %>
     </table>

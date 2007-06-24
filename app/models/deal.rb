@@ -9,6 +9,10 @@ class Deal < BaseDeal
 
   after_save :create_relations, :create_children
 
+  def another_account_entry(entry)
+    account_entries.detect{|e| e.account_id.to_s != entry.account.id.to_s}
+  end
+
   def before_validation
     # もし金額にカンマが入っていたら正規化する
     @amount = @amount.gsub(/,/,'') if @amount.class == String
