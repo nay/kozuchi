@@ -18,6 +18,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect ':controller', :action => 'index'
   
+#  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
   map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'
   map.connect 'settlement/:id/:action', :controller => 'settlements'
 

@@ -15,9 +15,11 @@ class Settlement < ActiveRecord::Base
 
   attr_accessor :result_date, :result_partner_account_id
 
-  def result_amount
+  def target_sum
+    sum = 0
+    target_entries.each{|e| sum += e.amount}
+    sum
   end
-  
   
   protected
   
