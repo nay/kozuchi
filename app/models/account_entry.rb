@@ -38,7 +38,7 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def before_destroy
-    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
+    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement
     p "before_destroy AccountEntry #{self.id}"
     clear_friend_deal
   end
