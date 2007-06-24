@@ -5,6 +5,12 @@ require 'login_engine'
 class ApplicationController < ActionController::Base
   include LoginEngine
   
+  #TODO: どこかにありそうなきがするが・・・
+  def to_date(hash)
+    raise "no hash" unless hash
+    Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
+  end
+  
     # login_required filter. add 
     #
     #   before_filter :login_required

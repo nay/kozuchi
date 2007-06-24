@@ -1,3 +1,9 @@
-<%# 精算処理 ビュー %>
 <div>
+  <table>
+    <% for s in @settlements %>
+      <tr>
+        <td><%= s.account.name %></td><td><%= s.name %></td>
+      </tr>
+    <% end %>
+  </table>
 </div>

@@ -11,6 +11,8 @@ ActiveRecord::Schema.define(:version => 8) do
     t.column "amount", :integer, :default => 0, :null => false
     t.column "balance", :integer
     t.column "friend_link_id", :integer
+    t.column "settlement_id", :integer
+    t.column "settlement_result", :boolean
   end
 
   create_table "account_links", :id => false, :force => true do |t|
@@ -57,7 +59,6 @@ ActiveRecord::Schema.define(:version => 8) do
     t.column "created_at", :datetime
     t.column "updated_at", :datetime
     t.column "settled_in", :integer
-    t.column "settlement_id", :integer
   end
 
   create_table "friends", :force => true do |t|
@@ -76,7 +77,7 @@ ActiveRecord::Schema.define(:version => 8) do
 
   create_table "settlements", :force => true do |t|
     t.column "user_id", :integer
-    t.column "credit_account_id", :integer
+    t.column "account_id", :integer
     t.column "name", :text
     t.column "created_at", :datetime
     t.column "updated_at", :datetime

@@ -208,7 +208,7 @@ class Account::Base < ActiveRecord::Base
 
     raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
     
-    raise "#{account_type_name} には #{connected_account.account_type_name} を連動できません。#{self.class.account_type[account_type_connectable][:name]} だけを連動することができます。" unless connected_account.type_in? account_type_connectable
+    raise "#{account_type_name} には #{connected_account.account_type_name} を連動できません。" unless self.kind_of?(connected_account.class.connectable_type)
     connected_accounts << connected_account
     # interactive なら逆リンクもはる。すでにあったら黙ってパスする
     associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}

@@ -1,4 +1,5 @@
 # 異動明細クラス。
+# TODO: 最終的に精算データが空になったらなくすとか、削除できないなどの処理をしたい。削除しつづけるとおかしな精算データができる恐れあり。
 class Deal < BaseDeal
   attr_accessor :minus_account_id, :plus_account_id, :amount, :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
@@ -16,6 +17,8 @@ class Deal < BaseDeal
   def validate
     errors.add_to_base("同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
     errors.add_to_base("金額が0となっています。") if @amount.to_i == 0
+    # もし精算データにひもづいているのに口座が対応していなくなったらエラー（TODO: 将来はかしこくするが現時点では精算ルール側でなおさないとだめにする）
+    # errors.add_to_base("#{self.settlement.account.name} の精算データに含まれているため、変更できません。") if self.settlement && self.minus_account_id != self.settlement.account_id && self.plus_account_id != self.settlement.account_id
   end
 
   # summary の前方一致で検索する
