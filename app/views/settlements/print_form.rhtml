@@ -44,15 +44,15 @@
     <% sum = 0 %>
     <% payed_sum = 0 %>
     <% for entry in @settlement.target_entries %>
-      <% if entry.amount > 0 %>
-        <% payed_sum += entry.amount %>
+      <% if entry.amount < 0 %>
+        <% payed_sum += (entry.amount * (-1)) %>
       <% else %>
-        <% sum += (entry.amount * (-1))%>
+        <% sum += entry.amount%>
       <tr>
         <td class="date"><%= format_date entry.deal.date %></td>
         <td><%= h entry.deal.summary %></td>
         <td class="number"> </td>
-        <td class="amount">￥<%= number_with_delimiter(entry.amount * (-1)) %></td>
+        <td class="amount">￥<%= number_with_delimiter(entry.amount) %></td>
       </tr>
       <% end %>
     <% end %>
