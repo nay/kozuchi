@@ -12,7 +12,7 @@ ActiveRecord::Schema.define(:version => 8) do
     t.column "balance", :integer
     t.column "friend_link_id", :integer
     t.column "settlement_id", :integer
-    t.column "settlement_result", :boolean
+    t.column "settlement_result", :boolean, :default => false, :null => false
   end
 
   create_table "account_links", :id => false, :force => true do |t|

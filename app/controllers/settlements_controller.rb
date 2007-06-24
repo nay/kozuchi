@@ -79,7 +79,6 @@ class SettlementsController < ApplicationController
   private
   def load_deals
     # TODO: 残高や不明金があると話がややこしい。とりあえず、債権には残高を記入できなかったと思うのでそのまま進める。
-#    @deals = Deal.find(:all, :include => :account_entries, :conditions => ["deals.user_id = ? && account_entries.account_id = ? && date >= ? && date <= ?", @user.id, @settlement.account.id, @start_date, @end_date], :order => "date, daily_seq")
     @entries = AccountEntry.find(:all, :include => :deal, :conditions => ["deals.user_id = ? and account_id = ? and deals.date >= ? and deals.date <= ? and settlement_id is null", @user.id, @settlement.account.id, @start_date, @end_date], :order => "deals.date, deals.daily_seq")
     @deals = @entries.map{|e| e.deal}
     @selected_deals = Array.new(@deals)

@@ -1,9 +1,25 @@
 <div>
-  <table>
-    <% for s in @settlements %>
+  <% if @settlements.empty? %>
+   <p>精算データはありません。</p>
+  <% else %>
+
+    <table>
       <tr>
-        <td><%= s.account.name %></td><td><%= s.name %></td>
+        <th>精算データ名</th>
+        <th>精算対象口座</th>
+        <th>対象取引数</th>
+        <th>精算額</th>
+        <th>登録日時</th>
       </tr>
-    <% end %>
-  </table>
+      <% for s in @settlements %>
+        <tr>
+          <td><%= s.name %></td>
+          <td><%= s.account.name %></td>
+          <td><%= s.target_entries.size %></td>
+          <td></td>
+          <td><%= format_date s.created_at %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
 </div>

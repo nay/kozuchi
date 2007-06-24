@@ -9,7 +9,7 @@ class CreateSettlements < ActiveRecord::Migration
       t.column :description, :text
     end
     add_column :account_entries, :settlement_id, :integer
-    add_column :account_entries, :settlement_result, :boolean
+    add_column :account_entries, :settlement_result, :boolean, :defalut => 0, :null => false
   end
 
   def self.down
