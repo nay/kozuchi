@@ -20,16 +20,18 @@
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
+      <th></th>
     </tr>
     <% for target_entry in @settlement.target_entries %>
       <tr>
         <%= display_account_entry(target_entry)%>
+        <td><%= link_to('→',{:controller => 'deals', :action => 'jump', :id => target_entry.deal.id}) %></td>
       </tr>
     <% end %>
     <% #target_entries の合計がプラスであるときに出す %>
     <% if @settlement.target_sum > 0 %>
     <tr>
-      <td colspan="6">
+      <td colspan="7">
       <%= link_to '立替経費精算依頼書', {:action => 'print_form'}, :popup => true %>
       |
       <%= link_to 'csv', {:action => 'print_form', :format => 'csv'}, :popup => true %>

@@ -12,6 +12,8 @@ class AccountEntry < ActiveRecord::Base
   validates_presence_of :amount
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account
   attr_reader :new_plus_link
+  belongs_to :settlement
+  belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   def another_account_entry
     deal.another_account_entry(self)

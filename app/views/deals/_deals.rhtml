@@ -40,7 +40,7 @@
                   <%=deal.balance ? "残高確認" : deal.summary%>
                 </td>
               <% end %>
-              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.friend_link_id %>
+              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.friend_link_id || account_entry.settlement || account_entry.result_settlement %>
                 <td class="account">
                   <%= account_entry.account.name %>
                 </td>
@@ -53,6 +53,12 @@
                   <% end %>
                   <% if account_entry.linked_account_entry %>
                     <span <%="class='unconfirmed'" unless account_entry.linked_account_entry.deal.confirmed %>><%= account_entry.linked_account_entry.deal.user.login_id %></span>
+                  <% end %>
+                  <% if account_entry.settlement %>
+                    <%= link_to '精算', :controller => 'settlements', :action => 'view', :id => account_entry.settlement.id %>
+                  <% end %>
+                  <% if account_entry.result_settlement %>
+                    <%= link_to '精算', :controller => 'settlements', :action => 'view', :id => account_entry.result_settlement.id %>
                   <% end %>
                 </td>
               <% else %>
