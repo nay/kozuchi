@@ -97,6 +97,7 @@ class SettlementsController < ApplicationController
       render :action => 'print_form_csv', :layout => false
       return
     end
+    render :layout => false
   end
   
   protected
