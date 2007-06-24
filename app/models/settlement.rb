@@ -4,8 +4,8 @@ class Settlement < ActiveRecord::Base
   has_many :target_entries,
            :class_name => 'AccountEntry',
            :foreign_key => 'settlement_id',
-           :include => :deal,
            :order => 'deals.date, deals.daily_seq',
+           :include => :deal,
            :dependent => :nullify
 
   has_one  :result_entry,

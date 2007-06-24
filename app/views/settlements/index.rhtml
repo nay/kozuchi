@@ -2,22 +2,24 @@
     <% if flash[:notice] %>
       <div><%= flash[:notice]%></div>
     <% end %>
-    <table>
+    <table class="book">
       <tr>
+        <th class="date">精算日</th>
         <th>精算データ名</th>
         <th>精算対象口座</th>
         <th>対象取引数</th>
-        <th>精算額</th>
+        <th class="amount">精算額</th>
         <th>登録日時</th>
         <th>詳細</th>
       </tr>
       <% for s in @settlements %>
         <tr>
+          <td class="date"><%= format_date s.result_entry.deal.date %></td>
           <td><%= s.name %></td>
           <td><%= s.account.name %></td>
-          <td><%= s.target_entries.size %></td>
-          <td></td>
-          <td><%= format_date s.created_at %></td>
+          <td style="text-align:right;"><%= s.target_entries.size %></td>
+          <td class="amount"><%= number_with_delimiter s.target_sum.abs %></td>
+          <td><%= format_datetime s.created_at %></td>
           <td><%= link_to '詳細', :action => 'view', :id => s.id %></td>
         </tr>
       <% end %>

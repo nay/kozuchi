@@ -79,6 +79,10 @@ EOS
     date.strftime('%Y/%m/%d')
   end
   
+  def format_datetime(date)
+    date.strftime('%Y/%m/%d %H:%M')
+  end
+  
   def user_color_style
     # TODO: なんとかしたい
     begin

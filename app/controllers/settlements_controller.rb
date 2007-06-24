@@ -63,7 +63,7 @@ class SettlementsController < ApplicationController
   end
   
   def index
-    @settlements = Settlement.find(:all, :conditions => ["user_id = ?", @user.id], :order => 'id')
+    @settlements = Settlement.find(:all, :include => {:result_entry => :deal }, :conditions => ["settlements.user_id = ?", @user.id], :order => 'deals.date, settlements.id')
     if @settlements.empty?
       render :action => 'no_settlement'
       return
@@ -116,9 +116,9 @@ class SettlementsController < ApplicationController
   
   def load_settlement
     unless params[:id]
-      @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ?", @user.id], :order => "settlements.created_at")
+      @settlement = Settlement.find(:first, :conditions => ["settlements.user_id = ?", @user.id], :order => "settlements.created_at")
     else
-      @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+      @settlement = Settlement.find(:first, :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
     end
   end
   
