@@ -16,6 +16,10 @@ class BaseDeal < ActiveRecord::Base
   
   before_save :set_daily_seq
 
+  def settlement_attached?
+    false
+  end
+
   # entry に対するブロックを渡してもらい、条件に当てはまる entry の amount の合計を返す。
   def amount_if_entry
     entries = account_entries.select{|e| yield e}

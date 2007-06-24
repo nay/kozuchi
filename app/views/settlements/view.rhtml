@@ -20,7 +20,7 @@
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
-      <th></th>
+      <th style="width: 4em;"></th>
     </tr>
     <% for target_entry in @settlement.target_entries %>
       <tr>
@@ -44,9 +44,11 @@
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
+      <th style="width: 4em;"></th>
     </tr>
     <tr>
       <%= display_account_entry(@settlement.result_entry)%>
+      <td><%= link_to('→',{:controller => 'deals', :action => 'jump', :id => @settlement.result_entry.deal.id}) %></td>
     </tr>
   </table>
 

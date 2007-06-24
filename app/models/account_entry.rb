@@ -15,6 +15,10 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :settlement
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
+  def settlement_attached?
+    self.settlement || self.result_settlement
+  end
+
   def another_account_entry
     deal.another_account_entry(self)
   end
@@ -34,6 +38,7 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def before_destroy
+    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
     p "before_destroy AccountEntry #{self.id}"
     clear_friend_deal
   end

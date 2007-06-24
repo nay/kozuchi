@@ -21,7 +21,7 @@
         <%= text_field("deal", "summary", {:size => "40", :tabindex => '10'}) %>
       <% end %>
       <span id="patterns"><%= render :partial => "patterns" %></span>
-      <%= text_field("deal", "amount", {:size => "8", :disabled => @deal.subordinate?, :class => @deal.subordinate? ? 'readonly' : '', :tabindex => '11'}) %>
+      <%= text_field("deal", "amount", {:size => "8", :disabled => @deal.subordinate? || @deal.settlement_attached?, :class => @deal.subordinate? ? 'readonly' : '', :tabindex => '11'}) %>
       <span>円</span>
       <%= render :partial => 'shared/account_entry_fields' %>
       <button type="submit" tabindex="14">記入</button>

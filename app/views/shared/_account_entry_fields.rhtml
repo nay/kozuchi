@@ -1,7 +1,7 @@
 <%# 勘定間の移動を記録するためのフィールド。将来は複雑な組み合わせにも対応したい。 %>
 <%# 前提として @deal が編集対象のDealオブジェクトであること。%>
 <span id="account_minus">
-        <% if @deal.subordinate? && @deal.parent_for(@deal.minus_account_id)%>
+        <% if (@deal.subordinate? && @deal.parent_for(@deal.minus_account_id)) || (@deal.minus_account_id && @deal.entry(@deal.minus_account_id) && @deal.entry(@deal.minus_account_id).settlement_attached?) %>
           <input type="text" disabled="true" class="readonly" value="<%= Account::Base.find(@deal.minus_account_id).name %>" tabindex="12" />
         <% else %>
           <select name="deal[minus_account_id]" id="deal_account_minus_id" tabindex="12">
@@ -11,7 +11,7 @@
 </span>
 <span>→</span>
 <span id="account_plus">
-        <% if @deal.subordinate? && @deal.parent_for(@deal.plus_account_id)%>
+        <% if (@deal.subordinate? && @deal.parent_for(@deal.plus_account_id)) || (@deal.plus_account_id && @deal.entry(@deal.plus_account_id) && @deal.entry(@deal.plus_account_id).settlement_attached?)%>
           <input type="text" disabled="true" class="readonly" value="<%= Account::Base.find(@deal.plus_account_id).name %>" tabindex="13"/>
         <% else %>
           <select name="deal[plus_account_id]" id="deal_account_plus_id" tabindex="13">

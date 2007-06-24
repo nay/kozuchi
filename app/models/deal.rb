@@ -9,6 +9,10 @@ class Deal < BaseDeal
 
   after_save :create_relations, :create_children
 
+  def settlement_attached?
+    !account_entries.detect{|e| e.settlement_attached?}.nil?
+  end
+
   def another_account_entry(entry)
     account_entries.detect{|e| e.account_id.to_s != entry.account.id.to_s}
   end
@@ -96,10 +100,10 @@ class Deal < BaseDeal
   # ↑↑  call back methods  ↑↑
   
   def entry(account_id)
-    for entry in account_entries
-      return entry if entry.account_id.to_i == account_id.to_i
-    end
-    return nil
+    raise "no account_id in Deal.entry()" unless account_id
+    r = account_entries.detect{|e| e.account_id.to_s == account_id.to_s}
+#    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
+    r
   end
 
   private
