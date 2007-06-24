@@ -64,17 +64,30 @@ class SettlementsController < ApplicationController
   
   def index
     @settlements = Settlement.find(:all, :conditions => ["user_id = ?", @user.id], :order => 'id')
-  end
-  
-  # 1件を表示する
-  def view
-    render :layout => false
+    if @settlements.empty?
+      render :action => 'no_settlement'
+      return
+    end
   end
   
   # 1件を削除する
   def delete
-    @settlement.destroy
+    if @settlement
+      name = @settlement.name
+      account_name = @settlement.account.name
+      @settlement.destroy
+      @flash[:notice] = "#{account_name}の精算データ「#{name}」を削除しました。"
+    else
+      @flash[:notice] = "精算データを削除できませんでした。"
+    end
     redirect_to :action => 'index'
+  end
+  
+  def view
+    unless @settlement
+      render :action => 'no_settlement'
+      return
+    end
   end
   
   protected
@@ -93,8 +106,11 @@ class SettlementsController < ApplicationController
   end
   
   def load_settlement
-    @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
-    return error_not_found unless @settlement
+    unless params[:id]
+      @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ?", @user.id], :order => "settlements.created_at")
+    else
+      @settlement = Settlement.find(:first, :include => [{:target_entries => [:deal, :account]}, {:result_entry => [:deal, :account]}], :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+    end
   end
   
   private

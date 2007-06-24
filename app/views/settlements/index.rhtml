@@ -1,8 +1,7 @@
 <div id="settlements">
-  <% if @settlements.empty? %>
-   <p>精算データはありません。</p>
-  <% else %>
-
+    <% if flash[:notice] %>
+      <div><%= flash[:notice]%></div>
+    <% end %>
     <table>
       <tr>
         <th>精算データ名</th>
@@ -19,9 +18,8 @@
           <td><%= s.target_entries.size %></td>
           <td></td>
           <td><%= format_date s.created_at %></td>
-          <td><%= link_to_remote '詳細', :update => 'settlements', :url => {:action => 'view', :id => s.id} %></td>
+          <td><%= link_to '詳細', :action => 'view', :id => s.id %></td>
         </tr>
       <% end %>
     </table>
-  <% end %>
 </div>

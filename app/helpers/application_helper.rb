@@ -198,6 +198,7 @@ EOS
       menues.create_menu_tree('精算') {|t|
         t.add_menu('新しい精算', :controller => '/settlements', :action => 'new')
         t.add_menu('一覧', :controller => '/settlements', :action => 'index')
+        t.add_menu('詳細', :controller => '/settlements', :action => 'view')
       }
       
       menues.create_menu_tree('基本設定') {|t|
