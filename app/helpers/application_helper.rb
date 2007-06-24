@@ -22,7 +22,7 @@ EOS
       <th> </th>
       <th class="summary">摘要</th>
       <th class="account"></th>
-      <th>出金</th>
+      <th class="amount">出金</th>
       <th>入金</th>
 EOS
   end

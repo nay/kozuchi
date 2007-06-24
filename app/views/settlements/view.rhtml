@@ -1,5 +1,5 @@
 <div>
-  <div><%= link_to '一覧に戻る', :action => 'index' %> | <%= link_to '削除', :action => 'delete', :id => @settlement.id %></div>
+  <div><%= link_to '一覧に戻る', :action => 'index' %> | <%= link_to '削除', {:action => 'delete', :id => @settlement.id}, :confirm => "精算データを削除すると、精算結果の取引も自動的に削除されます。精算データを削除してよろしいですか？" %></div>
   <br />
   <table>
     <tr>
