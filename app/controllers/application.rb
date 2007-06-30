@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
 
   def rescue_action_in_public(exception)
     logger.error(exception)
-    render :text => 'error. #{exception} #{exception.backtrace}'
+    render :text => "error. #{exception} #{exception.backtrace}"
 #    redirect_to(:controller => 'deals', :action => 'index')
   end
 
