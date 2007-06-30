@@ -79,10 +79,11 @@ class ApplicationController < ActionController::Base
     User.find(session[:user_id])
   end
 
-#  def rescue_action_in_public(exception)
-#    p "rescue"
+  def rescue_action_in_public(exception)
+    logger.error(exception)
+    render :text => 'error. #{exception} #{exception.backtrace}'
 #    redirect_to(:controller => 'deals', :action => 'index')
-#  end
+  end
 
   def set_ssl
     if KOZUCHI_SSL
