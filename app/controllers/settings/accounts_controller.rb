@@ -14,7 +14,7 @@ class Settings::AccountsController < ApplicationController
       account_class = Account::Asset.types.detect{|a| a.asset_name == params[:account][:type]}
       raise "Unknown account type #{params[:account][:type]} in #{Account::Asset.types}" unless account_class
     else
-      account_class = self.account_type == :expense ? Expense : Income
+      account_class = self.account_type == :expense ? Account::Expense : Account::Income
     end
     account = account_class.new(params[:account])
     account.user_id = @user.id
@@ -65,6 +65,8 @@ class Settings::AccountsController < ApplicationController
       end
       flash[:notice]="すべての#{term self.account_type}を変更しました。"
     rescue => err
+      logger.error("Exception was raised when accounts were going to be updated.")
+      logger.error(err)
       flash[:notice]="#{term self.account_type}を変更できませんでした。"
     end
     @user.accounts(true)
