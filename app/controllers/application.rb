@@ -21,12 +21,12 @@ class ApplicationController < ActionController::Base
     #   def authorize?(user)
     # 
     def login_required
-      p "login_required sesison[:user_id] = #{session[:user_id]}"
       if not protect?(action_name)
         return true  
       end
 
       if user? and authorize?(User.find(session[:user_id]))
+        load_user
         return true
       end
 
@@ -84,16 +84,6 @@ class ApplicationController < ActionController::Base
     false
   end
 
-  def rescue_action_in_public(exception)
-    # 例外クラスが見えないので文字列で比較
-    if exception.class.to_s == "ActionController::UnknownAction"
-      render :template => '/open/not_found', :layout => 'login'
-      return
-    end
-    logger.error(exception)
-    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
-#    redirect_to(:controller => 'deals', :action => 'index')
-  end
 
   def set_ssl
     if KOZUCHI_SSL
@@ -159,11 +149,6 @@ class ApplicationController < ActionController::Base
     @target_month ||= DateBox.this_month
   end
   
-  def load_user
-    # TODO: いずれ session には　user_id だけをのせ、毎回取得する仕組みにする
-    @user = User.find(session[:user_id])
-  end
-
   # @target_month をもとにして資産の残高を計算する
   # TODO: 先に @user が用意されている前提
   def load_assets
@@ -171,16 +156,32 @@ class ApplicationController < ActionController::Base
     @assets = AccountsBalanceReport.new(@user.accounts.types_in(:asset), date)
   end
   
-  def error_not_found
-    redirect_to :controller => 'open', :action => 'not_found'
-    false
-  end
   
   # post でない場合は error_not_found にする
   def require_post
     return error_not_found unless request.post?
     true
   end
-
   
+  private
+  # 指定されたURLがない旨のページを表示する。
+  # もとのURLのまま表示されるよう、redirectはしない。
+  # filter内で使って便利なよう、false を返す。
+  def error_not_found
+    render :template => '/open/not_found', :layout => 'login'
+    false
+  end
+
+  # 例外ハンドリング
+  def rescue_action_in_public(exception)
+    return error_not_found if exception.class.to_s == "ActionController::UnknownAction" # 例外クラスが見えないので文字列で比較
+    logger.error(exception)
+    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
+  end
+
+  # ユーザーオブジェクトを@userに取得する。なければnilが入る。
+  def load_user
+    @user = User.find(session[:user_id])
+  end
+
 end

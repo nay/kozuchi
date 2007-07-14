@@ -1,7 +1,7 @@
 class UserController < ApplicationController
   model   :user
   layout  'login'
-
+  
   # Override this function in your own application to define a custom home action.
   def home
     if user?

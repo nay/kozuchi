@@ -1,7 +1,6 @@
 # カスタマイズ （個人的好みによる設定） 
 class Settings::PreferencesController < ApplicationController
   before_filter :require_post, :only => [:update]
-  before_filter :load_user
   layout 'main'
 
   def index

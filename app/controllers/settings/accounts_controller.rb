@@ -5,8 +5,6 @@ class Settings::AccountsController < ApplicationController
   
   before_filter :require_post, :only => [:create]
   
-  before_filter :load_user
-  
   protected
 
   # 新しい勘定を作成する

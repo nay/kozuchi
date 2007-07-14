@@ -1,7 +1,7 @@
 class ProfitAndLossController < ApplicationController 
   layout 'main'
   helper :graph
-  before_filter :load_user, :check_account, :prepare_date, :prepare_update_profit_and_loss
+  before_filter :check_account, :prepare_date, :prepare_update_profit_and_loss
 
   def update
     render(:partial => "profit_and_loss", :layout => false)

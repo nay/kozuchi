@@ -1,8 +1,6 @@
 class Settings::AccountRulesController < ApplicationController
   layout 'main'
   
-  before_filter :load_user
-  
   PAYMENT_TERM_MONTHS = [['当月', 0], ['翌月', 1], ['翌々月', 2]]  
   
   # 精算ルールのメンテナンス -----------------------------------------------------------------------

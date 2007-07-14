@@ -2,8 +2,6 @@
 class HelpController < ApplicationController
   layout 'main'
   
-  before_filter :load_user
-  
   # 特徴
   def index
   end

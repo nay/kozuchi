@@ -1,6 +1,6 @@
 class AccountDealsController < ApplicationController 
   layout 'main'
-  before_filter :load_user, :check_account, :prepare_date, :prepare_update_account_deals
+  before_filter :check_account, :prepare_date, :prepare_update_account_deals
   
   # 月を選択して口座別出納を表示しなおす  
   def update

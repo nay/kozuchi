@@ -1,6 +1,6 @@
 class DailyBookingController < ApplicationController
 
-  before_filter :load_user, :check_use, :load_account
+  before_filter :check_use, :load_account
   before_filter :load_menues
 
   def index

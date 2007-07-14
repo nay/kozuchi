@@ -2,8 +2,6 @@
 class Settings::DealLinksController < ApplicationController
   layout 'main'
 
-  before_filter :load_user
-
   # 取引連動初期表示画面
   def index
     @accounts = @user.accounts(true)

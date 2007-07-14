@@ -1,6 +1,5 @@
 # フレンド設定
 class Settings::FriendsController < ApplicationController
-  before_filter :load_user
   layout 'main'
 
   def index
