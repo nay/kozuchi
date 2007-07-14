@@ -7,9 +7,7 @@ class ApplicationController < ActionController::Base
   helper :user
   model :user, 'account/base', 'account/asset', 'account/income'
   
-  before_filter :login_required
-  before_filter :set_charset
-  before_filter :set_ssl
+  before_filter :login_required, :set_charset, :set_ssl
 
   private
   

@@ -7,7 +7,10 @@ class Settings::AccountsController < ApplicationController
   
   protected
 
-  # 新しい勘定を作成する
+  # 新しい勘定を作成する。
+  # params['account']['name']:: 勘定名
+  # params['account']['type']:: (口座の場合だけ必要)口座種類名。asset_name でクラスに指定された日本語の名前が入る。
+  # params['account']['sort_key']:: 並び順
   def create
     if self.account_type == :asset
       account_class = Account::Asset.types.detect{|a| a.asset_name == params[:account][:type]}
@@ -74,7 +77,7 @@ class Settings::AccountsController < ApplicationController
   end
   
   def index
-    @account_type = self.account_type # symbol
+    @account_type = account_type # symbol
     @accounts = @user.accounts.select{|a|a.type_in? account_type}
     render(:template => "settings/shared/accounts")
   end
