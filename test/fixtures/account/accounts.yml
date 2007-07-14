@@ -44,6 +44,11 @@ second_food:
   user_id: 2
   name: 食費
   type: Expense
+deletable_one:
+  id: 10
+  user_id: 1
+  name: 貯金箱
+  type: Cache
 
 
   

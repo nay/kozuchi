@@ -23,7 +23,8 @@ class Settings::AccountsController < ApplicationController
     redirect_to_index    
   end
   
-  # 指定された勘定を削除する
+  # 指定された勘定を削除する。
+  # params[:id]:: 口座ID
   def delete
     unless params[:id]
       flash[:notice] = "#{term self.account_type}が指定されていません。"

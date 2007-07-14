@@ -20,6 +20,8 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_response :success
   end
 
+  # create のテスト
+
   # create を get で呼ぶと失敗する
   def test_create_by_get
     get :create, {}, {:user_id => 1}
@@ -44,4 +46,12 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_not_nil flash[:errors]
   end
 
+  # delete のテスト。貯金箱を消す。成功するはず。
+  def test_delete
+    get :delete, {:id => 10}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    assert_nil flash[:errors]
+    assert_equal "口座 '貯金箱' を削除しました。", flash[:notice]
+    assert_nil Account::Asset.find(:first, :conditions => 'id = 10')
+  end
 end
