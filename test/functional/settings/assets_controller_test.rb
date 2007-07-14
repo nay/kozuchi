@@ -36,9 +36,11 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
 
   # createのテスト。同じ名前がすでにあると失敗する。
   def test_create_cache
+    count_before = @test_user_1.accounts(true).size
     post :create, {:account => {:name => '現金', :type => Account::Cache.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
-    assert_equal ['で名前が重複しています。'], flash[:errors]
+    assert_equal count_before, @test_user_1.accounts(true).size
+    assert_not_nil flash[:errors]
   end
 
 end

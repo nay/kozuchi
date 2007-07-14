@@ -78,6 +78,14 @@ class Account::BaseTest < Test::Unit::TestCase
     account = Account::Cache.new(:user_id => 1)
     assert_equal false, account.save
   end
+  
+  # 同じ名前で登録できないことのテスト
+  def test_same_name
+    account = Account::Cache.new(:user_id => 1, :name => '現金')
+    assert_equal false, account.save
+    assert_equal 1, account.errors.size
+    assert_equal "口座・費目・収入内訳で名前が重複しています。", account.errors[:name]
+  end
 
 
 end

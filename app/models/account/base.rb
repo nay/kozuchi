@@ -102,7 +102,8 @@ class Account::Base < ActiveRecord::Base
   attr_accessor :balance, :percentage
   validates_presence_of :name,
                         :message => "名前を定義してください。"
-  validates_uniqueness_of :name, :scope => 'user_id', :message => "#{Account::Base.types.map{|type| type.type_name}.join('・')}で名前が重複しています。"
+  #TODO: 口座・費目・収入内訳を動的に作りたいが、現状の方針だとできない 
+  validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
   validate :validates_partner_account
   before_destroy :assert_not_used
   
