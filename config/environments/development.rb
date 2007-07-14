@@ -26,3 +26,5 @@ ActionMailer::Base.server_settings = {
   :port => 25
 }
 
+# エラーハンドリングをテストしたい場合は一時的にコメントをはずす
+config.action_controller.consider_all_requests_local = false

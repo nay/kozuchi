@@ -78,10 +78,20 @@ class ApplicationController < ActionController::Base
   def user
     User.find(session[:user_id])
   end
+  
+  # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
+  def local_request?
+    false
+  end
 
   def rescue_action_in_public(exception)
+    # 例外クラスが見えないので文字列で比較
+    if exception.class.to_s == "ActionController::UnknownAction"
+      render :template => '/open/not_found', :layout => 'login'
+      return
+    end
     logger.error(exception)
-    render :text => "error. #{exception} #{exception.backtrace}"
+    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
 #    redirect_to(:controller => 'deals', :action => 'index')
   end
 
