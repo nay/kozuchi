@@ -4,7 +4,7 @@ class Settings::FriendsController < ApplicationController
 
   def index
     # フレンド関係をもっている、あるいは向こうからこちらにフレンド関係をもっている user のリストを得る
-    @friends = Friend.get_all(user.id)
+    @friends = Friend.get_all(@user.id)
     for f in @friends
       p f.my_level
     end
@@ -22,21 +22,21 @@ class Settings::FriendsController < ApplicationController
     friend_user = get_friend_user(friend_login_id)
     return if !friend_user
     
-    save_friend(Friend.new(:user_id => user.id, :friend_user_id => friend_user.id, :friend_level => 1), "ユーザー'#{friend_login_id}'にフレンド申請をしました。")
+    save_friend(Friend.new(:user_id => @user.id, :friend_user_id => friend_user.id, :friend_level => 1), "ユーザー'#{friend_login_id}'にフレンド申請をしました。")
   end
   
   def accept_friend
     friend_user = User.find_by_login_id(params[:friend])
     return if !friend_user
     
-    save_friend(Friend.new(:user_id => user.id, :friend_user_id => friend_user.id, :friend_level => 1), "#{friend_user.login_id}さんからのフレンド申請を承諾しました。")
+    save_friend(Friend.new(:user_id => @user.id, :friend_user_id => friend_user.id, :friend_level => 1), "#{friend_user.login_id}さんからのフレンド申請を承諾しました。")
   end
   
   def clear_friend
     friend_user = User.find_by_login_id(params[:friend])
     return if !friend_user
     
-    friend = Friend.find(:first, :conditions => ["user_id = ? and friend_user_id = ?", user.id, friend_user.id])
+    friend = Friend.find(:first, :conditions => ["user_id = ? and friend_user_id = ?", @user.id, friend_user.id])
     before_level = friend.friend_level
     friend.destroy if friend
     if before_level == -1
@@ -51,8 +51,8 @@ class Settings::FriendsController < ApplicationController
   def reject_friend
     friend_user = User.find_by_login_id(params[:friend])
     return if !friend_user
-    friend = Friend.find(:first, :conditions => ["user_id = ? and friend_user_id = ?", user.id, friend_user.id])
-    friend ||= Friend.new(:user_id => user.id, :friend_user_id => friend_user.id)
+    friend = Friend.find(:first, :conditions => ["user_id = ? and friend_user_id = ?", @user.id, friend_user.id])
+    friend ||= Friend.new(:user_id => @user.id, :friend_user_id => friend_user.id)
     
     friend.friend_level = -1
     

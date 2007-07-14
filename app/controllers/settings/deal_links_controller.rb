@@ -5,7 +5,7 @@ class Settings::DealLinksController < ApplicationController
   # 取引連動初期表示画面
   def index
     @accounts = @user.accounts(true)
-    @friends = user.interactive_friends(1)
+    @friends = @user.interactive_friends(1)
     @accounts_with_partners = []
     for account in @accounts
       @accounts_with_partners << account unless account.connected_accounts.empty? && account.associated_accounts.empty?
@@ -17,7 +17,7 @@ class Settings::DealLinksController < ApplicationController
     account_id = @params[:account] ? @params[:account][:id] : nil
     raise "no account_id" unless account_id
     
-    account = Account::Base.get(user.id, account_id)
+    account = Account::Base.get(@user.id, account_id)
     raise "no account" unless account
     
     friend_user_login_id = params[:account][:partner_login_id]
@@ -44,7 +44,7 @@ class Settings::DealLinksController < ApplicationController
 
   # 連動設定の解除  
   def clear_connection
-    account = Account::Base.get(user.id, params[:id])
+    account = Account::Base.get(@user.id, params[:id])
     raise "no account" if !account
     
     connected_account = Account::Base.find(params[:connected_account_id])

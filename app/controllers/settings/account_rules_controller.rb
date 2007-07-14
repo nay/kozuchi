@@ -60,7 +60,7 @@ class Settings::AccountRulesController < ApplicationController
   def update_account_rule
     p params.to_s
     p params[:rule].to_s
-    rule = AccountRule.get(user.id, params[:rule][:id].to_i)
+    rule = AccountRule.get(@user.id, params[:rule][:id].to_i)
     if rule
       rule.attributes = params[:rule]
       begin

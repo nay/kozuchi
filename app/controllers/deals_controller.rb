@@ -116,7 +116,7 @@ class DealsController < ApplicationController
   # 確認処理
   def confirm
     p "confirm"
-    deal = BaseDeal.get(params[:id], user.id)
+    deal = BaseDeal.get(params[:id], @user.id)
     p "deal = #{deal}"
     raise "Could not get deal #{params[:id]}" unless deal
     
@@ -131,7 +131,7 @@ class DealsController < ApplicationController
   # 新規編集でサマリが編集されたときにくるAjaxメソッド
   def update_patterns
     summary_key = request.raw_post
-    @patterns = Deal.search_by_summary(user.id, summary_key, 5)
+    @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
     p "patterns.size = #{@patterns.size}"
     render(:partial => 'patterns')
   end
@@ -164,7 +164,7 @@ class DealsController < ApplicationController
   def save_deal
     # 更新のとき
     if params[:deal][:id]
-      deal = BaseDeal.get(params[:deal][:id].to_i, user.id)
+      deal = BaseDeal.get(params[:deal][:id].to_i, @user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       deal.attributes = params[:deal]
       # 精算ルール以外の理由で未確認のものは確認にする
@@ -172,7 +172,7 @@ class DealsController < ApplicationController
       deal.confirmed = true if !deal.confirmed && !deal.subordinate?
     else
       deal = Deal.new(params[:deal])
-      deal.user_id = user.id
+      deal.user_id = @user.id
     end
     deal.date = @date.to_date
     deal.save!
@@ -183,13 +183,13 @@ class DealsController < ApplicationController
   def save_balance
     # 更新のとき
     if params[:deal][:id]
-      balance = Balance.get(params[:deal][:id].to_i, user.id)
+      balance = Balance.get(params[:deal][:id].to_i, @user.id)
       raise "no balance #{params[:deal][:id]}" unless balance
 
       balance.attributes = params[:deal]
     else
       balance = Balance.new(params[:deal])
-      balance.user_id = user.id
+      balance.user_id = @user.id
     end
       balance.date = @date.to_date
     balance.save!
@@ -206,7 +206,7 @@ class DealsController < ApplicationController
   # 仕分け帳　表示準備
   def prepare_update_deals
     # todo preference のロード整備
-    @deals_scroll_height = user.preferences ? user.preferences.deals_scroll_height : nil
+    @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
     begin
       @deals = BaseDeal.get_for_month(@user.id, @target_month)
       session[:target_month] = @target_month

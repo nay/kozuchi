@@ -26,7 +26,7 @@ class Settings::PartnerAccountController < ApplicationController
   #更新
   def update
     account_id = params[:account][:id]
-    account = Account::Base.get(user.id, account_id.to_i)
+    account = Account::Base.get(@user.id, account_id.to_i)
     partner_account_id = params[:account][:partner_account_id]
     raise "error" if partner_account_id == nil
     p "partner_account_id = #{partner_account_id}"
