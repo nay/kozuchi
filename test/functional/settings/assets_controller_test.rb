@@ -54,4 +54,16 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_equal "口座 '貯金箱' を削除しました。", flash[:notice]
     assert_nil Account::Asset.find(:first, :conditions => 'id = 10')
   end
+
+  # delete のテスト。貯金箱を使ってから消す。失敗する。
+  def test_delete_used
+    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d.save!
+    get :delete, {:id => 10}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    assert_not_nil flash[:errors]
+    assert_equal ["口座 '貯金箱' はすでに使われているため削除できません。"], flash[:errors]
+    assert_not_nil Account::Asset.find(:first, :conditions => 'id = 10')
+  end
+
 end

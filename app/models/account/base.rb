@@ -2,17 +2,20 @@ class Account::Base < ActiveRecord::Base
   set_table_name "accounts"
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群
-  
+
+  # クラス名に対応する Symbol　を返す。  
   def self.to_sym
     self.name.demodulize.underscore.to_sym
   end
   
+  # Symbolに対応するクラスを返す。Accountモジュール下にないクラスの場合は例外を発生する。
+  # sym:: Symbol
   def self.sym_to_class(sym)
-    eval "Account::#{sym.to_s.camelize}"
+    eval "Account::#{sym.to_s.camelize}" # ネストしたクラスなので eval で
   end
   
   def type_in?(type)
-    t = self.class.sym_to_class(type) unless type.kind_of?(Class)
+    t = self.class.sym_to_class(type) unless type.kind_of?(Class) # TODO: Classのとき動かなそうだな
     self.kind_of? t
   end
 
@@ -57,10 +60,6 @@ class Account::Base < ActiveRecord::Base
   end
 
   # 勘定名（勘定種類 or 資産種類)
-#  def self.name_with_asset_type
-#    "#{self.type_name}(#{self.kind_of?(Asset) ? self.asset_name : self.short_name})"
-#  end
-  
   # TODO: リファクタリングしたい
   def name_with_asset_type
     "#{self.name}(#{self.kind_of?(Asset) ? self.class.asset_name : self.class.short_name})"
@@ -182,7 +181,7 @@ class Account::Base < ActiveRecord::Base
   
   def assert_not_used
     # 使われていたら消せない
-    raise "#{account_type_name} '#{target_account.name}' はすでに使われているため削除できません。" if AccountEntry.find(:first, :conditions => "account_id = #{self.id}")
+    raise Account::UsedAccountException.new("#{self.class.type_name} '#{name}' はすでに使われているため削除できません。") if AccountEntry.find(:first, :conditions => "account_id = #{self.id}")
   end
 
 end
@@ -196,3 +195,7 @@ end
 
 Account::Base.sort_types
 Account::Asset.sort_types
+
+# データがある勘定を削除したときに発生する例外
+class Account::UsedAccountException < Exception
+end

@@ -41,7 +41,7 @@ class Settings::AccountsController < ApplicationController
     begin
       @user.accounts.delete(target_account)
       flash[:notice]="#{term self.account_type} '#{target_account.name}' を削除しました。"
-    rescue => err
+    rescue Account::UsedAccountException => err
       flash[:errors]= [err.message]
     end
     
