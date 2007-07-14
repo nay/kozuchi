@@ -4,61 +4,6 @@ require 'login_engine'
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
   include LoginEngine
-  
-  #TODO: どこかにありそうなきがするが・・・
-  def to_date(hash)
-    raise "no hash" unless hash
-    Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
-  end
-  
-    # login_required filter. add 
-    #
-    #   before_filter :login_required
-    #
-    # if the controller should be under any rights management. 
-    # for finer access control you can overwrite
-    #   
-    #   def authorize?(user)
-    # 
-    def login_required
-      if not protect?(action_name)
-        return true  
-      end
-
-      if user? and authorize?(User.find(session[:user_id]))
-        load_user
-        return true
-      end
-
-      # store current location so that we can 
-      # come back after the user logged in
-      store_location
-  
-      # call overwriteable reaction to unauthorized access
-      access_denied
-    end
-    def user?
-      # First, is the user already authenticated?
-      return true if not session[:user_id].nil?
-
-      # If not, is the user being authenticated by a token?
-      id = params[:user_id]
-      key = params[:key]
-      if id and key
-        u = User.authenticate_by_token(id, key)
-        session[:user_id] = u.id if u
-        return true if not session[:user_id].nil?
-      end
-
-      # Everything failed
-      return false
-    end
-  
-    # Returns the current user from the session, if any exists
-    def current_user
-      User.find(session[:user_id].to_i)
-    end
-
   helper :user
   model :user, 'account/base', 'account/asset', 'account/income'
   
@@ -66,15 +11,61 @@ class ApplicationController < ActionController::Base
   before_filter :set_charset
   before_filter :set_ssl
 
+  private
+  
+  # LoginEngine login_required を overwrite。以下の目的。
+  # * session 内に user_id だけを入れるようにしたことに対応するため。
+  # * 認証OKの場合に @user をセットするため
+  def login_required
+    if not protect?(action_name)
+      return true  
+    end
 
+    if user? and authorize?(User.find(session[:user_id]))
+      load_user
+      return true
+    end
 
-  # -- login_engine overwrite
+    # store current location so that we can 
+    # come back after the user logged in
+    store_location
+  
+    # call overwriteable reaction to unauthorized access
+    access_denied
+  end
+  
+  # session に user_id を入れるためオーバーライト
+  def user?
+    # First, is the user already authenticated?
+    return true if not session[:user_id].nil?
+
+    # If not, is the user being authenticated by a token?
+    id = params[:user_id]
+    key = params[:key]
+    if id and key
+      u = User.authenticate_by_token(id, key)
+      session[:user_id] = u.id if u
+      return true if not session[:user_id].nil?
+    end
+
+    # Everything failed
+    return false
+  end
+  
+  # Returns the current user from the session, if any exists
+  #
+  # session に user_id を入れるためオーバーライト
+  def current_user
+    User.find(session[:user_id].to_i)
+  end
+
+  # login_engine overwrite
   def access_denied
     redirect_to :controller => "/user", :action => "login"
     false # なぜかもともとこれがなかったorz
   end
 
-
+  # deprecated
   def user
     User.find(session[:user_id])
   end
@@ -118,18 +109,6 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def check_account
-    if user
-      # 資産口座が1つ以上あり、全部で２つ以上の口座がないとダメ
-      if user.accounts.types_in(:asset).size < 1 || user.accounts.size < 2
-        render("book/need_accounts")
-      end
-    end
-  end
-
-  protected
-  # -------------------- 汎用処理 ------------------------------------------------------
-
   def load_menues
     @menu_tree, @current_menu = ApplicationHelper::Menues.side_menues.load(:controller => "/" + self.class.controller_path, :action => self.action_name)
     @title = @menu_tree ? @menu_tree.name : self.class.controller_name
@@ -155,15 +134,14 @@ class ApplicationController < ActionController::Base
     date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
     @assets = AccountsBalanceReport.new(@user.accounts.types_in(:asset), date)
   end
-  
-  
-  # post でない場合は error_not_found にする
-  def require_post
-    return error_not_found unless request.post?
-    true
+    
+  #TODO: どこかにありそうなきがするが・・・
+  def to_date(hash)
+    raise "no hash" unless hash
+    Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
   end
-  
-  private
+
+
   # 指定されたURLがない旨のページを表示する。
   # もとのURLのまま表示されるよう、redirectはしない。
   # filter内で使って便利なよう、false を返す。
@@ -182,6 +160,22 @@ class ApplicationController < ActionController::Base
   # ユーザーオブジェクトを@userに取得する。なければnilが入る。
   def load_user
     @user = User.find(session[:user_id])
+  end
+
+  # post でない場合は error_not_found にする
+  def require_post
+    return error_not_found unless request.post?
+    true
+  end
+
+  def check_account
+    if user
+      # 資産口座が1つ以上あり、全部で２つ以上の口座がないとダメ
+      if user.accounts.types_in(:asset).size < 1 || user.accounts.size < 2
+        render("book/need_accounts")
+        return false
+      end
+    end
   end
 
 end
