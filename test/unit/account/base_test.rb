@@ -86,6 +86,6 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_equal 1, account.errors.size
     assert_equal "口座・費目・収入内訳で名前が重複しています。", account.errors[:name]
   end
-
+  
 
 end

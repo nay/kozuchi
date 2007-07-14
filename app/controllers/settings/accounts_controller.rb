@@ -12,17 +12,11 @@ class Settings::AccountsController < ApplicationController
   # params['account']['type']:: (口座の場合だけ必要)口座種類名。asset_name でクラスに指定された日本語の名前が入る。
   # params['account']['sort_key']:: 並び順
   def create
-    if self.account_type == :asset
-      account_class = Account::Asset.types.detect{|a| a.asset_name == params[:account][:type]}
-      raise "Unknown account type #{params[:account][:type]} in #{Account::Asset.types}" unless account_class
-    else
-      account_class = self.account_type == :expense ? Account::Expense : Account::Income
-    end
     account = account_class.new(params[:account])
-    account.user_id = @user.id
+    account.user_id = @user.id # params に入っていたとしても上書きするのでいいかなぁ。
     if account.save
       @user.accounts(true)
-      flash[:notice]="#{account_class.type_name} '#{account.name}' を登録しました。"
+      flash[:notice]="#{account.class.type_name} '#{account.name}' を登録しました。"
     else
       flash_validation_errors(account)
     end

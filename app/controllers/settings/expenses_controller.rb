@@ -7,4 +7,9 @@ class Settings::ExpensesController < Settings::AccountsController
     :expense
   end
 
+  private
+  def account_class
+    Account::Expense
+  end
+
 end

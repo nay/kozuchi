@@ -7,4 +7,9 @@ class Settings::IncomesController < Settings::AccountsController
     :income
   end
 
+  private
+  def account_class
+    Account::Income
+  end
+
 end

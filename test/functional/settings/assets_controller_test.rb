@@ -32,6 +32,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_redirected_to :action => 'index'
     assert_not_nil User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_nil flash[:errors]
+    assert_equal "口座 'VISA' を登録しました。", flash[:notice]
   end
 
   # createのテスト。同じ名前がすでにあると失敗する。
