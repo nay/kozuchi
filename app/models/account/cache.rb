@@ -4,7 +4,6 @@ class Account::Cache < Account::Asset
   asset_name '現金'
 
   def validate
-    p "validate cache"
   end
 
 end

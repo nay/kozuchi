@@ -105,6 +105,24 @@ class Account::Base < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => 'user_id', :message => "口座・費目・収入内訳で名前が重複しています。"
   validate :validates_partner_account
   before_destroy :assert_not_used
+
+  # 削除可能性を調べる
+  def deletable?
+    @delete_errors = []
+    begin
+      assert_not_used
+      return true
+    rescue Account::UsedAccountException => err
+      delete_errors << err.message
+      return false
+    end
+  end
+  
+  # deletable? を実行したときに更新される削除エラーメッセージの配列を返す。
+  def delete_errors
+    @delete_errors ||= []
+    @delete_errors
+  end
   
   # 連携設定 ------------------
 

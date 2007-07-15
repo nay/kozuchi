@@ -83,6 +83,19 @@ class Account::Asset < Account::Base
 #     :order => 'sort_key')
   end
 
+  # 削除可能性を調べる
+  def deletable?
+    super_deletable = super
+    begin
+      assert_rule_not_associated
+      return super_deletable
+    rescue Account::RuleAssociatedAccountException => err
+      delete_errors << err.message
+      return false
+    end
+  end
+
+
   # account_type, asset_type, account_rule の整合性をあわせる
   def before_save
     # asset_type が credit 系でなければ、自分が適用対象として紐づいている rule があれば削除

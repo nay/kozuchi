@@ -181,7 +181,6 @@ class Deal < BaseDeal
     for i in 0..1
       next unless account_entries[i].account.kind_of? Account::Asset
       account_rule = account_entries[i].account.account_rule(true)
-      p "create_children in deal #{self.id}: entry #{i} : account_id = #{account_entries[i].account.id} : account_rule = #{account_rule}"
       # 精算ルールに従って従属行を用意する
       if account_rule
         # どこからからルール適用口座への異動額

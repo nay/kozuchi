@@ -89,6 +89,46 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_equal "口座・費目・収入内訳で名前が重複しています。", account.errors[:name]
   end
   
+  # ----- 削除可能性事前チェックのテスト
+  
+  # 使われていないのは消せる
+  def test_deletable
+    a = Account::Base.find(10)
+    assert_equal true, a.deletable?
+    assert a.delete_errors.empty?
+  end
+  
+  # 使われていたら消せない
+  def test_deletable_used
+    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d.save!
+    a = Account::Base.find(10)
+    assert_equal false, a.deletable?
+    assert_equal 1, a.delete_errors.size
+    assert_equal "口座 '貯金箱' はすでに使われているため削除できません。", a.delete_errors[0]
+  end
+  
+  # 精算先口座に指定されていたら消せない
+  def test_deletable_rule_associated
+    a = Account::Base.find(7)
+    assert_equal false, a.deletable?
+    assert_equal 1, a.delete_errors.size
+    assert_equal "「銀行」は精算口座として使われているため削除できません。", a.delete_errors[0]
+  end
+
+  # 精算先口座に指定されていたら消せない。データもある場合は２つエラーが用意できる。
+  def test_deletable_rule_associated
+    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 7, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d.save!
+    a = Account::Base.find(7)
+    assert_equal false, a.associated_account_rules.empty?
+    assert_equal false, a.deletable?
+    assert_equal 2, a.delete_errors.size
+    assert_equal "口座 '銀行' はすでに使われているため削除できません。", a.delete_errors[0]
+    assert_equal "「銀行」は精算口座として使われているため削除できません。", a.delete_errors[1]
+  end
+
+  
   # ----- 削除のテスト
  
   # 使われていないものが消せるテスト
@@ -105,7 +145,7 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_raise(Account::UsedAccountException) {a.destroy}
     assert_nothing_raised {Account::Base.find(10)}
   end
-  
+
   # [1vs1精算]
   #
   # 精算先口座に指定されていたら消せないことのテスト

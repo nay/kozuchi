@@ -156,11 +156,8 @@ class AccountEntry < ActiveRecord::Base
   # connected_account が指定されていれば、それが連携対象となっていれば登録する
   # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
   def create_friend_deal
-    p "create_friend_deal #{self.id} : friend_link_id = #{friend_link_id}"
     return unless !friend_link_id # すでにある＝お手玉になる
-    p "create_friend_deal. account = #{account.id}"
     partner_account = connected_account
-    p "partner_account = #{partner_account}"
     return unless partner_account
     
     # 相方のentry の口座が渡されていれば、その連携先が同じユーザーでこのentryの連携先以外か調べる
@@ -169,21 +166,18 @@ class AccountEntry < ActiveRecord::Base
     # 相方 entry の連携先もこれから作る Deal となるため、相方用 deal_link を用意する。
     # この相方用 link は、相方処理のために取り出せるよう、インスタンス変数に格納しておく
     @new_plus_link = partner_other_account ? DealLink.create(:created_user_id => account.user_id) : nil
-    p "new_plus_link = #{@new_plus_link}"
     
     # 二重接続でない場合の相方口座としては、先方ユーザーにおける受け皿設定があればそれを利用する。
     partner_other_account ||= partner_account.partner_account
     
     # それもなければ適当な資産口座を割り当てる。
     partner_other_account ||= partner_account.user.default_asset
-    p "partner_other_account = #{partner_other_account.name}"
     return unless partner_other_account
     
     new_minus_link = DealLink.create(:created_user_id => account.user_id)
     
     self.friend_link_id = new_minus_link.id
     
-    p "going to create friend_deal."
     friend_deal = Deal.new(
               :minus_account_id => partner_account.id,
               :minus_account_friend_link_id => new_minus_link.id,
@@ -196,7 +190,6 @@ class AccountEntry < ActiveRecord::Base
               :confirmed => false
     )
     friend_deal.save!
-    p "saved friend_deal #{friend_deal.id}"
     
   end
 
