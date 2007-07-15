@@ -106,12 +106,23 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_nothing_raised {Account::Base.find(10)}
   end
   
-  # =1vs1精算
+  # [1vs1精算]
+  #
   # 精算先口座に指定されていたら消せないことのテスト
   def test_delete_rule_associated
     a = Account::Base.find(7)
     assert_raise(Account::RuleAssociatedAccountException) {a.destroy}
     assert_nothing_raised {Account::Base.find(7)}
+  end
+  
+  # [1vs1精算]
+  # 
+  # 精算対象口座に指定されていたらルールも一緒に消されることのテスト
+  def test_delete_with_rule
+    assert_not_nil AccountRule.find(1)
+    a = Account::Base.find(6)
+    a.destroy
+    assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(1)}
   end
   
 end
