@@ -30,7 +30,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
 
   # create を  post で呼ぶと成功する。クレジットカード口座「VISA」を登録する。
   def test_create_visa
-    post :create, {:account => {:name => 'VISA', :type => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    post :create, {:account => {:name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_not_nil User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_nil flash[:errors]
@@ -41,7 +41,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   #
   # 異なるuser_id をパラメータで渡しても安全にクレジットカード口座「VISA」を登録することを確認する。
   def test_create_visa
-    post :create, {:account => {:user_id => 2, :name => 'VISA', :type => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    post :create, {:account => {:user_id => 2, :name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     visa =  User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_not_nil visa
@@ -54,7 +54,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   # createのテスト。同じ名前がすでにあると失敗する。
   def test_create_cache
     count_before = @test_user_1.accounts(true).size
-    post :create, {:account => {:name => '現金', :type => Account::Cache.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    post :create, {:account => {:name => '現金', :asset_name => Account::Cache.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_equal count_before, @test_user_1.accounts(true).size
     assert_not_nil flash[:errors]

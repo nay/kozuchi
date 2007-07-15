@@ -9,10 +9,16 @@ class Settings::AccountsController < ApplicationController
 
   # 新しい勘定を作成する。
   # params['account']['name']:: 勘定名
-  # params['account']['type']:: (口座の場合だけ必要)口座種類名。asset_name でクラスに指定された日本語の名前が入る。
+  # params['account']['asset_name']:: (口座の場合だけ必要)口座種類名。class.asset_name でクラスに指定された日本語の名前が入る。
   # params['account']['sort_key']:: 並び順
   def create
-    account = account_class(params[:account][:type]).new(params[:account])
+    account_attributes = params[:account]
+    raise "no params[:account]" unless account_attributes
+
+    account_attributes = account_attributes.clone
+    asset_name = account_attributes.delete(:asset_name)
+    
+    account = account_class(asset_name).new(account_attributes)
     account.user_id = @user.id # params に入っていたとしても上書きするのでいいかなぁ。
     if account.save
       @user.accounts(true)
