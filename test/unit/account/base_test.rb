@@ -5,6 +5,8 @@ class Account::BaseTest < Test::Unit::TestCase
   self.use_instantiated_fixtures  = false
   fixtures :users, "account/accounts"
   set_fixture_class  "account/accounts".to_sym => 'account/base'
+  fixtures :preferences
+  fixtures :account_rules
   fixtures :friends
   fixtures :account_links
 

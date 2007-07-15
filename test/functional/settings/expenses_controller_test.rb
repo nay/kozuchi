@@ -35,6 +35,19 @@ class Settings::ExpensesControllerTest < Test::Unit::TestCase
     assert_equal "費目「自動車費」を登録しました。", flash[:notice]
   end
 
+  # [security]
+  #
+  # 異なるuser_id をパラメータで渡しても安全に登録することを確認する。
+  def test_create_with_user_id
+    post :create, {:account => {:user_id => 2, :name => '自動車費', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    new_account =  User.find(1).accounts.detect{|a| a.name == '自動車費' && a.kind_of?(Account::Expense)}
+    assert_not_nil new_account
+    assert_equal 1, new_account.user_id # ログインユーザーになる
+    assert_nil flash[:errors]
+    assert_equal "費目「自動車費」を登録しました。", flash[:notice]
+  end
+
   # createのテスト。同じ名前がすでにあると失敗する。
   def test_create_cache
     count_before = @test_user_1.accounts(true).size
@@ -75,6 +88,46 @@ class Settings::ExpensesControllerTest < Test::Unit::TestCase
     assert_equal "指定された費目がみつかりません。", flash[:notice]
     assert_nil flash[:errors]
     assert_not_nil Account::Expense.find(2)
+  end
+
+  # 更新のテスト
+  
+  # getでは更新できないことの確認。
+  def test_update_by_get
+    get :update, {}, {:user_id => 1}
+    assert_template '/open/not_found'
+  end
+  
+  # 費目を１つ名前変更できることを確認。
+  def test_update_one_name
+    a = Account::Base.find(2)
+    post :update, {:account => {'2' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(2)
+    assert_equal '新しい名前', a.name
+  end
+
+  # [security]
+  # 
+  # 異なるユーザーでログインして不正に口座名を変更できないことを確認
+  def test_update_one_name_by_illegal_user
+    a = Account::Base.find(2)
+    post :update, {:account => {'2' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 2}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(2)
+    assert_equal '食費', a.name
+  end
+
+  # [security]
+  # 
+  # user_idをパラメータに指定しても他人の所有に口座を変更できないことを確認
+  def test_update_one_name_with_user_id
+    a = Account::Base.find(2)
+    post :update, {:account => {'2' => {:user_id => 2, :name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(2)
+    assert_equal '新しい名前', a.name
+    assert_equal 1, a.user_id
   end
 
 end

@@ -29,7 +29,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   end
 
   # create を  post で呼ぶと成功する。クレジットカード口座「VISA」を登録する。
-  def test_create_visa
+  def test_create
     post :create, {:account => {:name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_not_nil User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
@@ -40,7 +40,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   # [security]
   #
   # 異なるuser_id をパラメータで渡しても安全にクレジットカード口座「VISA」を登録することを確認する。
-  def test_create_visa
+  def test_create_with_user_id
     post :create, {:account => {:user_id => 2, :name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     visa =  User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}

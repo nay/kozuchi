@@ -38,7 +38,7 @@ class Settings::IncomesControllerTest < Test::Unit::TestCase
   # [security]
   #
   # 異なるuser_id をパラメータで渡しても安全に「臨時収入」を登録することを確認する。
-  def test_create_visa
+  def test_create_with_user_id
     post :create, {:account => {:user_id => 2, :name => '臨時収入', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     new_income =  User.find(1).accounts.detect{|a| a.name == '臨時収入' && a.kind_of?(Account::Income)}
@@ -100,7 +100,7 @@ class Settings::IncomesControllerTest < Test::Unit::TestCase
   
   # 収入内訳を１つ名前変更できることを確認。
   def test_update_one_name
-    a = Account::Base.find(7)
+    a = Account::Base.find(8)
     post :update, {:account => {'8' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     a = Account::Base.find(8)
