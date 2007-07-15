@@ -135,10 +135,16 @@ class Account::Asset < Account::Base
   # force:: true ならその時点でデータベースを新たに調べる。false ならキャッシュを使う。
   def assert_rule_not_associated(force = true)
     # 精算口座として使われていたら削除できない
-    raise Account::RuleAssociatedAccountException.new("「#{name}」は精算口座として使われているため削除できません。") unless associated_account_rules(force).empty?
+    raise Account::RuleAssociatedAccountException.new(name) unless associated_account_rules(force).empty?
   end
 
 end
 
 class Account::RuleAssociatedAccountException < Exception
+  def initialize(account_name)
+    super self.class.new_message(account_name)
+  end
+  def self.new_message(account_name)
+    "「#{account_name}」は精算口座として使われているため削除できません。"
+  end
 end

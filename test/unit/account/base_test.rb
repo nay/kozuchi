@@ -105,7 +105,7 @@ class Account::BaseTest < Test::Unit::TestCase
     a = Account::Base.find(10)
     assert_equal false, a.deletable?
     assert_equal 1, a.delete_errors.size
-    assert_equal "口座「貯金箱」はすでに使われているため削除できません。", a.delete_errors[0]
+    assert_equal Account::UsedAccountException.new_message('口座', '貯金箱'), a.delete_errors[0]
   end
   
   # 精算先口座に指定されていたら消せない
@@ -113,7 +113,7 @@ class Account::BaseTest < Test::Unit::TestCase
     a = Account::Base.find(7)
     assert_equal false, a.deletable?
     assert_equal 1, a.delete_errors.size
-    assert_equal "「銀行」は精算口座として使われているため削除できません。", a.delete_errors[0]
+    assert_equal Account::RuleAssociatedAccountException.new_message('銀行'), a.delete_errors[0]
   end
 
   # 精算先口座に指定されていたら消せない。データもある場合は２つエラーが用意できる。
@@ -124,8 +124,8 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_equal false, a.associated_account_rules.empty?
     assert_equal false, a.deletable?
     assert_equal 2, a.delete_errors.size
-    assert_equal "口座「銀行」はすでに使われているため削除できません。", a.delete_errors[0]
-    assert_equal "「銀行」は精算口座として使われているため削除できません。", a.delete_errors[1]
+    assert_equal Account::UsedAccountException.new_message('口座', '銀行'), a.delete_errors[0]
+    assert_equal Account::RuleAssociatedAccountException.new_message('銀行'), a.delete_errors[1]
   end
 
   

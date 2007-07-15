@@ -206,7 +206,7 @@ class Account::Base < ActiveRecord::Base
   # force:: true ならその時点でデータベースを新しく調べる。 false ならキャッシュを利用する。
   def assert_not_used(force = true)
     # 使われていたら消せない
-    raise Account::UsedAccountException.new("#{self.class.type_name}「#{name}」はすでに使われているため削除できません。") if self.any_entry(force)
+    raise Account::UsedAccountException.new(self.class.type_name, name) if self.any_entry(force)
   end
 
 end
@@ -223,4 +223,10 @@ Account::Asset.sort_types
 
 # データがある勘定を削除したときに発生する例外
 class Account::UsedAccountException < Exception
+  def initialize(account_type_name, account_name)
+    super(self.class.new_message(account_type_name, account_name))
+  end
+  def self.new_message(account_type_name, account_name)
+    "#{account_type_name}「#{account_name}」はすでに使われているため削除できません。"
+  end
 end

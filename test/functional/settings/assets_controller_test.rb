@@ -76,7 +76,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     get :delete, {:id => 10}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_not_nil flash[:errors]
-    assert_equal ["口座「貯金箱」はすでに使われているため削除できません。"], flash[:errors]
+    assert_equal [Account::UsedAccountException.new_message('口座', '貯金箱')], flash[:errors]
     assert_not_nil Account::Asset.find(:first, :conditions => 'id = 10')
   end
   
