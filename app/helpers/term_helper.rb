@@ -2,7 +2,7 @@ module TermHelper
 
   DEFAULT_TERMS = {
     :asset => '口座',
-    :expense => '支出',
+    :expense => '費目',
     :income => '収入内訳'
   }
   

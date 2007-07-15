@@ -49,6 +49,11 @@ deletable_one:
   user_id: 1
   name: 貯金箱
   type: Cache
+second_income:
+  id: 11
+  user_id: 2
+  name: 報酬
+  type: Income
 
 
   

@@ -58,7 +58,9 @@ class Settings::AccountsController < ApplicationController
   # params[:account][1][name]:: id 1 の勘定名
   # params[:account][1][asset_type]:: id 1 の種別（口座の場合のみ）
   # params[:account][1][sort_key]::　id 1 の並び順
-  # 好きな個数送ることができる。
+  # * 好きな個数送ることができる。
+  # * user_id が送られてきても無視する。
+  # * ログインユーザーのものでない id の情報も無視する。
   def update
     begin
       @user.accounts.update_all_with(params[:account])
