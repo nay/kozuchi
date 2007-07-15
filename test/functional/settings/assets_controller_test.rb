@@ -90,5 +90,35 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_nil flash[:errors]
     assert_not_nil Account::Asset.find(4)
   end
+  
+  # 更新のテスト
+  
+  # getでは更新できないことの確認。
+  def test_update_by_get
+    get :update, {}, {:user_id => 1}
+    assert_template '/open/not_found'
+  end
+  
+  # 口座を１つ名前変更できることを確認。
+  def test_update_one_name
+    a = Account::Base.find(7)
+    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(7)
+    assert_equal '新しい名前', a.name
+  end
+  
+  # 口座の種類を変更できることを確認。
+  def test_update_one_name
+    a = Account::Base.find(10)
+    assert a.kind_of?(Account::Cache)
+    assert_equal false, a.kind_of?(Account::Credit)
+    post :update, {:account => {'10' => {:name => '貯金箱２', :asset_name => Account::Credit.asset_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(10)
+    assert_equal '貯金箱２', a.name
+    assert a.kind_of?(Account::Credit)
+    assert_equal false, a.kind_of?(Account::Cache)
+  end
 
 end

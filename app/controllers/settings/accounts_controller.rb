@@ -3,7 +3,7 @@ class Settings::AccountsController < ApplicationController
   layout 'main'
   include TermHelper
   
-  before_filter :require_post, :only => [:create]
+  before_filter :require_post, :only => [:create, :update]
   
   protected
 
@@ -12,7 +12,7 @@ class Settings::AccountsController < ApplicationController
   # params['account']['type']:: (口座の場合だけ必要)口座種類名。asset_name でクラスに指定された日本語の名前が入る。
   # params['account']['sort_key']:: 並び順
   def create
-    account = account_class.new(params[:account])
+    account = account_class(params[:account][:type]).new(params[:account])
     account.user_id = @user.id # params に入っていたとしても上書きするのでいいかなぁ。
     if account.save
       @user.accounts(true)
@@ -48,23 +48,34 @@ class Settings::AccountsController < ApplicationController
     redirect_to_index
   end
 
-  # 複数の勘定を同時に更新する 
+  # 複数の勘定を同時に更新する。
+  # params[:account][1][name]:: id 1 の勘定名
+  # params[:account][1][asset_type]:: id 1 の種別（口座の場合のみ）
+  # params[:account][1][sort_key]::　id 1 の並び順
+  # 好きな個数送ることができる。
   def update
     # ユーザーIDに属する以外は無視する
     # (TODO: user_id が保護されていることを確認)
     begin
       Account::Base.transaction do
         for account in @user.accounts
-          next unless params[:account][account.id.to_s]
-          account.attributes = (params[:account][account.id.to_s])
+          break unless params[:account]
+          account_attributes = params[:account][account.id.to_s]
+          next unless account_attributes
+          account_attributes = account_attributes.clone
+          # 資産種類を変える場合はクラスを変える必要があるのでとっておく
+          new_asset_name = account_attributes.delete(:asset_name)
+          account.attributes = account_attributes
           account.save!
+          # type の変更は object ベースではできないので sql ベースで
+          Account::Base.update_all("type = '#{account_class(new_asset_name)}'", "id = #{account.id}") if new_asset_name && new_asset_name != account.asset_name
         end
       end
       flash[:notice]="すべての#{term self.account_type}を変更しました。"
-    rescue => err
-      logger.error("Exception was raised when accounts were going to be updated.")
-      logger.error(err)
-      flash[:notice]="#{term self.account_type}を変更できませんでした。"
+#    rescue => err
+#      logger.error("Exception was raised when accounts were going to be updated.")
+#      logger.error(err)
+#      flash[:notice]="#{term self.account_type}を変更できませんでした。"
     end
     @user.accounts(true)
     

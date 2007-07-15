@@ -8,7 +8,7 @@ class Settings::IncomesController < Settings::AccountsController
   end
 
   private
-  def account_class
+  def account_class(asset_name)
     Account::Income
   end
 

@@ -165,4 +165,13 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(1)}
   end
   
+  # 更新のテスト
+
+  # 勘定名を変えられることのテスト
+  def test_change_name
+    a = Account::Base.find(7)
+    a.name = "新しい名前"
+    assert a.save
+  end
+  
 end
