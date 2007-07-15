@@ -20,6 +20,34 @@ class User < ActiveRecord::Base
                 account_types = account_types.flatten
                 self.select{|a| account_types.detect{|t| a.type_in?(t)} }
               end
+              
+              # ハッシュに指定された内容に更新する。typeも変更する。
+              # udpate も update_all もすでにあるので一応別名でつけた。
+              def update_all_with(all_attributes)
+                return unless all_attributes
+                Account::Base.transaction do
+                  for account in self
+                    account_attributes = all_attributes[account.id.to_s]
+                    next unless account_attributes
+                    account_attributes = account_attributes.clone
+                    # user_id は指定させない
+                    account_attributes.delete(:user_id)
+                    # 資産種類を変える場合はクラスを変える必要があるのでとっておく
+                    new_asset_name = account_attributes.delete(:asset_name)
+                    old_account_name = account.name
+                    account.attributes = account_attributes
+                    account.save!
+                    # type の変更
+                    if new_asset_name && new_asset_name != account.asset_name
+                      target_type = Account::Asset.asset_name_to_class(new_asset_name)
+                      # 変更可能なものでなければ例外を発生する
+                      raise Account::IllegalClassChangeException.new(old_account_name, new_asset_name) unless account.changable_asset_types.include? target_type
+                      # object ベースではできないので sql ベースで
+                      Account::Base.update_all("type = '#{Account::Asset.asset_name_to_class(new_asset_name)}'", "id = #{account.id}") 
+                    end
+                  end
+                end
+              end
             end
 
   def default_asset

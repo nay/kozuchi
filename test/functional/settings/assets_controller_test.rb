@@ -107,9 +107,33 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     a = Account::Base.find(7)
     assert_equal '新しい名前', a.name
   end
+
+  # [security]
+  # 
+  # 異なるユーザーでログインして不正に口座名を変更できないことを確認
+  def test_update_one_name_by_illegal_user
+    a = Account::Base.find(7)
+    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 2}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(7)
+    assert_equal '銀行', a.name
+  end
+
+  # [security]
+  # 
+  # user_idをパラメータに指定しても他人の所有に口座を変更できないことを確認
+  def test_update_one_name_with_user_id
+    a = Account::Base.find(7)
+    post :update, {:account => {'7' => {:user_id => 2, :name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(7)
+    assert_equal '新しい名前', a.name
+    assert_equal 1, a.user_id
+  end
+
   
   # 口座の種類を変更できることを確認。
-  def test_update_one_name
+  def test_update_one_type
     a = Account::Base.find(10)
     assert a.kind_of?(Account::Cache)
     assert_equal false, a.kind_of?(Account::Credit)
@@ -119,6 +143,17 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_equal '貯金箱２', a.name
     assert a.kind_of?(Account::Credit)
     assert_equal false, a.kind_of?(Account::Cache)
+  end
+  
+  # 口座の種類を不正に変更できないことを確認。
+  # 精算先口座を　Credit　にはできない。
+  def test_update_one_type_invalid
+    a = Account::Base.find(7)
+    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => Account::Credit.asset_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    a = Account::Base.find(7)
+    assert a.kind_of?(Account::BankingFacility)
+    assert_equal [Account::IllegalClassChangeException.new_message('銀行', Account::Credit.asset_name)], flash[:errors]
   end
 
 end

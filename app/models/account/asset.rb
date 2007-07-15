@@ -26,6 +26,12 @@ class Account::Asset < Account::Base
     @asset_name = asset_name
   end
   
+  # 口座種類名からクラスを得る。
+  # asset_name:: 口座種類名
+  def self.asset_name_to_class(asset_name)
+    types.detect{|a| a.asset_name == asset_name}  
+  end
+  
   def self.rule_applicable(flag)
     @rule_applicable = flag
   end
@@ -104,13 +110,18 @@ class Account::Asset < Account::Base
     end
   end
 
-  #TODO: 対応
-  def asset_type_options
+  # 変更可能な口座種別を配列で返す。
+  def changable_asset_types
     asset_types = Account::Asset.types
     asset_types.delete_if{|t| !t.rule_applicable? } if self.account_rule
     asset_types.delete_if{|t| !t.rule_associatable? } unless associated_account_rules.empty?
     asset_types.delete_if{|t| t.business_only? } unless user.preferences(true).business_use?
-    asset_types.map{|t| [t.asset_name, t.asset_name]}
+    asset_types
+  end
+
+  # 変更可能な口座種別を名前・名前の配列の配列で返す。
+  def asset_type_options
+    changable_asset_types.map{|t| [t.asset_name, t.asset_name]}
   end
   
   def asset_name
@@ -146,5 +157,14 @@ class Account::RuleAssociatedAccountException < Exception
   end
   def self.new_message(account_name)
     "「#{account_name}」は精算口座として使われているため削除できません。"
+  end
+end
+
+class Account::IllegalClassChangeException < Exception
+  def self.new_message(account_name, illegal_asset_type_name)
+    "「#{account_name}」を#{illegal_asset_type_name}に変更することはできません。"
+  end
+  def initialize(account_name, illegal_asset_type_name)
+    super self.class.new_message(account_name, illegal_asset_type_name)
   end
 end

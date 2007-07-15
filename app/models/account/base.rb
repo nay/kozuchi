@@ -128,7 +128,7 @@ class Account::Base < ActiveRecord::Base
     @delete_errors ||= []
     @delete_errors
   end
-  
+
   # 連携設定 ------------------
 
   def connect(target_user_login_id, target_account_name, interactive = true)

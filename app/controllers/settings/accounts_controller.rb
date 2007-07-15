@@ -60,28 +60,11 @@ class Settings::AccountsController < ApplicationController
   # params[:account][1][sort_key]::　id 1 の並び順
   # 好きな個数送ることができる。
   def update
-    # ユーザーIDに属する以外は無視する
-    # (TODO: user_id が保護されていることを確認)
     begin
-      Account::Base.transaction do
-        for account in @user.accounts
-          break unless params[:account]
-          account_attributes = params[:account][account.id.to_s]
-          next unless account_attributes
-          account_attributes = account_attributes.clone
-          # 資産種類を変える場合はクラスを変える必要があるのでとっておく
-          new_asset_name = account_attributes.delete(:asset_name)
-          account.attributes = account_attributes
-          account.save!
-          # type の変更は object ベースではできないので sql ベースで
-          Account::Base.update_all("type = '#{account_class(new_asset_name)}'", "id = #{account.id}") if new_asset_name && new_asset_name != account.asset_name
-        end
-      end
+      @user.accounts.update_all_with(params[:account])
       flash[:notice]="すべての#{term self.account_type}を変更しました。"
-#    rescue => err
-#      logger.error("Exception was raised when accounts were going to be updated.")
-#      logger.error(err)
-#      flash[:notice]="#{term self.account_type}を変更できませんでした。"
+    rescue Account::IllegalClassChangeException => err
+      flash[:errors] = [err.message]
     end
     @user.accounts(true)
     

@@ -174,4 +174,55 @@ class Account::BaseTest < Test::Unit::TestCase
     assert a.save
   end
   
+  # changable_asset_types のテスト
+
+  # buisness_flag ONで何も関連がないときは、どの口座からもすべての口座に変更できることを確認する
+  def test_changable_asset_types_all_with_business_use
+    # 全種類つくる
+    count = 1
+    for type in Account::Asset.types
+      a = type.new(:name => "テスト口座#{count}", :user_id => 2)
+      a.save!
+      options = a.changable_asset_types
+      for target_type in Account::Asset.types
+        assert options.include?(target_type), "#{target_type} must be included in #{options} for #{type}."
+      end
+      count += 1
+    end
+  end
+  
+  # buisness_flag OFFで何も関連がないときは、資本以外のどの口座からも、資本以外のすべての口座に変更できることを確認する
+  def test_changable_asset_types_all_without_business_use
+    # 全種類つくる
+    count = 1
+    for type in Account::Asset.types
+      next if type == Account::CapitalFund
+      a = type.new(:name => "テスト口座#{count}", :user_id => 1)
+      a.save!
+      options = a.changable_asset_types
+      for target_type in Account::Asset.types
+        next if target_type == Account::CapitalFund
+        assert options.include?(target_type), "#{target_type} must be included in #{options} for #{type}."
+      end
+      assert_equal false, options.include?(Account::CapitalFund), "Account::CapitalFund should not be included in #{options}"
+      count += 1
+    end
+  end
+  
+  # 精算先口座になっている場合は金融機関口座にしかならない（実装マター）ことを確認する
+  def chanbale_asset_types_for_rule_associated
+    a = Account.find(7)
+    assert_equal 1, a.changable_asset_types.size
+    assert_equal Account::BankingFacility, a.changable_asset_types[0]
+  end
+
+  # 精算対象口座になっている場合はCredit, CreditCardにしかならない（実装マター）ことを確認する
+  def chanbale_asset_types_for_rule_associated
+    a = Account.find(6)
+    options = a.changable_asset_types
+    assert_equal 2, options.size
+    assert options.include?(Account::CreditCard)
+    assert options.include?(Account::Credit)
+  end
+
 end
