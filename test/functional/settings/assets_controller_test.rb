@@ -37,6 +37,20 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_equal "口座 'VISA' を登録しました。", flash[:notice]
   end
 
+  # [security]
+  #
+  # 異なるuser_id をパラメータで渡しても安全にクレジットカード口座「VISA」を登録することを確認する。
+  def test_create_visa
+    post :create, {:account => {:user_id => 2, :name => 'VISA', :type => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    visa =  User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
+    assert_not_nil visa
+    assert_equal 1, visa.user_id # ログインユーザーになる
+    assert_nil flash[:errors]
+    assert_equal "口座 'VISA' を登録しました。", flash[:notice]
+  end
+
+
   # createのテスト。同じ名前がすでにあると失敗する。
   def test_create_cache
     count_before = @test_user_1.accounts(true).size
@@ -64,6 +78,17 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_not_nil flash[:errors]
     assert_equal ["口座 '貯金箱' はすでに使われているため削除できません。"], flash[:errors]
     assert_not_nil Account::Asset.find(:first, :conditions => 'id = 10')
+  end
+  
+  # [security]
+  #
+  # ログインユーザー以外の口座が消せないことの確認。
+  def test_delete_other_users
+    get :delete, {:id => 4}, {:user_id => 1}
+    assert_redirected_to :action => 'index'
+    assert_equal "指定された口座がみつかりません。", flash[:notice]
+    assert_nil flash[:errors]
+    assert_not_nil Account::Asset.find(4)
   end
 
 end

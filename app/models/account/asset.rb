@@ -120,7 +120,10 @@ class Account::Asset < Account::Base
   end
   def assert_rule_not_associated
     # 精算口座として使われていたら削除できない
-    raise "「#{name}」は精算口座として使われているため削除できません。" unless associated_account_rules.empty?
+    raise Account::RuleAssociatedAccountException.new("「#{name}」は精算口座として使われているため削除できません。") unless associated_account_rules.empty?
   end
 
+end
+
+class Account::RuleAssociatedAccountException < Exception
 end

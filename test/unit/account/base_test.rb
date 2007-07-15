@@ -73,6 +73,8 @@ class Account::BaseTest < Test::Unit::TestCase
     assert is_error
   end
   
+  # ----- 新規登録のテスト
+  
   # 名前が空で登録できないことのテスト
   def test_empty_name
     account = Account::Cache.new(:user_id => 1)
@@ -87,5 +89,29 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_equal "口座・費目・収入内訳で名前が重複しています。", account.errors[:name]
   end
   
-
+  # ----- 削除のテスト
+ 
+  # 使われていないものが消せるテスト
+  def test_delete
+    a = Account::Base.find(10)
+    assert_nothing_raised {a.destroy}
+  end
+  
+  # データが使われていたら消せないことのテスト
+  def test_delete_used
+    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d.save!
+    a = Account::Base.find(10)
+    assert_raise(Account::UsedAccountException) {a.destroy}
+    assert_nothing_raised {Account::Base.find(10)}
+  end
+  
+  # =1vs1精算
+  # 精算先口座に指定されていたら消せないことのテスト
+  def test_delete_rule_associated
+    a = Account::Base.find(7)
+    assert_raise(Account::RuleAssociatedAccountException) {a.destroy}
+    assert_nothing_raised {Account::Base.find(7)}
+  end
+  
 end
