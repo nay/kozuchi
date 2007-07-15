@@ -87,7 +87,7 @@ class Account::Asset < Account::Base
   def deletable?
     super_deletable = super
     begin
-      assert_rule_not_associated
+      assert_rule_not_associated(false)
       return super_deletable
     rescue Account::RuleAssociatedAccountException => err
       delete_errors << err.message
@@ -131,9 +131,11 @@ class Account::Asset < Account::Base
       errors.add(:asset_type_code, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
   end
-  def assert_rule_not_associated
+  # 精算口座として使われていたら例外を出す。
+  # force:: true ならその時点でデータベースを新たに調べる。false ならキャッシュを使う。
+  def assert_rule_not_associated(force = true)
     # 精算口座として使われていたら削除できない
-    raise Account::RuleAssociatedAccountException.new("「#{name}」は精算口座として使われているため削除できません。") unless associated_account_rules.empty?
+    raise Account::RuleAssociatedAccountException.new("「#{name}」は精算口座として使われているため削除できません。") unless associated_account_rules(force).empty?
   end
 
 end

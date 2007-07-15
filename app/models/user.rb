@@ -13,7 +13,8 @@ class User < ActiveRecord::Base
   has_many  :accounts,
             :class_name => 'Account::Base',
             :dependent => true,
-            :order => 'sort_key' do
+            :include => [:associated_accounts, :any_entry], # 削除に関係がある
+            :order => 'accounts.sort_key' do
               # 指定した account_type のものだけを抽出する
               def types_in(*account_types)
                 account_types = account_types.flatten

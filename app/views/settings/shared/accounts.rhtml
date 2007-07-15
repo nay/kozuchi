@@ -59,11 +59,11 @@
           <td rowspan="<%= @accounts.size %>" class="button_action"><button type="submit">変更</button></td>
         <% end %>
         <td class="button_action">
-          <% # TODO: 削除できるものをとるメソッドをつくろう %>
-          <% if @account_type != :asset || @account.associated_account_rules.empty? %>
+          <% if @account.deletable? %>
             <button onClick="location.href='<%=url_for(:action => "delete", :id => @account.id)%>'">削除</button>
           <% else %>
-            <span>×</span>
+            <% delete_error_message = @account.delete_errors.join('\n')%>
+            <span>×(<a href='javascript:alert("<%= delete_error_message %>");'>理由</a>)</span>
           <% end %>
         </td> 
       </tr>

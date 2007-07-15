@@ -16,7 +16,7 @@ class Settings::AccountsController < ApplicationController
     account.user_id = @user.id # params に入っていたとしても上書きするのでいいかなぁ。
     if account.save
       @user.accounts(true)
-      flash[:notice]="#{account.class.type_name} '#{account.name}' を登録しました。"
+      flash[:notice]="#{account.class.type_name}「#{account.name}」を登録しました。"
     else
       flash_validation_errors(account)
     end
@@ -40,7 +40,7 @@ class Settings::AccountsController < ApplicationController
 
     begin
       @user.accounts.delete(target_account)
-      flash[:notice]="#{term self.account_type} '#{target_account.name}' を削除しました。"
+      flash[:notice]="#{term self.account_type}「#{target_account.name}」を削除しました。"
     rescue Account::UsedAccountException => err
       flash[:errors]= [err.message]
     end
@@ -71,9 +71,10 @@ class Settings::AccountsController < ApplicationController
     redirect_to_index
   end
   
+  # 一覧表示する。
   def index
     @account_type = account_type # symbol
-    @accounts = @user.accounts.select{|a|a.type_in? account_type}
+    @accounts = @user.accounts(true).select{|a|a.type_in? account_type}
     render(:template => "settings/shared/accounts")
   end
   

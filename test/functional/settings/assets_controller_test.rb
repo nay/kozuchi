@@ -34,7 +34,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_redirected_to :action => 'index'
     assert_not_nil User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_nil flash[:errors]
-    assert_equal "口座 'VISA' を登録しました。", flash[:notice]
+    assert_equal "口座「VISA」を登録しました。", flash[:notice]
   end
 
   # [security]
@@ -47,7 +47,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     assert_not_nil visa
     assert_equal 1, visa.user_id # ログインユーザーになる
     assert_nil flash[:errors]
-    assert_equal "口座 'VISA' を登録しました。", flash[:notice]
+    assert_equal "口座「VISA」を登録しました。", flash[:notice]
   end
 
 
@@ -65,7 +65,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     get :delete, {:id => 10}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_nil flash[:errors]
-    assert_equal "口座 '貯金箱' を削除しました。", flash[:notice]
+    assert_equal "口座「貯金箱」を削除しました。", flash[:notice]
     assert_nil Account::Asset.find(:first, :conditions => 'id = 10')
   end
 
@@ -76,7 +76,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
     get :delete, {:id => 10}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     assert_not_nil flash[:errors]
-    assert_equal ["口座 '貯金箱' はすでに使われているため削除できません。"], flash[:errors]
+    assert_equal ["口座「貯金箱」はすでに使われているため削除できません。"], flash[:errors]
     assert_not_nil Account::Asset.find(:first, :conditions => 'id = 10')
   end
   
