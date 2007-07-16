@@ -103,8 +103,8 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   
   # 口座を１つ名前変更できることを確認。
   def test_update_one_name
-    a = Account::Base.find(7)
-    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    a = Account::Asset.find(7)
+    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_name, :sort_key => a.sort_key}}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     a = Account::Base.find(7)
     assert_equal '新しい名前', a.name
@@ -115,7 +115,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   # 異なるユーザーでログインして不正に口座名を変更できないことを確認
   def test_update_one_name_by_illegal_user
     a = Account::Base.find(7)
-    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 2}
+    post :update, {:account => {'7' => {:name => '新しい名前', :asset_name => a.asset_name, :sort_key => a.sort_key}}}, {:user_id => 2}
     assert_redirected_to :action => 'index'
     a = Account::Base.find(7)
     assert_equal '銀行', a.name
@@ -126,7 +126,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   # user_idをパラメータに指定しても他人の所有に口座を変更できないことを確認
   def test_update_one_name_with_user_id
     a = Account::Base.find(7)
-    post :update, {:account => {'7' => {:user_id => 2, :name => '新しい名前', :asset_name => a.asset_type_name, :sort_key => a.sort_key}}}, {:user_id => 1}
+    post :update, {:account => {'7' => {:user_id => 2, :name => '新しい名前', :asset_name => a.asset_name, :sort_key => a.sort_key}}}, {:user_id => 1}
     assert_redirected_to :action => 'index'
     a = Account::Base.find(7)
     assert_equal '新しい名前', a.name

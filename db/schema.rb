@@ -58,7 +58,6 @@ ActiveRecord::Schema.define(:version => 9) do
     t.column "parent_deal_id", :integer
     t.column "created_at", :datetime
     t.column "updated_at", :datetime
-    t.column "settled_in", :integer
   end
 
   create_table "friends", :force => true do |t|

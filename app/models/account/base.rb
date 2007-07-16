@@ -66,12 +66,6 @@ class Account::Base < ActiveRecord::Base
   end
 
   # TODO: 呼び出し側のリファクタリング確認
-  # 資産口座種類名を返す。資産口座でなければnilを返す。
-  def asset_type_name
-    self.class.kind_of?(Asset) ? self.class.asset_name : nil
-  end
-
-  # TODO: 呼び出し側のリファクタリング確認
   # with_asset_type の前にユーザー名をつけたもの
   def name_with_user
     return "#{user.login_id} さんの #{name_with_asset_type}"

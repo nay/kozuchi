@@ -1,9 +1,9 @@
 class AccountRule < ActiveRecord::Base
   belongs_to :associated_account,
-             :class_name => 'Account::Base',
+             :class_name => 'Account::Asset',
              :foreign_key => 'associated_account_id'
   belongs_to :account,
-             :class_name => 'Account::Base',
+             :class_name => 'Account::Asset',
              :foreign_key => 'account_id'
 
   # 元となる取引に対して、精算予定日を計算する
