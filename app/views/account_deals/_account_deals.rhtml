@@ -2,7 +2,7 @@
       <% if @flash[:notice] || @flash[:notice].to_s != ""%>
         <div id="notice"><%=@flash[:notice]%></div>
       <% end %>
-      <div class="title"><%= "#{Account::Base.find(@account_id).name}の出納一覧（#{@date.year}年#{@date.month}月）" %></div>
+      <div class="title"><%= "#{h Account::Base.find(@account_id).name}の出納一覧（#{@date.year}年#{@date.month}月）" %></div>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>
@@ -37,9 +37,9 @@
           <% else %>
             <tr <%= 'class="unconfirmed"' if !entry.deal.confirmed %>>
               <td class="date"><%= format_date(entry.deal.date) %></td>
-              <td class="number"><%=entry.deal.daily_seq%></td>
-              <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed %><%= entry.deal.summary%></td>
-              <td class="account"><%= entry.account.name %></td>
+              <td class="number"><%= entry.deal.daily_seq%></td>
+              <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed %><%= h entry.deal.summary%></td>
+              <td class="account"><%= h entry.account.name %></td>
               <td class="amount"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
               <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
               <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(entry.balance_estimated) : '*' %></td>
