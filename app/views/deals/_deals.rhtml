@@ -15,7 +15,7 @@
           <th class="scroll_space"></th>
         </tr>
       </table>
-      <div class="scroll_box" <%= "style='height:#{@deals_scroll_height};'" if @deals_scroll_height && @deals_scroll_height != ''%>>
+      <div class="scroll_box" <%= "style='height:#{h @deals_scroll_height};'" if @deals_scroll_height && @deals_scroll_height != ''%>>
       <div class="scroll_inner_box">
       <table class="book">
         <% for deal in @deals %>

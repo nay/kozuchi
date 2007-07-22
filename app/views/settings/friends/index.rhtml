@@ -16,7 +16,7 @@
     </tr>
     <% for friend in @friends %>
       <tr>
-        <td><%= friend.friend_user.login_id %></td>
+        <td><%= h friend.friend_user.login_id %></td>
         <td>
           <% if friend.is_applied %>
             <span><%= "フレンド申請されています。"%></span>

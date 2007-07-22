@@ -2,7 +2,7 @@
   <div class="form_box">
     <% if @friends.size > 0%>
       <%= form_tag :action => 'connect_account'%>
-        <%= @user.login_id %>
+        <%= h @user.login_id %>
         <span>さんの</span>
         <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
         <span>への記入と、<br />
@@ -44,7 +44,7 @@
       <% for connected_account in account.connected_accounts %>
         <tr>
           <% if count == 0 %>
-            <td rowspan="<%= account.connected_or_associated_accounts_size%>"><%= account.name_with_asset_type %></td>
+            <td rowspan="<%= account.connected_or_associated_accounts_size%>"><%= h account.name_with_asset_type %></td>
           <% end %>
           <td>
             <span>→</span><br />
@@ -71,7 +71,7 @@
             <span>←</span><br />
           </td>
           <td>
-              <%= connected_account.name_with_user %>
+              <%= h connected_account.name_with_user %>
           </td>
           <td>
               <span>×</span>
