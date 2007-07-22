@@ -1,5 +1,5 @@
 class DailyBookingController < ApplicationController
-
+  layout 'main'
   before_filter :check_use, :load_account
   before_filter :load_menues
 
