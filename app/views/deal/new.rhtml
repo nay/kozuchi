@@ -1,0 +1,15 @@
+<div id="edit_box" class="middle_box">
+  <form action="<%= url_for(:controller => 'deal', :action => 'save')%>" method="post" onSubmit="if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_amount') != null && $('deal_amount').value == '') {alert('金額を入力してください。');return false;}if ($('deal_balance') != null && $('deal_balance').value == '') {alert('残高を入力してください。');return false;}return true;">
+    <div id="datebox">
+      <%= text_field("date", "year", {:size => "4", :maxlength => "4", :tabindex => '1'}) %>
+      <%= text_field("date", "month", {:size => "2", :maxlength => "2", :tabindex => '2'}) %>
+      <%= text_field("date", "day", {:maxlength => "2", :tabindex => '3'}) %>
+    </div>
+    <input type="hidden" name="back_to[controller]" value="<%= @back_to[:controller] %>" />
+    <input type="hidden" name="back_to[action]" value="<%= @back_to[:action] %>" >
+    <div id="tabwindow">
+      <%= render :partial => ('edit_'+@tab_name) %>
+    </div>
+  </form>
+</div>
+ 

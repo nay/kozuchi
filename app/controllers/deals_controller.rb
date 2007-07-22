@@ -3,47 +3,12 @@ class DealsController < ApplicationController
   before_filter :check_account
   include ApplicationHelper
 
-#  def rescue_action(exception)
-#    flash_error(exception.to_s)
-#    logger.error(exception.to_s)
-#    for b in exception.backtrace
-#      logger.error(b)
-#    end
-#    redirect_to(:action => 'index')
-#  end
-
   # ----- 入力画面表示系 -----------------------------------------------
 
   # 指定された行にジャンプするアクション
   def jump
     # todo tab_name は月更新すると不明状態となるので受け渡しても意味がない。hiddenなどで管理可能だが、今後の課題でいいだろう。
     redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
-  end
-
-  # 明細タブが選択されたときのAjaxアクション
-  def select_deal_tab
-    prepare_select_deal_tab
-    render(:partial => "edit_deal", :layout => false)
-  end
-
-  # 残高タブが選択されたときのAjaxアクション
-  def select_balance_tab
-    prepare_select_balance_tab
-    render(:partial => "edit_balance", :layout => false)
-  end
-
-  # 明細変更状態にするAjaxアクション
-  def edit_deal
-    @deal = BaseDeal.find(params[:id]) # Deal だとsubordinate がとってこられない。とれてもいいんだけど。
-    prepare_select_deal_tab
-    render(:partial => "edit_deal", :layout => false)
-  end
-
-  # 残高変更状態にするAjaxアクション
-  def edit_balance
-    @deal = Balance.find(params[:id])
-    prepare_select_balance_tab
-    render(:partial => "edit_balance", :layout => false)
   end
 
   # 仕分け帳画面を初期表示するための処理
@@ -59,14 +24,6 @@ class DealsController < ApplicationController
     end
     today = DateBox.today
     @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
-    @tab_name = params[:tab_name] || 'deal'
-    
-    case @tab_name
-      when "deal"
-        prepare_select_deal_tab
-      else
-        prepare_select_balance_tab
-    end
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
 
@@ -80,29 +37,6 @@ class DealsController < ApplicationController
   end
 
   # ----- 編集実行系 --------------------------------------------------
-
-  # タブシート内の「記入」ボタンが押されたときのアクション
-  def submit_tab
-    options = {:action => 'index', :tab_name => params[:tab_name]}
-    begin
-      @date = DateBox.new(params[:date])
-      if "deal" == params[:tab_name]
-        deal = save_deal
-        options.store("deal[minus_account_id]", deal.minus_account_id)
-        options.store("deal[plus_account_id]", deal.plus_account_id)
-      else
-        deal = save_balance
-        # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
-      end
-      session[:target_month] = @date
-      flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
-      options.store("updated_deal_id", deal.id)
-      redirect_to(options)
-#    rescue => err
-#      flash_error(err.to_s)
-#      redirect_to(options)
-   end
-  end
 
   # 取引の削除を受け付ける
   def delete_deal
@@ -128,80 +62,7 @@ class DealsController < ApplicationController
     render(:partial => "deals", :layout => false)
   end
 
-  # 新規編集でサマリが編集されたときにくるAjaxメソッド
-  def update_patterns
-    summary_key = request.raw_post
-    @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
-    p "patterns.size = #{@patterns.size}"
-    render(:partial => 'patterns')
-  end
-
-
   private
-
-  # ----- 入力画面表示系 -----------------------------------------------
-  # 記入エリアの準備
-  def prepare_select_deal_tab
-    @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :income), true
-     )
-    @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :expense), false
-     )
-     @deal ||= Deal.new(params[:deal])
-    @patterns = [] # 入力支援    
-  end
-  
-  def prepare_select_balance_tab
-    @accounts_for_balance = @user.accounts.types_in(:asset)
-    @deal ||=  Balance.new
-  end
-
-
-  # ----- 編集実行系 --------------------------------------------------
-
-  # 明細登録・変更
-  def save_deal
-    # 更新のとき
-    if params[:deal][:id]
-      deal = BaseDeal.get(params[:deal][:id].to_i, @user.id)
-      raise "no deal #{params[:deal][:id]}" unless deal
-      deal.attributes = params[:deal]
-      # 精算ルール以外の理由で未確認のものは確認にする
-      # モデルでやると相互作用による更新を見分けるのが大変なのでここでやる
-      deal.confirmed = true if !deal.confirmed && !deal.subordinate?
-    else
-      deal = Deal.new(params[:deal])
-      deal.user_id = @user.id
-    end
-    deal.date = @date.to_date
-    deal.save!
-    deal
-  end
-
-  # 残高確認記録を登録
-  def save_balance
-    # 更新のとき
-    if params[:deal][:id]
-      balance = Balance.get(params[:deal][:id].to_i, @user.id)
-      raise "no balance #{params[:deal][:id]}" unless balance
-
-      balance.attributes = params[:deal]
-    else
-      balance = Balance.new(params[:deal])
-      balance.user_id = @user.id
-    end
-      balance.date = @date.to_date
-    balance.save!
-    balance
-  end
-
-  def flash_save_deal(deal, is_new = true)
-    @updated_deal = deal
-    action_name = is_new ? "追加" : "更新"
-    flash[:notice] = "#{format_deal(deal)} を#{action_name}しました。"
-  end
-
   
   # 仕分け帳　表示準備
   def prepare_update_deals
