@@ -7,7 +7,7 @@
           <td>￥<%= number_with_delimiter(@total_expense)%></td>
           <th>収入</th>
           <td>￥<%= number_with_delimiter(@total_income)%></td>
-          <th><%= @account.name%>の残高</th>
+          <th><%= h @account.name%>の残高</th>
           <td>￥<%= number_with_delimiter(@balance_at_the_end)%></td>
         </tr>
       </table>
@@ -44,7 +44,7 @@
                 <% right_entry = target_entry %>
               <% end %>
               <tr>
-                <td><%= deal.daily_seq %></td><td class="summary"><%= deal.summary%></td><td><%= sub_summary %></td>
+                <td><%= deal.daily_seq %></td><td class="summary"><%= h deal.summary%></td><td><%= h sub_summary %></td>
                 <% if target_entry.account_id == @account.id %>
                   <td class="amount"><%= number_with_delimiter(left_entry.amount * -1) if left_entry %></td>
                   <td class="amount"><%= number_with_delimiter(right_entry.amount) if right_entry %></td>
@@ -52,9 +52,9 @@
                 <% else %>
                   <% if left_entry %>
                     <td class="amount">* <%= number_with_delimiter(left_entry.amount * -1)%></td>
-                    <td style="amount"><span style="font-size:80%;"><%= left_entry.account.name%>から</span></td>
+                    <td style="amount"><span style="font-size:80%;"><%= h left_entry.account.name%>から</span></td>
                   <% else %>
-                    <td class="amount"><span style="font-size:80%;"><%= right_entry.account.name%>へ</span></td>
+                    <td class="amount"><span style="font-size:80%;"><%= h right_entry.account.name%>へ</span></td>
                     <td class="amount">* <%= number_with_delimiter(right_entry.amount)%></td>
                   <% end %>
                   <td>-</td>
