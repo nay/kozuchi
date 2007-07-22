@@ -119,17 +119,47 @@ class ApplicationController < ActionController::Base
   end
   
   # @target_month と @date をセットする
+  # TODO: 新方式に切り替えたので呼び出し元を変更したい
   def prepare_date
-    @target_month = DateBox.new(params[:target_month]) if params[:target_month]
-    @target_month ||= session[:target_month]
-    @date = @target_month || DateBox.today
-    @target_month ||= DateBox.this_month
+    @target_month = DateBox.new(target_date)
+    @date = @target_month
+  end
+  
+  # 編集対象日をセッションに保存する
+  def target_date=(date)
+    if date.kind_of?(Date)
+      session[:target_date] = {:year => date.year, :month => date.month, :day => date.day}
+    else
+      session[:target_date] = date
+    end
+    
+  end
+
+  # 編集対象日のハッシュを得る
+  # セッションも更新する
+  def target_date
+    if session[:target_date] && session[:target_date][:year] && session[:target_date][:month]
+      # day がないときは補完できるならする
+      if !session[:target_date][:day]
+        today = Date.today
+        session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
+      end
+    else
+      today = Date.today
+      session[:target_date] = {:year => today.year, :month => today.month, :day => today.day}
+    end
+    return session[:target_date]
+  end
+  
+  def load_target_date
+    @target_date = target_date
+    raise "no target_date" unless @target_date
   end
   
   # @target_month をもとにして資産の残高を計算する
   # TODO: 先に @user が用意されている前提
   def load_assets
-    date = Date.new(@target_month.year_i, @target_month.month_i, 1) >> 1
+    date = Date.new(target_date[:year].to_i, target_date[:month].to_i, 1) >> 1
     @assets = AccountsBalanceReport.new(@user.accounts.types_in(:asset), date)
   end
     

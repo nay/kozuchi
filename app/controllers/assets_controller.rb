@@ -1,13 +1,8 @@
 class AssetsController < ApplicationController
+  include WithCalendar
   layout 'main'
   helper :graph
   before_filter :check_account
-  
-  before_filter :prepare_date, :load_assets
-
-  def update
-    render(:partial => "assets", :layout => false)
-  end
-  
+  before_filter :load_target_date, :redirect_unless_month, :load_assets
 
 end

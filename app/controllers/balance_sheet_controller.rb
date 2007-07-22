@@ -1,10 +1,7 @@
 class BalanceSheetController < ApplicationController
+  include WithCalendar
   layout 'main'
   
-  before_filter :prepare_date, :load_assets
-
-  def update
-    render(:partial => "balance_sheet", :layout => false)
-  end
+  before_filter :load_target_date, :redirect_unless_month, :load_assets
   
 end

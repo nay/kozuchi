@@ -25,17 +25,7 @@
       <span>円</span>
       <%= render :partial => 'shared/account_entry_fields' %>
       <button type="submit" tabindex="14">記入</button>
-
-
     </div>
-
-    <% if @deal.date %>
-      <script>
-        $('date_year').value = '<%=@deal.date.year%>'
-        $('date_month').value = '<%=@deal.date.month%>'
-        $('date_day').value = '<%=@deal.date.day%>'
-      </script>
-    <% end %>
 
     <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :url => {:controller => 'deal', :action => 'update_patterns'})%>
 

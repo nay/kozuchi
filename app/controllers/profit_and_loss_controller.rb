@@ -1,17 +1,26 @@
 class ProfitAndLossController < ApplicationController 
+  include WithCalendar
   layout 'main'
   helper :graph
-  before_filter :check_account, :prepare_date, :prepare_update_profit_and_loss
+  before_filter :check_account, :load_target_date, :prepare_update_profit_and_loss
+
+  def index
+    if !params[:year] || !params[:month]
+      redirect_to_index
+      return
+    end
+  end
 
   def update
     render(:partial => "profit_and_loss", :layout => false)
   end
   
   private
+  
 
   def prepare_update_profit_and_loss
     # 費目ごとの合計を得る
-    start_inclusive = Date.new(@target_month.year_i, @target_month.month_i, 1)
+    start_inclusive = Date.new(@target_date[:year].to_i, @target_date[:month].to_i, 1)
     end_exclusive = start_inclusive >> 1
     values = AccountEntry.sum(:amount,
      :group => 'account_id',

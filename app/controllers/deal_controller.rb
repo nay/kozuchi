@@ -1,46 +1,27 @@
 # 1件のDealに対する処理のコントローラ
 class DealController < ApplicationController
   include ApplicationHelper
-
+  
+  before_filter :load_target_date
+  
   # 取引入力画面を表示する。以下をデフォルト表示できる。
-  # params[:year]:: 年。省略可能。
-  # params[:month]:: 月。省略可能。
-  # params[:day]:: 日。省略可能。
   # params[:tab_name]]:: deal または　balance # TODO: 変えたい
-  # params[:from]:: 移動元勘定のid。
-  # params[:to]:: 移動先感情のid。
+  # params[:back_to][:controller]:: (必須) save 後に処理を戻す先のコントローラ
+  # params[:back_to][:action]:: (必須) save 後に処理を戻す先のアクション
   def new
-    raise "no back to" unless params[:back_to]
-    
-    @back_to = params[:back_to]
-    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
-    if @updated_deal
-      @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date
-    else
-      @target_month = session[:target_month]
-      @date = @target_month || DateBox.today
-      @target_month ||= DateBox.this_month
-    end
-    today = DateBox.today
-    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
+    load_and_assert_back_to
+
+    # deal / balance それぞれのフォーム初期化処理
     @tab_name = params[:tab_name] || 'deal'
-    
-    case @tab_name
-      when "deal"
-        prepare_select_deal_tab
-      else
-        prepare_select_balance_tab
-    end
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
   end
   
   # params[:back_to][:controller]:: 処理が終わったときに帰る Controller
   # params[:back_to][:action]:: 処理が終わったときに帰る Action
   def save
-    raise "no back_to" unless params[:back_to]
-    options = params[:back_to]
+    load_and_assert_back_to
+    options = @back_to
     begin
-      @date = DateBox.new(params[:date])
       if "deal" == params[:tab_name]
         deal = save_deal
         options.store("deal[minus_account_id]", deal.minus_account_id)
@@ -49,9 +30,12 @@ class DealController < ApplicationController
         deal = save_balance
         # TODO GET経由で文字列ではいったとき view の collection_select でうまく認識されないから送らない
       end
-      session[:target_month] = @date
+      session[:target_month] = deal.date
+      self.target_date = deal.date
       flash_save_deal(deal, !params[:deal] || !params[:deal][:id])
       options.store("updated_deal_id", deal.id)
+      options[:year] = deal.year
+      options[:month] = deal.month
       redirect_to(options)
     end
   end
@@ -78,19 +62,29 @@ class DealController < ApplicationController
 
   # 明細変更状態にするAjaxアクション
   def edit_deal
+    load_and_assert_back_to
     @deal = BaseDeal.find(params[:id]) # Deal だとsubordinate がとってこられない。とれてもいいんだけど。
+    @tab_name = 'deal'
     prepare_select_deal_tab
-    render(:partial => "edit_deal", :layout => false)
+    p @deal
+    render(:action => "new", :layout => false)
   end
 
   # 残高変更状態にするAjaxアクション
   def edit_balance
+    load_and_assert_back_to  
     @deal = Balance.find(params[:id])
+    @tab_name = 'balance'
     prepare_select_balance_tab
-    render(:partial => "edit_balance", :layout => false)
+    render(:action => "new", :layout => false)
   end
   
   private
+  def load_and_assert_back_to
+    raise "back_to is not defined properly." unless params[:back_to] && params[:back_to][:controller] && params[:back_to][:action]
+    @back_to = params[:back_to].clone
+  end
+  
 
   # 明細登録・変更
   def save_deal
@@ -106,7 +100,6 @@ class DealController < ApplicationController
       deal = Deal.new(params[:deal])
       deal.user_id = @user.id
     end
-    deal.date = @date.to_date
     deal.save!
     deal
   end
@@ -123,7 +116,6 @@ class DealController < ApplicationController
       balance = Balance.new(params[:deal])
       balance.user_id = @user.id
     end
-      balance.date = @date.to_date
     balance.save!
     balance
   end
@@ -143,26 +135,17 @@ class DealController < ApplicationController
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
       @user.accounts.types_in(:asset, :expense), false
      )
-     @deal ||= Deal.new(params[:deal])
+    unless @deal
+      @deal = Deal.new(params[:deal])
+      @deal.date = target_date # セッションから判断した日付を入れる
+    end
+
     @patterns = [] # 入力支援    
   end
   
   def prepare_select_balance_tab
     @accounts_for_balance = @user.accounts.types_in(:asset)
     @deal ||=  Balance.new
-  end
-
-  # 仕分け帳　表示準備
-  def prepare_update_deals
-    # todo preference のロード整備
-    @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
-    begin
-      @deals = BaseDeal.get_for_month(@user.id, @target_month)
-      session[:target_month] = @target_month
-    rescue Exception
-      flash[:notice] = "不正な日付です。 " + @target_month.to_s
-      @deals = Array.new
-    end
   end
 
 end

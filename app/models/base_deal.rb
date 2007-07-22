@@ -13,9 +13,63 @@ class BaseDeal < ActiveRecord::Base
   attr_accessor :old_date
   
   include ModelHelper
-  
-  before_save :set_daily_seq
 
+  before_validation :update_date
+  before_save :set_daily_seq
+  validates_presence_of :date
+
+  def year
+    split_date if !@year && self[:date]
+    @year
+  end  
+  def month
+    split_date if !@month && self[:date]
+    @month
+  end  
+  def day
+    split_date if !@day && self[:date]
+    @day
+  end
+  
+  def year=(year)
+    self[:date] = nil
+    @year = year
+  end
+
+  def month=(month)
+    self[:date] = nil
+    @month = month
+  end
+
+  def day=(day)
+    self[:date] = nil
+    @day = day
+  end
+  
+  def split_date
+    @year = self[:date] ? self[:date].year : nil
+    @month = self[:date] ? self[:date].month : nil
+    @day = self[:date] ? self[:date].day : nil
+  end
+  
+  def date=(date)
+    self[:date] = nil
+    if date.kind_of?(Hash)
+      @year = date[:year]
+      @month = date[:month]
+      @day = date[:day]
+      update_date
+    else
+      self[:date] = date
+      split_date
+    end
+  end
+  
+  def date
+    update_date unless self[:date]
+    self[:date]
+  end
+  
   def settlement_attached?
     false
   end
@@ -144,6 +198,15 @@ class BaseDeal < ActiveRecord::Base
     end
     
   end
-
   
+  def update_date
+    return if self[:date] # あるならそのまま
+    
+    begin
+      self[:date] = Date.new(self.year.to_i, self.month.to_i, self.day.to_i)
+    rescue
+      self[:date] = nil
+    end
+  end
+
 end

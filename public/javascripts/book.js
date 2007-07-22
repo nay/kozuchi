@@ -111,11 +111,11 @@ Month.prototype = {
 
     $("calendar").innerHTML = str;
     
-    $("target_month_year").value = selectedMonth.year;
-    $("target_month_month").value = selectedMonth.month;
+    $("calendar_year").value = selectedMonth.year;
+    $("calendar_month").value = selectedMonth.month;
     
     if (updatesBook) {
-      document.forms.month_form.onsubmit();
+      document.forms.month_form.submit();
     }
   }
 

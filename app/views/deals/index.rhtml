@@ -1,8 +1,6 @@
     <%= render (:partial => "shared/calendar") %>
-
-    <%= render_component :controller => 'deal', :action => 'new', :params => {:back_to => {:controller => 'deals', :action => 'index'}, :deal => params[:deal]} %>
-
-    <div id="book" class="bottom_box">
-      <%= render :partial => "deals" %>
+    
+    <div id="monthly_contents">
+      <%= render :partial => 'monthly_contents' %>
     </div>
     

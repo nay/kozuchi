@@ -25,6 +25,12 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
+
+  # account_deals
+  map.connect 'account_deals/:account_id/:year/:month', :action => 'index', :controller => 'account_deals'
+
+  # deals, profit_and_loss
+  map.connect ':controller/:year/:month', :action => 'index', :requirements => {:controller => /^deals$|^profit_and_loss$|^assets$|^balance_sheet$/}
   
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'

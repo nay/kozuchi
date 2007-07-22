@@ -1,6 +1,7 @@
 class DealsController < ApplicationController
+  include WithCalendar
   layout 'main'
-  before_filter :check_account
+  before_filter :check_account, :load_target_date
   include ApplicationHelper
 
   # ----- 入力画面表示系 -----------------------------------------------
@@ -14,13 +15,19 @@ class DealsController < ApplicationController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
+    if !params[:year] || !params[:month]
+      redirect_to_index
+      return 
+    end
+    self.target_date = {:year => params[:year], :month => params[:month]}
+    @target_date = target_date()
+    
     @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
     if @updated_deal
       @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date
     else
-      @target_month = session[:target_month]
-      @date = @target_month || DateBox.today
-      @target_month ||= DateBox.this_month
+      @target_month = DateBox.new('year' => @target_date[:year], 'month' => @target_date[:month], 'day' => @target_date[:day])
+      @date = @target_month
     end
     today = DateBox.today
     @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
@@ -28,13 +35,15 @@ class DealsController < ApplicationController
   end
 
   # 仕分け帳画面部分だけを更新するためのAjax対応処理
-  def update
-    @target_month = DateBox.new(params[:target_month])
-    today = DateBox.today
-    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-    render(:partial => "deals", :layout => false)
-  end
+  # カレンダーが変更されたとき呼ばれる。URLやメソッド名を変えたい。
+#  def update
+#    @target_month = DateBox.new(params[:target_month])
+#    today = DateBox.today
+#    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
+#    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+#    self.target_date = params[:target_month].clone
+#    render(:partial => "monthly_contents", :layout => false)
+#  end
 
   # ----- 編集実行系 --------------------------------------------------
 
@@ -70,6 +79,7 @@ class DealsController < ApplicationController
     @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
     begin
       @deals = BaseDeal.get_for_month(@user.id, @target_month)
+      # TODO: 外にだしたい
       session[:target_month] = @target_month
     rescue Exception
       flash[:notice] = "不正な日付です。 " + @target_month.to_s

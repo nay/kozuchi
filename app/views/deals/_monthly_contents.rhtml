@@ -1,0 +1,7 @@
+    <div id="edit_box" class="middle_box">
+      <%= render_component :controller => 'deal', :action => 'new', :params => {:back_to => {:controller => 'deals', :action => 'index'}, :deal => params[:deal]} %>
+    </div>
+
+    <div id="book" class="bottom_box">
+      <%= render :partial => "deals" %>
+    </div>

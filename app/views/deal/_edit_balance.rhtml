@@ -18,11 +18,4 @@
       <label>残高:</label><%= text_field("deal", "balance", :size => "8", :tabindex => "11")%>円
       <button type="submit" tabindex="12">記入</button>
     </div>
-    <% if @deal.date %>
-      <script>
-        $('date_year').value = '<%=@deal.date.year%>'
-        $('date_month').value = '<%=@deal.date.month%>'
-        $('date_day').value = '<%=@deal.date.day%>'
-      </script>
-    <% end %>
     

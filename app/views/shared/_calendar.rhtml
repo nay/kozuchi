@@ -4,17 +4,16 @@
     <div id="calendar" class="top_box">
     </div>
 
-    <%= form_remote_tag (:update => 'book', :url => {:action => 'update'},
-     :html => {:id => 'month_form'} ) %>
+    <%= form_tag ({:action => 'change_month'}, :method => 'get', :id => 'month_form') %>
       <% if calendar %>
         <%= render :partial => calendar %>
       <% end %>
-      <%= hidden_field("target_month", "year") %>
-      <%= hidden_field("target_month", "month") %>
+      <input type="hidden" id="calendar_year" name="year" value="<%= @target_date[:year]%>" />
+      <input type="hidden" id="calendar_month" name="month" value="<%= @target_date[:month]%>" />
     <%=end_form_tag%>
 
 <%= javascript_tag <<-END
-      select_month(#{@target_month.year},#{@target_month.month}, false);
+      select_month(#{params[:year]},#{params[:month]}, false);
 END
 %>
 </div>    
