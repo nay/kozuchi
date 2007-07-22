@@ -105,7 +105,7 @@ EOS
   # 一行を表示する　(table.book の下で呼ばれることを前提とする)
   def book_line(contents = {})
     string = "<tr>\n"
-    string += "<td>#{contents[:name]}</td>\n" if contents[:name]
+    string += "<td>#{h contents[:name]}</td>\n" if contents[:name]
     string += "<td class='percentage'>#{contents[:percentage]}%</td>\n" if contents[:percentage]
     string += "<td class='amount'>#{number_with_delimiter(contents[:amount])}</td>\n" if contents[:amount]
     string += "</tr>\n"

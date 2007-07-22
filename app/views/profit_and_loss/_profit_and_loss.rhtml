@@ -1,6 +1,6 @@
 <!-- 通信欄-->
 <% if @flash[:notice] || @flash[:notice].to_s != ""%>
-  <div id="notice"><%=@flash[:notice]%></div>
+  <div id="notice"><%= h @flash[:notice]%></div>
 <% end %>
 
 <div class="table_block">
@@ -12,7 +12,7 @@
       </tr>
       <% for summary in @expenses_summaries %>
       <tr>
-        <td><%= summary.name %></td>
+        <td><%= h summary.name %></td>
         <td class="percentage"><%= @expenses_sum != 0 ?
           (summary.sum * 100.0 / @expenses_sum).round : 0%>%</td>
         <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
@@ -28,7 +28,7 @@
         </tr>
         <% for summary in @incomes_summaries %>
         <tr>
-          <td><%= summary.name %></td>
+          <td><%= h summary.name %></td>
           <td class="percentage"><%= @incomes_sum != 0 ?
         (summary.sum * 100.0 / @incomes_sum).round : 0 %>%</td>
           <td class="amount"><%= number_with_delimiter(summary.sum)%></td>
@@ -88,7 +88,7 @@
       </tr>
       <% for summary in @asset_minus_summaries %>
       <tr>
-        <td><%= summary.account.name %></td>
+        <td><%= h summary.account.name %></td>
         <td class="amount">-<%= number_with_delimiter(summary.diff.abs)%></td>
       </tr>
       <% end %>
@@ -101,7 +101,7 @@
       </tr>
       <% for summary in @asset_plus_summaries %>
       <tr>
-        <td><%= summary.account.name %></td>
+        <td><%= h summary.account.name %></td>
         <td class="amount">+<%= number_with_delimiter(summary.diff)%></td>
       </tr>
       <% end %>
