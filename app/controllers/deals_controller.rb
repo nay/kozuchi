@@ -23,6 +23,7 @@ class DealsController < ApplicationController
     self.target_date = {:year => params[:year], :month => params[:month]}
     @target_date = target_date()
     
+    # TODO: 整理して共通化
     @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
     if @updated_deal
       @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date

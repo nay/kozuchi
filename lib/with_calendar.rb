@@ -11,7 +11,8 @@ module WithCalendar
   private
   def redirect_to_index(options = {})
     if options[:updated_deal_id]
-      updated_deal = BaseDeal.find(options[:updated_deal_id])
+      updated_deal = BaseDeal.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
+      raise ActiveRecord::RecordNotFound unless updated_deal
       year = updated_deal.year
       month = updated_deal.month
     else
