@@ -30,7 +30,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'account_deals/:account_id/:year/:month', :action => 'index', :controller => 'account_deals'
 
   # deals, profit_and_loss
-  map.connect ':controller/:year/:month', :action => 'index', :requirements => {:controller => /^deals$|^profit_and_loss$|^assets$|^balance_sheet$/}
+  map.connect ':controller/:year/:month', :action => 'index',
+    :requirements => {:controller => /^deals$|^profit_and_loss$|^assets$|^balance_sheet$/,
+                      :year => /^[0-9]*$/, :year => /^[0-9]*$/}
   
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'

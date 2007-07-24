@@ -9,8 +9,10 @@ module WithCalendar
   end
   
   private
-  def redirect_to_index
-    redirect_to :action => 'index', :year => target_date[:year], :month => target_date[:month]
+  def redirect_to_index(options = {})
+    options.merge!({:action => 'index', :year => target_date[:year], :month => target_date[:month]})
+    p "redirect_to_index #{options}"
+    redirect_to options
   end
   
   def redirect_unless_month
