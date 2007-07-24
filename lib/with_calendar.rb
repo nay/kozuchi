@@ -10,8 +10,15 @@ module WithCalendar
   
   private
   def redirect_to_index(options = {})
-    options.merge!({:action => 'index', :year => target_date[:year], :month => target_date[:month]})
-    p "redirect_to_index #{options}"
+    if options[:updated_deal_id]
+      updated_deal = BaseDeal.find(options[:updated_deal_id])
+      year = updated_deal.year
+      month = updated_deal.month
+    else
+      year = target_date[:year]
+      month = target_date[:month]
+    end
+    options.merge!({:action => 'index', :year => year, :month => month})
     redirect_to options
   end
   
