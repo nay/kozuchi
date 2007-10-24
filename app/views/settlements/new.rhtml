@@ -9,7 +9,7 @@
     <tr>
       <th>期間</th>
       <td>
-        <div><%= select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)%> ～ <%= select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true) %> <button onClick="alert('change_conditions');<%= change_condition%>;return false;">表示内容を更新</button></div>
+        <div><%= select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)%> ～ <%= select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true) %> <button onClick="<%= change_condition%>;">表示内容を更新</button></div>
       </td>
     </tr>
   </table>
