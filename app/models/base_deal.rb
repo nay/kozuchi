@@ -5,7 +5,8 @@ class BaseDeal < ActiveRecord::Base
   has_many   :account_entries,
              :foreign_key => 'deal_id',
              :exclusively_dependent => true,
-             :order => "amount"
+             :order => "amount",
+             :include => :account
 
   belongs_to :user
 

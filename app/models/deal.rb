@@ -1,13 +1,27 @@
 # 異動明細クラス。
 # TODO: 最終的に精算データが空になったらなくすとか、削除できないなどの処理をしたい。削除しつづけるとおかしな精算データができる恐れあり。
 class Deal < BaseDeal
-  attr_accessor :minus_account_id, :plus_account_id, :amount, :minus_account_friend_link_id, :plus_account_friend_link_id
+  attr_writer :minus_account_id, :plus_account_id, :amount
+  attr_accessor :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
              :class_name => 'SubordinateDeal',
              :foreign_key => 'parent_deal_id',
              :dependent => true
 
   after_save :create_relations, :create_children
+
+  def plus_account_id
+    refresh_account_info unless refreshed?
+    @plus_account_id
+  end
+  def minus_account_id
+    refresh_account_info unless refreshed?
+    @minus_account_id
+  end
+  def amount
+    refresh_account_info unless refreshed?
+    @amount
+  end
 
   def settlement_attached?
     !account_entries.detect{|e| e.settlement_attached?}.nil?
@@ -19,12 +33,12 @@ class Deal < BaseDeal
 
   def before_validation
     # もし金額にカンマが入っていたら正規化する
-    @amount = @amount.gsub(/,/,'') if @amount.class == String
+    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
   end
 
   def validate
     errors.add_to_base("同じ口座から口座への異動は記録できません。") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
-    errors.add_to_base("金額が0となっています。") if @amount.to_i == 0
+    errors.add_to_base("金額が0となっています。") if self.amount.to_i == 0
     # もし精算データにひもづいているのに口座が対応していなくなったらエラー（TODO: 将来はかしこくするが現時点では精算ルール側でなおさないとだめにする）
     # errors.add_to_base("#{self.settlement.account.name} の精算データに含まれているため、変更できません。") if self.settlement && self.minus_account_id != self.settlement.account_id && self.plus_account_id != self.settlement.account_id
   end
@@ -77,18 +91,19 @@ class Deal < BaseDeal
   # Prepare sugar methods
   def after_find
     set_old_date
-    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-#    raise "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-    return unless account_entries.size == 2
-    
-    for et in account_entries
-      if et.amount >= 0
-        @plus_account_id = et.account_id
-        @amount = et.amount
-      else
-        @minus_account_id = et.account_id
-      end
-    end
+    # account_enrties がまだできていないときにやるとパフォーマンスロスになるので refresh_account_infoに移動
+#    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
+##    raise "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
+#    return unless account_entries.size == 2
+#    
+#    for et in account_entries
+#      if et.amount >= 0
+#        @plus_account_id = et.account_id
+#        @amount = et.amount
+#      else
+#        @minus_account_id = et.account_id
+#      end
+#    end
   end
   
   def before_destroy
@@ -111,8 +126,8 @@ class Deal < BaseDeal
   def clear_entries_before_update
     for entry in account_entries
       # この取引の勘定でなくなっていたら、entryを消す
-      if @plus_account_id.to_i != entry.account_id.to_i && @minus_account_id.to_i != entry.account_id.to_i
-        p "plus_account_id = #{@plus_account_id} . minus_account_id = #{@minus_account_id}. this_entry_account_id = #{entry.account_id}" 
+      if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
+        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}" 
         entry.destroy
       end
     end
@@ -126,18 +141,18 @@ class Deal < BaseDeal
   def update_account_entry(is_minus, is_first, deal_link_for_second)
     deal_link_id_for_second = deal_link_for_second ? deal_link_for_second.id : nil
     if is_minus
-      entry_account_id = @minus_account_id
-      entry_amount = @amount.to_i*(-1)
+      entry_account_id = self.minus_account_id
+      entry_amount = self.amount.to_i*(-1)
       entry_friend_link_id = @minus_account_friend_link_id
       entry_friend_link_id ||= deal_link_id_for_second if !is_first
-      another_entry_account = is_first ? Account::Base.find(@plus_account_id) : nil
+      another_entry_account = is_first ? Account::Base.find(self.plus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     else
-      entry_account_id = @plus_account_id
-      entry_amount = @amount.to_i
+      entry_account_id = self.plus_account_id
+      entry_amount = self.amount.to_i
       entry_friend_link_id = @plus_account_friend_link_id
       entry_friend_link_id ||= deal_link_id_for_second if !is_first
-      another_entry_account = is_first ? Account::Base.find(@minus_account_id) : nil
+      another_entry_account = is_first ? Account::Base.find(self.minus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     end
     
@@ -169,9 +184,9 @@ class Deal < BaseDeal
     # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
     entry = nil
-    entry = update_account_entry(true, true, nil) if @amount.to_i >= 0     # create minus
+    entry = update_account_entry(true, true, nil) if self.amount.to_i >= 0     # create minus
     entry = update_account_entry(false, !entry, entry ? entry.new_plus_link : nil) # create plus
-    update_account_entry(true, false, entry.new_plus_link) if @amount.to_i < 0   # create_minus
+    update_account_entry(true, false, entry.new_plus_link) if self.amount.to_i < 0   # create_minus
     
     account_entries(true)
 
@@ -197,6 +212,28 @@ class Deal < BaseDeal
             :summary => "",
             :confirmed => false)
         end
+      end
+    end
+  end
+  
+  def refreshed?
+    return true if new_record?
+    @refresh ||= false
+    @refresh
+  end
+  
+  # 高速化のため、after_find でやっていたのを lazy にしてここへ
+  def refresh_account_info
+    @refrehsed = true
+    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
+    return unless account_entries.size == 2
+    
+    for et in account_entries
+      if et.amount >= 0
+        @plus_account_id = et.account_id
+        @amount = et.amount
+      else
+        @minus_account_id = et.account_id
       end
     end
   end

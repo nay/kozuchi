@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 10) do
 
   create_table "account_entries", :force => true do |t|
     t.column "user_id", :integer, :default => 0, :null => false
@@ -15,10 +15,20 @@ ActiveRecord::Schema.define(:version => 9) do
     t.column "result_settlement_id", :integer
   end
 
+  add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
+  add_index "account_entries", ["deal_id"], :name => "account_entries_deal_id_index"
+  add_index "account_entries", ["user_id"], :name => "account_entries_user_id_index"
+  add_index "account_entries", ["friend_link_id"], :name => "account_entries_friend_link_id_index"
+  add_index "account_entries", ["settlement_id"], :name => "account_entries_settlement_id_index"
+  add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
+
   create_table "account_links", :id => false, :force => true do |t|
     t.column "account_id", :integer, :default => 0, :null => false
     t.column "connected_account_id", :integer, :default => 0, :null => false
   end
+
+  add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
+  add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
 
   create_table "account_rules", :force => true do |t|
     t.column "user_id", :integer, :default => 0, :null => false
@@ -39,6 +49,9 @@ ActiveRecord::Schema.define(:version => 9) do
     t.column "type", :text
   end
 
+  add_index "accounts", ["user_id"], :name => "accounts_user_id_index"
+  add_index "accounts", ["partner_account_id"], :name => "accounts_partner_account_id_index"
+
   create_table "admin_users", :force => true do |t|
     t.column "name", :string
     t.column "hashed_password", :string, :limit => 40
@@ -58,8 +71,10 @@ ActiveRecord::Schema.define(:version => 9) do
     t.column "parent_deal_id", :integer
     t.column "created_at", :datetime
     t.column "updated_at", :datetime
-    t.column "settled_in", :integer
   end
+
+  add_index "deals", ["user_id"], :name => "deals_user_id_index"
+  add_index "deals", ["parent_deal_id"], :name => "deals_parent_deal_id_index"
 
   create_table "friends", :force => true do |t|
     t.column "user_id", :integer, :default => 0, :null => false
