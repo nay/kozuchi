@@ -1,7 +1,6 @@
 # 異動明細クラス。
 # TODO: 最終的に精算データが空になったらなくすとか、削除できないなどの処理をしたい。削除しつづけるとおかしな精算データができる恐れあり。
 class Deal < BaseDeal
-  attr_writer :minus_account_id, :plus_account_id, :amount
   attr_accessor :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
              :class_name => 'SubordinateDeal',
@@ -14,13 +13,25 @@ class Deal < BaseDeal
     refresh_account_info unless refreshed?
     @plus_account_id
   end
+  def plus_account_id=(id)
+    refresh_account_info unless refreshed?
+    @plus_account_id = id
+  end
   def minus_account_id
     refresh_account_info unless refreshed?
     @minus_account_id
   end
+  def minus_account_id=(id)
+    refresh_account_info unless refreshed?
+    @minus_account_id = id
+  end
   def amount
     refresh_account_info unless refreshed?
     @amount
+  end
+  def amount=(a)
+    refresh_account_info unless refreshed?
+    @amount = a
   end
 
   def settlement_attached?
@@ -218,13 +229,13 @@ class Deal < BaseDeal
   
   def refreshed?
     return true if new_record?
-    @refresh ||= false
-    @refresh
+    @refreshed ||= false
+    @refreshed
   end
   
   # 高速化のため、after_find でやっていたのを lazy にしてここへ
   def refresh_account_info
-    @refrehsed = true
+    @refreshed = true
     p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
     return unless account_entries.size == 2
     
