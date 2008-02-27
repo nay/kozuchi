@@ -34,12 +34,12 @@ h3 {
 }
 
 .form-padding table {
+  margin-left: 35%;
   text-align: center;
-  padding: 10%;
 }
 
 .prompt {
-  width: 8em;
+  width: 10em;
   text-align: left;
 }
 .value {
