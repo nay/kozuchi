@@ -28,14 +28,19 @@ h3 {
   margin-top: 1em;
 }
 
+.form {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
 .form-padding {
   text-align: center;
   margin: 16px;
 }
 
 .form-padding table {
-  margin-left: 35%;
   text-align: center;
+  margin: auto;
 }
 
 .prompt {
