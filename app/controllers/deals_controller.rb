@@ -1,6 +1,7 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
+  before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date
   include ApplicationHelper
 
@@ -16,10 +17,6 @@ class DealsController < ApplicationController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
-    if !params[:year] || !params[:month]
-      redirect_to_index
-      return 
-    end
     self.target_date = {:year => params[:year], :month => params[:month]}
     @target_date = target_date()
     
@@ -87,6 +84,10 @@ class DealsController < ApplicationController
       flash[:notice] = "不正な日付です。 " + @target_month.to_s
       @deals = Array.new
     end
+  end
+  
+  def specify_month
+    redirect_to_index and return false if !params[:year] || !params[:month]
   end
 
 end
