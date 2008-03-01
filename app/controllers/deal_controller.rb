@@ -56,7 +56,6 @@ class DealController < ApplicationController
   def update_patterns
     summary_key = request.raw_post
     @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
-    p "patterns.size = #{@patterns.size}"
     render(:partial => 'patterns')
   end
 
