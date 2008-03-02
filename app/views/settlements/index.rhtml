@@ -15,7 +15,7 @@
       <% for s in @settlements %>
 	    <% unless s.result_entry %>
 		<tr>
-		  <td colspan="7">請求(ID:<%= s.id%>のデータが破損しています。精算取引がありません。管理者に連絡してください。</td>
+		  <td colspan="7">請求(ID:<%= s.id%>、「<%= s.name %>」、相手先：<%= s.account ? s.account.name : '？' %>)のデータが破損しています。精算取引がありません。管理者に連絡してください。</td>
 		</tr>
 		<% else %>
         <tr>
