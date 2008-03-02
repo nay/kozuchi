@@ -54,6 +54,11 @@ class Settlement < ActiveRecord::Base
     submitted
   end
   
+  def deletable?
+    self.submitted_settlement_id.blank?
+  end
+    
+  
   protected
   
   def validate

@@ -1,6 +1,11 @@
 <%= flash_notice %>
 <div>
-  <div><%= link_to '一覧に戻る', :action => 'index' %> | <%= link_to '削除', {:action => 'delete', :id => @settlement.id}, :confirm => "精算データを削除すると、精算結果の取引も自動的に削除されます。精算データを削除してよろしいですか？" %></div>
+  <div>
+  	<%= link_to '一覧に戻る', :action => 'index' %>
+	<% if @settlement.deletable? %>
+    | <%= link_to '削除', {:action => 'delete', :id => @settlement.id}, :confirm => "精算データを削除すると、精算結果の取引も自動的に削除されます。精算データを削除してよろしいですか？" %>
+	<% end %>
+　　</div>
   <br />
   <table>
     <tr>
@@ -19,6 +24,9 @@
 
   <% if @settlement.kind_of?(SubmittedSettlement) %>
     <div style="text-align:center; font-weigt: bold;">この精算は<%= h @settlement.resource.user.login %>さんから提出されたことによりできたものです。</div>
+  <% end %>
+  <% if @settlement.submitted_settlement %>
+    <div style="text-align:center; font-weigt: bold;">この精算は<%= h @settlement.submitted_settlement.user.login %>さんに提出済です。削除するには先方に取消を依頼してください。</div>
   <% end %>
 
 
