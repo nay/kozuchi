@@ -23,6 +23,7 @@ option {
 #notice {
   padding: 8px;
   background-color: gold;
+  margin-bottom: 4px;
 }
 
 #errors {

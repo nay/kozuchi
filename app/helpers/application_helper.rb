@@ -4,6 +4,14 @@ module ApplicationHelper
   
   include TermHelper
 
+  # 通信欄
+  def flash_notice
+    if @flash[:notice] || @flash[:notice].to_s != ""
+      return "<div id=\"notice\">#{h flash[:notice]}</div>"
+    end
+    ''
+  end
+
   # 口座に注目したときの表記
   def display_account_entry(entry, style = nil)
     e = entry.another_account_entry

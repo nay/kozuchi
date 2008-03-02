@@ -31,10 +31,19 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def before_update
-    # リンクがあれば切る
-    clear_friend_deal
-    # 作る
-    create_friend_deal
+    if contents_updated?
+      # リンクがあれば切る
+      clear_friend_deal
+      # 作る
+      create_friend_deal
+    end
+  end
+
+  def contents_updated?
+    stored = AccountEntry.find(self.id)
+
+    # 金額/残高が変更されていたら中身が変わったとみなす
+    stored.amount.to_i != self.amount.to_i || stored.balance.to_i != self.balance.to_i
   end
   
   def before_destroy
@@ -141,17 +150,6 @@ class AccountEntry < ActiveRecord::Base
     return c
   end
   
-  private
-
-  def connected_account_in_another_entry_other_than(another_account)
-    p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
-    return nil unless self.another_entry_account
-    c = AccountEntry.calc_connected_account(self.another_entry_account, nil) # todo to_be_connected. ignore? 
-    c = nil if c && (c.id == another_account.id || c.user.id != another_account.user.id)
-    p "returned #{c}"
-    return c
-  end
-
   # 新しく連携先取引を作成する
   # connected_account が指定されていれば、それが連携対象となっていれば登録する
   # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
@@ -193,4 +191,14 @@ class AccountEntry < ActiveRecord::Base
     
   end
 
+  private
+
+  def connected_account_in_another_entry_other_than(another_account)
+    p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
+    return nil unless self.another_entry_account
+    c = AccountEntry.calc_connected_account(self.another_entry_account, nil) # todo to_be_connected. ignore? 
+    c = nil if c && (c.id == another_account.id || c.user.id != another_account.user.id)
+    p "returned #{c}"
+    return c
+  end
 end
