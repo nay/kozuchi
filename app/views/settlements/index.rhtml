@@ -15,7 +15,8 @@
       <% for s in @settlements %>
 	    <% unless s.result_entry %>
 		<tr>
-		  <td colspan="7">請求(ID:<%= s.id%>、「<%= s.name %>」、相手先：<%= s.account ? s.account.name : '？' %>)のデータが破損しています。精算取引がありません。管理者に連絡してください。</td>
+		  <td colspan="6">請求(ID:<%= s.id%>、「<%= s.name %>」、相手先：<%= s.account ? s.account.name : '？' %>)のデータが破損しています。精算取引がありません。管理者に連絡してください。</td>
+          <td><%= link_to '詳細', :action => 'view', :id => s.id %></td>
 		</tr>
 		<% else %>
         <tr>
