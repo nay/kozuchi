@@ -42,7 +42,7 @@
 
   <h3>精算結果</h3>
   <% unless @settlement.result_entry %>
-  <div>データが破損しています。精算取引がありません。管理者に連絡してください。</div>
+  <div style="color:red; font-weight: bold;">データが破損しています。精算取引がありません。管理者に連絡してください。</div>
   <% else %>
   <table class="book">
     <tr>
