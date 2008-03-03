@@ -239,24 +239,15 @@ class Deal < BaseDeal
     p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
     return unless account_entries.size == 2
     
-    require_revert = false
     for et in account_entries
       if et.amount >= 0
         @plus_account_id = et.account_id
         @amount = et.amount
       else
         @minus_account_id = et.account_id
-        require_revert = true if et.account.type_in?(:expense)
       end
     end
-    
-    if require_revert
-      plus = @plus_account_id
-      @plus_account_id = @minus_account_id
-      @minus_account_id = plus
-      @amount *= -1
-    end
-    
+        
   end
   
 end
