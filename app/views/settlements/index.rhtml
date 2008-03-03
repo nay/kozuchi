@@ -26,9 +26,9 @@
 		  <% end -%>
 		  <td>
 		  	<% if s.submitted_settlement_id -%>
-			  '提出済'
+			  提出済
 			<% elsif s.kind_of?(SubmittedSettlement) %>
-			  '受理'
+			  受理
 			<% end -%>
 		  </td>
           <td><%= link_to '詳細', :action => 'view', :id => s.id %></td>
