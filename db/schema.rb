@@ -5,10 +5,10 @@
 ActiveRecord::Schema.define(:version => 11) do
 
   create_table "account_entries", :force => true do |t|
-    t.column "user_id", :integer, :default => 0, :null => false
-    t.column "account_id", :integer, :default => 0, :null => false
-    t.column "deal_id", :integer, :default => 0, :null => false
-    t.column "amount", :integer, :default => 0, :null => false
+    t.column "user_id", :integer, :null => false
+    t.column "account_id", :integer, :null => false
+    t.column "deal_id", :integer, :null => false
+    t.column "amount", :integer, :null => false
     t.column "balance", :integer
     t.column "friend_link_id", :integer
     t.column "settlement_id", :integer
@@ -23,25 +23,25 @@ ActiveRecord::Schema.define(:version => 11) do
   add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 
   create_table "account_links", :id => false, :force => true do |t|
-    t.column "account_id", :integer, :default => 0, :null => false
-    t.column "connected_account_id", :integer, :default => 0, :null => false
+    t.column "account_id", :integer, :null => false
+    t.column "connected_account_id", :integer, :null => false
   end
 
   add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
   add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
 
   create_table "account_rules", :force => true do |t|
-    t.column "user_id", :integer, :default => 0, :null => false
-    t.column "account_id", :integer, :default => 0, :null => false
-    t.column "associated_account_id", :integer, :default => 0, :null => false
+    t.column "user_id", :integer, :null => false
+    t.column "account_id", :integer, :null => false
+    t.column "associated_account_id", :integer, :null => false
     t.column "closing_day", :integer, :default => 0, :null => false
     t.column "payment_term_months", :integer, :default => 1, :null => false
     t.column "payment_day", :integer, :default => 0, :null => false
   end
 
   create_table "accounts", :force => true do |t|
-    t.column "user_id", :integer, :default => 0, :null => false
-    t.column "name", :string, :limit => 32, :default => "", :null => false
+    t.column "user_id", :integer, :null => false
+    t.column "name", :string, :limit => 32, :null => false
     t.column "account_type_code", :integer
     t.column "asset_type_code", :integer
     t.column "sort_key", :integer
@@ -62,11 +62,11 @@ ActiveRecord::Schema.define(:version => 11) do
   end
 
   create_table "deals", :force => true do |t|
-    t.column "type", :string, :limit => 20, :default => "", :null => false
-    t.column "user_id", :integer, :default => 0, :null => false
+    t.column "type", :string, :limit => 20, :null => false
+    t.column "user_id", :integer, :null => false
     t.column "date", :date, :null => false
-    t.column "daily_seq", :integer, :default => 0, :null => false
-    t.column "summary", :string, :limit => 64, :default => "", :null => false
+    t.column "daily_seq", :integer, :null => false
+    t.column "summary", :string, :limit => 64, :null => false
     t.column "confirmed", :boolean, :default => true, :null => false
     t.column "parent_deal_id", :integer
     t.column "created_at", :datetime
@@ -77,13 +77,13 @@ ActiveRecord::Schema.define(:version => 11) do
   add_index "deals", ["parent_deal_id"], :name => "deals_parent_deal_id_index"
 
   create_table "friends", :force => true do |t|
-    t.column "user_id", :integer, :default => 0, :null => false
-    t.column "friend_user_id", :integer, :default => 0, :null => false
+    t.column "user_id", :integer, :null => false
+    t.column "friend_user_id", :integer, :null => false
     t.column "friend_level", :integer, :default => 1, :null => false
   end
 
   create_table "preferences", :force => true do |t|
-    t.column "user_id", :integer, :default => 0, :null => false
+    t.column "user_id", :integer, :null => false
     t.column "deals_scroll_height", :string, :limit => 20
     t.column "color", :string, :limit => 32
     t.column "business_use", :boolean, :default => false, :null => false

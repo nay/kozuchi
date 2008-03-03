@@ -140,8 +140,8 @@ EOS
       end
       if (is_asc)
         groups << assets if assets
-        groups << expenses if expenses
         groups << incomes if incomes
+        groups << expenses if expenses
       else
         groups << expenses if expenses
         groups << assets if assets

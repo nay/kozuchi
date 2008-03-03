@@ -71,6 +71,7 @@ module LoginEngine
   config :app_name, "小槌"
   config :changeable_fields, ['lastname', 'firstname', 'login', 'email']
   config :mail_charset, "iso-2022-jp"
+#  config :use_email_notification, false
 end
 ActionMailer::Base.default_charset = 'iso-2022-jp'
 
