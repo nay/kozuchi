@@ -1,4 +1,5 @@
-<% if @patterns && !@patterns.empty? %>
+<% if @patterns && !@patterns.empty? -%>
+  <%= javascript_tag "$('patterns').style.display = 'block';"%>
   <div style="background-color:white;">
     <table>
     <% for pattern in @patterns %>
@@ -9,9 +10,9 @@
         <td> → </td>
         <td>[<%= pattern.account_entries[1].account.name %>]</td>
       </tr>
-    <% end %>
+    <% end -%>
     </table>
   </div>
-<% else %>
-  <br />
-<% end %>
+<% else -%>
+  <%= javascript_tag "$('patterns').style.display = 'none';"%>
+<% end -%>
