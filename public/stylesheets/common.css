@@ -56,3 +56,21 @@ button, input.button, td.button input {
   padding-top:16px;
 }
 
+.information {
+  margin: 1em 6em;
+  border: 2px dotted darkgoldenrod;
+  background-color: #fff0f5;
+  padding: 1em 2em;
+  text-align: left;
+}
+.information h3 {
+  margin-top: 0;
+  text-align: center;
+}
+.information h4 {
+  color: lightcoral;	
+}
+.information ul {
+  padding-left: 1em;
+}
+

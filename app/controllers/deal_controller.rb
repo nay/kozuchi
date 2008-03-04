@@ -55,8 +55,6 @@ class DealController < ApplicationController
   # 新規編集でサマリが編集されたときにくるAjaxメソッド
   def update_patterns
     summary_key = request.raw_post
-    p summary_key
-    p request.inspect
     @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
     render(:partial => 'patterns')
   end
@@ -67,7 +65,6 @@ class DealController < ApplicationController
     @deal = BaseDeal.find(params[:id]) # Deal だとsubordinate がとってこられない。とれてもいいんだけど。
     @tab_name = 'deal'
     prepare_select_deal_tab
-    p @deal
     render(:action => "new", :layout => false)
   end
 

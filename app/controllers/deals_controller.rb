@@ -57,9 +57,7 @@ class DealsController < ApplicationController
   
   # 確認処理
   def confirm
-    p "confirm"
     deal = BaseDeal.get(params[:id], @user.id)
-    p "deal = #{deal}"
     raise "Could not get deal #{params[:id]}" unless deal
     
     deal.confirm
