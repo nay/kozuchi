@@ -189,7 +189,7 @@ EOS
       t.add_menu('家計簿', :controller => "/deals", :action => 'index')
       t.add_menu('精算', :controller => '/settlements', :action => 'new')
       t.add_menu('基本設定', :controller => "/settings/assets", :action => "index")
-      t.add_menu('高度な設定', :controller => "/settings/account_rules", :action => "index")
+      t.add_menu('高度な設定', :controller => "/settings/friends", :action => "index")
       t.add_menu('ヘルプ', :controller => "/help", :action => "index")
       t.add_menu('ログアウト', :controller => "/user", :action => "logout")
       t
@@ -200,7 +200,7 @@ EOS
 
       menues.create_menu_tree('家計簿') {|t|
         t.add_menu('仕訳帳', :controller => '/deals', :action => 'index')
-        t.add_menu('日めくり', :controller => '/daily_booking', :action => 'index')
+#        t.add_menu('日めくり', :controller => '/daily_booking', :action => 'index')
         t.add_menu('口座別出納', :controller => '/account_deals', :action => 'index')
         t.add_menu('収支表', :controller => '/profit_and_loss', :action => 'index')
         t.add_menu('資産表', :controller => '/assets', :action => 'index')
@@ -221,11 +221,11 @@ EOS
       }
       
       menues.create_menu_tree('高度な設定') {|t|
-        t.add_menu('精算ルール', :controller => '/settings/account_rules',:action => 'index')
         t.add_menu('フレンド', :controller => '/settings/friends',:action => 'index')
         t.add_menu('取引連動',:controller => '/settings/deal_links', :action => 'index')
         t.add_menu('受け皿', :controller => '/settings/partner_account', :action => 'index')
         t.add_menu('カスタマイズ', :controller => '/settings/preferences',:action => 'index')
+        t.add_menu('精算ルール', :controller => '/settings/account_rules',:action => 'index')
       }
       
       menues.create_menu_tree('ヘルプ') {|t|

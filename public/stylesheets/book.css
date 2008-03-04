@@ -458,4 +458,11 @@ h4 {
 p.example {
   padding: 0.2em 0;
   font-style: italic;
+  color: green;
+  font-weight: bold;
+}
+
+p.deprecated {
+  padding: 0.2em 0;
+  color: red;
 }

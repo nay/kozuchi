@@ -1,5 +1,6 @@
 <div class="top_box">
   <div class="form_box">
+  	<p class="deprecated">この機能は非推奨です。そのうち廃止する予定なので新しく使うことは避けてください。代わりに、新方式の<%= link_to '精算', :controller => '/settlements', :action => 'new' %>の仕組みを使ってください。</p>
     <% if @creatable %>
       <%= form_tag :action => 'create_account_rule'%>
         <label>適用対象</label>

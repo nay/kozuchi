@@ -15,7 +15,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '', :controller => "user", :action => "login"
   
   map.connect 'admin/:action', :controller => "admin/admin"
-  
+
+  # Off daily-booking
+  map.connect 'daily_booking/*any', :controller => 'open', :action => 'not_found'
+
   map.connect ':controller', :action => 'index'
   
 #  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
