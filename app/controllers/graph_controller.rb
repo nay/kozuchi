@@ -7,7 +7,9 @@ class GraphController < ApplicationController
 
   def pie
     labels = params[:labels].split(',')
+    labels = labels[0,10] # グラフに表示できる最大数を10個に制限する
     values = params[:values].split(',')
+    values = values[0,10]
 
     values.map! do |x|
       x.to_f
