@@ -1,12 +1,12 @@
 <div  class="form">
   <h3>ユーザー登録</h3>
 
-  <%= error_messages_for 'user' %>
+  <%= error_messages_for :user %>
 
   <div class="form-padding">
     <%  form_tag :action => 'signup'  do %>
-      <%= render_partial 'edit', :user => @user, :submit => false %>
-      <%= render_partial 'password', :submit => false %>
+      <%= render :partial => 'edit', :locals => {:user => @user, :submit => false} %>
+      <%= render :partial =>  'password', :locals => {:submit => false} %>
 
       <div class="button-bar">
         <%= submit_tag '登録' %>

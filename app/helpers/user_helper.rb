@@ -79,10 +79,10 @@ module UserHelper
   end
 
   def changeable(user, field)
-    if user.new_record? or LoginEngine.config(:changeable_fields).include?(field)
+#    if user.new_record? or LoginEngine.config(:changeable_fields).include?(field)
       :text_field
-    else
-      :read_only_field
-    end
+#    else
+#      :read_only_field
+#    end
   end
 end

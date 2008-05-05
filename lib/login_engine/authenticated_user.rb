@@ -143,11 +143,11 @@ module LoginEngine
     end
 
     def token_lifetime(hours = nil)
-      if hours.nil?
-        LoginEngine.config(:security_token_life_hours) * 60 * 60
-      else
-        hours * 60 * 60
-      end
+#      if hours.nil?
+#        LoginEngine.config(:security_token_life_hours) * 60 * 60
+#      else
+        100 * 60 * 60
+#      end
     end
 
   end

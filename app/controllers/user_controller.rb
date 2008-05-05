@@ -1,6 +1,6 @@
 class UserController < ApplicationController
 #  model   :user
-  skip_before_filter :login_required,  :only => "login"
+  skip_before_filter :login_required,  :only => ["login", "signup"]
 
   # Override this function in your own application to define a custom home action.
   def home
@@ -309,24 +309,25 @@ class UserController < ApplicationController
     params[:user].delete('verified') # you CANNOT pass this as part of the request
     @user = User.new(params[:user])
     begin
-      User.transaction(@user) do
+      User.transaction do
         @user.new_password = true
-        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+#        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
           @user.verified = 1
-        end
+ #       end
         if @user.save
           key = @user.generate_security_token
           url = url_for(:action => 'home', :user_id => @user.id, :key => key)
           msg = '登録は正常に受け付けられました。'
-          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
-            UserNotify.deliver_signup(@user, params[:user][:password], url)
-            flash_notice(msg + '登録確認メールを確認して登録処理を完了してください。')
-          else
+#          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+#            UserNotify.deliver_signup(@user, params[:user][:password], url)
+#            flash_notice(msg + '登録確認メールを確認して登録処理を完了してください。')
+#          else
             flash_notice(msg + 'ログインしてください。')
-          end
+ #         end
           redirect_to :action => 'login'
         end
       end
+      @user.reload
     rescue Exception => e
       flash_notice(nil, true)
 #      flash.now[:warning] = 'Error creating account: confirmation email not sent'
