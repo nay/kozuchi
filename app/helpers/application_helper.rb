@@ -6,7 +6,7 @@ module ApplicationHelper
 
   # 通信欄
   def flash_notice
-    if @flash[:notice] || @flash[:notice].to_s != ""
+    if flash[:notice] || flash[:notice].to_s != ""
       return "<div id=\"notice\">#{h flash[:notice]}</div>"
     end
     ''

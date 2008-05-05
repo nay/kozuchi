@@ -3,7 +3,7 @@
     <% if flash[:notice] %>
       <div><%= flash[:notice]%></div>
     <% end %>
-    <%= start_form_tag(:action => 'login')%>
+    <% form_tag(:action => 'login') do %>
       <table>
         <tr>
           <td>ID</td><td><%= text_field('admin_user', 'name')%></td>
@@ -14,6 +14,6 @@
         <tr>
           <td colspan="2"><%= submit_tag('ログイン') %></td>
       </table>
-    <%= end_form_tag %>
+    <% end  %>
   </body>
 </html>

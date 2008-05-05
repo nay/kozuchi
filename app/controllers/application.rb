@@ -1,13 +1,13 @@
-require 'login_engine'
 
 # Filters added to this controller will be run for all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
-  include LoginEngine
+#  include LoginEngine
+  include LoginEngine::AuthenticatedSystem
   helper :user
-  model :user, 'account/base', 'account/asset', 'account/income'
+ # model :user, 'account/base', 'account/asset', 'account/income'
   
-  before_filter :login_required, :set_charset, :set_ssl
+  before_filter :login_required, :set_ssl
 
   private
   
@@ -15,9 +15,9 @@ class ApplicationController < ActionController::Base
   # * session 内に user_id だけを入れるようにしたことに対応するため。
   # * 認証OKの場合に @user をセットするため
   def login_required
-    if not protect?(action_name)
-      return true  
-    end
+#    if not protect?(action_name)
+#      return true  
+#    end
 
     if user? and authorize?(User.find(session[:user_id]))
       load_user
@@ -111,11 +111,6 @@ class ApplicationController < ActionController::Base
     @menu_tree, @current_menu = ApplicationHelper::Menues.side_menues.load(:controller => "/" + self.class.controller_path, :action => self.action_name)
     @title = @menu_tree ? @menu_tree.name : self.class.controller_name
     @sub_title = @current_menu ? @current_menu.name : self.action_name
-  end
-
-  
-  def set_charset
-    @headers["Content-Type"] = 'text/html; charset=utf-8'
   end
   
   # @target_month と @date をセットする

@@ -1,9 +1,9 @@
 <div class="top_box">
   <div class="form_box">
-    <%= form_tag :action => 'create_friend'%>
+    <% form_tag :action => 'create_friend' do %>
       <label>ユーザーID</label><input type="text" name="friend_login_id" />
       <button type="submit">フレンド登録を申請する</button>
-    <%=end_form_tag%>
+    <% end %>
     <p class="guide">フレンド登録したいユーザーのIDを登録すると、フレンド登録申請状態となります。<br />相手ユーザーが承諾すると、フレンドとなります。<br /><br />
     フレンドと取引連動については、<%= link_to("ヘルプの「フレンドの項」", :controller => 'help', :action => 'functions', :anchor => "friend")%>に詳しいのでご参照ください。</p>
   </div>

@@ -1,6 +1,6 @@
 <!-- 通信欄-->
-<% if @flash[:notice] || @flash[:notice].to_s != ""%>
-  <div id="notice"><%= h @flash[:notice]%></div>
+<% if flash[:notice] || flash[:notice].to_s != ""%>
+  <div id="notice"><%= h flash[:notice]%></div>
 <% end %>
 
 <div class="table_block">

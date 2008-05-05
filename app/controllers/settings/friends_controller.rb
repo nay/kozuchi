@@ -12,7 +12,7 @@ class Settings::FriendsController < ApplicationController
   end
   
   def create_friend
-    friend_login_id = @params[:friend_login_id]
+    friend_login_id = params[:friend_login_id]
     if !friend_login_id || friend_login_id == ""
       flash_error("ユーザーIDを入力してください。")
       redirect_to(:action => 'index')

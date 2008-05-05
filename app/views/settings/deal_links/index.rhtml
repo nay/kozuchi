@@ -1,7 +1,7 @@
 <div class="top_box">
   <div class="form_box">
     <% if @friends.size > 0%>
-      <%= form_tag :action => 'connect_account'%>
+      <% form_tag :action => 'connect_account' do %>
         <%= h @user.login_id %>
         <span>さんの</span>
         <%= collection_select('account', 'id', @accounts, :id, :name_with_asset_type) %>
@@ -16,7 +16,7 @@
         </select>
         <span>で</span>
         <button type="submit">連動</button>
-      <%= end_form_tag %>
+      <% end %>
     <% else %>
      <p class="guide">取引連動機能を利用するには、フレンドが必要です。フレンド登録を申請し、お友達に承認をもらってください。</p>
     <% end %>

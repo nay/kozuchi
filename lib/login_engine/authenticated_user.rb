@@ -9,7 +9,7 @@ module LoginEngine
       base.class_eval do
 
         # use the table name given
-        set_table_name LoginEngine.config(:user_table)
+#        set_table_name LoginEngine.config(:user_table)
 
         attr_accessor :new_password
       
@@ -59,11 +59,11 @@ module LoginEngine
     
       def self.hashed(str)
         # check if a salt has been set...
-        if LoginEngine.config(:salt) == nil
-          raise "You must define a :salt value in the configuration for the LoginEngine module."
-        end
+#        if LoginEngine.config(:salt) == nil
+#          raise "You must define a :salt value in the configuration for the LoginEngine module."
+#        end
   
-        return Digest::SHA1.hexdigest("#{LoginEngine.config(:salt)}--#{str}--}")[0..39]
+        return Digest::SHA1.hexdigest("koban--#{str}--}")[0..39]
       end
     
       def self.salted_password(salt, hashed_password)

@@ -2,22 +2,30 @@ class Account::Asset < Account::Base
   type_order 1
   type_name '口座'
   short_name '口座'
-  connectable_type self
+  connectable_type Account::Asset
+
+  def name_with_asset_type
+    "#{self.name}(#{self.class.asset_name})"
+  end
+
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群
+  def self.types
+    [Account::Cache, Account::BankingFacility, Account::CreditCard, Account::Credit, Account::CapitalFund]
+  end
   
   def self.type_name(name = nil)
-    return Asset.type_name if self != Asset
+    return Account::Asset.type_name if self != Account::Asset
     super
   end
 
   def self.short_name(short_name = nil)
-    return Asset.short_name if self != Asset
+    return Account::Asset.short_name if self != Account::Asset
     super
   end
   
   def self.connectable_type(clazz = nil)
-    return Asset.connectable_type if self != Asset
+    return Account::Asset.connectable_type if self != Account::Asset
     super
   end
 
@@ -56,7 +64,7 @@ class Account::Asset < Account::Base
   # ---------- 機能
 
   has_one :account_rule,
-          :dependent => true,
+          :dependent => :destroy,
           :foreign_key => 'account_id'
   has_many :associated_account_rules,
            :class_name => 'AccountRule',
@@ -132,7 +140,7 @@ class Account::Asset < Account::Base
   # asset_type が金融機関でないのに、精算口座として使われていてはいけない。
   def validates_rule_associated
     # TODO: 属性化したい
-    unless self.kind_of? BankingFacility
+    unless self.kind_of? Account::BankingFacility
       errors.add(:type, "精算口座として精算ルールで使用されています。") unless AccountRule.find_associated_with(id).empty?
     end
   end

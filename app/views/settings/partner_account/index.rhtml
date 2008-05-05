@@ -15,7 +15,7 @@
       <th>操作</th>
     </tr>
     <% for account in @accounts %>
-      <%= form_tag :action => 'update'%>
+      <% form_tag :action => 'update' do %>
       <tr>
         <td><%= h account.name_with_asset_type %></td>
         <td>
@@ -30,7 +30,7 @@
           <button type="submit">更新</button>
         </td>
       </tr>
-    <%= end_form_tag %>
+    <% end %>
     <% end %>
   </table>
 </div>

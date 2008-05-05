@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class FriendDealTest < Test::Unit::TestCase
-  self.use_instantiated_fixtures  = false
-  fixtures :users
-  fixtures :friends
-  fixtures 'account/accounts'.to_sym
-  set_fixture_class  "account/accounts".to_sym => 'account/base'
-  fixtures :account_links
+#  self.use_instantiated_fixtures  = false
+#  fixtures :users
+#  fixtures :friends
+#  fixtures 'account/accounts'.to_sym
+#  set_fixture_class  "account/accounts".to_sym => 'account/base'
+#  fixtures :account_links
   
   # フレンド取引のテスト
   def test_not_confirmed

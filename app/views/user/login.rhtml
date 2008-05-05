@@ -7,7 +7,7 @@ END
 
 <div class="form">
   <div class="form-padding">
-    <%= start_form_tag :action => 'login'  %>
+    <% form_tag :action => 'login'  do %>
       <table>
         <%= form_input :text_field, "ログインID", "login", :size => 30 %>
         <%= form_input :password_field, "パスワード", "password", :size => 30 %>
@@ -17,7 +17,7 @@ END
         <%= submit_tag 'ログイン', :onclick => "if ($F('user_login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('user_password')=='') {alert('パスワードを入力してください。'); return false;}" %><br /><br />
         <%= link_to 'ユーザー登録', :action => 'signup' %> |
         <%= link_to 'パスワードを忘れたとき', :action => 'forgot_password' %>      </div>
-    <%= end_form_tag %>
+    <% end %>
   </div>
 </div>
 

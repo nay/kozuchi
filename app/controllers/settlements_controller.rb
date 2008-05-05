@@ -75,9 +75,9 @@ class SettlementsController < ApplicationController
       name = @settlement.name
       account_name = @settlement.account.name
       @settlement.destroy
-      @flash[:notice] = "#{account_name}の精算データ「#{name}」を削除しました。"
+      flash[:notice] = "#{account_name}の精算データ「#{name}」を削除しました。"
     else
-      @flash[:notice] = "精算データを削除できませんでした。"
+      flash[:notice] = "精算データを削除できませんでした。"
     end
     redirect_to :action => 'index'
   end

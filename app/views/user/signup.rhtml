@@ -4,7 +4,7 @@
   <%= error_messages_for 'user' %>
 
   <div class="form-padding">
-    <%= start_form_tag :action => 'signup' %>
+    <%  form_tag :action => 'signup'  do %>
       <%= render_partial 'edit', :user => @user, :submit => false %>
       <%= render_partial 'password', :submit => false %>
 
@@ -12,7 +12,7 @@
         <%= submit_tag '登録' %>
         <%= link_to 'キャンセル', :action => 'login' %>
       </div>
-    <%= end_form_tag %>
+    <% end %>
   </div>
   <div>※メールを利用して本人確認を行うため、利用可能なEメールアドレスをご指定いただかないとユーザー登録が完了しませんのでご注意ください。</div>
 </div>

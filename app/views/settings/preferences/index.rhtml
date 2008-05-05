@@ -1,6 +1,6 @@
 <%= render :partial => 'shared/information' %>
 <div class="top_box">
-  <%= form_tag :action => 'update'%>
+  <% form_tag :action => 'update' do %>
     <div class="form_box">
       <table class="form_fields">
         <tr>
@@ -31,5 +31,5 @@
       
       <div class="buttons_line"><button type="submit">カスタマイズ設定を更新</button></div>
     </div>
-  <%=end_form_tag%>
+  <% end  %>
 </div>

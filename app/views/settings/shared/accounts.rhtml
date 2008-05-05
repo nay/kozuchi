@@ -1,5 +1,5 @@
 <div class="form_box">
-  <%= form_tag :action => 'create'%>
+  <% form_tag :action => 'create' do %>
     <table>
       <tr>
         <td>
@@ -15,12 +15,12 @@
       </tr>
     </table>
     <p class="guide">※並び順が小さいものほど上に表示されます。</p>
-  <%=end_form_tag%>
+  <% end %>
 </div>
 <!-- 通信欄-->
 <%= render :partial => 'shared/information' %>
 <div class="bottom_box">
-  <%= form_tag :action => 'update'%>
+  <%  form_tag :action => 'update' do %>
   <table class="masters" width="100%">
     <tr>
       <th><%= term @account_type %>名</th>
@@ -69,6 +69,6 @@
       </tr>
     <% end %>
   </table>
-  <%=end_form_tag%>
+  <% end  -%>
   
 </div>

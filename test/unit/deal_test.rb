@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class DealTest < Test::Unit::TestCase
-  fixtures :users
-  fixtures 'account/accounts'.to_sym
-  set_fixture_class  "account/accounts".to_sym => 'account/base'
+#  fixtures :users
+#  fixtures 'account/accounts'.to_sym
+#  set_fixture_class  "account/accounts".to_sym => 'account/base'
   
   
   # 借方、貸方の entry が正しくとれることのテスト

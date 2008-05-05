@@ -14,7 +14,7 @@ class Settings::DealLinksController < ApplicationController
 
   # 連動設定の追加
   def connect_account
-    account_id = @params[:account] ? @params[:account][:id] : nil
+    account_id = params[:account] ? params[:account][:id] : nil
     raise "no account_id" unless account_id
     
     account = Account::Base.get(@user.id, account_id)

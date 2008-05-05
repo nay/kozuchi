@@ -2,20 +2,20 @@
 <div class="top_bottom">
   <div class="form_box">
 
-    <%= start_form_tag :action => 'edit' %>
+    <% form_tag :action => 'edit' do %>
       <%= render_partial 'edit', :user => @user, :submit => true %>
-    <%= end_form_tag %>
+    <% end  %>
     <br/>
-    <%= start_form_tag :action => 'change_password' %>
+    <% form_tag :action => 'change_password' do %>
       <%= hidden_field_tag "back_to", "edit" %>
       <%= render_partial 'password', :submit => true %>
-    <%= end_form_tag %>
+    <% end  %>
 
-    <%= start_form_tag :action => 'delete' %>
+    <% form_tag :action => 'delete' do %>
       <div class="user_delete">
         <%= hidden_field 'user', 'form', :value => 'delete' %>
         <input type="submit" class="button" value="アカウント削除"/>
       </div>
-    <%= end_form_tag %>
+    <% end  %>
   </div>
 </div>

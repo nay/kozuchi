@@ -3,16 +3,16 @@ class User < ActiveRecord::Base
 
   has_one   :preferences,
             :class_name => "Preferences",
-            :dependent => true
+            :dependent => :destroy
   has_many  :friends,
-            :dependent => true
+            :dependent => :destroy
   has_many  :friend_applicants,
             :class_name => 'Friend',
             :foreign_key => 'friend_user_id',
-            :dependent => true
+            :dependent => :destroy
   has_many  :accounts,
             :class_name => 'Account::Base',
-            :dependent => true,
+            :dependent => :destroy,
             :include => [:associated_accounts, :any_entry], # 削除に関係がある
             :order => 'accounts.sort_key' do
               # 指定した account_type のものだけを抽出する

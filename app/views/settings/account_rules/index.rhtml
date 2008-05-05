@@ -2,7 +2,7 @@
   <div class="form_box">
   	<p class="deprecated">この機能は非推奨です。そのうち廃止する予定なので新しく使うことは避けてください。代わりに、新方式の<%= link_to '精算', :controller => '/settlements', :action => 'new' %>の仕組みを使ってください。</p>
     <% if @creatable %>
-      <%= form_tag :action => 'create_account_rule'%>
+      <% form_tag :action => 'create_account_rule' do %>
         <label>適用対象</label>
         <%= collection_select('rule', 'account_id', @accounts_to_be_applied, :id, :name_with_asset_type) %>
         <br />
@@ -23,7 +23,7 @@
           <br /><br />
           <span>自動登録された記入は確定ボタンを押すまで未確定となります。自動登録されたものは金額は変更できませんが、日にちを変更することや削除することができます。また、もととなった記入が変更・削除されると連動して変更・削除されます。</span>
         </p>
-      <%=end_form_tag%>
+      <% end %>
     <% else %>
       <p class="guide">
         <%= @explanation %>
@@ -40,7 +40,7 @@
     </tr>
     <% for rule in @rules %>
       <tr>
-      <%= form_tag :action => 'update_account_rule'%>
+      <% form_tag :action => 'update_account_rule' do %>
       <input type="hidden" name="rule[id]" id="rule_id" value="<%= rule.id %>"/><% # hidden_field だとはいらない %>
         <td>
           <%= rule.account.name %>
@@ -67,7 +67,7 @@
           </select>
         </td>
         <td class="button_action"><button type="submit">変更</button></td>
-        <%=end_form_tag%>
+        <% end %>
         <td class="button_action"><%= button_to("削除", {:action => "delete_account_rule", :id => rule.id}, :class => 'button') %></td>
       </tr>
       

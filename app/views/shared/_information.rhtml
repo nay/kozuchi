@@ -1,18 +1,18 @@
 <!-- 通信欄-->
-<% if @flash[:notice] && @flash[:notice].to_s != ""%>
-  <div id="notice"><%= h @flash[:notice]%></div>
+<% if flash[:notice] && flash[:notice].to_s != ""%>
+  <div id="notice"><%= h flash[:notice]%></div>
 <% end %>
-<% if @flash[:errors] && !@flash[:errors].empty? %>
+<% if flash[:errors] && !flash[:errors].empty? %>
   <div id="errors" class="middle_box">
-  <% if @flash[:errors].size > 1%>
+  <% if flash[:errors].size > 1%>
     <div>エラーがありました。ご確認ください。</div>
     <ul>
-    <% for error_message in @flash[:errors] %>
+    <% for error_message in flash[:errors] %>
       <li><%= h error_message%></li>
     <% end %>
     </ul>
   <% else %>
-    <div><%= h @flash[:errors][0] %></div>
+    <div><%= h flash[:errors][0] %></div>
   <% end %>
   </div>
 <% end %>

@@ -5,7 +5,7 @@ class Deal < BaseDeal
   has_many   :children,
              :class_name => 'SubordinateDeal',
              :foreign_key => 'parent_deal_id',
-             :dependent => true
+             :dependent => :destroy
 
   after_save :create_relations, :create_children
 

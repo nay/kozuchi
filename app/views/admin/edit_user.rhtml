@@ -1,4 +1,4 @@
-<%= form_tag :action => 'save_user'%>
+<% form_tag :action => 'save_user' do %>
 <div class="window">
 <table>
   <h2>ユーザー登録</h2>
@@ -14,7 +14,7 @@
     <td colspan="2"><button type="submit" value="登録" class="window"><span>登録</span></button></td>
   </tr>
 </table>
-<%=end_form_tag%>
+<% end %>
 </div>
 <div class="window">
   <h2>ユーザー一覧</h2>

@@ -2,6 +2,12 @@ class Account::Base < ActiveRecord::Base
   set_table_name "accounts"
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群
+  # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる
+  def self.types
+    [Account::Asset, Account::Expense, Account::Income]
+#    @types ||= []
+#    return @types.clone
+  end
 
   # クラス名に対応する Symbol　を返す。  
   def self.to_sym
@@ -19,18 +25,13 @@ class Account::Base < ActiveRecord::Base
     self.kind_of? t
   end
 
-  # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる
-  def self.types
-    @types ||= []
-    return @types.clone
-  end
 
   # 継承されたときは口座種類配列を更新する
-  def self.inherited(subclass)
-    @types ||= []
-    @types << subclass unless @types.include?(subclass)
-    super
-  end
+ # def self.inherited(subclass)
+ #   @types ||= []
+ #   @types << subclass unless @types.include?(subclass)
+ #   super
+ # end
   
   def self.type_order(order = nil)
     @type_order ||= 0
@@ -38,11 +39,11 @@ class Account::Base < ActiveRecord::Base
     @type_order = order
   end
   
-  # 口座種類配列をソートする
-  def self.sort_types
-    @types ||= []
-    @types.sort!{|a, b| a.type_order <=> b.type_order}
-  end
+#  # 口座種類配列をソートする
+#  def self.sort_types
+#    @types ||= []
+#    @types.sort!{|a, b| a.type_order <=> b.type_order}
+#  end
   
   def self.type_name(name = nil)
     return @type_name unless name
@@ -62,7 +63,7 @@ class Account::Base < ActiveRecord::Base
   # 勘定名（勘定種類 or 資産種類)
   # TODO: リファクタリングしたい
   def name_with_asset_type
-    "#{self.name}(#{self.kind_of?(Asset) ? self.class.asset_name : self.class.short_name})"
+    "#{self.name}(#{self.class.short_name})"
   end
 
   # TODO: 呼び出し側のリファクタリング確認
@@ -172,11 +173,11 @@ class Account::Base < ActiveRecord::Base
   # 口座の初期設定を行う
   def self.create_default_accounts(user_id)
     # 口座
-    Cache.create_accounts(user_id, ['現金'])
+    Account::Cache.create_accounts(user_id, ['現金'])
     # 支出
-    Expense.create_accounts(user_id, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
+    Account::Expense.create_accounts(user_id, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
     # 収入
-    Income.create_accounts(user_id, ['給料', '賞与', '利子・配当', '贈与'] )
+    Account::Income.create_accounts(user_id, ['給料', '賞与', '利子・配当', '贈与'] )
   end
   
   protected
@@ -206,14 +207,14 @@ class Account::Base < ActiveRecord::Base
 end
 
 # require ではrails的に必要な文脈で確実にリロードされないので参照する
-for d in Dir.glob(File.expand_path(File.dirname(__FILE__)) + '/*')
-  clazz = d.scan(/.*\/(account\/.*).rb$/).to_s.camelize
-  eval clazz
-end
+#for d in Dir.glob(File.expand_path(File.dirname(__FILE__)) + '/*')
+#  clazz = d.scan(/.*\/account\/(.*).rb$/).to_s.camelize
+#  eval clazz
+#end
 #ObjectSpace.each_object(Class){|o| o}
 
-Account::Base.sort_types
-Account::Asset.sort_types
+#Account::Base.sort_types
+#Account::Asset.sort_types
 
 # データがある勘定を削除したときに発生する例外
 class Account::UsedAccountException < Exception

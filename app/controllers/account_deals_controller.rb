@@ -21,7 +21,7 @@ class AccountDealsController < ApplicationController
     if !params[:account_id]
       @account_id = @accounts.first.id
     else
-      @account_id = @params[:account_id].to_i
+      @account_id = params[:account_id].to_i
     end
     begin
       deals = BaseDeal.get_for_account(@user.id, @account_id, @target_month)

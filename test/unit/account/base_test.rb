@@ -1,31 +1,30 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 # require File.dirname(__FILE__) + '/../../../../app/models/account/base'
-class Account::BaseTest < Test::Unit::TestCase
-  self.use_instantiated_fixtures  = false
-  fixtures :users, "account/accounts"
-  set_fixture_class  "account/accounts".to_sym => 'account/base'
-  fixtures :preferences
-  fixtures :account_rules
-  fixtures :friends
-  fixtures :account_links
+class Account::BaseTest < ActiveSupport::TestCase
+#  fixtures :users, "account/accounts"
+  set_fixture_class  "accounts".to_sym => 'account/base'
+#  fixtures :preferences
+#  fixtures :account_rules
+#  fixtures :friends
+#  fixtures :account_links
 
   # クラスレベルの定義が正しく動くことをテストする
   def test_class_definitions
-    assert_equal [Asset, Expense, Income], Account::Base.types
-    assert_equal '費目', Expense.type_name
-    assert_equal '支出', Expense.short_name
-    assert_equal Income, Expense.connectable_type
+    assert_equal [Account::Asset, Account::Expense, Account::Income], Account::Base.types
+    assert_equal '費目', Account::Expense.type_name
+    assert_equal '支出', Account::Expense.short_name
+    assert_equal Account::Income, Account::Expense.connectable_type
 
-    assert_equal Cache, Asset.types.first
-    assert_equal '口座', Cache.type_name
-    assert_equal '口座', Cache.short_name
-    assert_equal Asset, Cache.connectable_type
-    assert_equal '現金', Cache.asset_name
-    assert_equal false, Cache.rule_applicable?
-    assert_equal false, Cache.business_only?
-    assert CreditCard.rule_applicable?
-    assert CapitalFund.business_only?
+    assert_equal Account::Cache, Account::Asset.types.first
+    assert_equal '口座', Account::Cache.type_name
+    assert_equal '口座', Account::Cache.short_name
+    assert_equal Account::Asset, Account::Cache.connectable_type
+    assert_equal '現金', Account::Cache.asset_name
+    assert_equal false, Account::Cache.rule_applicable?
+    assert_equal false, Account::Cache.business_only?
+    assert Account::CreditCard.rule_applicable?
+    assert Account::CapitalFund.business_only?
   end
 
   def test_type_in
@@ -167,16 +166,16 @@ class Account::BaseTest < Test::Unit::TestCase
     assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(1)}
   end
   
-  # 更新のテスト
+ # 更新のテスト
 
-  # 勘定名を変えられることのテスト
+ # 勘定名を変えられることのテスト
   def test_change_name
     a = Account::Base.find(7)
     a.name = "新しい名前"
     assert a.save
   end
-  
-  # changable_asset_types のテスト
+ 
+ # changable_asset_types のテスト
 
   # buisness_flag ONで何も関連がないときは、どの口座からもすべての口座に変更できることを確認する
   def test_changable_asset_types_all_with_business_use
@@ -226,5 +225,4 @@ class Account::BaseTest < Test::Unit::TestCase
     assert options.include?(Account::CreditCard)
     assert options.include?(Account::Credit)
   end
-
 end

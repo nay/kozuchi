@@ -26,7 +26,7 @@ module UserHelper
         end)
 #      lname = "#{form_name}_#{field_name}_form"
 #      prompt = l(:"#{lname}")
-      if LoginEngine.config(:two_column_input)
+      if false #LoginEngine.config(:two_column_input)
 <<-EOL
         <tr class="two_columns">
           <td class="prompt"><label>#{prompt}:</label></td>

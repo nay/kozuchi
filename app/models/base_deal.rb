@@ -4,7 +4,7 @@ class BaseDeal < ActiveRecord::Base
   set_table_name "deals"
   has_many   :account_entries,
              :foreign_key => 'deal_id',
-             :exclusively_dependent => true,
+             :dependent => :destroy,
              :order => "amount",
              :include => :account
 

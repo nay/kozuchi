@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ChildDealTest < Test::Unit::TestCase
-  self.use_instantiated_fixtures  = true
-  fixtures :users
-  fixtures 'account/accounts'.to_sym
-  set_fixture_class  "account/accounts".to_sym => 'account/base'
-  fixtures :account_rules
+#  self.use_instantiated_fixtures  = true
+#  fixtures :users
+#  fixtures 'account/accounts'.to_sym
+#  set_fixture_class  "account/accounts".to_sym => 'account/base'
+#  fixtures :account_rules
 
   # 精算ルールがあるとき、従属行が新しく作られ、更新時は作り直されることをテストする
   def test_create
