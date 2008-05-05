@@ -62,10 +62,10 @@
 
 <div class="table_block">
   <div class="left"><div class="graph">
-    <%= pie_graph(@expenses_summaries, nil, 'name', 'sum', @expenses_sum) %>
+    <%= pie_graph(@expenses_summaries, nil, 'name', 'sum', @expenses_sum, 'left_pie') %>
   </div></div>
   <div class="right"><div class="graph">
-    <%= pie_graph(@incomes_summaries, nil, 'name', 'sum', @incomes_sum) %>
+    <%= pie_graph(@incomes_summaries, nil, 'name', 'sum', @incomes_sum, 'right_pie') %>
   </div></div>
 </div>
 

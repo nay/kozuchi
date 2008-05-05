@@ -21,7 +21,7 @@
   </div>
 
   <div class="right"><div class="graph">
-    <%= pie_graph(@assets.plus, 'percentage', 'name') %>
+    <%= pie_graph(@assets.plus, 'percentage', 'name', 'right_pie') %>
   </div></div>
 </div>
 
@@ -43,7 +43,7 @@
 
   <div class="right">
     <div class="graph">
-      <%= pie_graph(@assets.minus, 'percentage', 'name') %>
+      <%= pie_graph(@assets.minus, 'percentage', 'name', 'left_pie') %>
     </div>
   </div>
 </div>

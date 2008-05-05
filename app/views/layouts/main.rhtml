@@ -1,13 +1,11 @@
 <%= render :partial => "shared/doctype" %>
-
-      <% # とりあえず毎回作る %>
-      <% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name) %>
-      <% title = menu_tree ? menu_tree.name : controller.class.controller_name %>
-      <% sub_title = current_menu ? current_menu.name : controller.action_name %>
-
+<% # とりあえず毎回作る -%>
+<% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => controller.action_name) -%>
+<% title = menu_tree ? menu_tree.name : controller.class.controller_name -%>
+<% sub_title = current_menu ? current_menu.name : controller.action_name -%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
-    <%= render :partial => "shared/html_header" %>
+    <%= render :partial => "shared/html_header" -%>
     <title>
       <%= title %> - <%= sub_title %> 
     </title>
@@ -16,10 +14,10 @@
     <%= stylesheet_link_tag 'book' %>
     <%= stylesheet_link_tag 'print', :media => :print %>
     <%#  stylesheet_link_tag 'daily_booking' %>
-    <%= javascript_include_tag "prototype" %>
+    <%= javascript_include_tag :defaults, :cache => true %>
     <%= javascript_include_tag "book" %>
-    <%= javascript_include_tag "dragdrop" %>
-    <%= javascript_include_tag "effects" %>
+    <!--[if IE]><%= javascript_include_tag "html5jp/excanvas/excanvas" %><![endif]-->
+    <%= javascript_include_tag "html5jp/graph/circle" %>
     <%= render :partial => "shared/google_analytics" %>
   </head>
   <body>
