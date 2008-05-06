@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_filter :login_required, :except => :destroy
+  skip_before_filter :login_required, :except => [:destroy, :edit]
   layout 'login'
 
   # render new.rhtml
@@ -80,6 +80,21 @@ class UsersController < ApplicationController
     reset_session
     flash[:notice] = "アカウントを削除してログアウトしました。ご利用ありがとうございました。"
     redirect_back_or_default('/')
+  end
+  
+  def edit
+#    render :layout => 'main'
+    @user = self.current_user
+  end
+  
+  def update
+    @user = self.current_user
+    if @user.update_attributes_and_password(params[:user], params[:password], params[:password_confirmation])
+      flash[:notice] = "プロフィールを変更しました。"
+      redirect_to edit_user_path
+      return
+    end
+    render :action => 'edit'
   end
   
   private

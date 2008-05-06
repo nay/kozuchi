@@ -199,6 +199,23 @@ class User < ActiveRecord::Base
     end
     result
   end
+  
+  def update_attributes_with_password(attributes, password, password_confirmation)
+    self.attributes = attributes
+    if (!password.blank?)
+      self.password = password
+      self.password_confirmation = password_confirmation
+    end
+    User.transaction do 
+      result = save
+      if result && !password.blank?
+        # password を更新したならtypeも更新
+        self[:type] = null
+        save(false)
+      end
+      result
+    end
+  end
 
   protected
     # before filter 

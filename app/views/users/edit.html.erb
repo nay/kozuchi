@@ -1,15 +1,19 @@
 <div class="top_bottom">
   <div class="form_box">
-
-    <% form_for :user, :action => 'edit' do |f| %>
+  	
+	<%= error_messages_for :user %>
+   
+    <% form_for :user, @user, :url => user_path, :html => {:method => :put}  do |f| %>
       <div class="user_edit">
-    	  <p><label>姓<br /><%= f.text_field :lastname %></label></p>
-		  <p><label>名<br /><%= f.text_field :firstname %></label></p>
-		  <p><label>ログインID<%= f.text_field :login, {:size => 30} %></label></p>
-		  <p><label>パスワード<%= f.password_field :password %></label></p>
-		  <p><label>パスワード（確認）<%= f.password_field :password %></label></p>
-		  <p><label>Eメールアドレス<%= f.text_field :email %></label></p>
-		  <p><%= submit_tag '変更' %></p>
+        <table style="margin-left:auto;margin-right:auto;">
+        	<%= with_label "姓", f.text_field(:lastname)  %>
+			<%= with_label "名", f.text_field(:firstname) %>
+			<%= with_label "ログインID", f.text_field(:login, {:size => 30})%>
+        	<%= with_label "パスワード", password_field_tag(:password, {}, :size => 30) %>
+        	<%= with_label "パスワード（確認）", password_field_tag(:password_confirmation, {}, :size => 30) %>
+        	<%= with_label "Eメールアドレス", f.text_field(:email) %>
+			<tr><td colspan="2"><%= submit_tag '変更' %></td></tr>
+        </table>      
       </div>
     <% end  %>
 	<div>
