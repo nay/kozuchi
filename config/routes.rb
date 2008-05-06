@@ -1,4 +1,13 @@
 ActionController::Routing::Routes.draw do |map|
+
+  map.signup '/signup', :controller => 'users', :action => 'new'
+  map.login '/login', :controller => 'sessions', :action => 'new'  
+  map.logout '/logout', :controller => 'sessions', :action => 'destroy'  
+  map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate'
+  map.resources :users
+
+  map.resource :session
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -12,7 +21,7 @@ ActionController::Routing::Routes.draw do |map|
   # You can have the root of your site routed by hooking up '' 
   # -- just remember to delete public/index.html.
   # map.connect '', :controller => "welcome"
-  map.connect '', :controller => "user", :action => "login"
+  map.root :controller => "home"
   
   map.connect 'admin/:action', :controller => "admin/admin"
 

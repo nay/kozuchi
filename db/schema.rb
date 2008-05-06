@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 11) do
+ActiveRecord::Schema.define(:version => 12) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :null => false
@@ -114,21 +114,24 @@ ActiveRecord::Schema.define(:version => 11) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "login",           :limit => 80, :default => "", :null => false
-    t.string   "salted_password", :limit => 40, :default => "", :null => false
-    t.string   "email",           :limit => 60, :default => "", :null => false
-    t.string   "firstname",       :limit => 40
-    t.string   "lastname",        :limit => 40
-    t.string   "salt",            :limit => 40, :default => "", :null => false
-    t.integer  "verified",                      :default => 0
-    t.string   "role",            :limit => 40
-    t.string   "security_token",  :limit => 40
+    t.string   "login",                     :limit => 80, :default => "", :null => false
+    t.string   "salted_password",           :limit => 40, :default => "", :null => false
+    t.string   "email",                     :limit => 60, :default => "", :null => false
+    t.string   "firstname",                 :limit => 40
+    t.string   "lastname",                  :limit => 40
+    t.string   "salt",                      :limit => 40, :default => "", :null => false
+    t.string   "role",                      :limit => 40
+    t.string   "security_token",            :limit => 40
     t.datetime "token_expiry"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "logged_in_at"
-    t.integer  "deleted",                       :default => 0
-    t.datetime "delete_after"
+    t.string   "crypted_password",          :limit => 40
+    t.string   "remember_token"
+    t.datetime "remember_token_expires_at"
+    t.string   "activation_code",           :limit => 40
+    t.datetime "activated_at"
+    t.string   "type",                      :limit => 40
   end
 
 end

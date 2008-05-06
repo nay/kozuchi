@@ -3,34 +3,34 @@
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
 #  include LoginEngine
-  include LoginEngine::AuthenticatedSystem
+#  include LoginEngine::AuthenticatedSystem
+  include AuthenticatedSystem
   helper :user
- # model :user, 'account/base', 'account/asset', 'account/income'
   
-  before_filter :login_required, :set_ssl
+  before_filter :login_required, :load_user, :set_ssl
 
   private
   
-  # LoginEngine login_required を overwrite。以下の目的。
-  # * session 内に user_id だけを入れるようにしたことに対応するため。
-  # * 認証OKの場合に @user をセットするため
-  def login_required
-#    if not protect?(action_name)
-#      return true  
+#  # LoginEngine login_required を overwrite。以下の目的。
+#  # * session 内に user_id だけを入れるようにしたことに対応するため。
+#  # * 認証OKの場合に @user をセットするため
+#  def login_required
+##    if not protect?(action_name)
+##      return true  
+##    end
+#
+#    if user? and authorize?(User.find(session[:user_id]))
+#      load_user
+#      return true
 #    end
-
-    if user? and authorize?(User.find(session[:user_id]))
-      load_user
-      return true
-    end
-
-    # store current location so that we can 
-    # come back after the user logged in
-    store_location
-  
-    # call overwriteable reaction to unauthorized access
-    access_denied
-  end
+#
+#    # store current location so that we can 
+#    # come back after the user logged in
+#    store_location
+#  
+#    # call overwriteable reaction to unauthorized access
+#    access_denied
+#  end
   
   # session に user_id を入れるためオーバーライト
   def user?
@@ -50,23 +50,23 @@ class ApplicationController < ActionController::Base
     return false
   end
   
-  # Returns the current user from the session, if any exists
-  #
-  # session に user_id を入れるためオーバーライト
-  def current_user
-    User.find(session[:user_id].to_i)
-  end
+#  # Returns the current user from the session, if any exists
+#  #
+#  # session に user_id を入れるためオーバーライト
+#  def current_user
+#    User.find(session[:user_id].to_i)
+#  end
 
-  # login_engine overwrite
-  def access_denied
-    redirect_to :controller => "/user", :action => "login"
-    false # なぜかもともとこれがなかったorz
-  end
+#  # login_engine overwrite
+#  def access_denied
+#    redirect_to :controller => "/user", :action => "login"
+#    false # なぜかもともとこれがなかったorz
+#  end
 
-  # deprecated
-  def user
-    User.find(session[:user_id])
-  end
+#  # deprecated
+#  def user
+#    User.find(session[:user_id])
+#  end
   
   # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
 #  def local_request?
@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
 
   # ユーザーオブジェクトを@userに取得する。なければnilが入る。
   def load_user
-    @user = User.find(session[:user_id])
+    @user = self.current_user
   end
 
   # post でない場合は error_not_found にする
