@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :login_required
+  layout 'login'
 
   # render new.rhtml
   def new

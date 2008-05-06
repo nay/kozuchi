@@ -1,12 +1,13 @@
 ActionController::Routing::Routes.draw do |map|
 
   map.signup '/signup', :controller => 'users', :action => 'new'
-  map.login '/login', :controller => 'sessions', :action => 'new'  
+  map.login '/login', :controller => 'sessions', :action => 'new'  , :conditions => {:method => :get}
+  map.login_post '/login', :controller => 'sessions', :action => 'create', :conditions => {:method => :post}
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'  
   map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate'
   map.resources :users
 
-  map.resource :session
+#  map.resource :session
 
   # The priority is based upon order of creation: first created -> highest priority.
   
@@ -47,6 +48,7 @@ ActionController::Routing::Routes.draw do |map|
                       :year => /[0-9]*/, :year => /[0-9]*/}
   
   # Install the default route as the lowest priority.
+  # TODO: except sessions, 
   map.connect ':controller/:action/:id'
   map.connect ':controller/:year/:month/:day', :action => 'index', :requirements => {:controller => /daily_booking/}
   

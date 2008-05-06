@@ -32,43 +32,43 @@ class UserController < ApplicationController
 
   # Register as a new user. Upon successful registration, the user will be sent to
   # "/user/login" to enter their details.
-  def signup
-    return if generate_blank
-    params[:user].delete('form')
-    params[:user].delete('verified') # you CANNOT pass this as part of the request
-    @user = User.new(params[:user])
-    begin
-      User.transaction(@user) do
-        @user.new_password = true
-        # Off notification
-#        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
-          @user.verified = 1
+#  def signup
+#    return if generate_blank
+#    params[:user].delete('form')
+#    params[:user].delete('verified') # you CANNOT pass this as part of the request
+#    @user = User.new(params[:user])
+#    begin
+#      User.transaction(@user) do
+#        @user.new_password = true
+#        # Off notification
+##        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+#          @user.verified = 1
+##        end
+#        if @user.save
+#          key = @user.generate_security_token
+#          url = url_for(:action => 'home', :user_id => @user.id, :key => key)
+#          flash[:notice] = 'Signup successful!'
+##          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+##            UserNotify.deliver_signup(@user, params[:user][:password], url)
+##            flash[:notice] << ' Please check your registered email account to verify your account registration and continue with the login.'
+##          else
+#            flash[:notice] << ' Please log in.'
+# #         end
+#          redirect_to :action => 'login'
 #        end
-        if @user.save
-          key = @user.generate_security_token
-          url = url_for(:action => 'home', :user_id => @user.id, :key => key)
-          flash[:notice] = 'Signup successful!'
-#          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
-#            UserNotify.deliver_signup(@user, params[:user][:password], url)
-#            flash[:notice] << ' Please check your registered email account to verify your account registration and continue with the login.'
-#          else
-            flash[:notice] << ' Please log in.'
- #         end
-          redirect_to :action => 'login'
-        end
-      end
-    rescue Exception => e
-      flash.now[:notice] = nil
-      flash.now[:warning] = 'Error creating account: confirmation email not sent'
-      logger.error "Unable to send confirmation E-Mail:"
-      logger.error e
-    end
-  end
+#      end
+#    rescue Exception => e
+#      flash.now[:notice] = nil
+#      flash.now[:warning] = 'Error creating account: confirmation email not sent'
+#      logger.error "Unable to send confirmation E-Mail:"
+#      logger.error e
+#    end
+#  end
 
-  def logout
-    session[:user] = nil
-    redirect_to :action => 'login'
-  end
+#  def logout
+#    session[:user] = nil
+#    redirect_to :action => 'login'
+#  end
 
   def change_password
     return if generate_filled_in
@@ -137,7 +137,7 @@ class UserController < ApplicationController
           flash[:notice] = "Instructions on resetting your password have been emailed to #{params[:user][:email]}"
         end  
         unless user?
-          redirect_to :action => 'login'
+          redirect_to login_path # :action => 'login'
           return
         end
         redirect_back_or_default :action => 'home'
@@ -281,68 +281,68 @@ class UserController < ApplicationController
   # The action used to log a user in. If the user was redirected to the login page
   # by the login_required method, they should be sent back to the page they were
   # trying to access. If not, they will be sent to "/user/home".
-  def login
-    reset_session if session[:user_id]
-    return if generate_blank
-    @user = User.new(params[:user])
-    if u = User.authenticate(params[:user][:login], params[:user][:password])
-      session[:user_id] = u.id
-      u.logged_in_at = Time.now
-      u.save
-#      flash[:notice] = 'Login successful'
-#      redirect_to_stored_or_default :action => 'home'
-      redirect_to :controller => 'deals', :action => 'index'
-#      redirect_to_stored_or_default :controller => 'deals', :action => 'index'
-    else
-      @login = params[:user][:login]
-#      flash.now[:warning] = 'Login unsuccessful'
-      flash_error('ログインに失敗しました。')
-      redirect_to :action => 'login' # avoid post
-    end
-  end
+#  def login
+#    reset_session if session[:user_id]
+#    return if generate_blank
+#    @user = User.new(params[:user])
+#    if u = User.authenticate(params[:user][:login], params[:user][:password])
+#      session[:user_id] = u.id
+#      u.logged_in_at = Time.now
+#      u.save
+##      flash[:notice] = 'Login successful'
+##      redirect_to_stored_or_default :action => 'home'
+#      redirect_to :controller => 'deals', :action => 'index'
+##      redirect_to_stored_or_default :controller => 'deals', :action => 'index'
+#    else
+#      @login = params[:user][:login]
+##      flash.now[:warning] = 'Login unsuccessful'
+#      flash_error('ログインに失敗しました。')
+#      redirect_to :action => 'login' # avoid post
+#    end
+#  end
 
-  # Register as a new user. Upon successful registration, the user will be sent to
-  # "/user/login" to enter their details.
-  def signup
-    return if generate_blank
-    params[:user].delete('form')
-    params[:user].delete('verified') # you CANNOT pass this as part of the request
-    @user = User.new(params[:user])
-    begin
-      User.transaction do
-        @user.new_password = true
-#        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
-          @user.verified = 1
- #       end
-        if @user.save
-          key = @user.generate_security_token
-          url = url_for(:action => 'home', :user_id => @user.id, :key => key)
-          msg = '登録は正常に受け付けられました。'
-#          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
-#            UserNotify.deliver_signup(@user, params[:user][:password], url)
-#            flash_notice(msg + '登録確認メールを確認して登録処理を完了してください。')
-#          else
-            flash_notice(msg + 'ログインしてください。')
- #         end
-          redirect_to :action => 'login'
-        end
-      end
-      @user.reload
-    rescue Exception => e
-      flash_notice(nil, true)
-#      flash.now[:warning] = 'Error creating account: confirmation email not sent'
-      flash_error("アカウント作成時にエラーが発生しました。（登録確認メールは送られていません。）", true)
-      logger.error "Unable to send confirmation E-Mail:"
-      logger.error e
-      logger.error e.backtrace
-      p e.backtrace
-    end
-  end
+#  # Register as a new user. Upon successful registration, the user will be sent to
+#  # "/user/login" to enter their details.
+#  def signup
+#    return if generate_blank
+#    params[:user].delete('form')
+#    params[:user].delete('verified') # you CANNOT pass this as part of the request
+#    @user = User.new(params[:user])
+#    begin
+#      User.transaction do
+#        @user.new_password = true
+##        unless LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+#          @user.verified = 1
+# #       end
+#        if @user.save
+#          key = @user.generate_security_token
+#          url = url_for(:action => 'home', :user_id => @user.id, :key => key)
+#          msg = '登録は正常に受け付けられました。'
+##          if LoginEngine.config(:use_email_notification) and LoginEngine.config(:confirm_account)
+##            UserNotify.deliver_signup(@user, params[:user][:password], url)
+##            flash_notice(msg + '登録確認メールを確認して登録処理を完了してください。')
+##          else
+#            flash_notice(msg + 'ログインしてください。')
+# #         end
+#          redirect_to :action => 'login'
+#        end
+#      end
+#      @user.reload
+#    rescue Exception => e
+#      flash_notice(nil, true)
+##      flash.now[:warning] = 'Error creating account: confirmation email not sent'
+#      flash_error("アカウント作成時にエラーが発生しました。（登録確認メールは送られていません。）", true)
+#      logger.error "Unable to send confirmation E-Mail:"
+#      logger.error e
+#      logger.error e.backtrace
+#      p e.backtrace
+#    end
+#  end
 
-  def logout
-    reset_session
-    redirect_to :action => 'login'
-  end
+#  def logout
+#    reset_session
+#    redirect_to :action => 'login'
+#  end
 
   # メニューからはプロファイルのみ
 #  def change_password

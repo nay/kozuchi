@@ -1,5 +1,6 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
+  layout 'login' # TODO: リファクタリング
   skip_before_filter :login_required
 
   # render new.rhtml
@@ -16,7 +17,9 @@ class SessionsController < ApplicationController
       redirect_back_or_default('/')
       flash[:notice] = "Logged in successfully"
     else
-      render :action => 'new'
+      flash.now[:login] = params[:login]
+#      render :action => 'new'
+      redirect_to login_path
     end
   end
 

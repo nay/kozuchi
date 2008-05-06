@@ -1,8 +1,14 @@
-<% form_tag session_path do -%>
-<p><label for="login">Login</label><br/>
-<%= text_field_tag 'login' %></p>
+<% javascript_tag do -%>
+window.onload = function() {
+	document.getElementById("login").focus();
+}
+<% end -%>
 
-<p><label for="password">Password</label><br/>
+<% form_tag login_post_path do -%>
+<p><label for="login"><%= _('Login') %></label><br/>
+<%= text_field_tag 'login', flash[:login] %></p>
+
+<p><label for="password"><%= _('Password') %></label><br/>
 <%= password_field_tag 'password' %></p>
 
 <!-- Uncomment this if you want this functionality
@@ -10,5 +16,29 @@
 <%= check_box_tag 'remember_me' %></p>
 -->
 
-<p><%= submit_tag 'Log in' %></p>
+<p><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></p>
+
+<p><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', :action => 'forgot_password' %></p>
+
 <% end -%>
+
+<div class="information">
+  <h3>お知らせ</h3>
+	<h4>2008.3.12</h4>
+	<ul>
+		<li>記入直後に記入した日付を記憶しなくなっていた不具合を修正しました。</li>
+	</ul>
+  <h4>2008.3.5</h4>
+  <ul>
+  	<li>反応速度を改善しました。</li>
+  	<li>新方式の精算機能を追加しました。上部メニューの「精算」から利用できます。旧方式は非推奨となります。</li>
+	<li>FireFoxで日本語入力が不正になる不具合を修正しました。</li>
+	<li>記入に使える口座・費目・収入内訳の制限をなくしました。まれに必要性が生じる食費→住居費（費目の移し変え）、交通費→会社（PASMOチャージ時に計上済の交通費の一部を立替にする）などが入力できるようになりました。</li>
+  </ul>
+  
+</div>
+
+<div id="features">
+<h3>小槌の特徴</h3>
+<%= render(:partial => 'shared/features') %>
+</div>

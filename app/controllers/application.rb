@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 #  include LoginEngine::AuthenticatedSystem
   include AuthenticatedSystem
   helper :user
-  
+  init_gettext "kozuchi"
   before_filter :login_required, :load_user, :set_ssl
 
   private
@@ -169,8 +169,9 @@ class ApplicationController < ActionController::Base
   # もとのURLのまま表示されるよう、redirectはしない。
   # filter内で使って便利なよう、false を返す。
   def error_not_found
-    render :template => '/open/not_found', :layout => 'login'
-    false
+    raise ActiveRecord::RecordNotFound # TODO
+#    render :template => '/open/not_found', :layout => 'login'
+#    false
   end
 
   # 例外ハンドリング
