@@ -5,10 +5,9 @@ class ApplicationController < ActionController::Base
 #  include LoginEngine
 #  include LoginEngine::AuthenticatedSystem
   include AuthenticatedSystem
-  helper :user
   init_gettext "kozuchi"
   before_filter :login_required, :load_user, :set_ssl
-
+  helper :all
   private
   
 #  # LoginEngine login_required を overwrite。以下の目的。

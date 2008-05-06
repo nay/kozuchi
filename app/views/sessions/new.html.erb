@@ -1,8 +1,4 @@
-<% javascript_tag do -%>
-window.onload = function() {
-	document.getElementById("login").focus();
-}
-<% end -%>
+<%= focus_on('login') %>
 
 <% form_tag login_post_path do -%>
 <p><label for="login"><%= _('Login') %></label><br/>
@@ -18,7 +14,7 @@ window.onload = function() {
 
 <p><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></p>
 
-<p><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', :action => 'forgot_password' %></p>
+<p><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', forgot_password_path %></p>
 
 <% end -%>
 

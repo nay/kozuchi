@@ -168,6 +168,38 @@ class User < ActiveRecord::Base
     @activated
   end
 
+  def update_password_token
+    self.password_token_expires_at = 3.days.from_now.utc
+    self.password_token            = encrypt("p-#{email}--#{password_token_expires_at}")
+    save(false)
+  end
+
+  def password_token?
+    password_token_expires_at && Time.now.utc < password_token_expires_at 
+  end
+  
+  def change_password(password, password_confirmation)
+    self.password = password
+    self.password_confirmation = password_confirmation
+    result = false
+    User.transaction do
+      result = save
+      # パスワードが変更できたら、activateして、クラスを強制的に変える
+      if result
+        self.password_token = nil
+        self.password_token_expires_at = nil
+        unless self.active?
+          @activated = true
+          self.activated_at = Time.now.utc
+          self.activation_code = nil
+        end
+        self[:type] = nil
+        save(false)
+      end
+    end
+    result
+  end
+
   protected
     # before filter 
     def encrypt_password

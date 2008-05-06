@@ -12,6 +12,12 @@ class UserMailer < ActionMailer::Base
     @body[:url]  = "#{ROOT_URL}/"
   end
   
+  def password_notification(user)
+    setup_email(user)
+    @subject    += "パスワード変更のご案内"
+    @body[:url]  = "#{ROOT_URL}/password/#{user.password_token}"
+  end
+  
   protected
     def setup_email(user)
       @recipients  = "#{user.email}"
