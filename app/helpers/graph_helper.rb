@@ -43,8 +43,10 @@ Event.observe(window, 'load', function () {
   
   def to_items( data )
     r = ''
-    data.each do |key, value|
-      r << %Q(["#{key}", #{value}],\n)
+    data = data.to_a
+    data.sort! {|v1, v2| v2[1] <=> v1[1]}
+    data.each do |value|
+      r << %Q(["#{value[0]}", #{value[1]}],\n)
     end
     r.chomp!(",\n")
   end
