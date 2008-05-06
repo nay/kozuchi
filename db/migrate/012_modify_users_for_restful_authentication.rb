@@ -3,12 +3,14 @@ class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
     add_column :users, :crypted_password,  :string, :limit => 40
     add_column :users, :remember_token,    :string
     add_column :users, :remember_token_expires_at, :datetime
-    add_column :users, :activation_code, :string, :limit => 40
     add_column :users, :activated_at, :datetime
     add_column :users, :type, :string, :limit => 40
-    
+
+    rename_column :users, :security_token, :activation_code
+
     execute "update users set type = 'LoginEngineUser';"
     
+    remove_column :users, :token_expiry
     remove_column :users, :deleted
     remove_column :users, :delete_after
     
@@ -58,12 +60,14 @@ class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
     add_column    :users, :deleted, :integer, :default => 0
     add_column    :users, :delete_after, :datetime
     add_column    :users, :verified, :integer, :default => 0
+    add_column    :users, :token_expiry, :datetime
     execute "update users set verified = 1 where activated_at is not null;"
+
+    rename_column :users, :activation_code, :security_token
 
     remove_column :users, :crypted_password
     remove_column :users, :remember_token
     remove_column :users, :remember_token_expires_at
-    remove_column :users, :activation_code
     remove_column :users, :activated_at
     remove_column :users, :type
   end

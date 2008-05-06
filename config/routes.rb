@@ -7,7 +7,10 @@ ActionController::Routing::Routes.draw do |map|
   map.login_post '/login', :controller => 'sessions', :action => 'create', :conditions => {:method => :post}
 
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'  
+  
   map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate'
+  map.activate_login_engine '/user/home', :controller => 'users', :action => 'activate_login_engine'
+
   map.resources :users
 
 #  map.resource :session
