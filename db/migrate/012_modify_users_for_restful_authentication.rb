@@ -54,6 +54,7 @@ class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
   end
 
   def self.down
+    execute "delete from users where type is NULL or type != 'LoginEngineUser';"
     add_column    :users, :deleted, :integer, :default => 0
     add_column    :users, :delete_after, :datetime
     add_column    :users, :verified, :integer, :default => 0

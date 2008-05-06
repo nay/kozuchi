@@ -54,18 +54,29 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
+  config.active_record.observers = :user_observer
 
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
  
-  config.action_mailer.delivery_method = :sendmail
-  config.action_mailer.sendmail_settings = {
-    :location => '/foo',
-    :arguments => '-i'
-  }
+  config.action_mailer.default_charset = 'iso-2022-jp' 
+  config.action_mailer.smtp_settings = {
+    :address        => "ko.meadowy.net",
+    :port           => 25,
+    :domain         => 'MyApp.com',
+    :user_name      => nil,
+    :password       => nil,
+    :authentication => nil
+  } 
+#  config.action_mailer.delivery_method = :sendmail
+#  config.action_mailer.sendmail_settings = {
+#    :location => '/foo',
+#    :arguments => '-i'
+#  }
 #  config.action_mailer.smtp_settings = {:address => "192.168.0.102"}
-  config.action_mailer.default_charset = 'iso-2022-jp'
 end
+
+SUPPORT_EMAIL_ADDRESS = "support@app.com"
 
 # Add new inflection rules using the following format 
 # (all these examples are active by default):
