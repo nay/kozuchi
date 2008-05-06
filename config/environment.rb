@@ -63,7 +63,7 @@ Rails::Initializer.run do |config|
   config.action_mailer.smtp_settings = {
     :address        => "ko.meadowy.net",
     :port           => 25,
-    :domain         => 'MyApp.com',
+    :domain         => 'ko.meadowy.net',
     :user_name      => nil,
     :password       => nil,
     :authentication => nil
@@ -75,39 +75,3 @@ Rails::Initializer.run do |config|
 #  }
 #  config.action_mailer.smtp_settings = {:address => "192.168.0.102"}
 end
-
-SUPPORT_EMAIL_ADDRESS = "support@app.com"
-
-# Add new inflection rules using the following format 
-# (all these examples are active by default):
-# Inflector.inflections do |inflect|
-#   inflect.plural /^(ox)$/i, '\1en'
-#   inflect.singular /^(ox)en/i, '\1'
-#   inflect.irregular 'person', 'people'
-#   inflect.uncountable %w( fish sheep )
-# end
-
-# Include your application configuration below
-#ActionController::AbstractRequest.relative_url_root = '/kozuchi'
-
-KOZUCHI_SSL = false
-
-# USER_MANAGEMENT_TYPE
-#   open : Anybody can make new user.
-#   closed : Admin function only.
-KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
-
-# GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
-
-#module LoginEngine
-#  config :salt, "koban"
-#  config :email_from, "kozuchi@goas.no-ip.org"
-#  config :admin_email, "kozuchi@goas.no-ip.org"
-#  config :app_name, "小槌"
-#  config :changeable_fields, ['lastname', 'firstname', 'login', 'email']
-#  config :mail_charset, "iso-2022-jp"
-##  config :use_email_notification, false
-#end
-#ActionMailer::Base.default_charset = 'iso-2022-jp'
-#
-#Engines.start :login

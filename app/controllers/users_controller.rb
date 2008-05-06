@@ -23,17 +23,16 @@ class UsersController < ApplicationController
   end
 
   def activate
-    self.current_user = params[:activation_code].blank? ? false : User.find_by_activation_code(params[:activation_code])
-    do_activate
+    do_activate(params[:activation_code])
   end
   
   def activate_login_engine
-    self.current_user = params[:key].blank? ? false : LoginEngineUser.find_by_activation_code(params[:key])
-    do_activate
+    do_activate(params[:key])
   end
   
   private
-  def do_activate
+  def do_activate(activation_code)
+    self.current_user = activation_code.blank? ? false : User.find_by_activation_code(activation_code)
     if logged_in? && !current_user.active?
       current_user.activate
       flash[:notice] = "登録が完了しました。"

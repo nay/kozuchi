@@ -24,4 +24,3 @@ config.action_mailer.raise_delivery_errors = true
 #  :port => 25
 #}
 
-LOGIN_ENGINE_SALT = "koban"

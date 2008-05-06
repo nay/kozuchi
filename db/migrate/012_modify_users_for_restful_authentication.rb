@@ -14,7 +14,7 @@ class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
     remove_column :users, :deleted
     remove_column :users, :delete_after
     
-    User.update_all(["activated_at = ?", Time.now.utc], "verified = 1")
+    User.update_all(["activated_at = ?, activation_code = NULL", Time.now.utc], "verified = 1")
     
     remove_column :users, :verified
     
