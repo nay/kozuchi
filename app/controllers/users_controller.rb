@@ -36,8 +36,10 @@ class UsersController < ApplicationController
     if logged_in? && !current_user.active?
       current_user.activate
       flash[:notice] = "登録が完了しました。"
+      redirect_to :controller => 'home', :action => 'index'
+    else
+      redirect_back_or_default('/')
     end
-    redirect_back_or_default('/')
   end
 
 end
