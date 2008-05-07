@@ -38,7 +38,7 @@ Event.observe(window, 'load', function () {
 	cg.draw(items);
 }, false);
     EOS
-    s << %Q(<div><canvas width="300" height="200" id="#{id}"></canvas></div>)
+    s << %Q(<div><canvas width="400" height="200" id="#{id}"></canvas></div>)
   end
   
   def to_items( data )
