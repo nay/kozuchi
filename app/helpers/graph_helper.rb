@@ -11,7 +11,7 @@ module GraphHelper
           percentage = total_value != 0 ? (r.method(value_method).call * 100.0 / total_value).round : 0
         end
         next if percentage == 100 || percentage == 0
-        data[r.method(name_method).call] = percentage.to_s
+        data[r.method(name_method).call] = percentage
       end
 
       if data.size > 1
