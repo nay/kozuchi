@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :login_required, :except => [:destroy, :edit]
-  layout 'login'
+#  layout 'login'
 
   # render new.rhtml
   def new

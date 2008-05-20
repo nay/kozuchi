@@ -5,6 +5,42 @@
   padding:0;
 }
 
+#page {
+	background-color: #fffff9;
+	margin-left: 8px;
+	margin-bottom: 8px;
+	padding: 1em;
+}
+
+#side {
+	float: right;
+	width: 40%;
+}
+
+.box {
+	border: 4px dotted #ffddbc;
+	background-color: white;
+	margin-bottom: 1em;
+	padding: 0.5em;
+}
+.box h2 {
+	font-size: 120%;
+	color: #fcbf7f;
+	text-align: center;
+}
+
+
+p {
+	padding-left: 1em;
+	padding-right: 1em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.strong {
+	color: #ff6347;
+}
+
 /* general input fields padding */
 
 input, select {
@@ -42,6 +78,16 @@ button, input.button, td.button input {
   padding: 1px 4px;
   font-size: 100%;
   margin: 4px;
+}
+
+/* ----- simple form ----- */
+table.simple_form th {
+  text-align: right;
+  color: #041A61;
+  padding-right: 4px;
+}
+table.simple_form .operation {
+  text-align: center;
 }
 
 /* -------- footer -------*/

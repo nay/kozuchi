@@ -1,0 +1,16 @@
+<% html_tag do -%>
+
+  <% head_tag 'users' do -%>
+  	<%= yield :head %>
+  <% end -%>
+  
+  <% body_tag do -%>
+    <div id="title">
+      <div style="float:right; "><%= link_to(image_tag("/images/izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path)%></div>
+  	  <%= yield :title %>
+	  <div style="clear:right"></div>
+	</div>
+    <%= yield %>
+  <% end -%>
+
+<% end -%>

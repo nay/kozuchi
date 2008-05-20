@@ -7,7 +7,7 @@
 
 <div id="side">
   <% unless current_user %>
-   <div id="login_form">
+   <div id="login_form" class="box">
       <% form_tag login_post_path do -%>
         <div><label for="login"><%= _('Login') %></label>
         <%= text_field_tag 'login', flash[:login] %></div>
@@ -28,7 +28,7 @@
     </div>
   <% end -%>
 
-  <div id="news">
+  <div id="news" class="box">
     <h2>お知らせ</h2>
     <div style="text-align:right;"><%= link_to '小槌.netへ', 'http://www.kozuchi.net' %></div>
     <%= news %>

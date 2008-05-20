@@ -3,29 +3,43 @@ module ApplicationHelper
   include LoginEngine
   include TermHelper
 
-  # レイアウトから使う、htmlタグの定型部分を出力してくれるヘルパー
-  def html_body_tag(&block)
+  def html_tag(&block)
     inner_content = capture(&block)
     content = <<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+#{inner_content}
+</html>
+EOF
+    concat content, block.binding
+  end
+  
+  def head_tag(*stylesheets, &block)
+    inner_content = capture(&block)
+    content = <<EOF
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Script-Type" content="text/javascript; charset=utf-8" />
     <meta name="author" content="Nay" />
     <meta http-equiv="content-style-type" content="text/css" />
-    #{yield :head}
-    #{stylesheet_link_tag 'common'}
+    #{inner_content}
+    #{stylesheet_link_tag *stylesheets.insert(0, 'common')}
     #{javascript_include_tag 'prototype'}
     #{render :partial => "shared/google_analytics"}
   </head>
+EOF
+    concat content, block.binding
+  end
+
+  def body_tag(&block)
+    inner_content = capture(&block)
+    content = <<EOF
   <body>
     <div id="page">
 #{inner_content}
 #{render :partial => "shared/footer"}
     </div>
   </body>
-</html>
 EOF
     concat content, block.binding
   end

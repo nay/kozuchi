@@ -1,19 +1,29 @@
-<%= error_messages_for :user %>
-<% form_for :user, :url => signup_post_path do |f| -%>
-<p><label for="login"><%= _('Login') %></label><br/>
-<%= f.text_field :login %></p>
-
-<p><label for="email"><%= ("Email")%></label><br/>
-<%= f.text_field :email %></p>
-
-<p><label for="password"><%= _("Password")%></label><br/>
-<%= f.password_field :password %></p>
-
-<p><label for="password_confirmation"><%= _("Confirm Password")%></label><br/>
-<%= f.password_field :password_confirmation %></p>
-
-<p><%= submit_tag _('Sign up') %></p>
+<% content_for :head do -%>
+  <title>[小槌] ユーザー登録</title>
+<% end -%>
+<% content_for :title do -%>
+  <h1>ユーザー登録</h1>
 <% end -%>
 
-<p>※メールを利用して本人確認を行うため、利用可能なEメールアドレスをご指定いただかないとユーザー登録が完了しませんのでご注意ください。</p>
+<div id="side">
+	<div class="box">
+	  <h2>ようこそ小槌へ！</h2>
+	  <p>必要事項を入力してユーザー登録ボタンを押すと、確認メールが送られます。メールの案内に従ってユーザー登録を完了してください。</p>
+      <p><span class="strong">利用可能なEメールアドレス</span>をご指定いただかないとユーザー登録が完了しませんのでご注意ください。</p>
+	</div>
+</div>
+
+<div id="main">
+<%= error_messages_for :user %>
+<% form_for :user, :url => signup_post_path do |f| -%>
+<table class="simple_form">
+  <tr><th><label for="login"><%= _('Login') %></label></th><td><%= f.text_field :login %></td></tr>
+  <tr><th><label for="email"><%= ("Email")%></label></th><td><%= f.text_field :email %></td></tr>
+  <tr><th><label for="password"><%= _("Password")%></label></th><td><%= f.password_field :password %></td></tr>
+  <tr><th><label for="password_confirmation"><%= _("Confirm Password")%></label></th><td><%= f.password_field :password_confirmation %></td></tr>
+  <tr><td colspan="2" class="operation"><%= submit_tag 'ユーザー登録' %></td></tr>
+</table>
+<% end %>
+</div>
+
 
