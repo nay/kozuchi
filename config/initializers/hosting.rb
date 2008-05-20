@@ -10,3 +10,5 @@ KOZUCHI_SSL           = false
 #   open : Anybody can make new user.
 #   closed : Admin function only.
 KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
+NEWS_RSS_HOST = "www.kozuchi.net"
+NEWS_RSS_PATH = "/rss"
