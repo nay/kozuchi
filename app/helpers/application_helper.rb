@@ -4,6 +4,32 @@ module ApplicationHelper
   
   include TermHelper
 
+  # レイアウトから使う、htmlタグの定型部分を出力してくれるヘルパー
+  def html_body_tag(title, styles, javascripts, &block)
+    inner_content = capture(&block)
+    content = <<EOF
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript; charset=utf-8" />
+    <meta name="author" content="Nay" />
+    <meta http-equiv="content-style-type" content="text/css" />
+    <title>#{title}</title>
+    #{stylesheet_link_tag *styles}
+    #{javascript_include_tag *javascripts}
+    #{render :partial => "shared/google_analytics"}
+  </head>
+  <body>
+    <div id="page">
+#{inner_content}
+    </div>
+  </body>
+</html>
+EOF
+    concat content, block.binding
+  end
+
   # 通信欄
   def flash_notice
     if flash[:notice] || flash[:notice].to_s != ""
