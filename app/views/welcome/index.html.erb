@@ -13,10 +13,11 @@
 <p><label for="remember_me">Remember me:</label>
 <%= check_box_tag 'remember_me' %></p>
 -->
+  <div class="error"><%= flash[:error] %></div>
 
-  <div style="text-align:center;"><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
+  <div><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
 
-  <div style="text-align:center;"><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', forgot_password_path %></div>
+  <div><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', forgot_password_path %></div>
 
       <% end -%>
     </div>

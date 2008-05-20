@@ -16,9 +16,9 @@ class SessionsController < ApplicationController
       end
       redirect_back_or_default('/')
     else
-      flash.now[:login] = params[:login]
-#      render :action => 'new'
-      redirect_to login_path
+      flash[:error] = "ログインに失敗しました。"
+      flash[:login] = params[:login]
+      redirect_to root_path
     end
   end
 
