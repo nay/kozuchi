@@ -1,5 +1,7 @@
 @charset "utf-8";
 
+/* dark blue : #041A61 */
+
 * {
   margin:0;
   padding:0;
@@ -28,7 +30,14 @@
 	color: #fcbf7f;
 	text-align: center;
 }
+.navigation {
+	text-align: right;
+	margin-bottom: 1em;
+}
 
+h1 {
+	color: #041A61;
+}
 
 p {
 	padding-left: 1em;
@@ -94,8 +103,8 @@ table.simple_form .operation {
 #footer {
   clear: both;
   margin-top: 16px;
-  border-bottom:1px dashed darkgoldenrod;
-  color:darkgoldenrod;
+  border-bottom:1px dashed #041A61;
+  color: #041A61;
   text-align:right;
   font-size:small;
   padding-bottom:2px;
