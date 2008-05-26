@@ -1,5 +1,4 @@
 quentin:
-  id: 1
   login: quentin
   email: quentin@example.com
   salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
@@ -9,11 +8,25 @@ quentin:
   activated_at: <%= 5.days.ago.to_s :db %> 
 
 aaron:
-  id: 2
   login: aaron
   email: aaron@example.com
   salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   created_at: <%= 1.days.ago.to_s :db %>
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
+
+old:
+  login: old
+  type: LoginEngineUser
+  salted_password: 6974f285f7139debe5ae317322cd585399989878 # testtest
+  salt: bfc324b9f83796b6989de61456adb1dbebce1d28
+  email: test@meadowy.org
+  activated_at: <%= 5.days.ago.to_s :db %> 
+
+old2:
+  login: test2
+  salted_password: 806adac92aa27ef0ad3da01f49af36ab2918af24 # testtest
+  salt: 59a9d05a2e4a0a72362990cc0b50df84518ff191
+  email: test2@meadowy.org
+  activated_at: <%= 5.days.ago.to_s :db %> 
 

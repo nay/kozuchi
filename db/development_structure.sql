@@ -99,7 +99,7 @@ CREATE TABLE `preferences` (
   `business_use` tinyint(1) NOT NULL default '0',
   `use_daily_booking` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `schema_info` (
   `version` int(11) default NULL
@@ -139,6 +139,6 @@ CREATE TABLE `users` (
   `password_token` varchar(40) default NULL,
   `password_token_expires_at` datetime default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 INSERT INTO `schema_info` (version) VALUES (13)
