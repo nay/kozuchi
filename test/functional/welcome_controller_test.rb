@@ -1,8 +1,14 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class WelcomeControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
-  def test_truth
-    assert true
+
+  # ログインしていない状態のウェルカムページ
+  def test_index_without_login
+    get :index
+    
+    assert_response :success
+    
+    # ログインフォームがあること
+    assert_tag :input, :attributes => {:id => 'login'}
   end
 end

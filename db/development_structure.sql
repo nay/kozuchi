@@ -15,7 +15,7 @@ CREATE TABLE `account_entries` (
   KEY `account_entries_friend_link_id_index` (`friend_link_id`),
   KEY `account_entries_settlement_id_index` (`settlement_id`),
   KEY `account_entries_result_settlement_id_index` (`result_settlement_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `account_links` (
   `account_id` int(11) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `accounts` (
   PRIMARY KEY  (`id`),
   KEY `accounts_user_id_index` (`user_id`),
   KEY `accounts_partner_account_id_index` (`partner_account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=310 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `admin_users` (
   `id` int(11) NOT NULL auto_increment,
@@ -76,7 +76,7 @@ CREATE TABLE `deals` (
   PRIMARY KEY  (`id`),
   KEY `deals_user_id_index` (`user_id`),
   KEY `deals_parent_deal_id_index` (`parent_deal_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `engine_schema_info` (
   `engine_name` varchar(255) default NULL,
@@ -99,7 +99,7 @@ CREATE TABLE `preferences` (
   `business_use` tinyint(1) NOT NULL default '0',
   `use_daily_booking` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `schema_info` (
   `version` int(11) default NULL
@@ -126,16 +126,19 @@ CREATE TABLE `users` (
   `firstname` varchar(40) default NULL,
   `lastname` varchar(40) default NULL,
   `salt` varchar(40) NOT NULL default '',
-  `verified` int(11) default '0',
   `role` varchar(40) default NULL,
-  `security_token` varchar(40) default NULL,
-  `token_expiry` datetime default NULL,
+  `activation_code` varchar(40) default NULL,
   `created_at` datetime default NULL,
   `updated_at` datetime default NULL,
   `logged_in_at` datetime default NULL,
-  `deleted` int(11) default '0',
-  `delete_after` datetime default NULL,
+  `crypted_password` varchar(40) default NULL,
+  `remember_token` varchar(255) default NULL,
+  `remember_token_expires_at` datetime default NULL,
+  `activated_at` datetime default NULL,
+  `type` varchar(40) default NULL,
+  `password_token` varchar(40) default NULL,
+  `password_token_expires_at` datetime default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
-INSERT INTO `schema_info` (version) VALUES (11)
+INSERT INTO `schema_info` (version) VALUES (13)
