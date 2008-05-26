@@ -13,6 +13,10 @@
 #news ul {
 	padding-left: 4em;
 }
+/* with side */
+#main {
+	width: 60%;
+}
 #title {
 	text-align: center;
 }

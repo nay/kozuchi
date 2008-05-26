@@ -27,12 +27,21 @@
       <% end -%>
     </div>
   <% end -%>
-
+  
+  <% if !defined?(DISPLAY_NEWS) || DISPLAY_NEWS -%>
   <div id="news" class="box">
     <h2>お知らせ</h2>
     <div style="text-align:right;"><%= link_to '小槌.netへ', 'http://www.kozuchi.net' %></div>
-    <%= news %>
+    <% if @news # キャッシュがあるか、ニュースが正常に取得できた -%>
+      <% cache :action => 'news' do # welcome/news というアクションはないがキャッシュファイルを作るためにこう命名。/だとうまくファイルができない。キャッシュ自体は効くが、どこに格納されているかは不明。 -%>
+	    <%= @news %>
+      <% end -%>
+	<% else # 取得エラー。キャッシュしない -%>
+  	  <p>現在、ニュースを表示できません。</p>
+    <% end -%>
   </div>
+  <% end -%>
+
 </div>
 
 <div id="main">
