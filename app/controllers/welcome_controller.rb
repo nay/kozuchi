@@ -1,3 +1,4 @@
+require 'rss'
 class WelcomeController < ApplicationController
   skip_before_filter :login_required
     
@@ -34,7 +35,9 @@ class WelcomeController < ApplicationController
         end
         return content
       end
-    rescue StandardError, TimeoutError
+    rescue StandardError, TimeoutError => e
+      logger.error "Could not get news."
+      logger.error e
       return nil
     end    
   end
