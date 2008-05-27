@@ -91,6 +91,11 @@ class UsersControllerTest < Test::Unit::TestCase
     get :forgot_password
     assert_response :success
   end
+  
+  def test_deliver_password_notification
+    post :deliver_password_notification, :email => 'test@meadowy.org'
+    assert_response :success
+  end
 
   protected
     def create_user(options = {})

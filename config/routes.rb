@@ -12,8 +12,9 @@ ActionController::Routing::Routes.draw do |map|
   map.activate_login_engine '/user/home', :controller => 'users', :action => 'activate_login_engine'
 
   map.forgot_password '/forgot_password', :controller => 'users', :action => 'forgot_password'
-  map.password '/password/:password_token', :controller => 'users', :action => 'change_password'
   map.deliver_password_notification '/deliver_password_notification', :controller => 'users', :action => 'deliver_password_notification', :conditions => {:method => :post}
+  map.password '/password/:password_token', :controller => 'users', :action => 'edit_password', :conditions => {:method => :get}
+  map.password '/password/:password_token', :controller => 'users', :action => 'update_password', :conditions => {:method => :post}
 
   map.resource :user
   

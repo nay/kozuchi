@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :login_required, :except => [:destroy, :edit]
+  before_filter :password_token_required, :only => [:edit_password, :update_password]
 #  layout 'login'
 
   # render new.rhtml
@@ -54,27 +55,21 @@ class UsersController < ApplicationController
   end
   
   # パスワードリマインダー経由のパスワード設定だけを行う
-  def change_password
-    raise InvalidParameterError if params[:password_token].blank?
-
-    user = User.find_by_password_token(params[:password_token])
-    if !user || !user.password_token?
-      flash_error("このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。")
-      redirect_to forgot_password_path
-      return
-    end
-    
-    @password_token = params[:password_token]
-    return if request.get?
-    
+  def edit_password
+    @title = "パスワード変更"
+  end
+  
+  def update_password
+    @title = "パスワード変更"
     # 更新実行
     if user.change_password(params[:password], params[:password_confirmation])
       flash[:notice] = "パスワードを変更しました。"
       self.current_user = user
-      redirect_to '/'
+      redirect_to :controller => 'home', :action => 'index'
+    else
+      @user = user
+      render :action => 'edit_password'
     end
-    @user = user
-    # render
   end
   
   def destroy
@@ -102,6 +97,19 @@ class UsersController < ApplicationController
   end
   
   private
+  def password_token_required
+    raise InvalidParameterError if params[:password_token].blank?
+
+    user = User.find_by_password_token(params[:password_token])
+    if !user || !user.password_token?
+      flash[:error] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
+      redirect_to forgot_password_path
+    else
+      @password_token = params[:password_token]
+    end
+  end
+  
+  
   def do_activate(activation_code)
     self.current_user = activation_code.blank? ? false : User.find_by_activation_code(activation_code)
     if logged_in? && !current_user.active?
