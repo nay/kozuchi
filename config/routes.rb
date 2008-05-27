@@ -13,6 +13,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.forgot_password '/forgot_password', :controller => 'users', :action => 'forgot_password'
   map.password '/password/:password_token', :controller => 'users', :action => 'change_password'
+  map.deliver_password_notification '/deliver_password_notification', :controller => 'users', :action => 'deliver_password_notification', :conditions => {:method => :post}
 
   map.resource :user
   

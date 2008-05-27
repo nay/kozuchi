@@ -128,4 +128,8 @@ table.simple_form .operation {
 .information ul {
   padding-left: 1em;
 }
+.error {
+  color: #ff6347;	
+}
+
 

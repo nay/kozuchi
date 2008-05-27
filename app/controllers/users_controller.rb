@@ -4,6 +4,7 @@ class UsersController < ApplicationController
 
   # render new.rhtml
   def new
+    @title = "ユーザー登録"
   end
 
   def create
@@ -34,19 +35,22 @@ class UsersController < ApplicationController
   # 内部的には change_password_token を生成し、そのコード付きでアクセスできるパスワード設定画面に誘導する
   # tokenの期限はchange_password_expires_at
   def forgot_password
-    return if request.get?
-    
+    @title = "パスワードを忘れたとき"
+  end
+  
+  def deliver_password_notification
+    @title = "パスワードを忘れたとき"
     raise InvalidParameterError if params[:email].blank?
     
     user =  User.find_by_email(params[:email])
     unless user
-      flash_error "該当するユーザーは登録されていません。", true
+      flash[:error] = "該当するユーザーは登録されていません。"
+      render :action => 'forgot_password'
       return
     end
     user.update_password_token
     UserMailer.deliver_password_notification(user)
-    flash_notice("パスワード変更のための情報を #{params[:email]}へ送信しました。")
-    redirect_to '/'
+    @email = params[:email]
   end
   
   # パスワードリマインダー経由のパスワード設定だけを行う

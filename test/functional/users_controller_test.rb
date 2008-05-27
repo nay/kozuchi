@@ -67,7 +67,7 @@ class UsersControllerTest < Test::Unit::TestCase
   def test_should_activate_user
     assert_nil User.authenticate('aaron', 'test')
     get :activate, :activation_code => users(:aaron).activation_code
-    assert_redirected_to '/'
+    assert_redirected_to :controller => 'home', :action => 'index' # Changed
     assert_not_nil flash[:notice]
     assert_equal users(:aaron), User.authenticate('aaron', 'test')
   end
@@ -84,6 +84,12 @@ class UsersControllerTest < Test::Unit::TestCase
     assert_nil flash[:notice]
   rescue ActionController::RoutingError
     # well played, sir
+  end
+  
+  # Added
+  def test_forgot_password
+    get :forgot_password
+    assert_response :success
   end
 
   protected
