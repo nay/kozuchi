@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(login, password)
     u = find :first, :conditions => ['login = ? and activated_at IS NOT NULL', login] # need to get the salt
-    u && u.authenticated?(password) ? u : nil
+    u && u.authenticated?(password) ? u.upgrade!(password) : nil
   end
 
   # Encrypts some data with the salt.
@@ -216,30 +216,36 @@ class User < ActiveRecord::Base
       result
     end
   end
-
-  protected
-    # before filter 
-    def encrypt_password
-      return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-      self.crypted_password = encrypt(password)
-    end
-      
-    def password_required?
-      crypted_password.blank? || !password.blank?
-    end
-    
-    def make_activation_code
-
-      self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
-    end
-
-  protected
   
+  # 新方式に変更する。基盤クラスなら何もしない。change_pass
+  def upgrade!(password)
+    return self if self.instance_of?(User)
+    
+    raise "Could not upgrade" unless change_password(password, password)
+    User.find(self.id)
+  end
+
+  protected
+  # before filter 
+  def encrypt_password
+    return if password.blank?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+    self.crypted_password = encrypt(password)
+  end
+    
+  def password_required?
+    crypted_password.blank? || !password.blank?
+  end
+  
+  def make_activation_code
+
+    self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+  end
+
   def after_create
     create_preferences()
     Account::Base.create_default_accounts(self.id)
   end
 
-    
+  
 end

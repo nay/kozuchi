@@ -8,17 +8,19 @@ class OriginalUserTest < ActiveSupport::TestCase
   # 旧ユーザーでログインできることの確認
   def test_old_user_can_login
     user = User.authenticate('old', 'testtest')
-    assert user.kind_of? LoginEngineUser
     assert_not_nil user
-    assert 'old', user.login
+    # ログイン後はtypeが変更されている
+    assert user.instance_of?(User)
+    # さらにログインできる
+    user = User.authenticate('old', 'testtest')
   end
   
   # 旧ユーザーのパスワードを変更すると新方式に移行することの確認
   def test_change_old_users_password
-    user = User.authenticate('old', 'testtest')
+    user = users(:old)
     user.change_password('newpass', 'newpass')
     user = User.find(user.id)
-    assert !user.kind_of?(LoginEngineUser)
+    assert user.instance_of?(User)
     assert !user.crypted_password != '6974f285f7139debe5ae317322cd585399989878'
     assert_not_nil User.authenticate('old', 'newpass')
   end
@@ -53,6 +55,26 @@ class OriginalUserTest < ActiveSupport::TestCase
     assert_not_equal 'Tom',user.login
     assert user.kind_of?(LoginEngineUser)
     assert user.crypted_password, '6974f285f7139debe5ae317322cd585399989878'
+    assert_not_nil User.authenticate('old', 'testtest')
+  end
+  
+  # 最新クラスをアップグレードしても何も起きないことの確認
+  def test_upgrade_user
+    user = users(:quentin)
+    updated_at = user.updated_at
+    user.upgrade!('test')
+    user = User.find(user.id)
+    assert user.instance_of?(User)
+    assert updated_at, user.updated_at
+    assert_not_nil User.authenticate('quentin', 'test')
+  end
+
+  # LoginEngineUserをアップグレードするテスト
+  def test_upgrade_login_engine_user
+    user = users(:old)
+    user.upgrade!('testtest')
+    user = User.find(user.id)
+    assert user.instance_of?(User)
     assert_not_nil User.authenticate('old', 'testtest')
   end
 

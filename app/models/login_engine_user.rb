@@ -18,11 +18,5 @@ class LoginEngineUser < User
   def salted_password
     self.crypted_password
   end
-  
-#  def upgrade!
-#    User.update_all("type = NULL", "id = #{self.id}")
-#    readonly!
-#    User.find(self.id)
-#  end
-  
+    
 end
