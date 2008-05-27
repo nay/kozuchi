@@ -15,6 +15,10 @@ class LoginEngineUser < User
     return Digest::SHA1.hexdigest("#{LOGIN_ENGINE_SALT}--#{str}--}")[0..39]
   end
   
+  def salted_password
+    self.crypted_password
+  end
+  
 #  def upgrade!
 #    User.update_all("type = NULL", "id = #{self.id}")
 #    readonly!

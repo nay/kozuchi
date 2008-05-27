@@ -208,9 +208,9 @@ class User < ActiveRecord::Base
     end
     User.transaction do 
       result = save
-      if result && !password.blank?
-        # password を更新したならtypeも更新
-        self[:type] = null
+      # 最新方式でない暗号化方式だった場合は、パスワードを変更したらクラスを最新にする
+      if result && !password.blank? && self[:type]
+        self[:type] = nil
         save(false)
       end
       result

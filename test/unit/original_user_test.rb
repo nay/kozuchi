@@ -8,15 +8,54 @@ class OriginalUserTest < ActiveSupport::TestCase
   # 旧ユーザーでログインできることの確認
   def test_old_user_can_login
     user = User.authenticate('old', 'testtest')
+    assert user.kind_of? LoginEngineUser
     assert_not_nil user
     assert 'old', user.login
   end
   
   # 旧ユーザーのパスワードを変更すると新方式に移行することの確認
   def test_change_old_users_password
-    assert true # TODO
+    user = User.authenticate('old', 'testtest')
+    user.change_password('newpass', 'newpass')
+    user = User.find(user.id)
+    assert !user.kind_of?(LoginEngineUser)
+    assert !user.crypted_password != '6974f285f7139debe5ae317322cd585399989878'
+    assert_not_nil User.authenticate('old', 'newpass')
   end
   
+  # ほかの属性といっしょにパスワードを変更しても新方式に移行することの確認
+  def test_change_old_users_password_with_attributes
+    user = users(:old)
+    user.update_attributes_with_password({:login => 'Tom'}, 'newpass', 'newpass')
+    user = User.find(user.id)
+    assert_equal 'Tom',user.login
+    assert !user.kind_of?(LoginEngineUser)
+    assert !user.crypted_password != '6974f285f7139debe5ae317322cd585399989878'
+    assert_not_nil User.authenticate('Tom', 'newpass')
+  end
+  
+  # ほかの属性といっしょにパスワードを変更するメソッドを呼んでも、パスワードに変更がなければ新方式に移行しないことの確認
+  def test_update_old_users_attributes_without_password
+    user = users(:old)
+    user.update_attributes_with_password({:login => 'Tom'}, nil, nil)
+    user = User.find(user.id)
+    assert_equal 'Tom',user.login
+    assert user.kind_of?(LoginEngineUser)
+    assert user.crypted_password, '6974f285f7139debe5ae317322cd585399989878'
+    assert_not_nil User.authenticate('Tom', 'testtest')
+  end
+
+  # ほかの属性といっしょにパスワードを変更するメソッドを呼んでも、検証エラーになれば新方式に移行しないことの確認
+  def test_update_old_users_attributes_with_password_error
+    user = users(:old)
+    user.update_attributes_with_password({:login => 'Tom'}, 'newpass', 'wrongconfirm')
+    user = User.find(user.id)
+    assert_not_equal 'Tom',user.login
+    assert user.kind_of?(LoginEngineUser)
+    assert user.crypted_password, '6974f285f7139debe5ae317322cd585399989878'
+    assert_not_nil User.authenticate('old', 'testtest')
+  end
+
   # account.types_in が正しく動作することのテスト
   def test_accounts_types_in
     assert_equal 5, users(:old).accounts.types_in(:asset).size
