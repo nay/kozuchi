@@ -5,6 +5,7 @@ namespace :gettext do
   desc 'Update pot/po files.'
   task :updatepo do
     GetText.update_pofiles('kozuchi',
+#                           ['app/models/account/base.rb'],
                            Dir.glob("{app,config,lib}/**/*.{rb,rhtml,erb}"),
                            'kozuchi'
                            )

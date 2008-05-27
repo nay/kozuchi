@@ -1,6 +1,7 @@
 require 'digest/sha1'
 class User < ActiveRecord::Base
-  
+#  N_('User|Password')
+#  N_('User|Password confirmation')
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :friends, :dependent => :destroy
   has_many  :friend_applicants, :class_name => 'Friend', :foreign_key => 'friend_user_id', :dependent => :destroy

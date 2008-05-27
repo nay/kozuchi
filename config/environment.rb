@@ -59,7 +59,7 @@ Rails::Initializer.run do |config|
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
  
-  config.action_mailer.default_charset = 'iso-2022-jp' 
+#  config.action_mailer.default_charset = 'iso-2022-jp' 
   config.action_mailer.smtp_settings = {
     :address        => "ko.meadowy.net",
     :port           => 25,

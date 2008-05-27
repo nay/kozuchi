@@ -30,7 +30,7 @@ class WelcomeController < ApplicationController
         for i in 0...size
           item = rss.channel.items[i]
           break unless item
-          content << "<h4>#{item.title} (#{item.pubDate.strftime("%Y/%m/%d")})</h4>"
+          content << "<h4>#{item.title} (#{item.pubDate.strftime('%Y/%m/%d')})</h4>"
           content << item.description
         end
         return content

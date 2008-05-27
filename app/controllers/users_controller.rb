@@ -62,12 +62,11 @@ class UsersController < ApplicationController
   def update_password
     @title = "パスワード変更"
     # 更新実行
-    if user.change_password(params[:password], params[:password_confirmation])
+    if @user.change_password(params[:password], params[:password_confirmation])
       flash[:notice] = "パスワードを変更しました。"
-      self.current_user = user
+      self.current_user = @user
       redirect_to :controller => 'home', :action => 'index'
     else
-      @user = user
       render :action => 'edit_password'
     end
   end
@@ -100,8 +99,8 @@ class UsersController < ApplicationController
   def password_token_required
     raise InvalidParameterError if params[:password_token].blank?
 
-    user = User.find_by_password_token(params[:password_token])
-    if !user || !user.password_token?
+    @user = User.find_by_password_token(params[:password_token])
+    if !@user || !@user.password_token?
       flash[:error] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
       redirect_to forgot_password_path
     else

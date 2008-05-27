@@ -128,8 +128,13 @@ table.simple_form .operation {
 .information ul {
   padding-left: 1em;
 }
-.error {
+.error, .errorExplanation {
   color: #ff6347;	
 }
-
+.errorExplanation h2 {
+	font-size: 120%;
+}
+.errorExplanation ul {
+	padding-left: 4em;
+}
 

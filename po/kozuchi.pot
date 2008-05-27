@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: kozuchi\n"
-"POT-Creation-Date: 2008-05-06 10:50+0900\n"
+"POT-Creation-Date: 2008-05-27 20:28+0900\n"
 "PO-Revision-Date: 2008-05-06 10:03+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -172,82 +172,6 @@ msgstr ""
 msgid "Friend|Friend level"
 msgstr ""
 
-#: app/models/old_user.rb:-
-msgid "user"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Login"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Salted password"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Email"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Firstname"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Lastname"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Salt"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Role"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Security token"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Token expiry"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Created at"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Updated at"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Logged in at"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Crypted password"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Remember token"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Remember token expires at"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Activation code"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Activated at"
-msgstr ""
-
-#: app/models/old_user.rb:-
-msgid "User|Type"
-msgstr ""
-
 #: app/models/preferences.rb:-
 msgid "preference"
 msgstr ""
@@ -308,22 +232,28 @@ msgstr ""
 msgid "Settlement|Type"
 msgstr ""
 
-#: app/views/sessions/new.html.erb:8 app/views/users/new.html.erb:3
+#: app/models/user.rb:3
+msgid "User|Password"
+msgstr ""
+
+#: app/models/user.rb:4
+msgid "User|Password confirmation"
+msgstr ""
+
+#: app/views/sessions/new.html.erb:4 app/views/users/new.html.erb:15
+#: app/views/welcome/index.html.erb:18
 msgid "Login"
 msgstr ""
 
-#: app/views/sessions/new.html.erb:11 app/views/users/new.html.erb:9
+#: app/views/sessions/new.html.erb:7 app/views/users/new.html.erb:17
+#: app/views/welcome/index.html.erb:20
 msgid "Password"
 msgstr ""
 
-#: app/views/sessions/new.html.erb:19
+#: app/views/sessions/new.html.erb:15 app/views/welcome/index.html.erb:24
 msgid "Log in"
 msgstr ""
 
-#: app/views/users/new.html.erb:12
+#: app/views/users/new.html.erb:18
 msgid "Confirm Password"
-msgstr ""
-
-#: app/views/users/new.html.erb:15
-msgid "Sign up"
 msgstr ""
