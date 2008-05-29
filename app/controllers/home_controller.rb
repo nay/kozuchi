@@ -1,5 +1,4 @@
 class HomeController < ApplicationController
-  layout 'login'
   
   def index
 #    today = Date.today
