@@ -4,6 +4,8 @@ SUPPORT_EMAIL_ADDRESS = "support@app.com"
 ROOT_URL              = "http://localhost:3000"
 LOGIN_ENGINE_SALT     = "koban"
 KOZUCHI_SSL           = false
+
+# SKIP_MAIL             = true
 # GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
 
 # USER_MANAGEMENT_TYPE

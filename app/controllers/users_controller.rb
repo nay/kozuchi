@@ -16,11 +16,10 @@ class UsersController < ApplicationController
     # reset_session
     @user = User.new(params[:user])
     @user.save
-    if @user.errors.empty?
-      redirect_to login_path
-      flash[:notice] = "ご登録ありがとうございます。確認メールが送信されますので、記載されているURLからアカウントを有効にしてください。確認メールが届かないときは #{SUPPORT_EMAIL_ADDRESS} までお問い合わせ下さい。"
-    else
+    if !@user.errors.empty?
       render :action => 'new'
+    elsif defined?(SKIP_MAIL) && SKIP_MAIL
+      do_activate(@user.activation_code)
     end
   end
 
