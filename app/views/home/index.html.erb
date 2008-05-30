@@ -1,7 +1,6 @@
-
 <div id="side">
 <div class="box"">
-	<h2>お知らせ</h2>
+  <h2>お知らせ</h2>
   <p>お知らせはありません。</p>
 </div>
 <div class="box">
@@ -12,13 +11,13 @@
 <div id="main">
 
 <div>
-	<div style="float:left; padding: 2em; border: 1px solid black; margin:1em;">日めくり</div>
-	<div style="float:left; padding: 2em; border: 1px solid black; margin:1em;">仕訳帳（月次）</div>
+	<%= large_menu_button_to '仕訳帳', :controller => 'deals', :action => 'index' %>
+	<%= large_menu_button_to '精算', :controller => 'settlements', :action => 'index' %>
 	<div style="clear:left;"></div>
 </div>
 </div>
 
-
+<!--
 <div class="memo">
 　　<h3>ようこそWeb家計簿 "小槌"へ！</h3>
   <p>楽しく家計簿をつけて節約しちゃいましょう！</p>
@@ -30,3 +29,4 @@
   <div id="features">
   </div>
 </div>
+-->

@@ -226,6 +226,7 @@ EOS
   class Menues
     def self.header_menues
       t = MenuTree.new
+      t.add_menu('ホーム', :controller => "/home", :action => 'index')
       t.add_menu('家計簿', :controller => "/deals", :action => 'index')
       t.add_menu('精算', :controller => '/settlements', :action => 'new')
       t.add_menu('基本設定', :controller => "/settings/assets", :action => "index")

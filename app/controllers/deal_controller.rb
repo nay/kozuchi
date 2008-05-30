@@ -14,6 +14,7 @@ class DealController < ApplicationController
     # deal / balance それぞれのフォーム初期化処理
     @tab_name = params[:tab_name] || 'deal'
     @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+    render :layout => false
   end
   
   # params[:back_to][:controller]:: 処理が終わったときに帰る Controller

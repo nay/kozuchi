@@ -1,16 +1,18 @@
 <% html_tag do -%>
 
-  <% head_tag 'users' do -%>
+  <% head_tag 'home' do -%>
   	<title>[小槌] ホーム</title>
   <% end -%>
   
   <% body_tag do -%>
     <div id="title">
-      <div style="float:right; "><%= link_to(image_tag("/images/izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path)%></div>
+      <div style="float:right; ">
+	    <%= link_to(image_tag("/images/izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path)%>
+	  </div>
   	  <h1><%= h @user.login %>さんの家計簿</h1>
 	  <div style="clear:right"></div>
 	</div>
-   <div class="navigation"><%= link_to 'トップページへ', root_path %></div>
+   <div class="navigation"><%= link_to 'ログアウト', logout_path, :style=>"margin-right: 1em;" %> <%= link_to 'トップページへ', root_path %></div>
     <%= yield %>
   <% end -%>
 

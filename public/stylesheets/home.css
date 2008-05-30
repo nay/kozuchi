@@ -1,0 +1,26 @@
+.large_menu_button {
+	float: left;
+	padding-top: 2em;
+	padding-bottom: 2em;
+	text-align: center;
+	background-color: #FFDDBC;
+	border: 4px outset #FFDDBC;
+	color: #041A61;
+	font-size: 120%;
+	width: 8em;
+	margin: 4px;
+	text-decoration: none;
+}
+.large_menu_button_selected {
+	float: left;
+	padding-top: 2em;
+	padding-bottom: 2em;
+	text-align: center;
+	background-color: #ff8ec6;
+	border: 4px outset #ff8ec6;
+	color: #041A61;
+	font-size: 120%;
+	width: 8em;
+	margin: 4px;
+	text-decoration: none;
+}
