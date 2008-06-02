@@ -226,6 +226,29 @@ class User < ActiveRecord::Base
     User.find(self.id)
   end
 
+  # == 家計簿ロジック TODO: モジュールへの切り出し ==
+  
+  # 指定した月の支出合計を得る
+  def expense_summary(year, month)
+    # 期間を用意
+    start_date = Date.new(year.to_i, month.to_i, 1)
+    end_date = start_date >> 1
+
+    p start_date, end_date
+
+    # 支出合計の生データを得る
+    expense_sum = Account::Expense.raw_sum_of(self.id, start_date, end_date)
+
+    # 各資産口座の不明金を計算し、ーのものをすべて足す
+    assets = accounts.types_in(:asset)
+    for a in assets
+      flow = a.unknown_flow(start_date, end_date)
+      expense_sum += flow.abs if flow < 0
+    end
+    
+    expense_sum
+  end
+
   protected
   # before filter 
   def encrypt_password

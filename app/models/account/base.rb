@@ -166,8 +166,17 @@ class Account::Base < ActiveRecord::Base
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
   # TODO: 格納したくない。返り値の利用でいい人はそうして。
+  # TODO: Assetに移すべき
   def balance_before(date)
     @balance = AccountEntry.balance_at_the_start_of(self.user_id, self.id, date)
+  end
+
+  # 指定した期間の支出合計額（不明金を換算しない）を得る
+  def raw_sum_in(start_date, end_date)
+    AccountEntry.sum(:amount,
+      :joins => "inner join deals on deals.id = account_entries.deal_id",
+      :conditions => ["account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date]
+    ) || 0
   end
 
   # 口座の初期設定を行う

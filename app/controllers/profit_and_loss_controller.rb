@@ -24,7 +24,7 @@ class ProfitAndLossController < ApplicationController
     end_exclusive = start_inclusive >> 1
     values = AccountEntry.sum(:amount,
      :group => 'account_id',
-     :conditions => ["dl.date >= ? and dl.date < ? and dl.confirmed = ?", start_inclusive, end_exclusive, true],
+     :conditions => ["dl.date >= ? and dl.date < ? and dl.confirmed = ? and et.user_id = ?", start_inclusive, end_exclusive, true, @user.id],
      :joins => "as et inner join deals as dl on dl.id = et.deal_id")
     expense_accounts = @user.accounts.types_in(:expense)
     @expenses_summaries = []
@@ -45,10 +45,8 @@ class ProfitAndLossController < ApplicationController
     @asset_minus_summaries = []
     for account in asset_accounts
       balance_start = AccountEntry.balance_at_the_start_of(@user.id, account.id, start_inclusive) # 期首残高
-      p "balance_start = #{balance_start}"
       
       balance_end = AccountEntry.balance_at_the_start_of(@user.id, account.id, end_exclusive) # 期末残高
-      p "balance_end = #{balance_end}"
 
       diff = balance_end - balance_start
       if diff > 0

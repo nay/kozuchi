@@ -11,7 +11,7 @@ class Balance < BaseDeal
 
   def before_create
     self.summary = ""
-    create_entry
+    account_entries.build(:user_id => user_id, :account_id => @account_id, :amount => 0, :balance => @balance)
   end
   
   def before_update
