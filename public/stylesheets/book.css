@@ -21,30 +21,30 @@
 
 /* 反転エリア */
 #header, #header * {
-  background-color: darkgoldenrod;
-  color: gold;
+  color: #041A61;
   font-weight: bold;
   padding: 4px;
 }
 
 #user_and_today {
   background-color: indigo;
-  color: gold;
+  color: white;
   font-weight: bold;
   padding: 4px;
 }
 
 /* 線で囲んだエリア */
 #sidebar .side_menu {
-  border: 2px solid darkgoldenrod;
+  border: 0;
+  background-color: #FFDDBC;
   padding: 4px;
 }
 
 /* フォーム地 */
 .tabsheet, .form_box {
-  border: 2px solid darkgoldenrod;
+  border: 2px solid #ffffb2;
   padding: 4px;
-  background-color: gold;
+  background-color: #ffffcc;
 }
 
 /* フォーム内テーブル */
@@ -84,15 +84,15 @@ span.large {
 }
 
 .book {
-  background-color: goldenrod;
-  border: 1px solid darkgoldenrod;
+  background-color: #EFEFEF;
+  border: 1px solid #d3d3d8;
 /*  width:100%; */ /* all_media で指定 */
 /*  width: 18em; */
 }
 
 .book_header {
-  background-color: goldenrod;
-  border: 1px solid darkgoldenrod;
+  background-color: #EFEFEF;
+  border: 1px solid #d3d3d8;
   /* width:100%; */ /* all_media で指定 */
 }
 
@@ -114,7 +114,7 @@ span.large {
 }
 .book_header th, .book_header tbody tr th {
   padding: 2px;
-  background-color: goldenrod;
+  background-color: #efefef;
   text-align: center;
 }
 th.scroll_space {
@@ -144,20 +144,20 @@ td.summary {
 
 /* マスタメンテナンステーブル */
 table.masters {
-  background-color: goldenrod;
-  border: 1px solid darkgoldenrod;
+  background-color: #FFDDBC;
+  border: 1px solid #FFDDBC;
   width:100%;
 }
 
 .masters td {
-  border: 1px inset wheat;
-  background-color: wheat;
+  border: 1px inset #fff2e5;
+  background-color: #fff2e5;
   padding: 2px;
 }
 
 .masters th {
-  border: 1px inset goldenrod;
-  background-color: goldenrod;
+  border: 1px inset #FFDDBC;
+  background-color: #FFDDBC;
   padding: 2px;
 }
 
@@ -168,13 +168,14 @@ table.masters {
   font-weight: bold;
 /*  height: 24px;*/
   padding : 2px 16px;
-  border-top: 2px solid darkgoldenrod;
-  border-left: 2px solid darkgoldenrod;
-  border-right: 2px solid darkgoldenrod;
+  border-top: 2px solid #FFFFB2;
+  border-left: 2px solid #FFFFB2;
+  border-right: 2px solid #FFFFB2;
 }
 
 .selectedtab {
-  background-color: gold;
+  background-color: #FFFFCC;
+  color: #FF8EC6;
 }
 
 .tab, .selectedtab {
@@ -200,8 +201,8 @@ table.masters {
 .graph {
   vertical-align: middle;
   text-align: center;
-  border: 2px solid darkgoldenrod;
-  color: darkgoldenrod;
+  border: 2px solid #D3D3D8;
+  color: black;
   font-weight: bold;
   background-color: white;
 }
@@ -216,10 +217,10 @@ span.system, span.system_button {
 
 /* ガイド欄 */
 p.guide {
-  border: 2px dotted darkgoldenrod;
+  border: 4px dotted #FFDDBC;
   padding: 8px;
   margin: 4px;
-  color: darkgoldenrod;
+  color: black;
   background-color: white;
   line-height: 1.5em;
 }
@@ -244,8 +245,8 @@ input.readonly {
   border: 1px outset goldenrod; 
 }
 a.small_button, .action a {
-  border: 1px outset goldenrod; 
-  background-color: gold;
+  border: 1px outset #FFDDBC; 
+  background-color: #FFDDBC;
   color: gray;
   text-decoration: none;
 }
@@ -256,20 +257,10 @@ a.small_button, .action a {
 /* ========== 固有情報　=============== */
 
 /* ------- top level ------------*/
-body {
-  margin: 0px;
-  padding: 0px;
-}
-#page {
-  background-color: wheat;
-  margin: 0px 4px;
-  padding: 8px;
-}
 /* -------- header -------*/
 #header {
   height: 2em;
   margin-bottom: 8px;
-  border: 4px double darkgoldenrod;
 }
 #home_icon {
   margin: 0;
@@ -289,7 +280,7 @@ body {
   float: right;
 }
 #header_menu .current {
-  color: white;
+  color: #FF8EC6;
 }
 /* -------- sidebar -------*/
 #sidebar {
@@ -302,14 +293,14 @@ body {
   white-space: nowrap;
   margin: 8px 0px;
   overflow: hidden;
-  border: 2px solid darkgoldenrod;
+  border: 0;
   padding: 4px;
   font-weight: bold;
 }
 
 .side_menu_current {
-  background-color: darkgoldenrod;
-  color: white;
+  background-color: #FF8EC6;
+  color: black;
 }
 
 /* -------- contents -------*/
@@ -334,26 +325,26 @@ body {
 }
 
 #calendar table {
-  background-color: darkgoldenrod;
+  background-color: #FFDDBC;
 }
 
 #calendar table tr td {
   width: 40px;
   padding: 0px 4px;
-  background-color: goldenrod;
+  background-color: #FFDDBC;
 }
 
 #calendar table tr td.selected_month {
-  border: 4px inset gold;
+  border: 4px inset #ff8ec6;
   text-align: right;
-  background-color: gold;
+  background-color: #ff8ec6;
   color: black;
 }
 
 #calendar table tr td.selectable_month {
-  border: 4px outset goldenrod;
+  border: 4px outset #FFDDBC;
   text-align: right;
-  background-color: goldenrod;
+  background-color: #FFDDBC;
   color: black;
 }
 
@@ -363,10 +354,10 @@ body {
 #datebox {
   float: left;
   padding: 4px;
-  background: gold;
-  border-top: 2px solid darkgoldenrod;
-  border-left: 2px solid darkgoldenrod;
-  border-right: 2px solid darkgoldenrod;
+  background: #FFFFCC;
+  border-top: 2px solid #FFFFB2;
+  border-left: 2px solid #FFFFB2;
+  border-right: 2px solid #FFFFB2;
 }
 
 /* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
@@ -390,8 +381,8 @@ body {
   white-space: nowrap;
   margin: 10px 100px;
   padding: 6px;
-  border-top: 6px double darkgoldenrod;
-  border-bottom: 6px double darkgoldenrod;
+  border-top: 6px double #D3D3D8;
+  border-bottom: 6px double #D3D3D8;
   text-align: center;
   font-weight: bold;
   font-size: 24px;  

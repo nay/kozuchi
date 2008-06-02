@@ -3,7 +3,7 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new', :conditions => {:method => :get}
   map.signup_post '/signup', :controller => 'users', :action => 'create', :conditions => {:method => :post}
 
-  map.login '/login', :controller => 'sessions', :action => 'new'  , :conditions => {:method => :get}
+#  map.login '/login', :controller => 'sessions', :action => 'new'  , :conditions => {:method => :get}
   map.login_post '/login', :controller => 'sessions', :action => 'create', :conditions => {:method => :post}
 
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'  

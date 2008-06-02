@@ -23,7 +23,7 @@
 	border: 4px dotted #ffddbc;
 	background-color: white;
 	margin-bottom: 1em;
-	padding: 0.5em;
+	padding: 1em;
 }
 .box h2 {
 	font-size: 120%;
@@ -57,9 +57,11 @@ input, select {
   font-size: 100%;
   margin: 4px;
 }
+select {
+}
 
 option {
-  font-size: 90%;
+  font-size: 100%;
   padding: 2px;
 }
 
@@ -80,8 +82,8 @@ option {
 button, input.button, td.button input {
   white-space: nowrap;
   text-decoration: none;
-  border: 4px outset goldenrod;
-  background-color: goldenrod;
+  border: 4px outset #FFDDBC;
+  background-color: #FFDDBC;
   color: black;
   font-weight: bold;
   padding: 1px 4px;
