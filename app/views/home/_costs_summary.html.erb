@@ -1,18 +1,2 @@
 <p>今月の支出：<%= number_with_delimiter @monthly_expense %></p>
-<div><canvas width="400" height="200" id="expense_summary_graph"></canvas></div>
-<!--[if IE]><script type="text/javascript" src="../html5jp/excanvas/excanvas.js"></script><![endif]-->
-<script type="text/javascript" src="../html5jp/graph/line.js"></script>
-<script type="text/javascript">
-window.onload = function() {
-  var lg = new html5jp.graph.line("expense_summary_graph");
-  if( ! lg ) { return; }
-  var items = [
-    <%= @summary_item.inspect %>
-  ];
-  var params = {
-  	x: <%= @months.inspect %>,
-	gbackgroundColor: '#FFDDBC'
-  };
-  lg.draw(items, params);
-};
-</script>
+<%= javascript_line_chart([@expenses_item], :width => 400, :height => 200, :canvas_id => 'expense_summary_graph', :x => @months, :gbackgroundColor => "'#ffe5f2'") %>

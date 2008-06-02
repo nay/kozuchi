@@ -234,8 +234,6 @@ class User < ActiveRecord::Base
     start_date = Date.new(year.to_i, month.to_i, 1)
     end_date = start_date >> 1
 
-    p start_date, end_date
-
     # 支出合計の生データを得る
     expense_sum = Account::Expense.raw_sum_of(self.id, start_date, end_date)
 
@@ -247,6 +245,23 @@ class User < ActiveRecord::Base
     end
     
     expense_sum
+  end
+  
+  # 指定した月の末日の資産合計、純資産合計の配列を得る
+  def assets_summary(year, month)
+    start_date = Date.new(year.to_i, month.to_i, 1)
+    end_date = start_date >> 1
+    
+    assets_sum = 0
+    pure_assets_sum = 0
+    # 各資産口座の残高を足す
+    assets = accounts.types_in(:asset)
+    for a in assets
+      balance = AccountEntry.balance_at_the_start_of(self.id, a.id, end_date) # 期末残高
+      pure_assets_sum += balance # 純資産は＋とーを単純に足す
+      assets_sum += balance if balance > 0 # 資産合計は正の資産だけ足す
+    end
+    [assets_sum, pure_assets_sum]
   end
 
   protected
