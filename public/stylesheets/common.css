@@ -19,6 +19,44 @@
 	width: 40%;
 }
 
+/* -------- header -------*/
+#header {
+  height: 2em;
+  margin-bottom: 8px;
+}
+/* 反転エリア */
+#header, #header * {
+  color: #041A61;
+  font-weight: bold;
+  padding: 4px;
+}
+
+#home_icon {
+  margin: 0;
+  padding: 0;
+  float:left;
+}
+#home_icon img {
+  padding: 0;
+  margin: 0;
+  height: 2em;
+  width: 2em;
+}
+#header_title {
+  float: left;
+}
+#header_menu {
+  float: right;
+}
+#header_menu .current {
+  color: #FF8EC6;
+}
+
+/* 大きな文字 */
+span.large {
+  font-size: 1.3em;
+}
+
 .box {
 	border: 4px dotted #ffddbc;
 	background-color: white;

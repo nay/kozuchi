@@ -5,14 +5,28 @@
   <% end -%>
   
   <% body_tag do -%>
-    <div id="title">
-      <div style="float:right; ">
-	    <%= link_to(image_tag("/images/izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path)%>
-	  </div>
-  	  <h1><%= h @user.login %>さんの家計簿</h1>
-	  <div style="clear:right"></div>
-	</div>
-   <div class="navigation"><%= link_to 'ログアウト', logout_path, :style=>"margin-right: 1em;" %> <%= link_to 'トップページへ', root_path %></div>
+    <div id="header">
+      <div id="home_icon">
+        <%= link_to(image_tag("/images/izumo_kozuchi.png", :border => 0, :width => 32, :height => 32), root_path) %>
+      </div>
+      <div id="header_title">
+        <span class="large"><%= h @user.login %>さんの家計簿</span>
+        <span> - ホーム</span>
+      </div>
+      <div id="header_menu">
+        <% h_menues = header_menues%>
+        <% for menu in h_menues %>
+          <% if menu.name != 'ホーム' %>
+            <%= link_to(menu.name, menu.url_option)%>
+          <% else %>
+            <span class="current"><%= menu.name %></span>
+          <% end %>
+          <% break if menu == h_menues.last %>
+          <span> | </span>
+        <% end %>
+      </div>
+    </div>
+
     <%= yield %>
   <% end -%>
 
