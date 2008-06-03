@@ -67,9 +67,9 @@ class ApplicationController < ActionController::Base
 #  end
   
   # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
-  def local_request?
-    false
-  end
+#  def local_request?
+#    false
+#  end
 
 
   def set_ssl

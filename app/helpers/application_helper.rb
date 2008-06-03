@@ -232,7 +232,8 @@ EOS
       t.add_menu('基本設定', :controller => "/settings/assets", :action => "index")
       t.add_menu('高度な設定', :controller => "/settings/friends", :action => "index")
       t.add_menu('ヘルプ', :controller => "/help", :action => "index")
-      t.add_menu('ログアウト', '/logout')  # TODO
+#      t.add_menu('ログアウト', logout_path)  # TODO
+      t.add_menu('ログアウト', :controller => "/sessions", :action => "destroy")
       t
     end
     
