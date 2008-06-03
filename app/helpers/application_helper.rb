@@ -22,10 +22,10 @@ EOF
     <meta http-equiv="Content-Script-Type" content="text/javascript; charset=utf-8" />
     <meta name="author" content="Nay" />
     <meta http-equiv="content-style-type" content="text/css" />
-    #{inner_content}
     #{stylesheet_link_tag *stylesheets.insert(0, 'common')}
     #{javascript_include_tag 'prototype'}
     #{render :partial => "shared/google_analytics"}
+    #{inner_content}
   </head>
 EOF
     concat content, block.binding

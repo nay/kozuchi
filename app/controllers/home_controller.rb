@@ -1,5 +1,4 @@
 class HomeController < ApplicationController
-  
   def index
     # TODO:単位をなんとか
     today = Date.today

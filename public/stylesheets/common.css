@@ -16,7 +16,7 @@
 
 #side {
 	float: right;
-	width: 40%;
+	width: 38%;
 }
 
 /* -------- header -------*/
@@ -56,12 +56,11 @@
 span.large {
   font-size: 1.3em;
 }
-
 .box {
 	border: 4px dotted #ffddbc;
 	background-color: white;
 	margin-bottom: 1em;
-	padding: 1em;
+	padding: 1em; 
 }
 .box h2 {
 	font-size: 120%;
