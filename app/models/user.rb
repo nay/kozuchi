@@ -245,7 +245,7 @@ class User < ActiveRecord::Base
     end
     
     expense_sum
-  end
+  end  
   
   # 指定した月の末日の資産合計、純資産合計の配列を得る
   def assets_summary(year, month)
@@ -264,6 +264,20 @@ class User < ActiveRecord::Base
     [assets_sum, pure_assets_sum]
   end
 
+  
+  def recent(months, &block)
+    result = []
+    dates = []
+    today = Date.today
+    day = today << (months-1)
+    while(day <= Date.today)
+      result << yield(self, day)
+      dates << day
+      day >>= 1
+    end
+    [result, dates]
+  end
+  
   protected
   # before filter 
   def encrypt_password
