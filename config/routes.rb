@@ -34,9 +34,6 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect 'admin/:action', :controller => "admin/admin"
 
-  # Off daily-booking
-  map.connect 'daily_booking/*any', :controller => 'open', :action => 'not_found'
-
   map.connect ':controller', :action => 'index'
   
 #  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
@@ -59,6 +56,4 @@ ActionController::Routing::Routes.draw do |map|
   # TODO: except sessions, 
   map.connect ':controller/:action/:id'
   map.connect ':controller/:year/:month/:day', :action => 'index', :requirements => {:controller => /daily_booking/}
-  
-  map.connect '*any', :controller => 'open', :action => 'not_found'
 end

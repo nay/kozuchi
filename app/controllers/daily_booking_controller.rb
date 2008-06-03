@@ -1,6 +1,6 @@
 class DailyBookingController < ApplicationController
   layout 'main'
-  before_filter :check_use, :load_account
+  before_filter :off, :check_use, :load_account
   before_filter :load_menues
 
   def index
@@ -43,5 +43,9 @@ class DailyBookingController < ApplicationController
     end
   end
 
+  private
+  def off
+    raise ActionController::RoutingError.new("")
+  end
 
 end

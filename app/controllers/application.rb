@@ -67,9 +67,9 @@ class ApplicationController < ActionController::Base
 #  end
   
   # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
-#  def local_request?
-#    false
-#  end
+  def local_request?
+    false
+  end
 
 
   def set_ssl
@@ -162,7 +162,6 @@ class ApplicationController < ActionController::Base
     Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
   end
 
-
   # 指定されたURLがない旨のページを表示する。
   # もとのURLのまま表示されるよう、redirectはしない。
   # filter内で使って便利なよう、false を返す。
@@ -172,12 +171,12 @@ class ApplicationController < ActionController::Base
 #    false
   end
 
-  # 例外ハンドリング
-  def rescue_action_in_public(exception)
-    return error_not_found if exception.class.to_s == "ActionController::UnknownAction" # 例外クラスが見えないので文字列で比較
-    logger.error(exception)
-    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
-  end
+#  # 例外ハンドリング
+#  def rescue_action_in_public(exception)
+#    return error_not_found if exception.class.to_s == "ActionController::UnknownAction" # 例外クラスが見えないので文字列で比較
+#    logger.error(exception)
+#    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
+#  end
 
   # ユーザーオブジェクトを@userに取得する。なければnilが入る。
   def load_user
