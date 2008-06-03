@@ -1,6 +1,6 @@
 # 折れ線グラフ用のデータ
 class LineGraph
-  attr_accessor :items_values, :item_labels, :x_values, :x_label, :grid, :y_values, :y_label, :min, :max
+  attr_accessor :items_values, :item_labels, :x_values, :x_label, :unit, :grid, :y_values, :y_label, :min, :max
   
   # [[1, 4, 2], [2, 4, 3], ...]
   def initialize(item_values, item_labels)
@@ -19,11 +19,12 @@ class LineGraph
       @item_values = item_values.map{|values| values.map{|v| (v.to_f / 10000).round}}
       @max /= 10000
       @min /= 10000
-      @y_label = "単位：万円"
+      @unit = "万円"
     else
       @item_values = item_values.dup
-      @y_label = "単位：円"
+      @unit = "円"
     end
+    @y_label = "単位：#{@unit}"
 
     # 横軸の目盛りは、minとmaxの間の線が5個以内になるような10の倍数（540 と 780 なら、1→240、10→24、100→2となり 100）を使う
     @grid = 1
@@ -38,7 +39,7 @@ class LineGraph
   end
 
   def y_min
-    @min - @grid
+    @min == 0 ? @min : @min - @grid
   end
   
   def y_max

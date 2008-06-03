@@ -229,7 +229,7 @@ class User < ActiveRecord::Base
   # == 家計簿ロジック TODO: モジュールへの切り出し ==
   
   # 指定した月の支出合計を得る
-  def expense_summary(year, month)
+  def expenses_summary(year, month)
     # 期間を用意
     start_date = Date.new(year.to_i, month.to_i, 1)
     end_date = start_date >> 1
