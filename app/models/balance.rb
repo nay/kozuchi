@@ -29,7 +29,7 @@ class Balance < BaseDeal
   
   private
   def create_entry
-    account_entries.create(:user_id => user_id, :account_id => @account_id, :amount => 0, :balance => @balance)
+    account_entries.create(:user_id => self.user_id, :account_id => @account_id, :amount => 0, :balance => @balance)
   end
 
 end
