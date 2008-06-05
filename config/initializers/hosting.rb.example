@@ -1,3 +1,5 @@
+# Please change this file to your hosting.rb.
+
 # Hosting Configurations
 
 SUPPORT_EMAIL_ADDRESS = "support@app.com"
