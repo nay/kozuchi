@@ -160,4 +160,6 @@ class DealTest < Test::Unit::TestCase
     # 5/1〜5/2の間の不明金は0
     assert_equal 0, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 3))
   end
+  
+  # TODO: confirm = false の項目は計算に入れない。
 end
