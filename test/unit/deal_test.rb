@@ -114,6 +114,7 @@ class DealTest < Test::Unit::TestCase
     Deal.create!(:summary => "5/1の買い物", :amount => "2380", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/01"))
     assert_equal 11620, cache.balance_before(Date.new(2008, 5, 2))
     
+    #5/3残高確認
     balance = Balance.new(:summary => "", :balance => "9000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 5, 3))
     balance.save!
     assert_equal 9000, cache.balance_before(Date.new(2008, 5, 4)) # 残高は9000円
@@ -125,6 +126,30 @@ class DealTest < Test::Unit::TestCase
     assert_equal 9000, cache.balance_before(Date.new(2008, 5, 4)) # 残高は9000円のまま
     assert_equal -1620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 4)) # 不明金は-1620円
     assert_equal -1620, balance.account_entries(true).first.amount
+   
+    #5/10に3000円の買い物
+    Deal.create!(:summary => "5/10の買い物", :amount => "3000", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/10"))
+    assert_equal 6000, cache.balance_before(Date.new(2008, 5, 11))
     
+    #同じ日に残高記入
+    Balance.create!(:summary => "", :balance => "7000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 5, 10))
+    assert_equal 7000, cache.balance_before(Date.new(2008, 5, 11))
+    assert_equal -620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 11)) # 不明金は-1620円
+    
+    #さらに記入しても不明金はかわらない
+    Deal.create!(:summary => "5/10の買い物２", :amount => "500", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/10"))
+    assert_equal 6500, cache.balance_before(Date.new(2008, 5, 11))
+    assert_equal -620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 11)) # 不明金は-1620円
+        
+  end
+  
+  # 「最初の残高確認」以前の残高についてファジーに処理するテスト
+  def test_initial_balance
+    user = users(:old)
+    cache = accounts(:first_cache)
+    # 2008/5/1 に残高を記入して、4月末時点での残高を照合すると、同じ残高となる
+    Balance.create!(:summary => "", :balance => "320000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 5, 1))
+    assert_equal 320000, cache.balance_before(Date.new(2008, 5, 2))
+    assert_equal 320000, cache.balance_before(Date.new(2008, 5, 1))
   end
 end

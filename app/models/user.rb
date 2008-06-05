@@ -257,7 +257,7 @@ class User < ActiveRecord::Base
     # 各資産口座の残高を足す
     assets = accounts.types_in(:asset)
     for a in assets
-      balance = AccountEntry.balance_at_the_start_of(self.id, a.id, end_date) # 期末残高
+      balance = a.balance_before(end_date) # 期末残高
       pure_assets_sum += balance # 純資産は＋とーを単純に足す
       assets_sum += balance if balance > 0 # 資産合計は正の資産だけ足す
     end

@@ -44,9 +44,9 @@ class ProfitAndLossController < ApplicationController
     @asset_plus_summaries = []
     @asset_minus_summaries = []
     for account in asset_accounts
-      balance_start = AccountEntry.balance_at_the_start_of(@user.id, account.id, start_inclusive) # 期首残高
+      balance_start = account.balance_before(start_inclusive) # 期首残高
       
-      balance_end = AccountEntry.balance_at_the_start_of(@user.id, account.id, end_exclusive) # 期末残高
+      balance_end = account.balance_before(end_exclusive) # 期末残高
 
       diff = balance_end - balance_start
       if diff > 0

@@ -73,19 +73,20 @@ class AccountEntry < ActiveRecord::Base
     # 相手があり、未確定なら相手も消す。連動して配下のentryをけすため destroy
     friend_deal.destroy if friend_deal && !friend_deal.confirmed
   end
-
+  # TODO: Accountへの移動
   def self.balance_start(user_id, account_id, year, month)
     start_exclusive = Date.new(year, month, 1)
-    return balance_at_the_start_of(user_id, account_id, start_exclusive)
+    Account.find(account_id).balance_before(start_exclusive) 
   end
 
-  def self.balance_at_the_start_of(user_id, account_id, start_exclusive)
-    # TODO: userに関する安全装置
-    AccountEntry.sum(:amount,
-      :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["account_entries.user_id = ? and account_entries.account_id = ? and deals.date < ? ", user_id, account_id, start_exclusive]
-      ) || 0
-      
+#  def self.balance_at_the_start_of(user_id, account_id, start_exclusive)
+#    # TODO: userに関する安全装置
+#    account_id = account.id
+#    AccountEntry.sum(:amount,
+#      :joins => "inner join deals on account_entries.deal_id = deals.id",
+#      :conditions => ["account_entries.user_id = ? and account_entries.account_id = ? and deals.date < ? ", user_id, account_id, start_exclusive]
+#      ) || 0
+#      
 #    # 期限より前の最新の残高確認情報を取得する
 #    entry = AccountEntry.find(:first,
 #                      :select => "et.*",
@@ -136,7 +137,7 @@ class AccountEntry < ActiveRecord::Base
 #                      :joins => "as et inner join deals as dl on et.deal_id = dl.id"
 #                             ) || 0)
 #    end
-  end
+#  end
   
   # 指定した取引位置での残高を計算する
   def self.balance_before(account_id, date, daily_seq)

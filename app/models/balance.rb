@@ -40,12 +40,12 @@ class Balance < BaseDeal
   private
   def create_entry
     # 不明金による出納を計算して入れる。本来の残高＋不明金＝指定された残高　なので　不明金＝指定された残高ー本来の残高
+    # 自分が「最初の残高」ならフラグを立てる
     amount = @balance - balance_before
     account_entries.create(:user_id => self.user_id, :account_id => @account_id, :amount => amount, :balance => @balance)
   end
   
   def balance_before
-    p "balance_before #{self.date}, #{self.daily_seq}"
     raise "date or daily_seq is nil!" unless self.date && self.daily_seq
     AccountEntry.balance_before(@account_id, self.date, self.daily_seq)
   end

@@ -4,6 +4,16 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
+  # 最初の残高記入を得る
+  def initial_balance_entry(force = false)
+    return @initial_balance_entry if @initial_balance_entry && !force
+    @initial_balance_entry = AccountEntry.find_by_account_id(self.id, 
+      :joins => "inner join deals on deals.id = account_entries.deal_id",
+      :conditions => "deals.type = 'Balance'",
+      :order => "deals.date, deals.daily_seq"
+    )
+  end
+
   def name_with_asset_type
     "#{self.name}(#{self.class.asset_name})"
   end

@@ -1,5 +1,11 @@
 class Account::Base < ActiveRecord::Base
   set_table_name "accounts"
+  
+  has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
+
+  def initial_balance_entry
+    raise "Should not be invoked."
+  end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群
   # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる
@@ -166,9 +172,11 @@ class Account::Base < ActiveRecord::Base
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
   # TODO: 格納したくない。返り値の利用でいい人はそうして。
-  # TODO: Assetに移すべき
   def balance_before(date)
-    @balance = AccountEntry.balance_at_the_start_of(self.user_id, self.id, date)
+    @balance = entries.sum(:amount,
+      :joins => "inner join deals on account_entries.deal_id = deals.id",
+      :conditions => ["deals.date < ? or account_entries.id = ?", date, initial_balance_entry ? initial_balance_entry.id : 0]
+      ) || 0
   end
 
   # 指定した期間の支出合計額（不明金を換算しない）を得る
