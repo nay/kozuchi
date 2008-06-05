@@ -106,7 +106,9 @@ class DealTest < Test::Unit::TestCase
     cache = accounts(:first_cache)
     food = accounts(:first_food)
 
-    Balance.create!(:summary => "", :balance => "14000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 4, 30))
+    b = Balance.create!(:summary => "", :balance => "14000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 4, 30))
+    assert_equal 14000, b.account_entries.first.balance
+    assert_equal 14000, b.account_entries.first.amount
     assert_equal 14000, cache.balance_before(Date.new(2008, 5, 1))
 
     Deal.create!(:summary => "5/1の買い物", :amount => "2380", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/01"))
@@ -122,7 +124,7 @@ class DealTest < Test::Unit::TestCase
     Deal.create!(:summary => "5/2の買い物", :amount => "1000", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/02"))
     assert_equal 9000, cache.balance_before(Date.new(2008, 5, 4)) # 残高は9000円のまま
     assert_equal -1620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 4)) # 不明金は-1620円
-    assert_equal -1620, balance.account_entries.first.amount
+    assert_equal -1620, balance.account_entries(true).first.amount
     
   end
 end

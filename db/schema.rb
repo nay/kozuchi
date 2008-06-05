@@ -9,13 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 14) do
+ActiveRecord::Schema.define(:version => 15) do
 
   create_table "account_entries", :force => true do |t|
-    t.integer "user_id",              :default => 0, :null => false
-    t.integer "account_id",           :default => 0, :null => false
-    t.integer "deal_id",              :default => 0, :null => false
-    t.integer "amount",               :default => 0, :null => false
+    t.integer "user_id",              :null => false
+    t.integer "account_id",           :null => false
+    t.integer "deal_id",              :null => false
+    t.integer "amount",               :null => false
     t.integer "balance"
     t.integer "friend_link_id"
     t.integer "settlement_id"
@@ -30,25 +30,25 @@ ActiveRecord::Schema.define(:version => 14) do
   add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 
   create_table "account_links", :id => false, :force => true do |t|
-    t.integer "account_id",           :default => 0, :null => false
-    t.integer "connected_account_id", :default => 0, :null => false
+    t.integer "account_id",           :null => false
+    t.integer "connected_account_id", :null => false
   end
 
   add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
   add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
 
   create_table "account_rules", :force => true do |t|
-    t.integer "user_id",               :default => 0, :null => false
-    t.integer "account_id",            :default => 0, :null => false
-    t.integer "associated_account_id", :default => 0, :null => false
+    t.integer "user_id",                              :null => false
+    t.integer "account_id",                           :null => false
+    t.integer "associated_account_id",                :null => false
     t.integer "closing_day",           :default => 0, :null => false
     t.integer "payment_term_months",   :default => 1, :null => false
     t.integer "payment_day",           :default => 0, :null => false
   end
 
   create_table "accounts", :force => true do |t|
-    t.integer "user_id",                          :default => 0,  :null => false
-    t.string  "name",               :limit => 32, :default => "", :null => false
+    t.integer "user_id",                          :null => false
+    t.string  "name",               :limit => 32, :null => false
     t.integer "account_type_code"
     t.integer "asset_type_code"
     t.integer "sort_key"
@@ -69,11 +69,11 @@ ActiveRecord::Schema.define(:version => 14) do
   end
 
   create_table "deals", :force => true do |t|
-    t.string   "type",           :limit => 20, :default => "",   :null => false
-    t.integer  "user_id",                      :default => 0,    :null => false
+    t.string   "type",           :limit => 20,                   :null => false
+    t.integer  "user_id",                                        :null => false
     t.date     "date",                                           :null => false
-    t.integer  "daily_seq",                    :default => 0,    :null => false
-    t.string   "summary",        :limit => 64, :default => "",   :null => false
+    t.integer  "daily_seq",                                      :null => false
+    t.string   "summary",        :limit => 64,                   :null => false
     t.boolean  "confirmed",                    :default => true, :null => false
     t.integer  "parent_deal_id"
     t.datetime "created_at"
@@ -89,13 +89,13 @@ ActiveRecord::Schema.define(:version => 14) do
   end
 
   create_table "friends", :force => true do |t|
-    t.integer "user_id",        :default => 0, :null => false
-    t.integer "friend_user_id", :default => 0, :null => false
+    t.integer "user_id",                       :null => false
+    t.integer "friend_user_id",                :null => false
     t.integer "friend_level",   :default => 1, :null => false
   end
 
   create_table "preferences", :force => true do |t|
-    t.integer "user_id",                           :default => 0,     :null => false
+    t.integer "user_id",                                              :null => false
     t.string  "deals_scroll_height", :limit => 20
     t.string  "color",               :limit => 32
     t.boolean "business_use",                      :default => false, :null => false

@@ -10,11 +10,8 @@ class Account::Asset < Account::Base
 
   # 期間内の不明金合計（ーなら支出）を得る。
   def unknown_flow(start_date, end_date)
-    balance_start = AccountEntry.balance_at_the_start_of(user_id, self.id, start_date) # 期首残高
-    balance_end = AccountEntry.balance_at_the_start_of(user_id, self.id, end_date) # 期末残高
-    # (式) 期首残高 + 月合計 + 不明金 = 期末残高
-    # 不明金 = 期末残高 - 期首残高 - 月合計
-    balance_end - balance_start - raw_sum_in(start_date, end_date)
+    AccountEntry.sum(:amount, :joins => "inner join deals on account_entries.deal_id = deals.id",
+     :conditions => ["deals.date >= ? and deals.date < ?", start_date, end_date]) || 0
   end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群

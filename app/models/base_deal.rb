@@ -209,5 +209,6 @@ class BaseDeal < ActiveRecord::Base
       self[:date] = nil
     end
   end
+  
 
 end
