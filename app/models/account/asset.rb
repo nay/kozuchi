@@ -19,9 +19,11 @@ class Account::Asset < Account::Base
   end
 
   # 期間内の不明金合計（ーなら支出）を得る。
+  # 最初の残高記入に伴うamountは不明金扱いしない。
   def unknown_flow(start_date, end_date)
-    AccountEntry.sum(:amount, :joins => "inner join deals on account_entries.deal_id = deals.id",
-     :conditions => ["deals.date >= ? and deals.date < ?", start_date, end_date]) || 0
+    AccountEntry.sum(:amount,
+      :joins => "inner join deals on account_entries.deal_id = deals.id",
+      :conditions => ["deals.date >= ? and deals.date < ? and account_entries.id != ?", start_date, end_date, initial_balance_entry ? initial_balance_entry.id : 0]) || 0
   end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群

@@ -15,6 +15,7 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :settlement
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
   after_save :update_balance
+  after_destroy :update_balance
 
   def settlement_attached?
     self.settlement || self.result_settlement

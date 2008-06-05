@@ -110,6 +110,7 @@ class DealTest < Test::Unit::TestCase
     assert_equal 14000, b.account_entries.first.balance
     assert_equal 14000, b.account_entries.first.amount
     assert_equal 14000, cache.balance_before(Date.new(2008, 5, 1))
+    assert_equal 0, cache.unknown_flow(Date.new(2008, 4, 30), Date.new(2008, 5, 1))
 
     Deal.create!(:summary => "5/1の買い物", :amount => "2380", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/01"))
     assert_equal 11620, cache.balance_before(Date.new(2008, 5, 2))
@@ -128,7 +129,7 @@ class DealTest < Test::Unit::TestCase
     assert_equal -1620, balance.account_entries(true).first.amount
    
     #5/10に3000円の買い物
-    Deal.create!(:summary => "5/10の買い物", :amount => "3000", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/10"))
+    deal_3000 = Deal.create!(:summary => "5/10の買い物", :amount => "3000", :minus_account_id => cache.id, :plus_account_id => food.id, :user_id => user.id, :date => Date.parse("2008/05/10"))
     assert_equal 6000, cache.balance_before(Date.new(2008, 5, 11))
     
     #同じ日に残高記入
@@ -141,6 +142,11 @@ class DealTest < Test::Unit::TestCase
     assert_equal 6500, cache.balance_before(Date.new(2008, 5, 11))
     assert_equal -620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 11)) # 不明金は-1620円
         
+    # 5/10の3000円の買い物を削除しても、5/11以前の残高は変わらない
+    deal_3000.destroy
+    assert_equal 6500, cache.balance_before(Date.new(2008, 5, 11))
+    # 不明金は大きくなる
+    assert_equal -3620, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 11)) # 不明金は-1620円
   end
   
   # 「最初の残高確認」以前の残高についてファジーに処理するテスト
@@ -151,5 +157,7 @@ class DealTest < Test::Unit::TestCase
     Balance.create!(:summary => "", :balance => "320000", :account_id => cache.id, :user_id => user.id, :date => Date.new(2008, 5, 1))
     assert_equal 320000, cache.balance_before(Date.new(2008, 5, 2))
     assert_equal 320000, cache.balance_before(Date.new(2008, 5, 1))
+    # 5/1〜5/2の間の不明金は0
+    assert_equal 0, cache.unknown_flow(Date.new(2008, 5, 1), Date.new(2008, 5, 3))
   end
 end
