@@ -79,72 +79,12 @@ class AccountEntry < ActiveRecord::Base
     start_exclusive = Date.new(year, month, 1)
     Account.find(account_id).balance_before(start_exclusive) 
   end
-
-#  def self.balance_at_the_start_of(user_id, account_id, start_exclusive)
-#    # TODO: userに関する安全装置
-#    account_id = account.id
-#    AccountEntry.sum(:amount,
-#      :joins => "inner join deals on account_entries.deal_id = deals.id",
-#      :conditions => ["account_entries.user_id = ? and account_entries.account_id = ? and deals.date < ? ", user_id, account_id, start_exclusive]
-#      ) || 0
-#      
-#    # 期限より前の最新の残高確認情報を取得する
-#    entry = AccountEntry.find(:first,
-#                      :select => "et.*",
-#                      :conditions => ["et.user_id = ? and et.account_id = ? and dl.date < ? and et.balance is not null", user_id, account_id, start_exclusive],
-#                      :joins => "as et inner join deals as dl on et.deal_id = dl.id",
-#                      :order => "dl.date desc, dl.daily_seq")
-#    # 期限より前に残高確認がない場合
-#    if !entry
-#      # 期限より後に残高確認があるか？
-#      entry = AccountEntry.find(:first,
-#                      :select => "et.*",
-#                      :conditions => ["et.user_id = ? and et.account_id = ? and dl.date >= ? and et.balance is not null", user_id, account_id, start_exclusive],
-#                      :joins => "as et inner join deals as dl on et.deal_id = dl.id",
-#                      :order => "dl.date, dl.daily_seq")
-#      # 期限より後にも残高確認がなければ、期限以前の異動合計を残高とする（初期残高０とみなす）。なければ０とする。
-#      if !entry
-#        return AccountEntry.sum("amount",
-#                      :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and dl.confirmed = ?", user_id, account_id, start_exclusive, true],
-#                      :joins => "as et inner join deals as dl on et.deal_id = dl.id"
-#                      ) || 0
-#      # 期限より後に残高確認があれば、期首から残高確認までの異動分をその残高から引いたものを期首残高とする
-#      else
-#        return entry.balance - (AccountEntry.sum("amount",
-#                      :conditions => [
-#                        "et.user_id = ? and account_id = ? and dl.date >= ? and (dl.date < ? or (dl.date =? and dl.daily_seq < ?)) and dl.confirmed = ?",
-#                        user_id,
-#                        account_id,
-#                        start_exclusive,
-#                        entry.deal.date,
-#                        entry.deal.date,
-#                        entry.deal.daily_seq,
-#                        true],
-#                      :joins => "as et inner join deals as dl on et.deal_id = dl.id"
-#                       ) || 0)
-#      end
-#      
-#    # 期限より前の最新残高確認があれば、それ以降の異動合計と残高を足したものとする。
-#    else
-#      return entry.balance + (AccountEntry.sum("amount",
-#                             :conditions => ["et.user_id = ? and account_id = ? and dl.date < ? and (dl.date > ? or (dl.date =? and dl.daily_seq > ?)) and dl.confirmed = ?",
-#                             user_id,
-#                             account_id,
-#                             start_exclusive,
-#                             entry.deal.date,
-#                             entry.deal.date,
-#                             entry.deal.daily_seq,
-#                             true],
-#                      :joins => "as et inner join deals as dl on et.deal_id = dl.id"
-#                             ) || 0)
-#    end
-#  end
   
   # 指定した取引位置での残高を計算する
   def self.balance_before(account_id, date, daily_seq)
     AccountEntry.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["account_entries.account_id = ? and (deals.date < ? or (deals.date = ? && deals.daily_seq < ?))", account_id, date, date, daily_seq]
+      :conditions => ["account_entries.account_id = ? and deals.confirmed = ? and (deals.date < ? or (deals.date = ? && deals.daily_seq < ?))", account_id, true, date, date, daily_seq]
       ) || 0
   end
   

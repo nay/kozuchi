@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many  :friend_applicants, :class_name => 'Friend', :foreign_key => 'friend_user_id', :dependent => :destroy
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:associated_accounts, :any_entry], :order => 'accounts.sort_key' do
     # 指定した account_type のものだけを抽出する
+    # TODO: 遅いので修正する
     def types_in(*account_types)
       account_types = account_types.flatten
       self.select{|a| account_types.detect{|t| a.type_in?(t)} }
@@ -40,7 +41,7 @@ class User < ActiveRecord::Base
       end
     end
   end
-
+  
   def default_asset
     accounts.types_in(:asset).first
   end

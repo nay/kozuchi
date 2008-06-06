@@ -1,5 +1,6 @@
 # 残高確認記入行クラス
 # TODO: 登録、更新の処理の統一
+# TODO: もう少しAccountオブジェクトを使ように設計変更
 class Balance < BaseDeal
   attr_accessor :account_id, :balance
   
@@ -29,12 +30,17 @@ class Balance < BaseDeal
     @balance = account_entries[0].balance
   end
   
-  # 不明金を再計算して更新
+  # amount（最初の残高以外は不明金として扱われる）を再計算して更新
+  # 自分が「最初の残高」なら、最初の残高を考慮しない残高計算をする
   def update_amount
     e = account_entries.first
-    amount = e.balance.to_i - balance_before
+    amount = e.balance.to_i - balance_before(asset.initial_balance_entry.id == self.account_entries.first.id)
     p "update_amount of #{self.id} - amount = #{e.amount} -> #{amount}"
     e.update_attribute(:amount, amount)
+  end
+  
+  def asset
+    Account::Base.find(@account_id)
   end
   
   private
@@ -45,8 +51,8 @@ class Balance < BaseDeal
     account_entries.create(:user_id => self.user_id, :account_id => @account_id, :amount => amount, :balance => @balance)
   end
   
-  def balance_before
+  def balance_before(ignore_initial = false)
     raise "date or daily_seq is nil!" unless self.date && self.daily_seq
-    AccountEntry.balance_before(@account_id, self.date, self.daily_seq)
+    asset.balance_before(self.date, self.daily_seq, ignore_initial)
   end
 end

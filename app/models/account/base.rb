@@ -172,11 +172,12 @@ class Account::Base < ActiveRecord::Base
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
   # TODO: 格納したくない。返り値の利用でいい人はそうして。
-  def balance_before(date)
+  def balance_before(date, daily_seq = 0, ignore_initial = false)
+    # 確認済のものだけカウントする
     @balance = entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["deals.date < ? or account_entries.id = ?", date, initial_balance_entry ? initial_balance_entry.id : 0]
-      ) || 0
+      :conditions => ["(deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))) or account_entries.id = ?", true, date, date, daily_seq, !ignore_initial && initial_balance_entry ? initial_balance_entry.id : 0]
+      ) || 0      
   end
 
   # 指定した期間の支出合計額（不明金を換算しない）を得る
