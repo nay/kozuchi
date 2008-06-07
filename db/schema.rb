@@ -9,17 +9,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 15) do
+ActiveRecord::Schema.define(:version => 16) do
 
   create_table "account_entries", :force => true do |t|
-    t.integer "user_id",              :null => false
-    t.integer "account_id",           :null => false
-    t.integer "deal_id",              :null => false
-    t.integer "amount",               :null => false
+    t.integer "user_id",                                 :null => false
+    t.integer "account_id",                              :null => false
+    t.integer "deal_id",                                 :null => false
+    t.integer "amount",                                  :null => false
     t.integer "balance"
     t.integer "friend_link_id"
     t.integer "settlement_id"
     t.integer "result_settlement_id"
+    t.boolean "initial_balance",      :default => false, :null => false
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"

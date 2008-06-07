@@ -3,10 +3,6 @@ class Account::Base < ActiveRecord::Base
   
   has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
 
-  def initial_balance_entry
-    raise "Should not be invoked."
-  end
-
   # ---------- 口座種別の静的属性を設定するためのメソッド群
   # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる
   def self.types
@@ -174,9 +170,14 @@ class Account::Base < ActiveRecord::Base
   # TODO: 格納したくない。返り値の利用でいい人はそうして。
   def balance_before(date, daily_seq = 0, ignore_initial = false)
     # 確認済のものだけカウントする
+    conditions = ["deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))", true, date, date, daily_seq]
+    if !ignore_initial
+      conditions.first.replace("(#{conditions.first}) or account_entries.initial_balance = ?")
+      conditions << true
+    end
     @balance = entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["(deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))) or account_entries.id = ?", true, date, date, daily_seq, !ignore_initial && initial_balance_entry ? initial_balance_entry.id : 0]
+      :conditions => conditions
       ) || 0      
   end
 

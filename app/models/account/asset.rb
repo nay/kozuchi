@@ -4,15 +4,6 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
-  # 最初の残高記入を得る
-  def initial_balance_entry(force = false)
-    return @initial_balance_entry if @initial_balance_entry && !force
-    @initial_balance_entry = AccountEntry.find_by_account_id(self.id, 
-      :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => "deals.type = 'Balance'",
-      :order => "deals.date, deals.daily_seq"
-    )
-  end
 
   def name_with_asset_type
     "#{self.name}(#{self.class.asset_name})"
@@ -23,7 +14,7 @@ class Account::Asset < Account::Base
   def unknown_flow(start_date, end_date)
     entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["deals.type = 'Balance' and confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.id != ?", true, start_date, end_date, initial_balance_entry ? initial_balance_entry.id : 0]) || 0
+      :conditions => ["deals.type = 'Balance' and confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance = ?", true, start_date, end_date, false]) || 0
   end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群

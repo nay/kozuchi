@@ -6,6 +6,9 @@ class Balance < BaseDeal
   
   validates_presence_of :balance, :message => '残高を入力してください。'
 
+  after_save :update_initial_balance
+  after_destroy :update_initial_balance
+  
   def before_validation
     # もし金額にカンマが入っていたら正規化する
     @balance = @balance.gsub(/,/,'')  if @balance.class == String
@@ -34,8 +37,7 @@ class Balance < BaseDeal
   # 自分が「最初の残高」なら、最初の残高を考慮しない残高計算をする
   def update_amount
     e = account_entries.first
-    amount = e.balance.to_i - balance_before(asset.initial_balance_entry.id == self.account_entries.first.id)
-    p "update_amount of #{self.id} - amount = #{e.amount} -> #{amount}"
+    amount = e.balance.to_i - balance_before(e.initial_balance?)
     e.update_attribute(:amount, amount)
   end
   
@@ -44,6 +46,22 @@ class Balance < BaseDeal
   end
   
   private
+  # 対象口座のinitial_balance値を更新する
+  def update_initial_balance
+    raise "no account_id" unless @account_id
+    initial_balance_entry = AccountEntry.find(:first, 
+      :joins => "inner join deals on deals.id = account_entries.deal_id",
+      :conditions => "account_entries.account_id = #{@account_id}", :order => "deals.date, deals.daily_seq", :readonly => false)
+    # 現在ひとつもないなら特に仕事なし
+    return unless initial_balance_entry
+    # すでにマークがついていたら仕事なし
+    return if initial_balance_entry.initial_balance?
+
+    # マークがついていない＝状態が変わったので修正する
+    AccountEntry.update_all(["initial_balance = ?", false], ["account_id = ?", @account_id])
+    initial_balance_entry.update_attribute(:initial_balance, true)
+  end
+  
   def create_entry
     # 不明金による出納を計算して入れる。本来の残高＋不明金＝指定された残高　なので　不明金＝指定された残高ー本来の残高
     # 自分が「最初の残高」ならフラグを立てる
