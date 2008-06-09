@@ -6,6 +6,25 @@ class User < ActiveRecord::Base
   has_many  :friends, :dependent => :destroy
   has_many  :friend_applicants, :class_name => 'Friend', :foreign_key => 'friend_user_id', :dependent => :destroy
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:associated_accounts, :any_entry], :order => 'accounts.sort_key' do
+
+    def balance_sum(date, conditions = "")
+      with_scope :find => {:conditions => conditions} do
+        sum("account_entries.amount",
+          :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id",
+          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
+        ).to_i
+      end
+    end
+    
+    def balances(date, conditions = "")
+      with_scope :find => {:conditions => conditions} do
+        find(:all, :select => "account.*, sum(account_entries.amount) as balance",
+          :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id",
+          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
+        )
+      end
+    end
+
     # 指定した account_type のものだけを抽出する
     # TODO: 遅いので修正する
     def types_in(*account_types)

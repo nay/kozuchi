@@ -25,6 +25,7 @@ class Test::Unit::TestCase
   self.use_instantiated_fixtures  = false
 
   fixtures :all
+  set_fixture_class  :accounts => Account::Base
 
   # Add more helper methods to be used by all tests here...
 end

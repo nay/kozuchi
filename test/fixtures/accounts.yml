@@ -55,3 +55,14 @@ second_income:
   type: Income
   user_id: <%= Fixtures.identify(:old2) %>
   
+first_house:
+  name: 住居費
+  type: Expense
+  user_id: <%= Fixtures.identify(:old) %>
+
+first_saraly:
+  name: 給料
+  type: Income
+  user_id: <%= Fixtures.identify(:old) %>
+
+  

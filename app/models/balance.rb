@@ -8,6 +8,11 @@ class Balance < BaseDeal
 
   after_save :update_initial_balance
   after_destroy :update_initial_balance
+
+  # TODO: 関連にかえていく
+  def entry
+    account_entries.first
+  end
   
   def before_validation
     # もし金額にカンマが入っていたら正規化する
@@ -51,7 +56,7 @@ class Balance < BaseDeal
     raise "no account_id" unless @account_id
     initial_balance_entry = AccountEntry.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => "account_entries.account_id = #{@account_id}", :order => "deals.date, deals.daily_seq", :readonly => false)
+      :conditions => "account_entries.account_id = #{@account_id} and deals.type='Balance'", :order => "deals.date, deals.daily_seq", :readonly => false)
     # 現在ひとつもないなら特に仕事なし
     return unless initial_balance_entry
     # すでにマークがついていたら仕事なし
@@ -59,7 +64,8 @@ class Balance < BaseDeal
 
     # マークがついていない＝状態が変わったので修正する
     AccountEntry.update_all(["initial_balance = ?", false], ["account_id = ?", @account_id])
-    initial_balance_entry.update_attribute(:initial_balance, true)
+    AccountEntry.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
+    self.entry.initial_balance = true if self.entry.id == initial_balance_entry.id
   end
   
   def create_entry

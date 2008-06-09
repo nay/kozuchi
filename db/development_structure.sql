@@ -8,6 +8,7 @@ CREATE TABLE `account_entries` (
   `friend_link_id` int(11) default NULL,
   `settlement_id` int(11) default NULL,
   `result_settlement_id` int(11) default NULL,
+  `initial_balance` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `account_entries_account_id_index` (`account_id`),
   KEY `account_entries_deal_id_index` (`deal_id`),
@@ -15,7 +16,7 @@ CREATE TABLE `account_entries` (
   KEY `account_entries_friend_link_id_index` (`friend_link_id`),
   KEY `account_entries_settlement_id_index` (`settlement_id`),
   KEY `account_entries_result_settlement_id_index` (`result_settlement_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `account_links` (
   `account_id` int(11) NOT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE `accounts` (
   PRIMARY KEY  (`id`),
   KEY `accounts_user_id_index` (`user_id`),
   KEY `accounts_partner_account_id_index` (`partner_account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=310 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=312 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `admin_users` (
   `id` int(11) NOT NULL auto_increment,
@@ -76,7 +77,7 @@ CREATE TABLE `deals` (
   PRIMARY KEY  (`id`),
   KEY `deals_user_id_index` (`user_id`),
   KEY `deals_parent_deal_id_index` (`parent_deal_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `engine_schema_info` (
   `engine_name` varchar(255) default NULL,
@@ -121,7 +122,6 @@ CREATE TABLE `settlements` (
 CREATE TABLE `users` (
   `id` int(11) NOT NULL auto_increment,
   `login` varchar(80) NOT NULL default '',
-  `salted_password` varchar(40) NOT NULL default '',
   `email` varchar(60) NOT NULL default '',
   `firstname` varchar(40) default NULL,
   `lastname` varchar(40) default NULL,
@@ -141,4 +141,4 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
-INSERT INTO `schema_info` (version) VALUES (13)
+INSERT INTO `schema_info` (version) VALUES (16)
