@@ -12,8 +12,6 @@ class InitialBalanceTest < Test::Unit::TestCase
   # 最初の取引として残高を記入するとinitial_balanceになることのテスト
   def test_add_first_balance
     ib = create_balance 2000, 4, 1
-    p ib.entry.object_id
-    p ib.entry.inspect
     assert ib.entry.initial_balance?
   end
 
@@ -21,15 +19,13 @@ class InitialBalanceTest < Test::Unit::TestCase
   def test_add_first_balance_after_deal
     create_deal 500, 3, 10
     ib = create_balance 2000, 4, 1
-    p ib.entry.id
     assert ib.entry.initial_balance?
   end
 
   private
   # 現金の残高記入をする
   def create_balance(balance, month, day)
-    b = Balance.create!(:summary => "", :balance => balance, :account_id => @cache.id, :user_id => @cache.user_id, :date => Date.new(@year, month, day))
-    b.reload
+    Balance.create!(:summary => "", :balance => balance, :account_id => @cache.id, :user_id => @cache.user_id, :date => Date.new(@year, month, day))
   end
   
   # 現金→食費の取引記入をする
