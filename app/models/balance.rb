@@ -2,7 +2,7 @@
 # TODO: 登録、更新の処理の統一
 # TODO: もう少しAccountオブジェクトを使ように設計変更
 class Balance < BaseDeal
-  attr_accessor :account_id, :balance
+  attr_writer :account_id, :balance
   
   validates_presence_of :balance, :message => '残高を入力してください。'
 
@@ -15,6 +15,7 @@ class Balance < BaseDeal
 
   # TODO: 関連にかえていく
   def entry
+    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
     account_entries.first
   end
   
@@ -37,9 +38,19 @@ class Balance < BaseDeal
   # Prepare sugar methods
   def after_find
     set_old_date
-    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
-    @account_id = account_entries[0].account_id
-    @balance = account_entries[0].balance
+#    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
+#    @account_id = account_entries[0].account_id
+#    @balance = account_entries[0].balance
+  end
+  
+  def account_id
+    @account_id ||= entry.account_id
+    @account_id
+  end
+  
+  def balance
+    @balance ||= entry.balance
+    @balance
   end
   
   # amount（最初の残高以外は不明金として扱われる）を再計算して更新
@@ -51,7 +62,7 @@ class Balance < BaseDeal
   end
   
   def asset
-    Account::Base.find(@account_id)
+    Account::Base.find(self.account_id)
   end
   
   private
@@ -75,8 +86,8 @@ class Balance < BaseDeal
   def create_entry
     # 不明金による出納を計算して入れる。本来の残高＋不明金＝指定された残高　なので　不明金＝指定された残高ー本来の残高
     # 自分が「最初の残高」ならフラグを立てる
-    amount = @balance - balance_before
-    account_entries.create(:user_id => self.user_id, :account_id => @account_id, :amount => amount, :balance => @balance)
+    amount = self.balance.to_i - balance_before
+    account_entries.create(:user_id => self.user_id, :account_id => self.account_id, :amount => amount, :balance => self.balance)
   end
   
   def balance_before(ignore_initial = false)
