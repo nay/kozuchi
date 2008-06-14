@@ -100,7 +100,8 @@ class Account::Base < ActiveRecord::Base
                           :class_name => 'AccountEntry',
                           :foreign_key => 'account_id'
   
-  attr_accessor :balance, :percentage
+#  attr_accessor :balance, 
+  attr_accessor :percentage
   validates_presence_of :name,
                         :message => "名前を定義してください。"
   #TODO: 口座・費目・収入内訳を動的に作りたいが、現状の方針だとできない 
@@ -167,7 +168,6 @@ class Account::Base < ActiveRecord::Base
   # 口座別計算メソッド
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
-  # TODO: 格納したくない。返り値の利用でいい人はそうして。
   def balance_before(date, daily_seq = 0, ignore_initial = false)
     # 確認済のものだけカウントする
     conditions = ["deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))", true, date, date, daily_seq]
@@ -175,7 +175,7 @@ class Account::Base < ActiveRecord::Base
       conditions.first.replace("(#{conditions.first}) or account_entries.initial_balance = ?")
       conditions << true
     end
-    @balance = entries.sum(:amount,
+    entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
       :conditions => conditions
       ) || 0      

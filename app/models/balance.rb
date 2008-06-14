@@ -9,6 +9,10 @@ class Balance < BaseDeal
   after_save :update_initial_balance
   after_destroy :update_initial_balance
 
+  def initial_balance?
+    entry.initial_balance?
+  end
+
   # TODO: 関連にかえていく
   def entry
     account_entries.first

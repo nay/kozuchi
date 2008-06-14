@@ -153,7 +153,8 @@ class ApplicationController < ActionController::Base
   # TODO: 先に @user が用意されている前提
   def load_assets
     date = Date.new(target_date[:year].to_i, target_date[:month].to_i, 1) >> 1
-    @assets = AccountsBalanceReport.new(@user.accounts.types_in(:asset), date)
+    asset_accounts = @user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする
+    @assets = AccountsBalanceReport.new(asset_accounts, date)
   end
     
   #TODO: どこかにありそうなきがするが・・・

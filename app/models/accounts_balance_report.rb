@@ -5,15 +5,15 @@ class AccountsBalanceReport
   attr_reader :sum, :profit
 
   # 口座リストと残高計算期日から報告内容を作成する
+  # TODO: とりあえず残高入りのaccountsをもらう
   def initialize(accounts, date)
-    @plus = Accounts.new
+    @plus = Accounts.new # TODO: やだなあこれ
     @minus = Accounts.new
     @capital_fund = Accounts.new
     accounts.each do |account|
       if account.kind_of? Account::CapitalFund
-        account.balance_before(date) # 残高を計算しておく
         @capital_fund << account
-      elsif account.balance_before(date) >= 0
+      elsif account.balance >= 0
         @plus << account
       else
         @minus << account
