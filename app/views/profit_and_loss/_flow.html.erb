@@ -1,0 +1,5 @@
+        <tr>
+          <td><%= h flow.name %></td>
+          <td class="percentage"><%=  "#{flow.percentage}%" if flow.percentage %></td>
+          <td class="amount"><%= number_with_delimiter(flow.flow)%></td>
+        </tr>
