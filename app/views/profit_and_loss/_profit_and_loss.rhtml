@@ -86,7 +86,7 @@
     <table class="book">
       <tr>
         <td>減少合計</td>
-        <td class="amount">-<%= number_with_delimiter(@asset_minus_flows.sum)%></td>
+        <td class="amount"><%= number_with_delimiter(@asset_minus_flows.sum)%></td>
       </tr>
     </table>
   </div>
@@ -94,7 +94,7 @@
     <table class="book">
       <tr>
         <td>増加合計</td>
-        <td class="amount">+<%= number_with_delimiter(@asset_plus_flows.sum)%></td>
+        <td class="amount"><%= number_with_delimiter(@asset_plus_flows.sum)%></td>
       </tr>
     </table>
   </div>
