@@ -301,37 +301,24 @@ class User < ActiveRecord::Base
   # == 家計簿ロジック TODO: モジュールへの切り出し ==
   
   # 指定した月の支出合計を得る
+  # TODO: メソッド廃止
   def expenses_summary(year, month)
     # 期間を用意
     start_date = Date.new(year.to_i, month.to_i, 1)
     end_date = start_date >> 1
 
-    # 支出合計の生データを得る
-    expense_sum = Account::Expense.raw_sum_of(self.id, start_date, end_date)
-
-    # 各資産口座の不明金を計算し、ーのものをすべて足す
-    assets = accounts.types_in(:asset)
-    for a in assets
-      flow = a.unknown_flow(start_date, end_date)
-      expense_sum += flow.abs if flow < 0
-    end
-    
-    expense_sum
+    accounts.expense_sum(start_date, end_date)
   end  
   
   # 指定した月の末日の資産合計、純資産合計の配列を得る
   def assets_summary(year, month)
-    start_date = Date.new(year.to_i, month.to_i, 1)
-    end_date = start_date >> 1
-    
+    date = Date.new(year.to_i, month.to_i, 1) >> 1
+    assets = accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'")
     assets_sum = 0
     pure_assets_sum = 0
-    # 各資産口座の残高を足す
-    assets = accounts.types_in(:asset)
     for a in assets
-      balance = a.balance_before(end_date) # 期末残高
-      pure_assets_sum += balance # 純資産は＋とーを単純に足す
-      assets_sum += balance if balance > 0 # 資産合計は正の資産だけ足す
+      pure_assets_sum += a.balance # 純資産は＋とーを単純に足す
+      assets_sum += a.balance if a.balance > 0 # 資産合計は正の資産だけ足す
     end
     [assets_sum, pure_assets_sum]
   end
