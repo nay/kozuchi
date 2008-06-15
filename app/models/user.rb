@@ -7,25 +7,70 @@ class User < ActiveRecord::Base
   has_many  :friend_applicants, :class_name => 'Friend', :foreign_key => 'friend_user_id', :dependent => :destroy
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:associated_accounts, :any_entry], :order => 'accounts.sort_key' do
 
+    # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
-      with_scope :find => {:conditions => conditions} do
+      with_joined_scope(conditions) do
         sum("account_entries.amount",
-          :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id",
           :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
         ).to_i
       end
     end
     
+    # 指定した日の最初における指定した口座の残高をAccountモデルの一覧として得る
     def balances(date, conditions = nil)
-      with_scope :find => {:conditions => conditions} do
+      with_joined_scope(conditions) do
         Account::Base.find(:all, :select => "accounts.*, sum(account_entries.amount) as balance",
-          :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id",
           :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true],
           :group => 'accounts.id'
         ).each{|a| a.balance = a.balance.to_i}
       end
     end
+    
+    # 指定した期間における収入口座のフロー合計を得る。収入の不明金も含める。
+    def income_sum(start_date, end_date)
+      result = flow_sum(start_date, end_date, "accounts.type = 'Income'")
+      unknowns(start_date, end_date).delete_if{|a| a.unknown >= 0}.each{|a| result += a.unknown}
+      result
+    end
 
+    # 指定した期間における支出口座のフロー合計を得る。支出の不明金も含める。
+    def expense_sum(start_date, end_date)
+      result = flow_sum(start_date, end_date, "accounts.type = 'Expense'")
+      unknowns(start_date, end_date).delete_if{|a| a.unknown <= 0}.each{|a| result += a.unknown}
+      result
+    end
+    
+    # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
+    def flow_sum(start_date, end_date, conditions = nil)
+      with_joined_scope(conditions) do
+        sum("account_entries.amount",
+          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true]
+        ).to_i
+      end
+    end
+    
+    # 指定した期間における指定した口座のフローをAccountモデルの一覧として得る。flowカラムに格納される。
+    # 資産口座の不明金を結果に足すことはしない。
+    def flows(start_date, end_date, conditions = nil)
+      with_joined_scope(conditions) do
+        Account::Base.find(:all, :select => "accounts.*, sum(account_entries.amount) as flow",
+          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
+          :group => 'accounts.id'
+        ).each{|a| a.flow = a.flow.to_i}
+      end
+    end
+
+    # 指定した期間における指定した口座の不明金を Accountモデルの一覧として得る。不明金は unknown カラムに格納される。
+    # 不明金勘定の視点から、正負は逆にする。つまり、支出の不明金はプラスで出る。
+    def unknowns(start_date, end_date, conditions = nil)
+      with_joined_scope(conditions) do
+        Account::Base.find(:all, :select => "accounts.*, sum(account_entries.amount) as unknown",
+          :conditions => ["deals.type = 'Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
+          :group => 'accounts.id'
+        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1}
+      end
+    end
+  
     # 指定した account_type のものだけを抽出する
     # TODO: 遅いので修正する
     def types_in(*account_types)
@@ -58,6 +103,12 @@ class User < ActiveRecord::Base
             Account::Base.update_all("type = '#{Account::Asset.asset_name_to_class(new_asset_name)}'", "id = #{account.id}") 
           end
         end
+      end
+    end
+    private
+    def with_joined_scope(conditions, &block)
+      with_scope :find => {:conditions => conditions, :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id"} do
+        yield
       end
     end
   end

@@ -67,6 +67,36 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     assert_equal 4000, balance(@first_user, 3, 10, @bank)
   end
 
+  # flow_sum, flows が正しいことを確認する
+  def test_flows
+    create_balance 4, 1, @cache, 10000        # 4/1 現金残高 10000（初期）
+    create_balance 4, 1, @bank, 250000        # 4/1 銀行残高 250,000（初期）
+    create_deal 4, 1, @cache, @food, 1000     # 4/1 現金→食費 1000
+    create_deal 4, 2, @bank, @house, 120000   # 4/2 銀行→住居費 120,000 (銀行残高 130,000)
+    create_deal 4, 3, @bank, @food, 5000      # 4/3 銀行→食費 5000      (銀行残高 125,000)
+    create_deal 4, 4, @cache, @house, 3000    # 4/4 現金→住居費 3000
+    create_balance 4, 5, @cache, 5000         # 4/5 現金残高 5000（不明金 支出1000）
+    create_deal 4, 6, @saraly, @bank, 200000  # 4/6 給料 → 銀行 200,000  (銀行残高 325,0000
+    create_deal 4, 10, @bonus, @bank, 300000  # 4/10 ボーナス → 銀行 300,000 (銀行残高 625,000)
+    create_balance 4, 20, @bank, 800000       # 4/20 銀行残高 800,000（不明金 収入175,000） 
+    # 支出合計は 1,000 + 120,000 + 5,000 + 3,000 + 1,000 = 130,000
+    assert_equal 130000, expense_sum(@first_user, 4)
+    # 食費合計は 1000 + 5000 = 6000
+    assert_equal 6000, flow(@first_user, 4, @food)
+    # 住居費合計は 120,000 + 3000 = 123,000
+    assert_equal 123000, flow(@first_user, 4, @house)
+    # 給料合計は -200,000
+    assert_equal -200000, flow(@first_user, 4, @saraly)
+    # 不明金（現金）は 1000
+    assert_equal 1000, unknown(@first_user, 4, @cache)
+    # 不明金（銀行）は -175000
+    assert_equal -175000, unknown(@first_user, 4, @bank)
+
+    # 収入合計は、200,000 + 300,000 + 175,000 = 675,000
+    assert_equal -675000, income_sum(@first_user, 4)
+  end
+
+
   private
   def create_deal(month, day, from, to, amount)
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :user_id => to.user_id, :date => Date.new(@year, month, day)}
@@ -86,4 +116,27 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     balances.detect{|a| a.id == account.id}.balance
   end
   
+  def income_sum(user, month)
+    user.accounts.income_sum(*date_range(month))
+  end
+
+  def expense_sum(user, month)
+    user.accounts.expense_sum(*date_range(month))
+  end
+  
+  def flow(user, month, account)
+    flows = user.accounts.flows(*date_range(month))
+    flows.detect{|a| a.id == account.id}.flow
+  end
+  
+  def unknown(user, month, account)
+    unknowns = user.accounts.unknowns(*date_range(month))    
+    unknowns.detect{|a| a.id == account.id}.unknown
+  end
+    
+  def date_range(month)
+    start_date = Date.new(@year, month, 1)
+    end_date = start_date >> 1
+    return [start_date, end_date]
+  end
 end
