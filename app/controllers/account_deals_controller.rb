@@ -46,11 +46,9 @@ class AccountDealsController < ApplicationController
       end
       @balance_end = @account_entries.size > 0 ? (@account_entries.last.balance || @account_entries.last.balance_estimated) : @balance_start 
     rescue => err
-      p err.backtrace
       flash[:notice] = "不正な日付です。 " + @target_month.to_s + err
       @account_entries = Array.new
     end
-    p 'end'
   end
   
   private
