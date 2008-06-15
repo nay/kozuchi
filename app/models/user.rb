@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
     def flows(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
         Account::Base.find(:all, :select => "accounts.*, sum(account_entries.amount) as flow",
-          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
+          :conditions => ["deals.id is null or (deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?)", true, start_date, end_date, true],
           :group => 'accounts.id'
         ).each{|a| a.flow = a.flow.to_i}
       end
@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
     end
     private
     def with_joined_scope(conditions, &block)
-      with_scope :find => {:conditions => conditions, :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id"} do
+      with_scope :find => {:conditions => conditions, :joins => "left outer join account_entries on accounts.id = account_entries.account_id left outer join deals on account_entries.deal_id = deals.id"} do
         yield
       end
     end
