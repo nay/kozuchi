@@ -11,8 +11,6 @@ class AccountDealsController < ApplicationController
     @target_month = DateBox.new
     @target_month.year = @target_date[:year]
     @target_month.month = @target_date[:month]
-    p @target_month
-    p @target_month.start_inclusive
     
     @accounts = @user.accounts.types_in(:asset)
     
@@ -48,9 +46,11 @@ class AccountDealsController < ApplicationController
       end
       @balance_end = @account_entries.size > 0 ? (@account_entries.last.balance || @account_entries.last.balance_estimated) : @balance_start 
     rescue => err
-      flash[:notice] = "不正な日付です。 " + @target_month.to_s + err + err.backtrace.to_s
+      p err.backtrace
+      flash[:notice] = "不正な日付です。 " + @target_month.to_s + err
       @account_entries = Array.new
     end
+    p 'end'
   end
   
   private

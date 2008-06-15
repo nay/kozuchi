@@ -77,7 +77,7 @@ class AccountEntry < ActiveRecord::Base
   # TODO: Accountへの移動
   def self.balance_start(user_id, account_id, year, month)
     start_exclusive = Date.new(year, month, 1)
-    Account.find(account_id).balance_before(start_exclusive) 
+    Account::Base.find(account_id).balance_before(start_exclusive) 
   end
   
   # 指定した取引位置での残高を計算する
