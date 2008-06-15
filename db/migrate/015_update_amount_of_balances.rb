@@ -1,36 +1,28 @@
 class UpdateAmountOfBalances < ActiveRecord::Migration
-
-  # モデルクラスの定義
-  class BaseDeal < ActiveRecord::Base
-    set_table_name "deals"
-  end
-  class Balance < BaseDeal
-    has_one :entry, :class_name => "AccountEntry", :foreign_key => "deal_id"
-  end
-  class AccountEntry < ActiveRecord::Base
-  end
   
   def self.up
-    Balance.transaction do
-      # 残高記入を順に取り出し、新方式でamountをセットしていく
-      balances = Balance.find(:all, :order => "date, daily_seq")
-      for b in balances
-        balance = AccountEntry.sum(:amount,
-          :joins => "inner join deals on account_entries.deal_id = deals.id",
-          :conditions => ["account_entries.account_id = ? && (deals.date < ? or (deals.date = ? && deals.daily_seq > ?))", b.entry.account_id, b.date, b.date, b.daily_seq]
-        ) || 0
-        amount = b.entry.balance - balance
-        b.entry.update_attribute(:amount, amount)
-      end
+    for account_id, date, daily_seq, real_balance, entry_id in execute("select account_entries.account_id, deals.date, deals.daily_seq, account_entries.balance, account_entries.id from deals inner join account_entries on account_entries.deal_id = deals.id where type = 'Balance' order by date, daily_seq;")
+      # 本来あるべき残高を計算
+      balance = nil
+      execute(
+        ActiveRecord::Base.sanitize_sql_array(
+          ["select sum(amount) from account_entries inner join deals on account_entries.deal_id = deals.id where account_entries.account_id = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?));",
+            account_id, 
+            date,
+            date,
+            daily_seq
+          ]
+        )
+      ).each{|result| balance = result[0].to_i}
+#      p "real_balance = #{real_balance}, balance = #{balance}"
+      amount = real_balance.to_i - balance # 差分
+      execute("update account_entries set amount = #{amount} where id = #{entry_id};")
     end
   end
 
   def self.down
-    Balance.transaction do
-      balances = Balance.find(:all, :order => "date, daily_seq")
-      for b in balances
-        b.entry.update_attribute(:amount, 0)
-      end
+    for entry_id in execute("select account_entries.id from deals inner join account_entries on account_entries.deal_id = deals.id where type = 'Balance';")
+      execute("update account_entries set amount = 0 where id = #{entry_id};")
     end
   end
 end
