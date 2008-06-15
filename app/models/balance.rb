@@ -53,6 +53,10 @@ class Balance < BaseDeal
     @balance
   end
   
+  def amount
+    entry.amount
+  end
+  
   # amount（最初の残高以外は不明金として扱われる）を再計算して更新
   # 自分が「最初の残高」なら、最初の残高を考慮しない残高計算をする
   def update_amount

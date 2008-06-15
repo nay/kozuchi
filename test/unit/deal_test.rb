@@ -156,8 +156,17 @@ class DealTest < Test::Unit::TestCase
   
   def test_confirm
     # 5/10に未確認取引
-    create_deal(1800, 5, 10, :confirmed => false)
+    d = create_deal(1800, 5, 10, :confirmed => false)
     assert_equal 0, balance_before(5, 11)
+    # 5/12に残高記入
+    b = create_balance(2000, 5, 12)
+    assert_equal 2000, b.amount
+    assert_equal 2000, balance_before(5, 12)
+    # 5/10の取引を確認する
+    d.confirm
+    b.reload
+    assert_equal 3800, b.amount
+    assert_equal 2000, balance_before(5, 12)
   end
   
   # ------------------  set_up  ----------------------

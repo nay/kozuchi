@@ -147,6 +147,10 @@ class AccountEntry < ActiveRecord::Base
     
   end
 
+  def after_confirmed
+    update_balance
+  end
+
   private
 
   def connected_account_in_another_entry_other_than(another_account)

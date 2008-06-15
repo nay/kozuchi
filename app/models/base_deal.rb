@@ -163,10 +163,14 @@ class BaseDeal < ActiveRecord::Base
   end
   
   def confirm
-    BaseDeal.update_all("confirmed = #{boolean_to_s(true)}", "id = #{self.id}")
-    # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
+    BaseDeal.transaction do
+      BaseDeal.update_all("confirmed = #{boolean_to_s(true)}", "id = #{self.id}")
+      # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
+      # TODO: コールバックは見直し必要か
+      reload
+      account_entries.each{|e| e.after_confirmed}
+    end
   end
-
 
   protected
   # daily_seq をセットする。

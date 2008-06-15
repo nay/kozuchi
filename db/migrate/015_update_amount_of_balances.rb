@@ -6,11 +6,12 @@ class UpdateAmountOfBalances < ActiveRecord::Migration
       balance = nil
       execute(
         ActiveRecord::Base.sanitize_sql_array(
-          ["select sum(amount) from account_entries inner join deals on account_entries.deal_id = deals.id where account_entries.account_id = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?));",
+          ["select sum(amount) from account_entries inner join deals on account_entries.deal_id = deals.id where account_entries.account_id = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?)) and deals.confirmed = ?;",
             account_id, 
             date,
             date,
-            daily_seq
+            daily_seq,
+            true
           ]
         )
       ).each{|result| balance = result[0].to_i}
