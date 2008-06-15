@@ -29,7 +29,7 @@
       <button type="submit" tabindex="14">記入</button>
     </div>
 
-    <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :url => {:controller => 'deal', :action => 'update_patterns'})%>
+    <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :url => {:controller => 'deal', :action => 'update_patterns'})%>
 
     <%= javascript_tag <<-END
       function setEditDeal(summary, amount, minus_account_id, plus_account_id) {

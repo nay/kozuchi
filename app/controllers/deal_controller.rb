@@ -55,7 +55,8 @@ class DealController < ApplicationController
 
   # 新規編集でサマリが編集されたときにくるAjaxメソッド
   def update_patterns
-    summary_key = request.raw_post
+    p params.inspect
+    summary_key = params[:keyword]
     @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
     render(:partial => 'patterns')
   end
