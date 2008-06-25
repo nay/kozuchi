@@ -1,6 +1,9 @@
 # 残高確認記入行クラス
 # TODO: 登録、更新の処理の統一
 # TODO: もう少しAccountオブジェクトを使ように設計変更
+
+# * 登録時は、account_id, balanceをセットしてsaveする。
+# * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Balance < BaseDeal
   attr_writer :account_id, :balance
   
@@ -15,7 +18,6 @@ class Balance < BaseDeal
 
   # TODO: 関連にかえていく
   def entry
-    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
     account_entries.first
   end
   
@@ -44,17 +46,17 @@ class Balance < BaseDeal
   end
   
   def account_id
-    @account_id ||= entry.account_id
+    @account_id ||= (entry ? entry.account_id : nil)
     @account_id
   end
   
   def balance
-    @balance ||= entry.balance
+    @balance ||= (entry ? entry.balance : nil)
     @balance
   end
   
   def amount
-    entry.amount
+    entry ? entry.amount : nil
   end
   
   # amount（最初の残高以外は不明金として扱われる）を再計算して更新

@@ -145,7 +145,7 @@ class DealController < ApplicationController
   
   def prepare_select_balance_tab
     @accounts_for_balance = @user.accounts.types_in(:asset)
-    @deal ||=  Balance.new
+    @deal ||=  Balance.new(:account_id => @accounts_for_balance.id)
   end
 
 end
