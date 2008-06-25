@@ -4,7 +4,6 @@ class DateBoxTest < Test::Unit::TestCase
 
   def test_set
     values = {"year" => "2004", "month" => "4"}
-    p values["year"]
     d = DateBox.new(values)
     assert_equal "2004", d.year
     assert_equal "4", d.month
