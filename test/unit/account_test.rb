@@ -1,13 +1,6 @@
-require File.dirname(__FILE__) + '/../../test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
-# require File.dirname(__FILE__) + '/../../../../app/models/account/base'
 class Account::BaseTest < ActiveSupport::TestCase
-#  fixtures :users, "account/accounts"
-  set_fixture_class  "accounts".to_sym => 'account/base'
-#  fixtures :preferences
-#  fixtures :account_rules
-#  fixtures :friends
-#  fixtures :account_links
 
   # クラスレベルの定義が正しく動くことをテストする
   def test_class_definitions
@@ -36,16 +29,16 @@ class Account::BaseTest < ActiveSupport::TestCase
   end
 
   def test_name_with_asset_type
-    assert_equal '現金(現金)', Account::Base.find(1).name_with_asset_type
-    assert_equal '食費(支出)', Account::Base.find(2).name_with_asset_type
-    assert_equal 'ボーナス(収入)', Account::Base.find(8).name_with_asset_type
+    assert_equal '現金(現金)', accounts(:first_cache).name_with_asset_type
+    assert_equal '食費(支出)', accounts(:first_food).name_with_asset_type
+    assert_equal 'ボーナス(収入)', accounts(:first_bonus).name_with_asset_type
   end
 
   # デフォルト口座登録がエラーなく動くことを確認する
   def test_create_default_accounts
-    Account::Base.delete_all('user_id = 2')
-    Account::Base.create_default_accounts(2)
-    user = User.find(2)
+    Account::Base.delete_all("user_id = #{users(:old2).id}")
+    Account::Base.create_default_accounts(users(:old2).id)
+    user = users(:old2)
     assert_equal 1, user.accounts.types_in(:asset).size
     a = user.accounts.types_in(:asset)[0]
     assert_equal '現金', a.name
@@ -60,8 +53,8 @@ class Account::BaseTest < ActiveSupport::TestCase
   # tests partner account error
   # 違うユーザーの口座を受け皿に設定できないことのテスト
   def test_wrong_partner_account
-    account = Account::Base.find(1)
-    wrong_partner_account = Account::Base.find(4)
+    account = accounts(:first_cache)
+    wrong_partner_account = accounts(:second_cache)
     assert account.user_id != wrong_partner_account.user_id
 
     account.partner_account_id = wrong_partner_account.id
@@ -94,16 +87,16 @@ class Account::BaseTest < ActiveSupport::TestCase
   
   # 使われていないのは消せる
   def test_deletable
-    a = Account::Base.find(10)
+    a = accounts(:deletable_one)
     assert_equal true, a.deletable?
     assert a.delete_errors.empty?
   end
   
   # 使われていたら消せない
   def test_deletable_used
-    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d = Deal.new(:user_id => users(:old).id, :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:deletable_one).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
     d.save!
-    a = Account::Base.find(10)
+    a = accounts(:deletable_one)
     assert_equal false, a.deletable?
     assert_equal 1, a.delete_errors.size
     assert_equal Account::UsedAccountException.new_message('口座', '貯金箱'), a.delete_errors[0]
@@ -111,7 +104,7 @@ class Account::BaseTest < ActiveSupport::TestCase
   
   # 精算先口座に指定されていたら消せない
   def test_deletable_rule_associated
-    a = Account::Base.find(7)
+    a = accounts(:first_bank)
     assert_equal false, a.deletable?
     assert_equal 1, a.delete_errors.size
     assert_equal Account::RuleAssociatedAccountException.new_message('銀行'), a.delete_errors[0]
@@ -119,9 +112,9 @@ class Account::BaseTest < ActiveSupport::TestCase
 
   # 精算先口座に指定されていたら消せない。データもある場合は２つエラーが用意できる。
   def test_deletable_rule_associated
-    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 7, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d = Deal.new(:user_id => users(:old).id, :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:first_bank).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
     d.save!
-    a = Account::Base.find(7)
+    a = accounts(:first_bank)
     assert_equal false, a.associated_account_rules.empty?
     assert_equal false, a.deletable?
     assert_equal 2, a.delete_errors.size
@@ -134,43 +127,44 @@ class Account::BaseTest < ActiveSupport::TestCase
  
   # 使われていないものが消せるテスト
   def test_delete
-    a = Account::Base.find(10)
+    a = accounts(:deletable_one)
     assert_nothing_raised {a.destroy}
   end
   
   # データが使われていたら消せないことのテスト
   def test_delete_used
-    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d = Deal.new(:user_id => users(:old), :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:deletable_one).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
     d.save!
-    a = Account::Base.find(10)
+    a = accounts(:deletable_one)
     assert_raise(Account::UsedAccountException) {a.destroy}
-    assert_nothing_raised {Account::Base.find(10)}
+    assert_nothing_raised {Account::Base.find(a.id)}
   end
 
   # [1vs1精算]
   #
   # 精算先口座に指定されていたら消せないことのテスト
   def test_delete_rule_associated
-    a = Account::Base.find(7)
+    a = accounts(:first_bank)
     assert_raise(Account::RuleAssociatedAccountException) {a.destroy}
-    assert_nothing_raised {Account::Base.find(7)}
+    assert_nothing_raised {Account::Base.find(a.id)}
   end
   
   # [1vs1精算]
   # 
   # 精算対象口座に指定されていたらルールも一緒に消されることのテスト
   def test_delete_with_rule
-    assert_not_nil AccountRule.find(1)
-    a = Account::Base.find(6)
+    r = account_rules(:first_account_rule)
+    assert_not_nil r
+    a = accounts(:first_credit_card)
     a.destroy
-    assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(1)}
+    assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(r.id)}
   end
   
  # 更新のテスト
 
  # 勘定名を変えられることのテスト
   def test_change_name
-    a = Account::Base.find(7)
+    a = accounts(:first_bank)
     a.name = "新しい名前"
     assert a.save
   end
@@ -182,7 +176,7 @@ class Account::BaseTest < ActiveSupport::TestCase
     # 全種類つくる
     count = 1
     for type in Account::Asset.types
-      a = type.new(:name => "テスト口座#{count}", :user_id => 2)
+      a = type.new(:name => "テスト口座#{count}", :user_id => users(:old2).id)
       a.save!
       options = a.changable_asset_types
       for target_type in Account::Asset.types
@@ -198,7 +192,7 @@ class Account::BaseTest < ActiveSupport::TestCase
     count = 1
     for type in Account::Asset.types
       next if type == Account::CapitalFund
-      a = type.new(:name => "テスト口座#{count}", :user_id => 1)
+      a = type.new(:name => "テスト口座#{count}", :user_id => users(:old).id)
       a.save!
       options = a.changable_asset_types
       for target_type in Account::Asset.types
