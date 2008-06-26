@@ -82,21 +82,16 @@ class OriginalUserTest < ActiveSupport::TestCase
   def test_accounts_types_in
     assert_equal 5, users(:old).accounts.types_in(:asset).size
     assert_equal 0, users(:old).accounts.types_in.size
-    assert_equal 6, users(:old).accounts.types_in(:asset, :expense).size
+    assert_equal 7, users(:old).accounts.types_in(:asset, :expense).size
     assert_equal 2, users(:old).accounts.types_in(:cache).size
     assert_equal 1, users(:old).accounts.types_in(:banking_facility).size
     assert_equal 3, users(:old).accounts.types_in(:cache, :credit).size
   end
   
-#  def test_account_options
-#    options = account_options(users(:test_user_1), :asset)
-#    assert_not_nil options.match(/<optgroup label='口座'>/)
-#  end
-#
   def test_default_asset
     user = users(:old)
     assert_not_nil user.default_asset
-    assert_equal 1, user.default_asset.id
+    assert_equal accounts(:first_cache).id, user.default_asset.id
   end
 
   def test_available_asset_types

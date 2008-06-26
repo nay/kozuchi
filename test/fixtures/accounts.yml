@@ -4,65 +4,78 @@ first_cache:
   name: 現金
   type: Cache
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 1
 
 first_food:
   name: 食費
   type: Expense
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 2
 
 first_second:
   name: second
   type: Credit
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 2
 
 second_cache:
   name: 現金
   type: Cache
   user_id: <%= Fixtures.identify(:old2) %>
+  sort_key: 1
 
 second_first:
   name: first
   type: Credit
   user_id: <%= Fixtures.identify(:old2) %>
+  sort_key: 2
 
 first_credit_card:
   name: カード
   type: CreditCard
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 4
 
 first_bank:
   name: 銀行
   type: BankingFacility
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 5
 
 first_bonus:
   name: ボーナス
   type: Income
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 6
 
 second_food:
   name: 食費
   type: Expense
   user_id: <%= Fixtures.identify(:old2) %>
+  sort_key: 3
 
 deletable_one:
   name: 貯金箱
   type: Cache
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 3
 
 second_income:
   name: 報酬
   type: Income
   user_id: <%= Fixtures.identify(:old2) %>
+  sort_key: 3
   
 first_house:
   name: 住居費
   type: Expense
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 5
 
 first_saraly:
   name: 給料
   type: Income
   user_id: <%= Fixtures.identify(:old) %>
+  sort_key: 5
 
   
