@@ -1,12 +1,18 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class FriendDealTest < Test::Unit::TestCase
-#  self.use_instantiated_fixtures  = false
-#  fixtures :users
-#  fixtures :friends
-#  fixtures 'account/accounts'.to_sym
-#  set_fixture_class  "account/accounts".to_sym => 'account/base'
-#  fixtures :account_links
+  
+  def setup
+    @user1 = users(:old)
+    @user2 = users(:old2)
+  end
+  
+  # 前提条件のテスト
+  def test_conditions
+    # old と old2はlevel1のフレンドである
+    assert @user1.friend?(@user2)
+    assert @user2.friend?(@user1)
+  end
   
   # フレンド取引のテスト
   def test_not_confirmed
@@ -14,20 +20,20 @@ class FriendDealTest < Test::Unit::TestCase
     first_deal = Deal.new(
       :summary => 'second へ貸した',
       :amount => 1000,
-      :minus_account_id => 1,
-      :plus_account_id => 3,
-      :user_id => 1,
+      :minus_account_id => accounts(:first_cache).id,
+      :plus_account_id => accounts(:first_second).id,
+      :user_id => users(:old).id,
       :date => Date.parse("2006/05/01")
     )
     first_deal.save!
     first_deal = Deal.find(first_deal.id)
 
-    first_second_entry = first_deal.entry(3)
+    first_second_entry = first_deal.entry(accounts(:first_second).id)
     assert first_second_entry.friend_link
     friend_link = first_second_entry.friend_link # あとでつかう
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
-    assert_equal 2, another_entry.user_id 
-    assert_equal 5, another_entry.account_id
+    assert_equal users(:old2).id, another_entry.user_id 
+    assert_equal accounts(:second_first).id, another_entry.account_id
     assert 1000*(-1), another_entry.amount
     
     # 相手が未確定な状態で金額を変更したら相手も変わる
@@ -61,20 +67,20 @@ class FriendDealTest < Test::Unit::TestCase
     first_deal = Deal.new(
       :summary => 'second に借りた',
       :amount => 1000,
-      :minus_account_id => 3,
-      :plus_account_id => 1,
-      :user_id => 1,
+      :minus_account_id => accounts(:first_second).id,
+      :plus_account_id => accounts(:first_cache).id,
+      :user_id => users(:old).id,
       :date => Date.parse("2006/05/02")
     )
     first_deal.save!
     first_deal = Deal.find(first_deal.id)
 
-    first_second_entry = first_deal.entry(3)
+    first_second_entry = first_deal.entry(accounts(:first_second).id)
     assert first_second_entry.friend_link
     friend_link_id = first_second_entry.friend_link.id # あとでつかう
     another_entry = first_second_entry.friend_link.another(first_second_entry.id)
-    assert_equal 2, another_entry.user_id 
-    assert_equal 5, another_entry.account_id
+    assert_equal users(:old2).id, another_entry.user_id 
+    assert_equal accounts(:second_first).id, another_entry.account_id
     assert 1000, another_entry.amount
 
     # 相手を確定にする
@@ -85,19 +91,19 @@ class FriendDealTest < Test::Unit::TestCase
     
     assert friend_deal.confirmed
     
-    assert friend_deal.entry(5).friend_link
+    assert friend_deal.entry(accounts(:second_first).id).friend_link
     
     # 変更したら、新しい相手ができる。旧相手はリンクがきれる。
     first_deal.attributes = {:amount => 1200}
     first_deal.save!
     
     friend_deal = Deal.find(friend_deal.id)
-    assert !friend_deal.entry(5).friend_link # リンクがきれたはず。
+    assert !friend_deal.entry(accounts(:second_first).id).friend_link # リンクがきれたはず。
     
     assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
     
     # 新しい相手ができたはず。
-    first_second_entry = first_deal.entry(3)
+    first_second_entry = first_deal.entry(accounts(:first_second).id)
     new_friend_link = first_second_entry.friend_link
     
     assert new_friend_link.id != friend_link_id
@@ -118,7 +124,7 @@ class FriendDealTest < Test::Unit::TestCase
     
     first_deal = Deal.find(first_deal.id)
     
-    assert !first_deal.entry(3).friend_link
+    assert !first_deal.entry(accounts(:first_second).id).friend_link
     
     assert !DealLink.find(:first, :conditions => "id = #{new_friend_link_id}")
     

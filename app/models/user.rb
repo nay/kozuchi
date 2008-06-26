@@ -123,6 +123,11 @@ class User < ActiveRecord::Base
     self.login
   end
   
+  # 相手と、指定したレベル以上の友人か調べる
+  def friend?(target, level = 1)
+    interactive_friends(level).include?(target)
+  end
+  
   # 双方向に指定level以上のフレンドを返す
   def interactive_friends(level)
     # TODO 効率悪い

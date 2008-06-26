@@ -1,7 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 first:
-  account_id: 3
-  connected_account_id: 5
+  account_id: <%= Fixtures.identify(:first_second) %>
+  connected_account_id: <%= Fixtures.identify(:second_first) %>
 another:
-  account_id: 5
-  connected_account_id: 3
+  account_id: <%= Fixtures.identify(:second_first) %>
+  connected_account_id: <%= Fixtures.identify(:first_second) %>
