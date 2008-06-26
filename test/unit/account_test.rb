@@ -71,13 +71,13 @@ class Account::BaseTest < ActiveSupport::TestCase
   
   # 名前が空で登録できないことのテスト
   def test_empty_name
-    account = Account::Cache.new(:user_id => 1)
+    account = Account::Cache.new(:user_id => users(:old).id)
     assert_equal false, account.save
   end
   
   # 同じ名前で登録できないことのテスト
   def test_same_name
-    account = Account::Cache.new(:user_id => 1, :name => '現金')
+    account = Account::Cache.new(:user_id => users(:old).id, :name => '現金')
     assert_equal false, account.save
     assert_equal 1, account.errors.size
     assert_equal "口座・費目・収入内訳で名前が重複しています。", account.errors[:name]

@@ -2,7 +2,7 @@
 first_account_rule:
   user_id: <%= Fixtures.identify(:old) %>
   account: first_credit_card
-  associated_account_id: first_bank
+  associated_account: first_bank
   closing_day: 0
   payment_term_months: 1
   payment_day: 0
