@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   helper :all
   private
   
+  def IE6?
+    request.user_agent =~ /MSIE 6.0/ && !(request.user_agent =~ /Opera/)
+  end
+  
 #  # LoginEngine login_required を overwrite。以下の目的。
 #  # * session 内に user_id だけを入れるようにしたことに対応するため。
 #  # * 認証OKの場合に @user をセットするため

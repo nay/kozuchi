@@ -2,6 +2,7 @@ class HomeController < ApplicationController
   def index
     prepare_assets_summary
     prepare_expenses_summary
+    @IE6 = IE6?
   end
 
   private

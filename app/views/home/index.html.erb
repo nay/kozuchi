@@ -3,6 +3,9 @@
 <% end -%>
 
   <p style="padding: 1em;"><%= h @user.login%>さん、ようこそWeb家計簿「小槌」へ！ → <%= link_to'家計簿を記入する', :controller => 'deals', :action => 'index' %></p>
+  <% if @IE6 -%>
+  <p class="error" style="text-align: center;">この画面はInternet Explorer6では正しく表示されません。Firefox、Internet Explorer7などのご利用をお奨めします。</p>
+  <% else -%>
   <div>	
     <div class="box" style="float:left; margin: 1em;">
       <h2>支出の状況</h2>
@@ -14,5 +17,4 @@
     </div>
     <div style="clear:left;"></div>
   </div>
-
-
+<% end -%>
