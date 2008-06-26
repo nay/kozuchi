@@ -5,8 +5,8 @@ require 'settings/assets_controller'
 class Settings::AssetsController; def rescue_action(e) raise e end; end
 
 class Settings::AssetsControllerTest < Test::Unit::TestCase
-  fixtures :users, "account/accounts"
-  set_fixture_class  "account/accounts".to_sym => 'account/base'
+#  fixtures :users, "account/accounts"
+#  set_fixture_class  "account/accounts".to_sym => 'account/base'
 
   def setup
     @controller = Settings::AssetsController.new
@@ -16,7 +16,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
 
   # index のテスト
   def test_index
-    get :index, {}, {:user_id => 1}
+    get :index, {}, {:user_id => users(:old).id}
     assert_response :success
   end
 
@@ -24,15 +24,15 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
 
   # create を get で呼ぶと失敗する
   def test_create_by_get
-    get :create, {}, {:user_id => 1}
+    get :create, {}, {:user_id => users(:old).id}
     assert_template '/open/not_found'
   end
 
   # create を  post で呼ぶと成功する。クレジットカード口座「VISA」を登録する。
   def test_create
-    post :create, {:account => {:name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    post :create, {:account => {:name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => users(:old).id}
     assert_redirected_to :action => 'index'
-    assert_not_nil User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
+    assert_not_nil users(:old).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_nil flash[:errors]
     assert_equal "口座「VISA」を登録しました。", flash[:notice]
   end
@@ -41,11 +41,11 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
   #
   # 異なるuser_id をパラメータで渡しても安全にクレジットカード口座「VISA」を登録することを確認する。
   def test_create_with_user_id
-    post :create, {:account => {:user_id => 2, :name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => 1}
+    post :create, {:account => {:user_id => users(:old2).id, :name => 'VISA', :asset_name => Account::CreditCard.asset_name, :sort_key => '10'}}, {:user_id => users(:old).id}
     assert_redirected_to :action => 'index'
-    visa =  User.find(1).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
+    visa =  users(:old).accounts.detect{|a| a.name == 'VISA' && a.kind_of?(Account::CreditCard)}
     assert_not_nil visa
-    assert_equal 1, visa.user_id # ログインユーザーになる
+    assert_equal users(:old).id, visa.user_id # ログインユーザーになる
     assert_nil flash[:errors]
     assert_equal "口座「VISA」を登録しました。", flash[:notice]
   end

@@ -20,7 +20,11 @@ class UsersControllerTest < Test::Unit::TestCase
   def test_should_allow_signup
     assert_difference 'User.count' do
       create_user
-      assert_response :redirect
+      if defined?(SKIP_MAIL) && SKIP_MAIL
+        assert_response :redirect
+      else
+        assert_response :success
+      end
     end
   end
 
@@ -61,7 +65,11 @@ class UsersControllerTest < Test::Unit::TestCase
   def test_should_sign_up_user_with_activation_code
     create_user
     assigns(:user).reload
-    assert_not_nil assigns(:user).activation_code
+    if defined?(SKIP_MAIL) && SKIP_MAIL
+      assert_nil assigns(:user).activation_code
+    else
+      assert_not_nil assigns(:user).activation_code
+    end
   end
 
   def test_should_activate_user

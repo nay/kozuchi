@@ -2,9 +2,10 @@
 class SessionsController < ApplicationController
   layout 'login' # TODO: リファクタリング
   skip_before_filter :login_required
-
-  # render new.rhtml
+  
+  # functional test のために残している
   def new
+    render :nothing => true
   end
 
   def create
