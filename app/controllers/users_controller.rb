@@ -80,7 +80,7 @@ class UsersController < ApplicationController
   end
   
   def edit
-#    render :layout => 'main'
+    render :layout => 'main'
     @user = self.current_user
   end
   

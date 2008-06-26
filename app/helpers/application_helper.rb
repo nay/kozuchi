@@ -259,7 +259,7 @@ EOS
         t.add_menu('口座', :controller => '/settings/assets', :action => 'index')
         t.add_menu('費目', :controller => '/settings/expenses',:action => 'index')
         t.add_menu('収入内訳', :controller => '/settings/incomes',:action => 'index')
-        t.add_menu('プロフィール', :controller => '/user',:action => 'edit')
+        t.add_menu('プロフィール', :controller => '/users',:action => 'edit')
       }
       
       menues.create_menu_tree('高度な設定') {|t|
