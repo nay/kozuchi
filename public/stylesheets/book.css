@@ -164,7 +164,7 @@ table.masters {
 
 .selectedtab {
   background-color: #FFFFCC;
-  color: #FF8EC6;
+  color: #ff7fbf;
 }
 
 .tab, .selectedtab {
@@ -264,7 +264,7 @@ a.small_button, .action a {
 }
 
 .side_menu_current {
-  background-color: #FF8EC6;
+  background-color: #ffb7db;
   color: black;
 }
 
@@ -300,9 +300,9 @@ a.small_button, .action a {
 }
 
 #calendar table tr td.selected_month {
-  border: 4px inset #ff8ec6;
+  border: 4px inset #ffb7db;
   text-align: right;
-  background-color: #ff8ec6;
+  background-color: #ffb7db;
   color: black;
 }
 
