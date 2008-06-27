@@ -8,7 +8,7 @@ class UserMailer < ActionMailer::Base
   
   def activation(user)
     setup_email(user)
-    @subject    += 'Your account has been activated!'
+    @subject    += 'ご登録完了のお知らせ'
     @body[:url]  = "#{ROOT_URL}/"
   end
   

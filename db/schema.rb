@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 16) do
+ActiveRecord::Schema.define(:version => 17) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",                                 :null => false
@@ -117,8 +117,6 @@ ActiveRecord::Schema.define(:version => 16) do
   create_table "users", :force => true do |t|
     t.string   "login",                     :limit => 80, :default => "", :null => false
     t.string   "email",                     :limit => 60, :default => "", :null => false
-    t.string   "firstname",                 :limit => 40
-    t.string   "lastname",                  :limit => 40
     t.string   "salt",                      :limit => 40, :default => "", :null => false
     t.string   "role",                      :limit => 40
     t.string   "activation_code",           :limit => 40

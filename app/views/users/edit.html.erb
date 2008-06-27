@@ -6,9 +6,7 @@
     <% form_for :user, @user, :url => user_path, :html => {:method => :put}  do |f| %>
       <div class="user_edit">
         <table style="margin-left:auto;margin-right:auto;">
-        	<%= with_label "姓", f.text_field(:lastname)  %>
-			<%= with_label "名", f.text_field(:firstname) %>
-			<%= with_label "ログインID", f.text_field(:login, {:size => 30})%>
+			    <%= with_label "ログインID", f.text_field(:login, {:size => 30})%>
         	<%= with_label "パスワード", password_field_tag(:password, {}, :size => 30) %>
         	<%= with_label "パスワード（確認）", password_field_tag(:password_confirmation, {}, :size => 30) %>
         	<%= with_label "Eメールアドレス", f.text_field(:email) %>

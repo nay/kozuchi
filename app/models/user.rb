@@ -182,7 +182,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   before_save :encrypt_password
   before_create :make_activation_code 
-  attr_accessible :login, :email, :password, :password_confirmation, :firstname, :lastname, 
+  attr_accessible :login, :email, :password, :password_confirmation
 
   # Activates the user in the database.
   def activate
