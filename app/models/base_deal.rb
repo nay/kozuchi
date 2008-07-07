@@ -18,6 +18,8 @@ class BaseDeal < ActiveRecord::Base
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
+  
+#  named_scope :without_balance, :conditions => "type = 'Deal'" # user.dealsからのアクセスのため
 
   def year
     split_date if !@year && self[:date]

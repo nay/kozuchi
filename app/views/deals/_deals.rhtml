@@ -26,7 +26,7 @@
             <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed %>>
               <td class="date">
                 <% if first %>
-                  <a name="#<%=deal.id%>"%><%= format_date(deal.date) %></a>
+                  <a name="<%=deal.id%>"><%= format_date(deal.date) %></a>
                 <% end %>
               </td>
               <td class="number">

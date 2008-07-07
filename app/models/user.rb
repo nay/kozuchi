@@ -114,6 +114,8 @@ class User < ActiveRecord::Base
     end
   end
   
+  has_many :deals, :class_name => 'BaseDeal', :extend => User::DealsExtension
+  
   def default_asset
     accounts.types_in(:asset).first
   end
@@ -152,12 +154,6 @@ class User < ActiveRecord::Base
 
   def self.find_by_login_id(login_id)
     find(:first, :conditions => ["login = ? ", login_id])
-  end
-  
-  # 指定された期間の取引データを取得する。
-  # TODO: 口座によらない自由な期間のメソッドがほしくなったら Account に別のスタティックを作りここのデフォルトをnilにしてよびかえる
-  def deals(start_date, end_date, accounts)
-    BaseDeal.get_for_accounts(self.id, start_date, end_date, accounts)
   end
   
   def deal_exists?(date)

@@ -16,7 +16,7 @@ class DailyBookingController < ApplicationController
     @balance_at_the_end = @account.balance_before(@date + 1)
     
     # 基準日の関係ある取引を抽出する
-    @deals = @user.deals(@date, @date, @user.accounts.types_in(:income, :expense) << @account)
+    @deals = @user.deals.in_range(@date, @date, @user.accounts.types_in(:income, :expense) << @account)
     
     # 取引の中の収入、支出を集計する
     @total_income = 0

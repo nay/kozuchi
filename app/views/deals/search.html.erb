@@ -1,0 +1,32 @@
+<div>
+	<%= @keywords.map{|k| "「#{k}」"} %>を含む明細は<%= @deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"%>
+</div>
+<div style="text-align: center;padding: 4px;"><%= link_to '戻る', :action => 'index' %></div>
+<% unless @deals.empty? -%>
+<table class="book">
+  <tr>
+    <th class="date">日付</th>
+    <th>摘要</th>
+	<th style="width: 2em;"></th>
+    <th class="account"> </th>
+    <th class="amount">入金</th>
+    <th class="amount">出金</th>
+    <th class="amount">残高</th>
+  </tr>
+  <% for d in @deals -%>
+  <% for e in d.account_entries -%>
+  <tr>
+  	  <% if e == d.account_entries.first -%>
+  	  <td class="date" rowspan="<%=d.account_entries.size%>"><%= d.date %></td>
+	  <td class="summary" rowspan="<%=d.account_entries.size%>"><%= d.summary %></td>
+	  <td rowspan="<%=d.account_entries.size%>" style="text-align:center;"><%= link_to '→', {:action => 'jump', :id => d.id}, {:class => 'arrow'}%></td>
+	  <% end -%>
+	  <td class="account"><%= e.account.name %></td>
+      <td class="amount"><%= number_with_delimiter(e.amount) if e.amount  > 0 && !e.initial_balance? %></td>
+      <td class="amount"><%= number_with_delimiter(e.amount.abs) if e.amount < 0 && !e.initial_balance? %></td>
+      <td class="amount"><%= number_with_delimiter(e.balance)%> </td>
+  </tr>
+  <% end -%>
+  <% end -%>
+</table>
+<% end -%>

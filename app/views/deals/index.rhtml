@@ -1,5 +1,10 @@
+    <div style="float:right">
+    	<% form_tag({:controller => '/deals', :action => 'search'}, :method => :get) do -%>
+		  <%= text_field_tag :keyword, "", :size => 14 %> <%= submit_tag '明細を検索', :class => 'button', :onClick => "if($('keyword').value == '') {alert('キーワードを入力してください。'); return false;}" %>
+		<% end -%>
+    </div>
 	<%= render (:partial => "shared/calendar") %>
-    
+	<div style="clear:right;"></div>
     <div id="monthly_contents">
       <%= render :partial => 'monthly_contents' %>
     </div>

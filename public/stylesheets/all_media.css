@@ -25,7 +25,7 @@
   float: right;
 }
 
-.number, .amount, .percentage {
+td.number, td.amount, .percentage {
   text-align:right;
 }
 
@@ -47,4 +47,8 @@ td.number, th.number {
 
 td.account, th.account {
   width: 100px;
+}
+
+a.arrow {
+  text-decoration: none;
 }

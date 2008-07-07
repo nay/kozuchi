@@ -35,16 +35,13 @@ class DealsController < ApplicationController
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
 
-  # 仕分け帳画面部分だけを更新するためのAjax対応処理
-  # カレンダーが変更されたとき呼ばれる。URLやメソッド名を変えたい。
-#  def update
-#    @target_month = DateBox.new(params[:target_month])
-#    today = DateBox.today
-#    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
-#    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-#    self.target_date = params[:target_month].clone
-#    render(:partial => "monthly_contents", :layout => false)
-#  end
+  # キーワードで検索したときに一覧を出す
+  def search
+    raise InvalidParameterError if params[:keyword].blank?
+    @keywords = params[:keyword].split(' ')
+    @deals = current_user.deals.including(@keywords)
+    @as_action = :index
+  end
 
   # ----- 編集実行系 --------------------------------------------------
 
