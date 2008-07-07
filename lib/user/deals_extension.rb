@@ -8,6 +8,7 @@ module User::DealsExtension
   end
   
   # summary の前方一致で検索する
+  # TODO: search_by_summary から置き換えるが、NamedScopeが欲しい。
   def begin_with(summary_key, limit = nil)
     raise ArgumentError.new("No summary_key") if summary_key.blank?
     # まず summary と 日付(TODO: created_at におきかえたい)のセットを返す
