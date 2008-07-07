@@ -1,0 +1,54 @@
+<!--
+	Copyright 2007 futomi  http://www.html5.jp/
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	  http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="ja" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>円グラフ サンプル - jsライブラリ - HTML5.JP</title>
+<style type="text/css">
+canvas {border:1px solid #4c4c4c;}
+</style>
+<!--[if IE]><script type="text/javascript" src="../html5jp/excanvas/excanvas.js"></script><![endif]-->
+<script type="text/javascript" src="../html5jp/graph/circle.js"></script>
+<script type="text/javascript">
+window.onload = function() {
+	var cg = new html5jp.graph.circle("sample");
+	if( ! cg ) { return; }
+	var items = [
+		["sample01", 150],
+		["sample02", 100],
+		["sample03", 80],
+		["sample04", 60],
+		["sample05", 30],
+		["sample06", 20],
+		["sample07", 10],
+		["sample08", 10],
+		["sample09", 10],
+		["sample10", 10],
+		["sample11", 10],
+		["sample12", 10]
+	];
+	cg.draw(items);
+};
+</script>
+</head>
+<body>
+<h1>円グラフ サンプル - jsライブラリ - HTML5.JP</h1>
+<div><canvas width="400" height="300" id="sample"></canvas></div>
+</body>
+</html>
