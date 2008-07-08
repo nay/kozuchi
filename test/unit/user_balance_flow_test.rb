@@ -22,6 +22,9 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     # 年
     @year = 2008
     
+    
+    @second_cache = accounts(:second_cache)
+    @second_food = accounts(:second_food)
   end
 
   # -------- Test Cases -----------
@@ -66,6 +69,20 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     assert_equal 2500, balance(@first_user, 3, 10, @cache)
     assert_equal 4000, balance(@first_user, 3, 10, @bank)
   end
+  
+  # 複数のユーザーについての残高が正しく、balancesに他人のものが含まれないことを確認する
+  def test_balance_in_multil_user
+    create_deal 3, 1, @bank, @food, 1000
+    create_balance 3, 3, @bank, 4000
+    create_deal 3, 1, @second_cache, @food, 1000
+    create_balance 3, 3, @second_cache, 2000
+    
+    assert_equal 4000, balance(@first_user, 3, 4, @bank)
+    assert_equal 2000, balance(@second_user, 3, 4, @second_cache)
+    
+    assert_nil @first_user.accounts.balances(Date.new(@year, 3, 4)).detect{|a| a.user_id != @first_user.id}
+    assert_nil @second_user.accounts.balances(Date.new(@year, 3, 4)).detect{|a| a.user_id != @second_user.id}
+  end
 
   # flow_sum, flows が正しいことを確認する
   def test_flows
@@ -96,6 +113,23 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     assert_equal -675000, income_sum(@first_user, 4)
   end
 
+  # 複数のユーザーについてのフローが正しく、flowsに他人のものが含まれないことを確認する
+  def test_flow_in_multil_user
+    create_deal 3, 1, @bank, @food, 1000
+    create_balance 3, 3, @bank, 4000
+    create_balance 3, 4, @bank, 2000
+    create_deal 3, 1, @second_cache, @second_food, 1500
+    create_balance 3, 3, @second_cache, 2000
+    create_balance 3, 4, @second_cache, 1000
+    
+    assert_equal 1000, flow(@first_user, 3, @food)
+    assert_equal 2000, unknown(@first_user, 3, @bank)
+    assert_equal 1500, flow(@second_user, 3, @second_food)
+    assert_equal 1000, unknown(@second_user, 3, @second_cache)
+    
+    assert_nil @first_user.accounts.flows(*date_range(3)).detect{|a| a.user_id != @first_user.id}
+    assert_nil @second_user.accounts.flows(*date_range(3)).detect{|a| a.user_id != @second_user.id}
+  end
 
   private
   def create_deal(month, day, from, to, amount)

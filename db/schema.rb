@@ -1,5 +1,5 @@
 # This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of ActiveRecord to incrementally modify your database, and
+# please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
 # Note that this schema.rb definition is the authoritative source for your database schema. If you need
@@ -12,15 +12,15 @@
 ActiveRecord::Schema.define(:version => 17) do
 
   create_table "account_entries", :force => true do |t|
-    t.integer "user_id",                                 :null => false
-    t.integer "account_id",                              :null => false
-    t.integer "deal_id",                                 :null => false
-    t.integer "amount",                                  :null => false
-    t.integer "balance"
-    t.integer "friend_link_id"
-    t.integer "settlement_id"
-    t.integer "result_settlement_id"
-    t.boolean "initial_balance",      :default => false, :null => false
+    t.integer "user_id",              :limit => 11,                    :null => false
+    t.integer "account_id",           :limit => 11,                    :null => false
+    t.integer "deal_id",              :limit => 11,                    :null => false
+    t.integer "amount",               :limit => 11,                    :null => false
+    t.integer "balance",              :limit => 11
+    t.integer "friend_link_id",       :limit => 11
+    t.integer "settlement_id",        :limit => 11
+    t.integer "result_settlement_id", :limit => 11
+    t.boolean "initial_balance",                    :default => false, :null => false
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
@@ -31,29 +31,29 @@ ActiveRecord::Schema.define(:version => 17) do
   add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 
   create_table "account_links", :id => false, :force => true do |t|
-    t.integer "account_id",           :null => false
-    t.integer "connected_account_id", :null => false
+    t.integer "account_id",           :limit => 11, :null => false
+    t.integer "connected_account_id", :limit => 11, :null => false
   end
 
   add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
   add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
 
   create_table "account_rules", :force => true do |t|
-    t.integer "user_id",                              :null => false
-    t.integer "account_id",                           :null => false
-    t.integer "associated_account_id",                :null => false
-    t.integer "closing_day",           :default => 0, :null => false
-    t.integer "payment_term_months",   :default => 1, :null => false
-    t.integer "payment_day",           :default => 0, :null => false
+    t.integer "user_id",               :limit => 11,                :null => false
+    t.integer "account_id",            :limit => 11,                :null => false
+    t.integer "associated_account_id", :limit => 11,                :null => false
+    t.integer "closing_day",           :limit => 11, :default => 0, :null => false
+    t.integer "payment_term_months",   :limit => 11, :default => 1, :null => false
+    t.integer "payment_day",           :limit => 11, :default => 0, :null => false
   end
 
   create_table "accounts", :force => true do |t|
-    t.integer "user_id",                          :null => false
+    t.integer "user_id",            :limit => 11, :null => false
     t.string  "name",               :limit => 32, :null => false
-    t.integer "account_type_code"
-    t.integer "asset_type_code"
-    t.integer "sort_key"
-    t.integer "partner_account_id"
+    t.integer "account_type_code",  :limit => 11
+    t.integer "asset_type_code",    :limit => 11
+    t.integer "sort_key",           :limit => 11
+    t.integer "partner_account_id", :limit => 11
     t.text    "type"
   end
 
@@ -66,17 +66,17 @@ ActiveRecord::Schema.define(:version => 17) do
   end
 
   create_table "deal_links", :force => true do |t|
-    t.integer "created_user_id"
+    t.integer "created_user_id", :limit => 11
   end
 
   create_table "deals", :force => true do |t|
     t.string   "type",           :limit => 20,                   :null => false
-    t.integer  "user_id",                                        :null => false
+    t.integer  "user_id",        :limit => 11,                   :null => false
     t.date     "date",                                           :null => false
-    t.integer  "daily_seq",                                      :null => false
+    t.integer  "daily_seq",      :limit => 11,                   :null => false
     t.string   "summary",        :limit => 64,                   :null => false
     t.boolean  "confirmed",                    :default => true, :null => false
-    t.integer  "parent_deal_id"
+    t.integer  "parent_deal_id", :limit => 11
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -86,17 +86,17 @@ ActiveRecord::Schema.define(:version => 17) do
 
   create_table "engine_schema_info", :id => false, :force => true do |t|
     t.string  "engine_name"
-    t.integer "version"
+    t.integer "version",     :limit => 11
   end
 
   create_table "friends", :force => true do |t|
-    t.integer "user_id",                       :null => false
-    t.integer "friend_user_id",                :null => false
-    t.integer "friend_level",   :default => 1, :null => false
+    t.integer "user_id",        :limit => 11,                :null => false
+    t.integer "friend_user_id", :limit => 11,                :null => false
+    t.integer "friend_level",   :limit => 11, :default => 1, :null => false
   end
 
   create_table "preferences", :force => true do |t|
-    t.integer "user_id",                                              :null => false
+    t.integer "user_id",             :limit => 11,                    :null => false
     t.string  "deals_scroll_height", :limit => 20
     t.string  "color",               :limit => 32
     t.boolean "business_use",                      :default => false, :null => false
@@ -104,13 +104,13 @@ ActiveRecord::Schema.define(:version => 17) do
   end
 
   create_table "settlements", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "account_id"
+    t.integer  "user_id",                 :limit => 11
+    t.integer  "account_id",              :limit => 11
     t.text     "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
-    t.integer  "submitted_settlement_id"
+    t.integer  "submitted_settlement_id", :limit => 11
     t.string   "type",                    :limit => 40
   end
 
