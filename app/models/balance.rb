@@ -74,17 +74,17 @@ class Balance < BaseDeal
   private
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
-    raise "no account_id" unless @account_id
+    raise "no account_id" unless account_id
     initial_balance_entry = AccountEntry.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => "account_entries.account_id = #{@account_id} and deals.type='Balance'", :order => "deals.date, deals.daily_seq", :readonly => false)
+      :conditions => ["account_entries.account_id = ? and deals.type='Balance'", account_id], :order => "deals.date, deals.daily_seq", :readonly => false)
     # 現在ひとつもないなら特に仕事なし
     return unless initial_balance_entry
     # すでにマークがついていたら仕事なし
     return if initial_balance_entry.initial_balance?
 
     # マークがついていない＝状態が変わったので修正する
-    AccountEntry.update_all(["initial_balance = ?", false], ["account_id = ?", @account_id])
+    AccountEntry.update_all(["initial_balance = ?", false], ["account_id = ?", account_id])
     AccountEntry.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
     self.entry.initial_balance = true if self.entry.id == initial_balance_entry.id
   end

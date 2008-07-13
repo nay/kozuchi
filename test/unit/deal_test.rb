@@ -117,6 +117,16 @@ class DealTest < Test::Unit::TestCase
     assert_equal 2000, balance_before(5, 12)
   end
   
+  # 残高記入が削除できることのテスト
+  def test_destroy_balance
+    b1 = create_balance(2000, 5, 12)
+    b1 = Balance.find(b1.id)
+    b2 = create_balance(2000, 5, 14)
+    b2 = Balance.find(b2.id)
+    b2.destroy
+    b1.destroy
+  end  
+  
   # ------------------  set_up  ----------------------
   def setup
     @user = users(:old)
