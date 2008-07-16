@@ -97,7 +97,9 @@ class Settlement < ActiveRecord::Base
   def before_destroy
     # submit されていたら消せない
     raise "提出済の精算データは削除できません。" if self.submitted_settlement_id
-
+  end
+  
+  def after_destroy
     self.result_entry.deal.destroy if self.result_entry
   end
   
