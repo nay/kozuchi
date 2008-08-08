@@ -24,6 +24,14 @@
 
   <% if @settlement.kind_of?(SubmittedSettlement) %>
     <div style="text-align:center; font-weigt: bold;">この精算は<%= h @settlement.resource.user.login %>さんから提出されたことによりできたものです。</div>
+		<% # 確定状態 %>
+		<div style="text-align:center;">
+		  <% if @settlement.all_confirmed? -%>
+			  この精算は確認済です。
+		  <% else -%>
+			  この精算には未確認の取引が含まれています。<%= button_to 'この精算の明細をすべて確認済にする', {:action => 'confirm'}, {:class => 'button', :confirm => 'この精算に含まれる記入をすべて有効なデータと認めます。よろしいですか？'} %>
+			<% end -%>
+		</div>
   <% end %>
   <% if @settlement.submitted_settlement %>
     <div style="text-align:center; font-weigt: bold;">この精算は<%= h @settlement.submitted_settlement.user.login %>さんに提出済です。削除するには先方に取消を依頼してください。</div>

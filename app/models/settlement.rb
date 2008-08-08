@@ -57,7 +57,12 @@ class Settlement < ActiveRecord::Base
   def deletable?
     self.submitted_settlement_id.blank?
   end
-    
+  
+  # すべて確認済か調べる
+  def all_confirmed?
+    return false if target_entries.detect{|e| !e.deal.confirmed?}
+    result_entry.deal.confirmed?
+  end
   
   protected
   

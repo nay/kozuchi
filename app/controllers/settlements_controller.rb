@@ -2,7 +2,7 @@
 class SettlementsController < ApplicationController
   layout 'main'
   before_filter :check_credit_account, :except => [:view, :delete, :print_form]
-  before_filter :load_settlement, :only => [:view, :delete, :print_form, :submit]
+  before_filter :load_settlement, :only => [:view, :delete, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
 
   # 新しい精算口座を作る
@@ -104,6 +104,17 @@ class SettlementsController < ApplicationController
     submitted = @settlement.submit
     
     flash[:notice] = "#{submitted.user.login}さんに提出済としました。"
+    redirect_to :action => 'view', :id => @settlement.id
+  end
+  
+  # 含まれる取引を確認済にする
+  def confirm
+    # 専用のコールバック処理があるため、メソッドを一つ一つ呼ぶ
+    BaseDeal.transaction do
+      @settlement.target_entries.each{|e| e.deal.confirm unless e.deal.confirmed?}
+      @settlement.result_entry.deal.confirm unless @settlement.result_entry.deal.confirmed?
+    end
+    flash[:notice] = "精算に含まれるすべての記入を確認済としました。"
     redirect_to :action => 'view', :id => @settlement.id
   end
   
