@@ -107,17 +107,6 @@ class SettlementsController < ApplicationController
     redirect_to :action => 'view', :id => @settlement.id
   end
   
-  # 含まれる取引を確認済にする
-  def confirm
-    # 専用のコールバック処理があるため、メソッドを一つ一つ呼ぶ
-    BaseDeal.transaction do
-      @settlement.target_entries.each{|e| e.deal.confirm unless e.deal.confirmed?}
-      @settlement.result_entry.deal.confirm unless @settlement.result_entry.deal.confirmed?
-    end
-    flash[:notice] = "精算に含まれるすべての記入を確認済としました。"
-    redirect_to :action => 'view', :id => @settlement.id
-  end
-  
   protected
   
   def new_settlement
