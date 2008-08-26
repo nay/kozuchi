@@ -17,14 +17,16 @@ class AccountDealsController < ApplicationController
     raise "口座が１つもありません" if @accounts.empty?
 
     if !params[:account_id]
-      @account_id = @accounts.first.id
+      @account = @user.accounts.find(@accounts.first.id)
     else
-      @account_id = params[:account_id].to_i
+      @account = @user.accounts.find(params[:account_id]).to_i
     end
+    @account_id = @account.id
     begin
       deals = BaseDeal.get_for_account(@user.id, @account_id, @target_month)
       @account_entries = Array.new();
-      @balance_start = AccountEntry.balance_start(@user.id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
+ #     @balance_start = AccountEntry.balance_start(@user.id, @account_id, @target_month.year_i, @target_month.month_i) # これまでの残高
+      @balance_start = @account.balance_before(Date.new(@target_month.year_i, @target_month.month_i, 1))
       balance_estimated = @balance_start
       for deal in deals do
         for account_entry in deal.account_entries do
