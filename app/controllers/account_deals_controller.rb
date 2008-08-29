@@ -19,7 +19,7 @@ class AccountDealsController < ApplicationController
     if !params[:account_id]
       @account = @user.accounts.find(@accounts.first.id)
     else
-      @account = @user.accounts.find(params[:account_id]).to_i
+      @account = @user.accounts.find(params[:account_id].to_i)
     end
     @account_id = @account.id
     begin
