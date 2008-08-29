@@ -29,7 +29,7 @@ class AccountDealsController < ApplicationController
     deals = @account.deals.in_a_time_between(start_date, end_date)
     
     @account_entries = []
-    @balance_start = @account.balance_before(Date.new(@target_month.year_i, @target_month.month_i, 1))
+    @balance_start = @account.balance_before(start_date)
     balance_estimated = @balance_start
     for deal in deals do
       for account_entry in deal.account_entries do
