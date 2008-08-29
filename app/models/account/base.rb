@@ -3,6 +3,9 @@ class Account::Base < ActiveRecord::Base
   
   has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
 
+  has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
+  
+
   # ---------- 口座種別の静的属性を設定するためのメソッド群
   # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる
   def self.types

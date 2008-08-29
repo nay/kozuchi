@@ -10,16 +10,24 @@ class AccountDealsController < ApplicationController
   
   def monthly
     raise InvalidParameterError unless params[:account_id] && params[:year] && params[:month]
-    raise InvalidParameterError unless params[:year].to_i > 0
-    raise InvalidParameterError unless params[:month].to_i > 0
     @menu_name = "口座別出納"
+    
+    @year = params[:year].to_i
+    @month = params[:month].to_i
+    # TODO: ↑共通化
+    
     @target_month = DateBox.new
     @target_month.year = @target_date[:year]
     @target_month.month = @target_date[:month]
 
     @account = current_user.accounts.find(params[:account_id])
     
-    deals = BaseDeal.get_for_account(@user.id, @account.id, @target_month)
+    # deals = BaseDeal.get_for_account(@user.id, @account.id, @target_month)
+    start_date = Date.new(@year, @month, 1)
+    end_date = (start_date >> 1) -1
+    
+    deals = @account.deals.in_a_time_between(start_date, end_date)
+    
     @account_entries = []
     @balance_start = @account.balance_before(Date.new(@target_month.year_i, @target_month.month_i, 1))
     balance_estimated = @balance_start

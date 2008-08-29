@@ -6,16 +6,38 @@
       <% if flash[:notice] || flash[:notice].to_s != ""%>
         <div id="notice"><%=flash[:notice]%></div>
       <% end %>
-      <div class="title"><%= "#{h @account.name}の出納一覧（#{@target_date[:year]}年#{@target_date[:month]}月）" %></div>
+      <div class="title"><%= h @account.name %>の出納一覧（<%= @year %>年<%= @month %>月）</div>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>
           <th class="number"> </th>
           <th>摘要</th>
           <th class="account">　</th>
-          <th class="amount">入金</th>
-          <th class="amount">出金</th>
-          <th class="amount">残高</th>
+          <th class="amount">
+          	  <% if @account.kind_of?(Account::Asset) -%>
+			    入金
+			  <% elsif @account.kind_of?(Account::Income) -%>
+			    収入
+			  <% else -%>
+			    支出
+			  <% end -%>
+		  </th>
+          <th class="amount">
+          	  <% if @account.kind_of?(Account::Asset) -%>
+			    出金
+			  <% elsif @account.kind_of?(Account::Income) -%>
+			    戻し
+			  <% else -%>
+			    戻し
+			  <% end -%>
+		  </th>
+          <th class="amount">
+          	  <% if @account.kind_of?(Account::Asset) -%>
+			    残高
+			  <% else %>
+			    合計
+			  <% end -%>
+		  </th>
         </tr>
       </table>
       <table class="book">

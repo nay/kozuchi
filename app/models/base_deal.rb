@@ -19,6 +19,8 @@ class BaseDeal < ActiveRecord::Base
   before_save :set_daily_seq
   validates_presence_of :date
   
+  named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
+  
 #  named_scope :without_balance, :conditions => "type = 'Deal'" # user.dealsからのアクセスのため
 
   def year
