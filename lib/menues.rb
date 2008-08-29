@@ -9,10 +9,9 @@ class Menues
   
   # 現在のurlまたはメニュー名に対して出すべきメニューセットと現在のメニューを返す
   def load(url, name, sender)
-    p "url = #{url.inspect}"
     @trees.each{|t| t.each {|menu|
       menu_url = menu.url.kind_of?(Hash) ? sender.url_for(menu.url) : menu.url
-      p "menu_url = #{menu_url.inspect}"; return t, menu if menu_url == url || menu.name == name}
+      return t, menu if menu_url == url || menu.name == name}
     }
     nil
   end

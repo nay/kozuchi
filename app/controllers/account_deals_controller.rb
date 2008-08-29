@@ -4,10 +4,11 @@ class AccountDealsController < ApplicationController
   before_filter :check_account, :load_target_date, :load_account
   
   def index
-    if !params[:account_id] || !params[:year] || !params[:month]
-      redirect_to :action => 'index', :year => @target_date[:year], :month => @target_date[:month], :account_id => @account.id
-      return
-    end
+    redirect_to account_deals_path(:year => @target_date[:year], :month => @target_date[:month], :account_id => @account.id)
+  end
+  
+  def monthly
+    raise InvalidParameterError unless params[:account_id] && params[:year] && params[:month]
     @menu_name = "口座別出納"
     @target_month = DateBox.new
     @target_month.year = @target_date[:year]

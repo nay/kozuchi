@@ -215,14 +215,13 @@ class ApplicationController < ActionController::Base
     @header_menues.add_menu '基本設定', :controller => "/settings/assets", :action => "index"
     @header_menues.add_menu '高度な設定', :controller => "/settings/friends", :action => "index"
     @header_menues.add_menu 'ヘルプ', :controller => "/help", :action => "index"
-    #      t.add_menu('ログアウト', logout_path)  # TODO
-    @header_menues.add_menu 'ログアウト', logout_path # :controller => "/sessions", :action => "destroy"    
+    @header_menues.add_menu 'ログアウト', logout_path
 
     @side_menues = Menues.new
     @side_menues.create_menu_tree('家計簿') do |t|
       t.add_menu('仕訳帳', :controller => '/deals', :action => 'index')
 #        t.add_menu('日めくり', :controller => '/daily_booking', :action => 'index')
-      t.add_menu('口座別出納', :controller => '/account_deals', :action => 'index')
+      t.add_menu('口座別出納', :controller => 'account_deals')
       t.add_menu('収支表', :controller => '/profit_and_loss', :action => 'index')
       t.add_menu('資産表', :controller => '/assets', :action => 'index')
       t.add_menu('貸借対照表', :controller => '/balance_sheet', :action => 'index')
