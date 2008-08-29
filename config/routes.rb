@@ -47,12 +47,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
   # account_deals
-  map.account_deals 'accounts/:account_id/deals/:year/:month', :action => 'monthly', :controller => 'account_deals'
+  map.account_deals 'accounts/:account_id/deals/:year/:month', :action => 'monthly', :controller => 'account_deals', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
 
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',
     :requirements => {:controller => /deals|profit_and_loss|assets|balance_sheet/,
-                      :year => /[0-9]*/, :year => /[0-9]*/}
+                      :year => /[0-9]*/, :month => /[0-9]*/}
   
   # Install the default route as the lowest priority.
   # TODO: except sessions, 

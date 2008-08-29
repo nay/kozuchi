@@ -1,3 +1,4 @@
   <div id="account_options">
-    <%= collection_select("account", "id", @accounts, :id, :name, {}, "onChange" => "$('month_form').submit();") %>
+  	<%= grouped_account_select "account_id", current_user.accounts, nil, "onChange" => "$('month_form').submit();" %>
+    <%# collection_select("account", "id", @accounts, :id, :name, {}, "onChange" => "$('month_form').submit();") %>
   </div>
