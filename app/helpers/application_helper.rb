@@ -200,13 +200,9 @@ EOS
     end
   end
   
-  def load_menu(url)
-    Menues.side_menues.load(url)
-  end
-  
-  def header_menues
-    Menues.header_menues
-  end
+#  def load_menu(url)
+#    Menues.side_menues.load(url)
+#  end
   
   def header_menu
     content = "<div id=\"header_menu\">"

@@ -15,7 +15,7 @@
         <span> - ホーム</span>
       </div>
       <div id="header_menu">
-        <% h_menues = header_menues%>
+        <% h_menues = @header_menues %>
         <% for menu in h_menues %>
           <% if menu.name != 'ホーム' %>
             <%= link_to(menu.name, menu.url)%>

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   init_gettext "kozuchi"
   before_filter :login_required, :load_user, :set_ssl
   helper :all
+  
+  before_filter :load_menues
   private
   
   def IE6?
@@ -109,11 +111,11 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def load_menues
-    @menu_tree, @current_menu = ApplicationHelper::Menues.side_menues.load(:controller => "/" + self.class.controller_path, :action => self.action_name)
-    @title = @menu_tree ? @menu_tree.name : self.class.controller_name
-    @sub_title = @current_menu ? @current_menu.name : self.action_name
-  end
+#  def load_menues
+#    @menu_tree, @current_menu = ApplicationHelper::Menues.side_menues.load(:controller => "/" + self.class.controller_path, :action => self.action_name)
+#    @title = @menu_tree ? @menu_tree.name : self.class.controller_name
+#    @sub_title = @current_menu ? @current_menu.name : self.action_name
+#  end
   
   # @target_month と @date をセットする
   # TODO: 新方式に切り替えたので呼び出し元を変更したい
@@ -202,6 +204,56 @@ class ApplicationController < ActionController::Base
       return false
     end
     true
+  end
+  
+  def load_menues
+    # Prepare Menu Items
+    @header_menues = MenuTree.new
+    @header_menues.add_menu 'ホーム', :controller => "/home", :action => 'index'
+    @header_menues.add_menu '家計簿', :controller => "/deals", :action => 'index'
+    @header_menues.add_menu '精算',  :controller => '/settlements', :action => 'new'
+    @header_menues.add_menu '基本設定', :controller => "/settings/assets", :action => "index"
+    @header_menues.add_menu '高度な設定', :controller => "/settings/friends", :action => "index"
+    @header_menues.add_menu 'ヘルプ', :controller => "/help", :action => "index"
+    #      t.add_menu('ログアウト', logout_path)  # TODO
+    @header_menues.add_menu 'ログアウト', logout_path # :controller => "/sessions", :action => "destroy"    
+
+    @side_menues = Menues.new
+    @side_menues.create_menu_tree('家計簿') do |t|
+      t.add_menu('仕訳帳', :controller => '/deals', :action => 'index')
+#        t.add_menu('日めくり', :controller => '/daily_booking', :action => 'index')
+      t.add_menu('口座別出納', :controller => '/account_deals', :action => 'index')
+      t.add_menu('収支表', :controller => '/profit_and_loss', :action => 'index')
+      t.add_menu('資産表', :controller => '/assets', :action => 'index')
+      t.add_menu('貸借対照表', :controller => '/balance_sheet', :action => 'index')
+    end
+    
+    @side_menues.create_menu_tree('精算') do |t|
+      t.add_menu('新しい精算', :controller => '/settlements', :action => 'new')
+      t.add_menu('一覧', :controller => '/settlements', :action => 'index')
+      t.add_menu('詳細', :controller => '/settlements', :action => 'view')
+    end
+    
+    @side_menues.create_menu_tree('基本設定') do |t|
+      t.add_menu('口座', :controller => '/settings/assets', :action => 'index')
+      t.add_menu('費目', :controller => '/settings/expenses',:action => 'index')
+      t.add_menu('収入内訳', :controller => '/settings/incomes',:action => 'index')
+      t.add_menu('プロフィール', :controller => '/users',:action => 'edit')
+    end
+    
+    @side_menues.create_menu_tree('高度な設定') do |t|
+      t.add_menu('フレンド', :controller => '/settings/friends',:action => 'index')
+      t.add_menu('取引連動',:controller => '/settings/deal_links', :action => 'index')
+      t.add_menu('受け皿', :controller => '/settings/partner_account', :action => 'index')
+      t.add_menu('カスタマイズ', :controller => '/settings/preferences',:action => 'index')
+      t.add_menu('精算ルール', :controller => '/settings/account_rules',:action => 'index')
+    end
+    
+    @side_menues.create_menu_tree('ヘルプ') do |t|
+      t.add_menu('小槌の特徴', :controller => '/help', :action => 'index')
+      t.add_menu('できること', :controller => '/help', :action => 'functions')
+      t.add_menu('FAQ', :controller => '/help', :action => 'faq')
+    end
   end
 
 end
