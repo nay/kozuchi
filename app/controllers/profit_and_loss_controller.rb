@@ -9,6 +9,7 @@ class ProfitAndLossController < ApplicationController
       redirect_to_index
       return
     end
+    @menu_name = "収支表"
   end
 
   def update

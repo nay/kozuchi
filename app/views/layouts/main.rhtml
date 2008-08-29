@@ -1,6 +1,8 @@
 <%= render :partial => "shared/doctype" %>
 <% # とりあえず毎回作る -%>
-<% menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => (@as_action || controller.action_name).to_s) -%>
+<% menu_tree, current_menu = Menues.side_menues.load(request.path, @menu_name, self) %>
+
+<%# menu_tree, current_menu = load_menu(:controller => "/" + controller.class.controller_path, :action => (@as_action || controller.action_name).to_s) -%>
 <% title = menu_tree ? menu_tree.name : controller.class.controller_name -%>
 <% sub_title = current_menu ? current_menu.name : controller.action_name -%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
@@ -34,7 +36,7 @@
         <% h_menues = header_menues%>
         <% for menu in h_menues %>
           <% if menu_tree && menu.name != menu_tree.name %>
-            <%= link_to(menu.name, menu.url_option)%>
+            <%= link_to(menu.name, menu.url)%>
           <% else %>
             <span class="current"><%= menu.name %></span>
           <% end %>
@@ -55,7 +57,7 @@
           <% if menu == current_menu %>
             <span><%= menu.name %></span>
           <% else %>
-            <%= link_to(menu.name, url_for(menu.url_option)) %>
+            <%= link_to(menu.name, menu.url) %>
           <% end %>
         </div>
       <% end %>

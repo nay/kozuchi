@@ -17,6 +17,7 @@ class DealsController < ApplicationController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
+    @menu_name = "仕訳帳"
     unless target_date[:year].to_i == params[:year].to_i && target_date[:month].to_i == params[:month].to_i
       self.target_date = {:year => params[:year], :month => params[:month]}
     end

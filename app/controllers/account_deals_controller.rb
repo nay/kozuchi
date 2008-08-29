@@ -8,6 +8,7 @@ class AccountDealsController < ApplicationController
       redirect_to :action => 'index', :year => @target_date[:year], :month => @target_date[:month], :account_id => @account.id
       return
     end
+    @menu_name = "口座別出納"
     @target_month = DateBox.new
     @target_month.year = @target_date[:year]
     @target_month.month = @target_date[:month]

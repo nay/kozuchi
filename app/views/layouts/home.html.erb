@@ -18,7 +18,7 @@
         <% h_menues = header_menues%>
         <% for menu in h_menues %>
           <% if menu.name != 'ホーム' %>
-            <%= link_to(menu.name, menu.url_option)%>
+            <%= link_to(menu.name, menu.url)%>
           <% else %>
             <span class="current"><%= menu.name %></span>
           <% end %>
