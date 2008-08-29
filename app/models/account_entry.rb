@@ -10,7 +10,7 @@ class AccountEntry < ActiveRecord::Base
              :class_name => 'DealLink',
              :foreign_key => 'friend_link_id'
   validates_presence_of :amount
-  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account
+  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
   attr_reader :new_plus_link
   belongs_to :settlement
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
