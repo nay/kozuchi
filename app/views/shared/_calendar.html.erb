@@ -9,12 +9,12 @@
       <% if calendar %>
         <%= render :partial => calendar %>
       <% end %>
-      <input type="hidden" id="calendar_year" name="year" value="<%= @target_date[:year]%>" />
-      <input type="hidden" id="calendar_month" name="month" value="<%= @target_date[:month]%>" />
+      <input type="hidden" id="calendar_year" name="year" value="<%= year %>" />
+      <input type="hidden" id="calendar_month" name="month" value="<%= month %>" />
     <% end %>
 
 <%= javascript_tag <<-END
-      select_month(#{params[:year]},#{params[:month]}, false);
+      select_month(#{year},#{month}, false);
 END
 %>
 </div>    
