@@ -11,6 +11,7 @@ class Menues
   def load(url, name, sender)
     @trees.each{|t| t.each {|menu|
       menu_url = menu.url.kind_of?(Hash) ? sender.url_for(menu.url) : menu.url
+      sender.logger.info("menu_url = #{menu_url}, url = #{url}")
       return t, menu if menu_url == url || menu.name == name}
     }
     nil
