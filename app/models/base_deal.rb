@@ -118,19 +118,19 @@ class BaseDeal < ActiveRecord::Base
                   :order => "date, daily_seq")
   end
 
-  def self.get_for_account(user_id, account_id, datebox)
-    BaseDeal.find(:all,
-                 :select => "dl.*",
-                  :conditions => ["dl.user_id = ? and et.account_id = ? and dl.date >= ? and dl.date < ?",
-                    user_id,
-                    account_id,
-                    datebox.start_inclusive,
-                    datebox.end_exclusive],
-                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
-                  :order => "dl.date, dl.daily_seq"
-    
-    )
-  end
+#  def self.get_for_account(user_id, account_id, datebox)
+#    BaseDeal.find(:all,
+#                 :select => "dl.*",
+#                  :conditions => ["dl.user_id = ? and et.account_id = ? and dl.date >= ? and dl.date < ?",
+#                    user_id,
+#                    account_id,
+#                    datebox.start_inclusive,
+#                    datebox.end_exclusive],
+#                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
+#                  :order => "dl.date, dl.daily_seq"
+#    
+#    )
+#  end
 
   # start_date から end_dateまでの、accounts に関連するデータを取得する。
   def self.get_for_accounts(user_id, start_date, end_date, accounts)

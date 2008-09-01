@@ -19,7 +19,6 @@ class AccountDealsController < ApplicationController
 
     @account = current_user.accounts.find(params[:account_id])
     
-    # deals = BaseDeal.get_for_account(@user.id, @account.id, @target_month)
     start_date = Date.new(@year, @month, 1)
     end_date = (start_date >> 1) -1
     
