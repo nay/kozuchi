@@ -10,8 +10,9 @@ class ApplicationController < ActionController::Base
   
   before_filter :load_menues
   
-  def self.use_calendar
+  def self.use_calendar(url_method = nil)
     include WithCalendar
+    write_inheritable_attribute(:calendar_url_method, url_method)
   end
   
   private

@@ -6,8 +6,7 @@ class ProfitAndLossController < ApplicationController
 
   def index
     if !params[:year] || !params[:month]
-      redirect_to calendar_target_url
-#      redirect_to_index
+      redirect_to_index
       return
     end
     @menu_name = "収支表"
@@ -57,5 +56,10 @@ class ProfitAndLossController < ApplicationController
     @profit = @income_flows.sum - @expense_flows.sum
 
     session[:target_month] = @target_month
+  end
+  
+  private
+  def redirect_to_index
+    redirect_to :action => 'index', :year => target_date[:year], :month => target_date[:month]
   end
 end

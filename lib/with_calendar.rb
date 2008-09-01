@@ -6,11 +6,11 @@ module WithCalendar
   def change_month
     write_target_date(params[:year], params[:month]) # TODO: よびだされた側のアクションでしてここではなくしたい
     redirect_to calendar_target_url
-#    redirect_to_index
   end
   
   private
   
+  # TODO: カレンダーに関係ないものは追い出す
   def calendar_target_url(options = params.dup)
     if options[:updated_deal_id]
       updated_deal = BaseDeal.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])

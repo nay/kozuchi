@@ -3,7 +3,7 @@ class AccountDealsController < ApplicationController
   layout 'main'
   before_filter :check_account
   
-  use_calendar
+  use_calendar :account_deals_path
   
   def index
     year, month = read_target_date
