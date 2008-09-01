@@ -1,7 +1,9 @@
 class AccountDealsController < ApplicationController 
-  include WithCalendar
+#  include WithCalendar
   layout 'main'
-  before_filter :check_account, :load_target_date
+  before_filter :check_account
+  
+  use_calendar
   
   def index
     year, month = read_target_date
@@ -15,10 +17,6 @@ class AccountDealsController < ApplicationController
     @year = params[:year].to_i
     @month = params[:month].to_i
     write_target_date(@year, @month)
-    
-    @target_month = DateBox.new
-    @target_month.year = @target_date[:year]
-    @target_month.month = @target_date[:month]
 
     @account = current_user.accounts.find(params[:account_id])
     
@@ -59,20 +57,14 @@ class AccountDealsController < ApplicationController
   
   private
   
+  def calendar_target_url
+    account_deals_path(params)
+  end
+  
   # カレンダーから呼ばれる
   # TODO: 統合したいが accountのparamが問題
-  def redirect_to_index
-    redirect_to account_deals_path(:year => params[:year], :month => params[:month], :account_id => params[:account_id])
-  end
-
-  def load_account
-    if params[:account_id]
-      @account = @user.accounts.find(params[:account_id])
-      # なかったらエラー
-    else
-      @account = @user.accounts.first
-    end
-  end
-
+#  def redirect_to_index
+#    redirect_to account_deals_path(:year => params[:year], :month => params[:month], :account_id => params[:account_id])
+#  end
 
 end

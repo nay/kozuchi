@@ -6,7 +6,8 @@ class ProfitAndLossController < ApplicationController
 
   def index
     if !params[:year] || !params[:month]
-      redirect_to_index
+      redirect_to calendar_target_url
+#      redirect_to_index
       return
     end
     @menu_name = "収支表"

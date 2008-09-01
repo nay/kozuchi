@@ -9,6 +9,11 @@ class ApplicationController < ActionController::Base
   helper :all
   
   before_filter :load_menues
+  
+  def self.use_calendar
+    include WithCalendar
+  end
+  
   private
   
   def IE6?

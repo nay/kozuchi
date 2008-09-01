@@ -9,7 +9,7 @@ class DealsController < ApplicationController
 
   # 指定された行にジャンプするアクション
   def jump
-    redirect_to_index(:updated_deal_id => params[:id])
+    redirect_to calendar_target_url(:updated_deal_id => params[:id])
     # todo tab_name は月更新すると不明状態となるので受け渡しても意味がない。hiddenなどで管理可能だが、今後の課題でいいだろう。
 #    redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
   end
@@ -85,7 +85,7 @@ class DealsController < ApplicationController
   end
   
   def specify_month
-    redirect_to_index and return false if !params[:year] || !params[:month]
+    redirect_to calendar_target_url and return false if !params[:year] || !params[:month]
   end
 
 end
