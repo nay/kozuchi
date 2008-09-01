@@ -15,6 +15,10 @@ class ApplicationController < ActionController::Base
     write_inheritable_attribute(:calendar_url_method, url_method)
   end
   
+  def self.calendar_url_method
+    read_inheritable_attribute(:calendar_url_method)
+  end
+  
   private
   
   def IE6?

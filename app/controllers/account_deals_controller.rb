@@ -1,5 +1,4 @@
 class AccountDealsController < ApplicationController 
-#  include WithCalendar
   layout 'main'
   before_filter :check_account
   
@@ -55,16 +54,4 @@ class AccountDealsController < ApplicationController
     @flow_end = flow_sum
   end
   
-  private
-  
-  def calendar_target_url
-    account_deals_path(params)
-  end
-  
-  # カレンダーから呼ばれる
-  # TODO: 統合したいが accountのparamが問題
-#  def redirect_to_index
-#    redirect_to account_deals_path(:year => params[:year], :month => params[:month], :account_id => params[:account_id])
-#  end
-
 end
