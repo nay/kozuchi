@@ -134,8 +134,25 @@ class ApplicationController < ActionController::Base
     
   end
 
+  # セッションに入っているyear, month, dayを配列で返す
+  def read_target_date
+    year = session[:target_date] ? session[:target_date][:year] : nil
+    month = year ? session[:target_date][:month] : nil
+    day = month ? session[:target_date][:day] : nil
+    [year, month, day]
+  end
+  
+  # セッションに入っているyear, month, dayを更新する
+  def write_target_date(year, month = nil, day = nil)
+    session[:target_date] ||= {}
+    session[:target_date][:year] = year
+    session[:target_date][:month] = year ? month : nil
+    session[:target_date][:day] = month ? day : nil
+  end
+
   # 編集対象日のハッシュを得る
   # セッションも更新する
+  # dprecated.
   def target_date
     if session[:target_date] && session[:target_date][:year] && session[:target_date][:month]
       # day がないときは補完できるならする

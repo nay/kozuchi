@@ -1,5 +1,6 @@
 require 'time'
 
+# TODO: このクラスはなくす方向で
 class DateBox
   attr_accessor :year, :month, :day
   

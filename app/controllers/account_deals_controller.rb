@@ -1,11 +1,11 @@
-# TODO: すべてのAccountに適用したい
 class AccountDealsController < ApplicationController 
   include WithCalendar
   layout 'main'
   before_filter :check_account, :load_target_date
   
   def index
-    redirect_to account_deals_path(:year => @target_date[:year], :month => @target_date[:month], :account_id => current_user.accounts.first.id)
+    year, month = read_target_date
+    redirect_to account_deals_path(:year => year, :month => month, :account_id => current_user.accounts.first.id)
   end
   
   def monthly
@@ -14,7 +14,7 @@ class AccountDealsController < ApplicationController
     
     @year = params[:year].to_i
     @month = params[:month].to_i
-    # TODO: ↑共通化
+    write_target_date(@year, @month)
     
     @target_month = DateBox.new
     @target_month.year = @target_date[:year]
