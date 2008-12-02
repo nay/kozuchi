@@ -28,13 +28,12 @@ class Balance < BaseDeal
 
   def before_create
     self.summary = ""
-    amount = @balance.to_i - balance_before
-    account_entries.build(:user_id => user_id, :account_id => @account_id, :amount => amount, :balance => @balance)
+    account_entries.build(:user_id => self.user_id, :account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
   end
   
   def before_update
     account_entries.clear
-    create_entry
+    account_entries.create(:user_id => self.user_id, :account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
   end
 
   # Prepare sugar methods
@@ -72,6 +71,12 @@ class Balance < BaseDeal
   end
   
   private
+  def calc_amount
+    current_initial_balance = AccountEntry.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
+    this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
+    self.balance.to_i - balance_before(this_will_be_initial)
+  end
+
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
     raise "no account_id" unless account_id
@@ -89,12 +94,6 @@ class Balance < BaseDeal
     self.entry.initial_balance = true if self.entry.id == initial_balance_entry.id
   end
   
-  def create_entry
-    # 不明金による出納を計算して入れる。本来の残高＋不明金＝指定された残高　なので　不明金＝指定された残高ー本来の残高
-    # 自分が「最初の残高」ならフラグを立てる
-    amount = self.balance.to_i - balance_before
-    account_entries.create(:user_id => self.user_id, :account_id => self.account_id, :amount => amount, :balance => self.balance)
-  end
   
   def balance_before(ignore_initial = false)
     raise "date or daily_seq is nil!" unless self.date && self.daily_seq
