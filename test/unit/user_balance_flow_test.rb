@@ -81,6 +81,43 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     assert_equal 3700, balance_sum(@first_user, 5, 1, "accounts.type != 'Income' and accounts.type != 'Expense'")
   end
 
+  # １つの口座について、残高の更新によって初期残高が変更になるケースでbalance_sum, balances が正しいことを確認する
+  def test_balance_with_initial_change
+    # 現金
+    # 3/20 食費 500
+    # 3/31 残高 4000
+    # 4/1  食費 300
+    # 4/20 残高 1000
+    #
+    # このあと、4/20の残高を3/19に変更する
+    #   3/19 残高 1000
+    #   3/20 食費 500
+    #   3/31 残高 4000
+    #   4/1  食費 300
+    #
+    create_deal 3, 20, @cache, @food, 500
+    ib = create_balance 3, 31, @cache, 4000
+    assert ib.account_entries.first.initial_balance?
+
+    create_deal 4, 1, @cache, @food, 300
+
+    ib2 = create_balance 4, 20, @cache, 1000
+    assert ib2.account_entries.first.initial_balance?
+
+    new_date = (ib2.date << 1) - 1
+    ib2.date = new_date
+    ib2.save!
+
+    assert_equal true, ib2.account_entries.first.initial_balance?
+    ib.reload
+    assert_equal false, ib.account_entries.first.initial_balance?
+
+    # 3/1の資産合計は1000
+    assert_equal 1000, balance_sum(@first_user, 3, 1, "accounts.type != 'Income' and accounts.type != 'Expense'")
+
+    # 5/1の資産残高合計は3700
+    assert_equal 3700, balance_sum(@first_user, 5, 1, "accounts.type != 'Income' and accounts.type != 'Expense'")
+  end
 
   # 複数の口座についての残高が正しいことを確認する
   def test_balance_in_multi_accounts
