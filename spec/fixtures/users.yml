@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+account_entry_test_user:
+  login: account_entry_test
+# one:
+#   column: value
+#
+# two:
+#   column: value

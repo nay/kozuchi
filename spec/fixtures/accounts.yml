@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+account_enrty_test_cache:
+  name: 現金
+  user: account_entry_test_user
+
+# one:
+#   column: value
+#
+# two:
+#   column: value

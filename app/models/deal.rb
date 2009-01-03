@@ -1,5 +1,4 @@
 # 異動明細クラス。
-# TODO: 最終的に精算データが空になったらなくすとか、削除できないなどの処理をしたい。削除しつづけるとおかしな精算データができる恐れあり。
 class Deal < BaseDeal
   attr_accessor :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
