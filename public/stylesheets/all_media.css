@@ -52,3 +52,22 @@ td.account, th.account {
 a.arrow {
   text-decoration: none;
 }
+
+/* new design */
+table.listing {
+  margin-left: 24px;
+  border: 2px solid #FFDDBC;
+  background-color: #FFF2E5;
+  margin-bottom: 12px;
+}
+table.listing th, table.listing td {
+  padding: 8px;
+}
+table.listing .timestamp {
+  font-size: small;
+}
+.userName {
+  color: #301000;
+  font-weight: bold;
+  font-size: 110%;
+}

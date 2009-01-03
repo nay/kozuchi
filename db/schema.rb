@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 17) do
+ActiveRecord::Schema.define(:version => 20090103152113) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11,                    :null => false
@@ -23,20 +23,20 @@ ActiveRecord::Schema.define(:version => 17) do
     t.boolean "initial_balance",                    :default => false, :null => false
   end
 
-  add_index "account_entries", ["account_id"], :name => "index_account_entries_on_account_id"
-  add_index "account_entries", ["deal_id"], :name => "index_account_entries_on_deal_id"
-  add_index "account_entries", ["user_id"], :name => "index_account_entries_on_user_id"
-  add_index "account_entries", ["friend_link_id"], :name => "index_account_entries_on_friend_link_id"
-  add_index "account_entries", ["settlement_id"], :name => "index_account_entries_on_settlement_id"
-  add_index "account_entries", ["result_settlement_id"], :name => "index_account_entries_on_result_settlement_id"
+  add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
+  add_index "account_entries", ["deal_id"], :name => "account_entries_deal_id_index"
+  add_index "account_entries", ["user_id"], :name => "account_entries_user_id_index"
+  add_index "account_entries", ["friend_link_id"], :name => "account_entries_friend_link_id_index"
+  add_index "account_entries", ["settlement_id"], :name => "account_entries_settlement_id_index"
+  add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 
   create_table "account_links", :id => false, :force => true do |t|
     t.integer "account_id",           :limit => 11, :null => false
     t.integer "connected_account_id", :limit => 11, :null => false
   end
 
-  add_index "account_links", ["account_id"], :name => "index_account_links_on_account_id"
-  add_index "account_links", ["connected_account_id"], :name => "index_account_links_on_connected_account_id"
+  add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
+  add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
 
   create_table "account_rules", :force => true do |t|
     t.integer "user_id",               :limit => 11,                :null => false
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(:version => 17) do
     t.text    "type"
   end
 
-  add_index "accounts", ["user_id"], :name => "index_accounts_on_user_id"
-  add_index "accounts", ["partner_account_id"], :name => "index_accounts_on_partner_account_id"
+  add_index "accounts", ["user_id"], :name => "accounts_user_id_index"
+  add_index "accounts", ["partner_account_id"], :name => "accounts_partner_account_id_index"
 
   create_table "admin_users", :force => true do |t|
     t.string "name"
@@ -81,13 +81,27 @@ ActiveRecord::Schema.define(:version => 17) do
     t.datetime "updated_at"
   end
 
-  add_index "deals", ["user_id"], :name => "index_deals_on_user_id"
-  add_index "deals", ["parent_deal_id"], :name => "index_deals_on_parent_deal_id"
+  add_index "deals", ["user_id"], :name => "deals_user_id_index"
+  add_index "deals", ["parent_deal_id"], :name => "deals_parent_deal_id_index"
 
-  create_table "friends", :force => true do |t|
-    t.integer "user_id",        :limit => 11,                :null => false
-    t.integer "friend_user_id", :limit => 11,                :null => false
-    t.integer "friend_level",   :limit => 11, :default => 1, :null => false
+  create_table "engine_schema_info", :id => false, :force => true do |t|
+    t.string  "engine_name"
+    t.integer "version",     :limit => 11
+  end
+
+  create_table "friend_permissions", :force => true do |t|
+    t.integer  "user_id",    :limit => 11
+    t.integer  "target_id",  :limit => 11
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "friend_requests", :force => true do |t|
+    t.integer  "user_id",    :limit => 11
+    t.integer  "sender_id",  :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "preferences", :force => true do |t|

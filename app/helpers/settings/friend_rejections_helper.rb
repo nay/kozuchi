@@ -1,0 +1,2 @@
+module Settings::FriendRejectionsHelper
+end

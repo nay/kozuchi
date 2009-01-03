@@ -1,10 +1,13 @@
+# ユーザーに紐づくロジックは多いので、機能別にモジュールを記述してincludeする
+
+
 require 'digest/sha1'
 class User < ActiveRecord::Base
 #  N_('User|Password')
 #  N_('User|Password confirmation')
+  include User::Friend
+
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
-  has_many  :friends, :dependent => :destroy
-  has_many  :friend_applicants, :class_name => 'Friend', :foreign_key => 'friend_user_id', :dependent => :destroy
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:associated_accounts, :any_entry], :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る
@@ -128,32 +131,6 @@ class User < ActiveRecord::Base
     self.login
   end
   
-  # 相手と、指定したレベル以上の友人か調べる
-  def friend?(target, level = 1)
-    interactive_friends(level).include?(target)
-  end
-  
-  # 双方向に指定level以上のフレンドを返す
-  def interactive_friends(level)
-    # TODO 効率悪い
-    friend_users = []
-    for l in friends(true)
-      friend_users << l.friend_user if l.friend_level >= level && l.friend_user.friends(true).detect{|e|e.friend_user_id == self.id && e.friend_level >= level}
-    end
-    return friend_users
-  end
-
-  def self.find_friend_of(user_id, login_id)
-    if 2 == Friend.count(:joins => "as fr inner join users as us on ((fr.user_id = us.id and fr.friend_user_id = #{user_id}) or (fr.user_id = #{user_id} and fr.friend_user_id = us.id))",
-                   :conditions => ["us.login = ? and fr.friend_level > 0", login_id])
-      return find_by_login_id(login_id)
-    end
-  end
-
-  def self.is_friend(user1_id, user2_id)
-    return 2 == Friend.count(:conditions => ["(user_id = ? and friend_user_id = ? and friend_level > 0) or (user_id = ? and friend_user_id == ? and friend_level > 0)", user1_id, user2_id, user2_id, user1_id])
-  end
-
 
   def self.find_by_login_id(login_id)
     find(:first, :conditions => ["login = ? ", login_id])
