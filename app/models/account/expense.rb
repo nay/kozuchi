@@ -4,6 +4,13 @@ class Account::Expense < Account::Base
   short_name '支出'
   connectable_type Account::Income
 
+  def base_type
+    :expense
+  end
+  def linkable_to?(target_base_type)
+    target_base_type == :income
+  end
+
   def self.types
     []
   end

@@ -6,8 +6,10 @@ module User::Friend
   end
 
   # 相手と双方向のフレンドか調べる
+  # * target - Userオブジェクトかidのどちらでもよい
   def friend?(target)
-    friend_acceptances.find_by_target_id(target.id) && friend_requests.find_by_sender_id(target.id) != nil
+    target_id = target.kind_of?(User) ? target.id : target
+    friend_acceptances.find_by_target_id(target_id) && friend_requests.find_by_sender_id(target_id) != nil
   end
 
   # ユーザー側に、フレンド登録されたという情報を送る。

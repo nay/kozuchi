@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   include User::Friend
 
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
-  has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:associated_accounts, :any_entry], :order => 'accounts.sort_key' do
+  has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
@@ -119,6 +119,22 @@ class User < ActiveRecord::Base
       end
     end
   end
+
+  # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
+  def account(account_id)
+     accounts.find(account_id)
+
+#    AccountProxy.new(account_id)
+  end
+
+  # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
+  def account_by_name(account_name)
+    accounts.find_by_name(account_name)
+
+#    AccountProxy.new(account_id)
+  end
+
+  include User::AccountLinking
   
   has_many :deals, :class_name => 'BaseDeal', :extend => User::DealsExtension
   

@@ -4,6 +4,14 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
+  # TODO: クラスベースがちょっと大変過ぎる＆別アプリケーション化にとって厳しいので揺り戻し
+  def base_type
+    :asset
+  end
+  def linkable_to?(target_base_type)
+    target_base_type == :asset
+  end
+  
 
   def name_with_asset_type
     "#{self.name}(#{self.class.asset_name})"

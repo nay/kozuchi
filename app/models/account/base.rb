@@ -1,5 +1,7 @@
 class Account::Base < ActiveRecord::Base
   set_table_name "accounts"
+
+  include Account::Common
   
   has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
 
@@ -82,18 +84,6 @@ class Account::Base < ActiveRecord::Base
   include TermHelper
   belongs_to :user
 
-  has_and_belongs_to_many :connected_accounts,
-                          :class_name => 'Account::Base',
-                          :join_table => 'account_links',
-                          :foreign_key => 'connected_account_id',
-                          :association_foreign_key => 'account_id'
-
-  has_and_belongs_to_many :associated_accounts,
-                          :class_name => 'Account::Base',
-                          :join_table => 'account_links',
-                          :foreign_key => 'account_id',
-                          :association_foreign_key => 'connected_account_id'
-
   belongs_to              :partner_account,
                           :class_name => 'Account::Base',
                           :foreign_key => 'partner_account_id'
@@ -131,34 +121,7 @@ class Account::Base < ActiveRecord::Base
   end
 
   # 連携設定 ------------------
-
-  def connect(target_user_login_id, target_account_name, interactive = true)
-    friend_user = User.find_friend_of(self.user_id, target_user_login_id)
-    raise "no friend user" unless friend_user
-
-    connected_account = Account::Base.get_by_name(friend_user.id, target_account_name)
-    raise "フレンド #{partner_user.login_id} さんには #{target_account_name} がありません。" unless connected_account
-
-    raise "すでに連動設定されています。" if connected_accounts.detect {|e| e.id == connected_account.id} 
-    
-    raise "#{account_type_name} には #{connected_account.account_type_name} を連動できません。" unless self.kind_of?(connected_account.class.connectable_type)
-    connected_accounts << connected_account
-    # interactive なら逆リンクもはる。すでにあったら黙ってパスする
-    associated_accounts << connected_account if interactive && !associated_accounts.detect {|e| e.id == connected_account.id}
-    save!
-  end
-
-  def clear_connection(connected_account)
-    connected_accounts.delete(connected_account)
-  end
-
-  def connected_or_associated_accounts_size
-    size = connected_accounts.size
-    for account in associated_accounts
-      size += 1 unless connected_accounts.detect{|e| e.id == account.id}
-    end
-    return size
-  end
+  include Account::Linking
 
   def self.get(user_id, account_id)
     return Account::Base.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])

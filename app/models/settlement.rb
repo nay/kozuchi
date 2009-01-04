@@ -1,3 +1,4 @@
+#TODO: UserProxy対応
 class Settlement < ActiveRecord::Base
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'
 
@@ -30,7 +31,7 @@ class Settlement < ActiveRecord::Base
     # すでに提出済ならエラー
     raise "すでに#{submitted_settlement.user.login}さんに提出されています。" if self.submitted_settlement
     
-    target_account = account.connected_accounts.first # 1つであることを想定
+    target_account = account.link.target_account # 1つであることを想定
     raise "#{account.name}には連携先がありません。" unless target_account
 
     submitted = nil

@@ -1,5 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
+common_general:
+  login: common_general
 account_entry_test_user:
   login: account_entry_test
 friend_permission_test_user:
@@ -10,6 +11,10 @@ friend_permission_test_user2:
   login: friend_permission_test_user
 friend_permission_test_target_user2:
   login: friend_permission_test_target_user
+account_link_test_user:
+  login: account_link_test_user
+account_link_test_target_user:
+  login: account_link_test_target_user
 
 
 # one:

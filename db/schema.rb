@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090103152113) do
+ActiveRecord::Schema.define(:version => 20090103235236) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11,                    :null => false
@@ -30,13 +30,24 @@ ActiveRecord::Schema.define(:version => 20090103152113) do
   add_index "account_entries", ["settlement_id"], :name => "account_entries_settlement_id_index"
   add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 
-  create_table "account_links", :id => false, :force => true do |t|
-    t.integer "account_id",           :limit => 11, :null => false
-    t.integer "connected_account_id", :limit => 11, :null => false
+  create_table "account_link_requests", :force => true do |t|
+    t.integer  "account_id",           :limit => 11
+    t.integer  "sender_id",            :limit => 11
+    t.integer  "sender_ex_account_id", :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "account_links", ["account_id"], :name => "account_links_account_id_index"
-  add_index "account_links", ["connected_account_id"], :name => "account_links_connected_account_id_index"
+  create_table "account_links", :force => true do |t|
+    t.integer  "user_id",              :limit => 11
+    t.integer  "account_id",           :limit => 11
+    t.integer  "target_user_id",       :limit => 11
+    t.integer  "target_ex_account_id", :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "account_links", ["target_ex_account_id"], :name => "account_links_target_ex_account_id_index"
 
   create_table "account_rules", :force => true do |t|
     t.integer "user_id",               :limit => 11,                :null => false

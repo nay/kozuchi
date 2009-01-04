@@ -49,7 +49,7 @@
             <% if !@account.associated_account_rules.empty? %>
               <span class="system">精算口座</span>
             <% end %>
-            <% if @account.connected_or_associated_accounts_size > 0 %>
+            <% if @account.linked? %>
               <span class="system">取引連動</span>
             <% end %>
           <% end %>

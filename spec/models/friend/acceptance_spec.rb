@@ -7,6 +7,7 @@ describe Friend::Acceptance do
   before do
     @user = users(:friend_permission_test_user)
     @target = users(:friend_permission_test_target_user)
+    @target2 = users(:friend_permission_test_target_user2)
   end
 
   describe "attributes=" do
@@ -35,6 +36,11 @@ describe Friend::Acceptance do
       new_acceptance(@user.id, @target.id).save!
 
       find_request(@target.id, @user.id).should_not be_nil
+    end
+    it "別のacceptanceがすでにあっても干渉しない" do
+      new_acceptance(@user.id, @target2.id).save!
+      new_acceptance(@user.id, @target.id).save!
+      find_acceptance(@user.id, @target2.id).should_not be_nil
     end
   end
 

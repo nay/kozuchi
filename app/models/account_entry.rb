@@ -97,13 +97,10 @@ class AccountEntry < ActiveRecord::Base
   def connected_account
     return AccountEntry.calc_connected_account(self.account, self.account_to_be_connected)
   end
-  
+
+  # TODO: connected_accountsは実際には１つしか入れてなかったためこのメソッドはつぶせるとおもわれる
   def self.calc_connected_account(account, account_to_be_connected)
-    c = account_to_be_connected ? account.connected_accounts.detect{|e| e.id == account_to_be_connected.id} : nil
-    if !c
-      c = account.connected_accounts.size == 1 ? account.connected_accounts[0] : nil
-    end
-    return c
+    account.linked_account
   end
   
   # 新しく連携先取引を作成する

@@ -20,11 +20,18 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resource :user
 
-  # フレンド
+  # フレンド設定
   map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
   map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
-  
-#  map.resource :session
+
+  # 口座連携設定
+  map.account_links "settings/accounts/links", :controller => "settings/account_links", :action => "index", :conditions => {:method => :get}
+  #map.connect "settings/account/:account_id/link", :controller => "settings/account_links", :action => "create_or_update", :conditions => {:method => :put}
+  #上記のようにしたいけどUI上面倒なので
+  map.connect "settings/accounts/links", :controller => "settings/account_links", :action => "create_or_update", :conditions => {:method => :post}
+  map.account_link "settings/account/:account_id/link", :controller => "settings/account_links", :action => "destroy", :conditions => {:method => :delete}
+  map.account_link_request "settings/account/:account_id/link_requests/:id", :controller => "settings/account_link_requests", :action => "destroy", :conditions => {:method => :delete}
+  #  map.resource :session
 
   # The priority is based upon order of creation: first created -> highest priority.
   

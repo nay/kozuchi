@@ -16,14 +16,29 @@ CREATE TABLE `account_entries` (
   KEY `account_entries_friend_link_id_index` (`friend_link_id`),
   KEY `account_entries_settlement_id_index` (`settlement_id`),
   KEY `account_entries_result_settlement_id_index` (`result_settlement_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `account_link_requests` (
+  `id` int(11) NOT NULL auto_increment,
+  `account_id` int(11) default NULL,
+  `sender_id` int(11) default NULL,
+  `sender_ex_account_id` int(11) default NULL,
+  `created_at` datetime default NULL,
+  `updated_at` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `account_links` (
-  `account_id` int(11) NOT NULL,
-  `connected_account_id` int(11) NOT NULL,
-  KEY `account_links_account_id_index` (`account_id`),
-  KEY `account_links_connected_account_id_index` (`connected_account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) default NULL,
+  `account_id` int(11) default NULL,
+  `target_user_id` int(11) default NULL,
+  `target_ex_account_id` int(11) default NULL,
+  `created_at` datetime default NULL,
+  `updated_at` datetime default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `account_links_target_ex_account_id_index` (`target_ex_account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `account_rules` (
   `id` int(11) NOT NULL auto_increment,
@@ -48,7 +63,7 @@ CREATE TABLE `accounts` (
   PRIMARY KEY  (`id`),
   KEY `accounts_user_id_index` (`user_id`),
   KEY `accounts_partner_account_id_index` (`partner_account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=339 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=341 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `admin_users` (
   `id` int(11) NOT NULL auto_increment,
@@ -61,7 +76,7 @@ CREATE TABLE `deal_links` (
   `id` int(11) NOT NULL auto_increment,
   `created_user_id` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `deals` (
   `id` int(11) NOT NULL auto_increment,
@@ -77,7 +92,7 @@ CREATE TABLE `deals` (
   PRIMARY KEY  (`id`),
   KEY `deals_user_id_index` (`user_id`),
   KEY `deals_parent_deal_id_index` (`parent_deal_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `engine_schema_info` (
   `engine_name` varchar(255) default NULL,
@@ -92,7 +107,7 @@ CREATE TABLE `friend_permissions` (
   `created_at` datetime default NULL,
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `friend_requests` (
   `id` int(11) NOT NULL auto_increment,
@@ -101,15 +116,7 @@ CREATE TABLE `friend_requests` (
   `created_at` datetime default NULL,
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-CREATE TABLE `friends` (
-  `id` int(11) NOT NULL auto_increment,
-  `user_id` int(11) NOT NULL,
-  `friend_user_id` int(11) NOT NULL,
-  `friend_level` int(11) NOT NULL default '1',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `preferences` (
   `id` int(11) NOT NULL auto_increment,
@@ -137,7 +144,7 @@ CREATE TABLE `settlements` (
   `submitted_settlement_id` int(11) default NULL,
   `type` varchar(40) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL auto_increment,
@@ -182,6 +189,12 @@ INSERT INTO schema_migrations (version) VALUES ('2');
 INSERT INTO schema_migrations (version) VALUES ('20090103053930');
 
 INSERT INTO schema_migrations (version) VALUES ('20090103053943');
+
+INSERT INTO schema_migrations (version) VALUES ('20090103152113');
+
+INSERT INTO schema_migrations (version) VALUES ('20090103211631');
+
+INSERT INTO schema_migrations (version) VALUES ('20090103235236');
 
 INSERT INTO schema_migrations (version) VALUES ('3');
 
