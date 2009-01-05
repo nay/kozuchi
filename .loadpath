@@ -2,10 +2,10 @@
 <loadpath>
 	<pathentry path="" type="src"/>
 	<pathentry path="org.rubypeople.rdt.launching.RUBY_CONTAINER" type="con"/>
-	<pathentry path="GEM_LIB/rails-2.0.2/lib" type="var"/>
-	<pathentry path="GEM_LIB/activerecord-2.0.2/lib" type="var"/>
-	<pathentry path="GEM_LIB/actionmailer-2.0.2/lib" type="var"/>
-	<pathentry path="GEM_LIB/actionpack-2.0.2/lib" type="var"/>
+	<pathentry path="GEM_LIB/rails-1.2.6/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-1.15.6/lib" type="var"/>
+	<pathentry path="GEM_LIB/actionmailer-1.3.6/lib" type="var"/>
+	<pathentry path="GEM_LIB/actionpack-1.13.6/lib" type="var"/>
 	<pathentry path="GEM_LIB/actionwebservice-1.2.6/lib" type="var"/>
-	<pathentry path="GEM_LIB/activesupport-2.0.2/lib" type="var"/>
+	<pathentry path="GEM_LIB/activesupport-1.4.4/lib" type="var"/>
 </loadpath>

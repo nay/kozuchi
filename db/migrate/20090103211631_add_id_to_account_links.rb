@@ -6,7 +6,8 @@ class AddIdToAccountLinks < ActiveRecord::Migration
       data << {:account_id => account_id, :user_id => user_id, :target_user_id => target_user_id, :target_ex_account_id => target_ex_account_id}
     end
     p data.inspect
-    remove_index :account_links, :name => "account_links_connected_account_id_index"
+    remove_index :account_links, :connected_account_id
+    
     drop_table "account_links"
     create_table "account_links" do |t|
       t.integer :user_id
@@ -16,7 +17,10 @@ class AddIdToAccountLinks < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index "account_links", ["target_ex_account_id"], :name => "account_links_target_ex_account_id_index"
+    
+    add_index :account_links, :account_id
+    add_index :account_links, :target_ex_account_id
+#    add_index "account_links", ["target_ex_account_id"], :name => "account_links_target_ex_account_id_index"
     for hash in data
       execute("insert into account_links (user_id, account_id, target_user_id, target_ex_account_id, created_at, updated_at) values (#{hash[:user_id]}, #{hash[:account_id]}, #{hash[:target_user_id]}, #{hash[:target_ex_account_id]}, now(), now())")
     end
