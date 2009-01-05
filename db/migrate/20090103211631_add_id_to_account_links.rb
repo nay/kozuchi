@@ -7,7 +7,8 @@ class AddIdToAccountLinks < ActiveRecord::Migration
     end
     p data.inspect
     remove_index :account_links, :connected_account_id
-    
+#    remove_index :account_links, :name => "account_links_connected_account_id_index"
+   
     drop_table "account_links"
     create_table "account_links" do |t|
       t.integer :user_id
