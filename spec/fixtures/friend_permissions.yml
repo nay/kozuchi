@@ -1,11 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  user_id: 1
-  target_id: 1
-  type: MyString
-
-two:
-  user_id: 1
-  target_id: 1
-  type: MyString
+account_link_test_user_to_target_user:
+  user_id: <%= Fixtures.identify(:account_link_test_user) %>
+  target_id: <%= Fixtures.identify(:account_link_test_target_user) %>
+  type: Acceptance
+account_link_test_target_user_to_user:
+  user_id: <%= Fixtures.identify(:account_link_test_target_user) %>
+  target_id: <%= Fixtures.identify(:account_link_test_user) %>
+  type: Acceptance

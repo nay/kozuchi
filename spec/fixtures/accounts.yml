@@ -3,6 +3,12 @@
 account_enrty_test_cache:
   name: 現金
   user: account_entry_test_user
+account_link_test_user_1:
+  name: target_user
+  user: account_link_test_user
+account_link_test_target_user_1:
+  name: user
+  user: account_link_test_target_user
 
 # one:
 #   column: value
