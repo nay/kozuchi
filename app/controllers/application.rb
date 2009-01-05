@@ -3,6 +3,8 @@
 class ApplicationController < ActionController::Base
 #  include LoginEngine
 #  include LoginEngine::AuthenticatedSystem
+  mobile_filter
+  transit_sid
   include AuthenticatedSystem
   init_gettext "kozuchi"
   before_filter :login_required, :load_user, :set_ssl
