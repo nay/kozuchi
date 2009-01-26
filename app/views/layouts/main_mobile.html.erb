@@ -1,0 +1,29 @@
+<%= render :partial => "shared/doctype" %>
+<% menu_tree, current_menu = @side_menues.load(request.path, @menu_name, self) %>
+
+<% title = menu_tree ? menu_tree.name : controller.class.controller_name -%>
+<% sub_title = current_menu ? current_menu.name : controller.action_name -%>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+  <head>
+    <%= render :partial => "shared/html_header" -%>
+    <title>
+      <%= title %> - <%= sub_title %> 
+    </title>
+    <%= stylesheet_link_tag 'common' %>
+    <%= stylesheet_link_tag 'all_media', :media => :all %>
+    <%= stylesheet_link_tag 'book' %>
+    <%= stylesheet_link_tag 'print', :media => :print %>
+    <%= render :partial => "shared/google_analytics" %>
+  </head>
+  <body>
+    <a name="top"></a>
+    <div id="page">
+    <!-- contents -->
+    <div id="contents">
+      <%= yield %>
+    </div>
+    <!-- footer -->
+    <%= render :partial => "shared/footer" %>
+    </div>
+  </body>
+</html>

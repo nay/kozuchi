@@ -1,0 +1,15 @@
+<% html_tag do -%>
+
+  <% head_tag 'home' do -%>
+  	<title>[小槌] ホーム</title>
+	<%= yield :head %>
+  <% end -%>
+  
+  <% body_tag do -%>
+    <div>
+      <h1 class="mobile_title"><%= h @user.login %>さんの家計簿<br />HOME</h1>
+      <%= yield %>
+    </div>
+  <% end -%>
+
+<% end -%>

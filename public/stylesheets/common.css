@@ -177,3 +177,7 @@ table.simple_form .operation {
 	padding-left: 4em;
 }
 
+h1.mobile_title {
+    text-align: center;
+    fon-size: 120%;
+}

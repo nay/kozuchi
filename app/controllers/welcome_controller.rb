@@ -3,13 +3,17 @@ class WelcomeController < ApplicationController
   skip_before_filter :login_required
     
   def index
-    if !defined?(DISPLAY_NEWS) || DISPLAY_NEWS
+    if !request.mobile? && (!defined?(DISPLAY_NEWS) || DISPLAY_NEWS)
       # newsキャッシュが昨日以前ならキャッシュを削除する（キャッシュ方式依存）
       file_path = File.join(RAILS_ROOT, "tmp/cache", fragment_cache_key(:action => 'news')) + ".cache"
       File.delete(file_path) if File.exist?(file_path) && File.mtime(file_path).to_date < Date.today
       
       # キャッシュがなければニュースを取ってくる。エラー時はnilが入るのでテンプレート側でキャッシュするかどうかを制御する。
       @news = File.exist?(file_path) ? true : news
+    end
+    # ログインしておらず、携帯からのアクセスの場合は、簡単ログインを試みる
+    if !current_user || request.mobile?
+
     end
   end
 

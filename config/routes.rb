@@ -1,5 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
 
+  map.resources :mobiles
+  map.home "/home", :controller => "home", :action => "index"
+
   map.signup '/signup', :controller => 'users', :action => 'new', :conditions => {:method => :get}
   map.signup_post '/signup', :controller => 'users', :action => 'create', :conditions => {:method => :post}
 

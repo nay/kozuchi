@@ -195,6 +195,11 @@ class User < ActiveRecord::Base
     u && u.authenticated?(password) ? u.upgrade!(password) : nil
   end
 
+  def update_hashed_mobile_identity(identity)
+    self.mobile_identity = self.class.encript(identity, salt)
+    self.save!
+  end
+
   # Encrypts some data with the salt.
   def self.encrypt(password, salt)
     Digest::SHA1.hexdigest("--#{salt}--#{password}--")
