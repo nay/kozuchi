@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding=" UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: softbank.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset= UTF-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>softbank.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>lib/jpmobile/emoticon/softbank.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Jul 23 16:10:31 +0900 2008</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SOFTBANK_UNICODE_TO_WEBCODE</td>
+          <td>=</td>
+          <td class="context-item-value">{   0xE001 =&gt; &quot;G!&quot;,   0xE002 =&gt; &quot;G\&quot;&quot;,   0xE003 =&gt; &quot;G#&quot;,   0xE004 =&gt; &quot;G$&quot;,   0xE005 =&gt; &quot;G%&quot;,   0xE006 =&gt; &quot;G&amp;&quot;,   0xE007 =&gt; &quot;G'&quot;,   0xE008 =&gt; &quot;G(&quot;,   0xE009 =&gt; &quot;G)&quot;,   0xE00A =&gt; &quot;G*&quot;,   0xE00B =&gt; &quot;G+&quot;,   0xE00C =&gt; &quot;G,&quot;,   0xE00D =&gt; &quot;G-&quot;,   0xE00E =&gt; &quot;G.&quot;,   0xE00F =&gt; &quot;G/&quot;,   0xE010 =&gt; &quot;G0&quot;,   0xE011 =&gt; &quot;G1&quot;,   0xE012 =&gt; &quot;G2&quot;,   0xE013 =&gt; &quot;G3&quot;,   0xE014 =&gt; &quot;G4&quot;,   0xE015 =&gt; &quot;G5&quot;,   0xE016 =&gt; &quot;G6&quot;,   0xE017 =&gt; &quot;G7&quot;,   0xE018 =&gt; &quot;G8&quot;,   0xE019 =&gt; &quot;G9&quot;,   0xE01A =&gt; &quot;G:&quot;,   0xE01B =&gt; &quot;G;&quot;,   0xE01C =&gt; &quot;G&lt;&quot;,   0xE01D =&gt; &quot;G=&quot;,   0xE01E =&gt; &quot;G&gt;&quot;,   0xE01F =&gt; &quot;G?&quot;,   0xE020 =&gt; &quot;G@&quot;,   0xE021 =&gt; &quot;GA&quot;,   0xE022 =&gt; &quot;GB&quot;,   0xE023 =&gt; &quot;GC&quot;,   0xE024 =&gt; &quot;GD&quot;,   0xE025 =&gt; &quot;GE&quot;,   0xE026 =&gt; &quot;GF&quot;,   0xE027 =&gt; &quot;GG&quot;,   0xE028 =&gt; &quot;GH&quot;,   0xE029 =&gt; &quot;GI&quot;,   0xE02A =&gt; &quot;GJ&quot;,   0xE02B =&gt; &quot;GK&quot;,   0xE02C =&gt; &quot;GL&quot;,   0xE02D =&gt; &quot;GM&quot;,   0xE02E =&gt; &quot;GN&quot;,   0xE02F =&gt; &quot;GO&quot;,   0xE030 =&gt; &quot;GP&quot;,   0xE031 =&gt; &quot;GQ&quot;,   0xE032 =&gt; &quot;GR&quot;,   0xE033 =&gt; &quot;GS&quot;,   0xE034 =&gt; &quot;GT&quot;,   0xE035 =&gt; &quot;GU&quot;,   0xE036 =&gt; &quot;GV&quot;,   0xE037 =&gt; &quot;GW&quot;,   0xE038 =&gt; &quot;GX&quot;,   0xE039 =&gt; &quot;GY&quot;,   0xE03A =&gt; &quot;GZ&quot;,   0xE03B =&gt; &quot;G[&quot;,   0xE03C =&gt; &quot;G\\&quot;,   0xE03D =&gt; &quot;G]&quot;,   0xE03E =&gt; &quot;G^&quot;,   0xE03F =&gt; &quot;G_&quot;,   0xE040 =&gt; &quot;G`&quot;,   0xE041 =&gt; &quot;Ga&quot;,   0xE042 =&gt; &quot;Gb&quot;,   0xE043 =&gt; &quot;Gc&quot;,   0xE044 =&gt; &quot;Gd&quot;,   0xE045 =&gt; &quot;Ge&quot;,   0xE046 =&gt; &quot;Gf&quot;,   0xE047 =&gt; &quot;Gg&quot;,   0xE048 =&gt; &quot;Gh&quot;,   0xE049 =&gt; &quot;Gi&quot;,   0xE04A =&gt; &quot;Gj&quot;,   0xE04B =&gt; &quot;Gk&quot;,   0xE04C =&gt; &quot;Gl&quot;,   0xE04D =&gt; &quot;Gm&quot;,   0xE04E =&gt; &quot;Gn&quot;,   0xE04F =&gt; &quot;Go&quot;,   0xE050 =&gt; &quot;Gp&quot;,   0xE051 =&gt; &quot;Gq&quot;,   0xE052 =&gt; &quot;Gr&quot;,   0xE053 =&gt; &quot;Gs&quot;,   0xE054 =&gt; &quot;Gt&quot;,   0xE055 =&gt; &quot;Gu&quot;,   0xE056 =&gt; &quot;Gv&quot;,   0xE057 =&gt; &quot;Gw&quot;,   0xE058 =&gt; &quot;Gx&quot;,   0xE059 =&gt; &quot;Gy&quot;,   0xE05A =&gt; &quot;Gz&quot;,   0xE101 =&gt; &quot;E!&quot;,   0xE102 =&gt; &quot;E\&quot;&quot;,   0xE103 =&gt; &quot;E#&quot;,   0xE104 =&gt; &quot;E$&quot;,   0xE105 =&gt; &quot;E%&quot;,   0xE106 =&gt; &quot;E&amp;&quot;,   0xE107 =&gt; &quot;E'&quot;,   0xE108 =&gt; &quot;E(&quot;,   0xE109 =&gt; &quot;E)&quot;,   0xE10A =&gt; &quot;E*&quot;,   0xE10B =&gt; &quot;E+&quot;,   0xE10C =&gt; &quot;E,&quot;,   0xE10D =&gt; &quot;E-&quot;,   0xE10E =&gt; &quot;E.&quot;,   0xE10F =&gt; &quot;E/&quot;,   0xE110 =&gt; &quot;E0&quot;,   0xE111 =&gt; &quot;E1&quot;,   0xE112 =&gt; &quot;E2&quot;,   0xE113 =&gt; &quot;E3&quot;,   0xE114 =&gt; &quot;E4&quot;,   0xE115 =&gt; &quot;E5&quot;,   0xE116 =&gt; &quot;E6&quot;,   0xE117 =&gt; &quot;E7&quot;,   0xE118 =&gt; &quot;E8&quot;,   0xE119 =&gt; &quot;E9&quot;,   0xE11A =&gt; &quot;E:&quot;,   0xE11B =&gt; &quot;E;&quot;,   0xE11C =&gt; &quot;E&lt;&quot;,   0xE11D =&gt; &quot;E=&quot;,   0xE11E =&gt; &quot;E&gt;&quot;,   0xE11F =&gt; &quot;E?&quot;,   0xE120 =&gt; &quot;E@&quot;,   0xE121 =&gt; &quot;EA&quot;,   0xE122 =&gt; &quot;EB&quot;,   0xE123 =&gt; &quot;EC&quot;,   0xE124 =&gt; &quot;ED&quot;,   0xE125 =&gt; &quot;EE&quot;,   0xE126 =&gt; &quot;EF&quot;,   0xE127 =&gt; &quot;EG&quot;,   0xE128 =&gt; &quot;EH&quot;,   0xE129 =&gt; &quot;EI&quot;,   0xE12A =&gt; &quot;EJ&quot;,   0xE12B =&gt; &quot;EK&quot;,   0xE12C =&gt; &quot;EL&quot;,   0xE12D =&gt; &quot;EM&quot;,   0xE12E =&gt; &quot;EN&quot;,   0xE12F =&gt; &quot;EO&quot;,   0xE130 =&gt; &quot;EP&quot;,   0xE131 =&gt; &quot;EQ&quot;,   0xE132 =&gt; &quot;ER&quot;,   0xE133 =&gt; &quot;ES&quot;,   0xE134 =&gt; &quot;ET&quot;,   0xE135 =&gt; &quot;EU&quot;,   0xE136 =&gt; &quot;EV&quot;,   0xE137 =&gt; &quot;EW&quot;,   0xE138 =&gt; &quot;EX&quot;,   0xE139 =&gt; &quot;EY&quot;,   0xE13A =&gt; &quot;EZ&quot;,   0xE13B =&gt; &quot;E[&quot;,   0xE13C =&gt; &quot;E\\&quot;,   0xE13D =&gt; &quot;E]&quot;,   0xE13E =&gt; &quot;E^&quot;,   0xE13F =&gt; &quot;E_&quot;,   0xE140 =&gt; &quot;E`&quot;,   0xE141 =&gt; &quot;Ea&quot;,   0xE142 =&gt; &quot;Eb&quot;,   0xE143 =&gt; &quot;Ec&quot;,   0xE144 =&gt; &quot;Ed&quot;,   0xE145 =&gt; &quot;Ee&quot;,   0xE146 =&gt; &quot;Ef&quot;,   0xE147 =&gt; &quot;Eg&quot;,   0xE148 =&gt; &quot;Eh&quot;,   0xE149 =&gt; &quot;Ei&quot;,   0xE14A =&gt; &quot;Ej&quot;,   0xE14B =&gt; &quot;Ek&quot;,   0xE14C =&gt; &quot;El&quot;,   0xE14D =&gt; &quot;Em&quot;,   0xE14E =&gt; &quot;En&quot;,   0xE14F =&gt; &quot;Eo&quot;,   0xE150 =&gt; &quot;Ep&quot;,   0xE151 =&gt; &quot;Eq&quot;,   0xE152 =&gt; &quot;Er&quot;,   0xE153 =&gt; &quot;Es&quot;,   0xE154 =&gt; &quot;Et&quot;,   0xE155 =&gt; &quot;Eu&quot;,   0xE156 =&gt; &quot;Ev&quot;,   0xE157 =&gt; &quot;Ew&quot;,   0xE158 =&gt; &quot;Ex&quot;,   0xE159 =&gt; &quot;Ey&quot;,   0xE15A =&gt; &quot;Ez&quot;,   0xE201 =&gt; &quot;F!&quot;,   0xE202 =&gt; &quot;F\&quot;&quot;,   0xE203 =&gt; &quot;F#&quot;,   0xE204 =&gt; &quot;F$&quot;,   0xE205 =&gt; &quot;F%&quot;,   0xE206 =&gt; &quot;F&amp;&quot;,   0xE207 =&gt; &quot;F'&quot;,   0xE208 =&gt; &quot;F(&quot;,   0xE209 =&gt; &quot;F)&quot;,   0xE20A =&gt; &quot;F*&quot;,   0xE20B =&gt; &quot;F+&quot;,   0xE20C =&gt; &quot;F,&quot;,   0xE20D =&gt; &quot;F-&quot;,   0xE20E =&gt; &quot;F.&quot;,   0xE20F =&gt; &quot;F/&quot;,   0xE210 =&gt; &quot;F0&quot;,   0xE211 =&gt; &quot;F1&quot;,   0xE212 =&gt; &quot;F2&quot;,   0xE213 =&gt; &quot;F3&quot;,   0xE214 =&gt; &quot;F4&quot;,   0xE215 =&gt; &quot;F5&quot;,   0xE216 =&gt; &quot;F6&quot;,   0xE217 =&gt; &quot;F7&quot;,   0xE218 =&gt; &quot;F8&quot;,   0xE219 =&gt; &quot;F9&quot;,   0xE21A =&gt; &quot;F:&quot;,   0xE21B =&gt; &quot;F;&quot;,   0xE21C =&gt; &quot;F&lt;&quot;,   0xE21D =&gt; &quot;F=&quot;,   0xE21E =&gt; &quot;F&gt;&quot;,   0xE21F =&gt; &quot;F?&quot;,   0xE220 =&gt; &quot;F@&quot;,   0xE221 =&gt; &quot;FA&quot;,   0xE222 =&gt; &quot;FB&quot;,   0xE223 =&gt; &quot;FC&quot;,   0xE224 =&gt; &quot;FD&quot;,   0xE225 =&gt; &quot;FE&quot;,   0xE226 =&gt; &quot;FF&quot;,   0xE227 =&gt; &quot;FG&quot;,   0xE228 =&gt; &quot;FH&quot;,   0xE229 =&gt; &quot;FI&quot;,   0xE22A =&gt; &quot;FJ&quot;,   0xE22B =&gt; &quot;FK&quot;,   0xE22C =&gt; &quot;FL&quot;,   0xE22D =&gt; &quot;FM&quot;,   0xE22E =&gt; &quot;FN&quot;,   0xE22F =&gt; &quot;FO&quot;,   0xE230 =&gt; &quot;FP&quot;,   0xE231 =&gt; &quot;FQ&quot;,   0xE232 =&gt; &quot;FR&quot;,   0xE233 =&gt; &quot;FS&quot;,   0xE234 =&gt; &quot;FT&quot;,   0xE235 =&gt; &quot;FU&quot;,   0xE236 =&gt; &quot;FV&quot;,   0xE237 =&gt; &quot;FW&quot;,   0xE238 =&gt; &quot;FX&quot;,   0xE239 =&gt; &quot;FY&quot;,   0xE23A =&gt; &quot;FZ&quot;,   0xE23B =&gt; &quot;F[&quot;,   0xE23C =&gt; &quot;F\\&quot;,   0xE23D =&gt; &quot;F]&quot;,   0xE23E =&gt; &quot;F^&quot;,   0xE23F =&gt; &quot;F_&quot;,   0xE240 =&gt; &quot;F`&quot;,   0xE241 =&gt; &quot;Fa&quot;,   0xE242 =&gt; &quot;Fb&quot;,   0xE243 =&gt; &quot;Fc&quot;,   0xE244 =&gt; &quot;Fd&quot;,   0xE245 =&gt; &quot;Fe&quot;,   0xE246 =&gt; &quot;Ff&quot;,   0xE247 =&gt; &quot;Fg&quot;,   0xE248 =&gt; &quot;Fh&quot;,   0xE249 =&gt; &quot;Fi&quot;,   0xE24A =&gt; &quot;Fj&quot;,   0xE24B =&gt; &quot;Fk&quot;,   0xE24C =&gt; &quot;Fl&quot;,   0xE24D =&gt; &quot;Fm&quot;,   0xE24E =&gt; &quot;Fn&quot;,   0xE24F =&gt; &quot;Fo&quot;,   0xE250 =&gt; &quot;Fp&quot;,   0xE251 =&gt; &quot;Fq&quot;,   0xE252 =&gt; &quot;Fr&quot;,   0xE253 =&gt; &quot;Fs&quot;,   0xE255 =&gt; &quot;Fu&quot;,   0xE256 =&gt; &quot;Fv&quot;,   0xE257 =&gt; &quot;Fw&quot;,   0xE301 =&gt; &quot;O!&quot;,   0xE302 =&gt; &quot;O\&quot;&quot;,   0xE303 =&gt; &quot;O#&quot;,   0xE304 =&gt; &quot;O$&quot;,   0xE305 =&gt; &quot;O%&quot;,   0xE306 =&gt; &quot;O&amp;&quot;,   0xE307 =&gt; &quot;O'&quot;,   0xE308 =&gt; &quot;O(&quot;,   0xE309 =&gt; &quot;O)&quot;,   0xE30A =&gt; &quot;O*&quot;,   0xE30B =&gt; &quot;O+&quot;,   0xE30C =&gt; &quot;O,&quot;,   0xE30D =&gt; &quot;O-&quot;,   0xE30E =&gt; &quot;O.&quot;,   0xE30F =&gt; &quot;O/&quot;,   0xE310 =&gt; &quot;O0&quot;,   0xE311 =&gt; &quot;O1&quot;,   0xE312 =&gt; &quot;O2&quot;,   0xE313 =&gt; &quot;O3&quot;,   0xE314 =&gt; &quot;O4&quot;,   0xE315 =&gt; &quot;O5&quot;,   0xE316 =&gt; &quot;O6&quot;,   0xE317 =&gt; &quot;O7&quot;,   0xE318 =&gt; &quot;O8&quot;,   0xE319 =&gt; &quot;O9&quot;,   0xE31A =&gt; &quot;O:&quot;,   0xE31B =&gt; &quot;O;&quot;,   0xE31C =&gt; &quot;O&lt;&quot;,   0xE31D =&gt; &quot;O=&quot;,   0xE31E =&gt; &quot;O&gt;&quot;,   0xE31F =&gt; &quot;O?&quot;,   0xE320 =&gt; &quot;O@&quot;,   0xE321 =&gt; &quot;OA&quot;,   0xE322 =&gt; &quot;OB&quot;,   0xE323 =&gt; &quot;OC&quot;,   0xE324 =&gt; &quot;OD&quot;,   0xE325 =&gt; &quot;OE&quot;,   0xE326 =&gt; &quot;OF&quot;,   0xE327 =&gt; &quot;OG&quot;,   0xE328 =&gt; &quot;OH&quot;,   0xE329 =&gt; &quot;OI&quot;,   0xE32A =&gt; &quot;OJ&quot;,   0xE32B =&gt; &quot;OK&quot;,   0xE32C =&gt; &quot;OL&quot;,   0xE32D =&gt; &quot;OM&quot;,   0xE32E =&gt; &quot;ON&quot;,   0xE32F =&gt; &quot;OO&quot;,   0xE330 =&gt; &quot;OP&quot;,   0xE331 =&gt; &quot;OQ&quot;,   0xE332 =&gt; &quot;OR&quot;,   0xE333 =&gt; &quot;OS&quot;,   0xE334 =&gt; &quot;OT&quot;,   0xE335 =&gt; &quot;OU&quot;,   0xE336 =&gt; &quot;OV&quot;,   0xE337 =&gt; &quot;OW&quot;,   0xE338 =&gt; &quot;OX&quot;,   0xE339 =&gt; &quot;OY&quot;,   0xE33A =&gt; &quot;OZ&quot;,   0xE33B =&gt; &quot;O[&quot;,   0xE33C =&gt; &quot;O\\&quot;,   0xE33D =&gt; &quot;O]&quot;,   0xE33E =&gt; &quot;O^&quot;,   0xE33F =&gt; &quot;O_&quot;,   0xE340 =&gt; &quot;O`&quot;,   0xE341 =&gt; &quot;Oa&quot;,   0xE342 =&gt; &quot;Ob&quot;,   0xE343 =&gt; &quot;Oc&quot;,   0xE344 =&gt; &quot;Od&quot;,   0xE345 =&gt; &quot;Oe&quot;,   0xE346 =&gt; &quot;Of&quot;,   0xE347 =&gt; &quot;Og&quot;,   0xE348 =&gt; &quot;Oh&quot;,   0xE349 =&gt; &quot;Oi&quot;,   0xE34A =&gt; &quot;Oj&quot;,   0xE34B =&gt; &quot;Ok&quot;,   0xE34C =&gt; &quot;Ol&quot;,   0xE34D =&gt; &quot;Om&quot;,   0xE401 =&gt; &quot;P!&quot;,   0xE402 =&gt; &quot;P\&quot;&quot;,   0xE403 =&gt; &quot;P#&quot;,   0xE404 =&gt; &quot;P$&quot;,   0xE405 =&gt; &quot;P%&quot;,   0xE406 =&gt; &quot;P&amp;&quot;,   0xE407 =&gt; &quot;P'&quot;,   0xE408 =&gt; &quot;P(&quot;,   0xE409 =&gt; &quot;P)&quot;,   0xE40A =&gt; &quot;P*&quot;,   0xE40B =&gt; &quot;P+&quot;,   0xE40C =&gt; &quot;P,&quot;,   0xE40D =&gt; &quot;P-&quot;,   0xE40E =&gt; &quot;P.&quot;,   0xE40F =&gt; &quot;P/&quot;,   0xE410 =&gt; &quot;P0&quot;,   0xE411 =&gt; &quot;P1&quot;,   0xE412 =&gt; &quot;P2&quot;,   0xE413 =&gt; &quot;P3&quot;,   0xE414 =&gt; &quot;P4&quot;,   0xE415 =&gt; &quot;P5&quot;,   0xE416 =&gt; &quot;P6&quot;,   0xE417 =&gt; &quot;P7&quot;,   0xE418 =&gt; &quot;P8&quot;,   0xE419 =&gt; &quot;P9&quot;,   0xE41A =&gt; &quot;P:&quot;,   0xE41B =&gt; &quot;P;&quot;,   0xE41C =&gt; &quot;P&lt;&quot;,   0xE41D =&gt; &quot;P=&quot;,   0xE41E =&gt; &quot;P&gt;&quot;,   0xE41F =&gt; &quot;P?&quot;,   0xE420 =&gt; &quot;P@&quot;,   0xE421 =&gt; &quot;PA&quot;,   0xE422 =&gt; &quot;PB&quot;,   0xE423 =&gt; &quot;PC&quot;,   0xE424 =&gt; &quot;PD&quot;,   0xE425 =&gt; &quot;PE&quot;,   0xE426 =&gt; &quot;PF&quot;,   0xE427 =&gt; &quot;PG&quot;,   0xE428 =&gt; &quot;PH&quot;,   0xE429 =&gt; &quot;PI&quot;,   0xE42A =&gt; &quot;PJ&quot;,   0xE42B =&gt; &quot;PK&quot;,   0xE42C =&gt; &quot;PL&quot;,   0xE42D =&gt; &quot;PM&quot;,   0xE42E =&gt; &quot;PN&quot;,   0xE42F =&gt; &quot;PO&quot;,   0xE430 =&gt; &quot;PP&quot;,   0xE431 =&gt; &quot;PQ&quot;,   0xE432 =&gt; &quot;PR&quot;,   0xE433 =&gt; &quot;PS&quot;,   0xE434 =&gt; &quot;PT&quot;,   0xE435 =&gt; &quot;PU&quot;,   0xE436 =&gt; &quot;PV&quot;,   0xE437 =&gt; &quot;PW&quot;,   0xE438 =&gt; &quot;PX&quot;,   0xE439 =&gt; &quot;PY&quot;,   0xE43A =&gt; &quot;PZ&quot;,   0xE43B =&gt; &quot;P[&quot;,   0xE43C =&gt; &quot;P\\&quot;,   0xE43D =&gt; &quot;P]&quot;,   0xE43E =&gt; &quot;P^&quot;,   0xE43F =&gt; &quot;P_&quot;,   0xE440 =&gt; &quot;P`&quot;,   0xE441 =&gt; &quot;Pa&quot;,   0xE442 =&gt; &quot;Pb&quot;,   0xE443 =&gt; &quot;Pc&quot;,   0xE444 =&gt; &quot;Pd&quot;,   0xE445 =&gt; &quot;Pe&quot;,   0xE446 =&gt; &quot;Pf&quot;,   0xE447 =&gt; &quot;Pg&quot;,   0xE448 =&gt; &quot;Ph&quot;,   0xE449 =&gt; &quot;Pi&quot;,   0xE44A =&gt; &quot;Pj&quot;,   0xE44B =&gt; &quot;Pk&quot;,   0xE44C =&gt; &quot;Pl&quot;,   0xE501 =&gt; &quot;Q!&quot;,   0xE502 =&gt; &quot;Q\&quot;&quot;,   0xE503 =&gt; &quot;Q#&quot;,   0xE504 =&gt; &quot;Q$&quot;,   0xE505 =&gt; &quot;Q%&quot;,   0xE506 =&gt; &quot;Q&amp;&quot;,   0xE507 =&gt; &quot;Q'&quot;,   0xE508 =&gt; &quot;Q(&quot;,   0xE509 =&gt; &quot;Q)&quot;,   0xE50A =&gt; &quot;Q*&quot;,   0xE50B =&gt; &quot;Q+&quot;,   0xE50C =&gt; &quot;Q,&quot;,   0xE50D =&gt; &quot;Q-&quot;,   0xE50E =&gt; &quot;Q.&quot;,   0xE50F =&gt; &quot;Q/&quot;,   0xE510 =&gt; &quot;Q0&quot;,   0xE511 =&gt; &quot;Q1&quot;,   0xE512 =&gt; &quot;Q2&quot;,   0xE513 =&gt; &quot;Q3&quot;,   0xE514 =&gt; &quot;Q4&quot;,   0xE515 =&gt; &quot;Q5&quot;,   0xE516 =&gt; &quot;Q6&quot;,   0xE517 =&gt; &quot;Q7&quot;,   0xE518 =&gt; &quot;Q8&quot;,   0xE519 =&gt; &quot;Q9&quot;,   0xE51A =&gt; &quot;Q:&quot;,   0xE51B =&gt; &quot;Q;&quot;,   0xE51C =&gt; &quot;Q&lt;&quot;,   0xE51D =&gt; &quot;Q=&quot;,   0xE51E =&gt; &quot;Q&gt;&quot;,   0xE51F =&gt; &quot;Q?&quot;,   0xE520 =&gt; &quot;Q@&quot;,   0xE521 =&gt; &quot;QA&quot;,   0xE522 =&gt; &quot;QB&quot;,   0xE523 =&gt; &quot;QC&quot;,   0xE524 =&gt; &quot;QD&quot;,   0xE525 =&gt; &quot;QE&quot;,   0xE526 =&gt; &quot;QF&quot;,   0xE527 =&gt; &quot;QG&quot;,   0xE528 =&gt; &quot;QH&quot;,   0xE529 =&gt; &quot;QI&quot;,   0xE52A =&gt; &quot;QJ&quot;,   0xE52B =&gt; &quot;QK&quot;,   0xE52C =&gt; &quot;QL&quot;,   0xE52D =&gt; &quot;QM&quot;,   0xE52E =&gt; &quot;QN&quot;,   0xE52F =&gt; &quot;QO&quot;,   0xE530 =&gt; &quot;QP&quot;,   0xE531 =&gt; &quot;QQ&quot;,   0xE532 =&gt; &quot;QR&quot;,   0xE533 =&gt; &quot;QS&quot;,   0xE534 =&gt; &quot;QT&quot;,   0xE535 =&gt; &quot;QU&quot;,   0xE536 =&gt; &quot;QV&quot;,   0xE537 =&gt; &quot;QW&quot;, }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SOFTBANK_WEBCODE_TO_UNICODE</td>
+          <td>=</td>
+          <td class="context-item-value">Jpmobile::Emoticon::SOFTBANK_UNICODE_TO_WEBCODE.invert</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

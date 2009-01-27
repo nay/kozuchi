@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding=" UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Jpmobile::Emoticon</title>
+  <meta http-equiv="Content-Type" content="text/html; charset= UTF-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Jpmobile::Emoticon</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/jpmobile/emoticon/z_combine_rb.html">
+                lib/jpmobile/emoticon/z_combine.rb
+                </a>
+        <br />
+                <a href="../../files/lib/jpmobile/emoticon_rb.html">
+                lib/jpmobile/emoticon.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+絵文字関連処理
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000086">external_to_unicodecr_au</a>&nbsp;&nbsp;
+      <a href="#M000085">external_to_unicodecr_docomo</a>&nbsp;&nbsp;
+      <a href="#M000089">external_to_unicodecr_jphone</a>&nbsp;&nbsp;
+      <a href="#M000087">external_to_unicodecr_softbank</a>&nbsp;&nbsp;
+      <a href="#M000088">external_to_unicodecr_vodafone</a>&nbsp;&nbsp;
+      <a href="#M000090">unicodecr_to_external</a>&nbsp;&nbsp;
+      <a href="#M000091">unicodecr_to_utf8</a>&nbsp;&nbsp;
+      <a href="#M000092">utf8_to_unicodecr</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SJIS_TO_UNICODE</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UNICODE_TO_SJIS</td>
+          <td>=</td>
+          <td class="context-item-value">SJIS_TO_UNICODE.invert.freeze</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SJIS_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*SJIS_TO_UNICODE.keys.map{|s| Regexp.compile(Regexp.escape([s].pack('n'),&quot;s&quot;),nil,'s')})</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SOFTBANK_WEBCODE_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*([/(?!)/n]+SOFTBANK_WEBCODE_TO_UNICODE.keys.map{|x| &quot;\x1b\x24#{x}\x0f&quot;}))</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DOCOMO_SJIS_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*DOCOMO_SJIS_TO_UNICODE.keys.map{|s| Regexp.compile(Regexp.escape([s].pack('n'),&quot;s&quot;),nil,'s')})</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">AU_SJIS_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*AU_SJIS_TO_UNICODE.keys.map{|s| Regexp.compile(Regexp.escape([s].pack('n'),&quot;s&quot;),nil,'s')})</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SOFTBANK_UNICODE_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*SOFTBANK_UNICODE_TO_WEBCODE.keys.map{|x| [x].pack('U')}).freeze</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EMOTICON_UNICODES</td>
+          <td>=</td>
+          <td class="context-item-value">UNICODE_TO_SJIS.keys|SOFTBANK_UNICODE_TO_WEBCODE.keys.map{|k|k+0x1000}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UTF8_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.union(*EMOTICON_UNICODES.map{|x| [x].pack('U')}).freeze</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000086" class="method-detail">
+        <a name="M000086"></a>
+
+        <div class="method-heading">
+          <a href="#M000086" class="method-signature">
+          <span class="method-name">external_to_unicodecr_au</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>
+のなかでDoCoMo絵文字をUnicode数値文字参照に置換した文字列を返す。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000086-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000086-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 32</span>
+32:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">external_to_unicodecr_au</span>(<span class="ruby-identifier">str</span>)
+33:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">AU_SJIS_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+34:         <span class="ruby-identifier">sjis</span> = <span class="ruby-identifier">match</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'n'</span>).<span class="ruby-identifier">first</span>
+35:         <span class="ruby-identifier">unicode</span> = <span class="ruby-constant">AU_SJIS_TO_UNICODE</span>[<span class="ruby-identifier">sjis</span>]
+36:         <span class="ruby-identifier">unicode</span> <span class="ruby-value">? </span>(<span class="ruby-value str">&quot;&amp;#x%04x;&quot;</span><span class="ruby-operator">%</span><span class="ruby-identifier">unicode</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">match</span>
+37:       <span class="ruby-keyword kw">end</span>
+38:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000085" class="method-detail">
+        <a name="M000085"></a>
+
+        <div class="method-heading">
+          <a href="#M000085" class="method-signature">
+          <span class="method-name">external_to_unicodecr_docomo</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>
+のなかでDoCoMo絵文字をUnicode数値文字参照に置換した文字列を返す。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000085-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000085-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 23</span>
+23:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">external_to_unicodecr_docomo</span>(<span class="ruby-identifier">str</span>)
+24:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">DOCOMO_SJIS_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+25:         <span class="ruby-identifier">sjis</span> = <span class="ruby-identifier">match</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'n'</span>).<span class="ruby-identifier">first</span>
+26:         <span class="ruby-identifier">unicode</span> = <span class="ruby-constant">DOCOMO_SJIS_TO_UNICODE</span>[<span class="ruby-identifier">sjis</span>]
+27:         <span class="ruby-identifier">unicode</span> <span class="ruby-value">? </span>(<span class="ruby-value str">&quot;&amp;#x%04x;&quot;</span><span class="ruby-operator">%</span><span class="ruby-identifier">unicode</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">match</span>
+28:       <span class="ruby-keyword kw">end</span>
+29:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000089" class="method-detail">
+        <a name="M000089"></a>
+
+        <div class="method-heading">
+          <a href="#M000089" class="method-signature">
+          <span class="method-name">external_to_unicodecr_jphone</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>のなかでWebcodeのSoftBank絵文字を(+0x1000だけシフトして)Unicode数値文字参照に変換した文字列を返す。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000089-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000089-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 52</span>
+52:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">external_to_unicodecr_jphone</span>(<span class="ruby-identifier">str</span>)
+53:       <span class="ruby-comment cmt"># SoftBank Webcode</span>
+54:       <span class="ruby-identifier">s</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">clone</span>
+55:       <span class="ruby-comment cmt"># 連続したエスケープコードが省略されている場合は切りはなす。</span>
+56:       <span class="ruby-identifier">s</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\x1b\x24(.)(.+?)\x0f/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+57:         <span class="ruby-identifier">a</span> = <span class="ruby-identifier">$1</span>
+58:         <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">//</span>).<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;\x1b\x24#{a}#{x}\x0f&quot;</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">''</span>)
+59:       <span class="ruby-keyword kw">end</span>
+60:       <span class="ruby-comment cmt"># Webcodeを変換</span>
+61:       <span class="ruby-identifier">s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">SOFTBANK_WEBCODE_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+62:         <span class="ruby-identifier">unicode</span> = <span class="ruby-constant">SOFTBANK_WEBCODE_TO_UNICODE</span>[<span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>,<span class="ruby-value">2</span>]] <span class="ruby-operator">+</span> <span class="ruby-value">0x1000</span>
+63:         <span class="ruby-identifier">unicode</span> <span class="ruby-value">? </span>(<span class="ruby-value str">&quot;&amp;#x%04x;&quot;</span><span class="ruby-operator">%</span><span class="ruby-identifier">unicode</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">match</span>
+64:       <span class="ruby-keyword kw">end</span>
+65:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000087" class="method-detail">
+        <a name="M000087"></a>
+
+        <div class="method-heading">
+          <a href="#M000087" class="method-signature">
+          <span class="method-name">external_to_unicodecr_softbank</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>のなかでUTF8のSoftBank絵文字を(+0x1000だけシフトして)Unicode数値文字参照に変換した文字列を返す。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000087-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000087-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 41</span>
+41:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">external_to_unicodecr_softbank</span>(<span class="ruby-identifier">str</span>)
+42:       <span class="ruby-comment cmt"># SoftBank Unicode</span>
+43:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">SOFTBANK_UNICODE_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+44:         <span class="ruby-identifier">unicode</span> = <span class="ruby-identifier">match</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U'</span>).<span class="ruby-identifier">first</span>
+45:         <span class="ruby-value str">&quot;&amp;#x%04x;&quot;</span> <span class="ruby-operator">%</span> (<span class="ruby-identifier">unicode</span><span class="ruby-operator">+</span><span class="ruby-value">0x1000</span>)
+46:       <span class="ruby-keyword kw">end</span>
+47:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000088" class="method-detail">
+        <a name="M000088"></a>
+
+        <div class="method-heading">
+          <a href="#M000088" class="method-signature">
+          <span class="method-name">external_to_unicodecr_vodafone</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000088-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000088-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 48</span>
+48:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">external_to_unicodecr_vodafone</span>(<span class="ruby-identifier">str</span>)
+49:       <span class="ruby-identifier">external_to_unicodecr_softbank</span>(<span class="ruby-identifier">str</span>)
+50:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000090" class="method-detail">
+        <a name="M000090"></a>
+
+        <div class="method-heading">
+          <a href="#M000090" class="method-signature">
+          <span class="method-name">unicodecr_to_external</span><span class="method-args">(str, conversion_table=nil, to_sjis=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>
+のなかでUnicode数値文字参照で表記された絵文字を携帯側エンコーディングに置換する。
+</p>
+<p>
+キャリア間の変換に <tt>conversion_table</tt>
+を使う。<tt>conversion_table</tt> に<tt>nil</tt>を与えると、
+キャリア間の変換は行わない。
+</p>
+<p>
+携帯側エンコーディングがShift_JIS場合は <tt>to_sjis</tt> に
+<tt>true</tt> を指定する。 <tt>true</tt>
+を指定すると変換テーブルに文字列が指定されている場合にShift_JISで出力される。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000090-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000090-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 74</span>
+ 74:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">unicodecr_to_external</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">conversion_table</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">to_sjis</span>=<span class="ruby-keyword kw">true</span>)
+ 75:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/&amp;#x([0-9a-f]{4});/i</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+ 76:         <span class="ruby-identifier">unicode</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">scanf</span>(<span class="ruby-value str">&quot;%x&quot;</span>).<span class="ruby-identifier">first</span>
+ 77:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">conversion_table</span>
+ 78:           <span class="ruby-identifier">converted</span> = <span class="ruby-identifier">conversion_table</span>[<span class="ruby-identifier">unicode</span>] <span class="ruby-comment cmt"># キャリア間変換</span>
+ 79:         <span class="ruby-keyword kw">else</span>
+ 80:           <span class="ruby-identifier">converted</span> = <span class="ruby-identifier">unicode</span> <span class="ruby-comment cmt"># 変換しない</span>
+ 81:         <span class="ruby-keyword kw">end</span>
+ 82: 
+ 83:         <span class="ruby-comment cmt"># 携帯側エンコーディングに変換する</span>
+ 84:         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">converted</span>
+ 85:         <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Integer</span>
+ 86:           <span class="ruby-comment cmt"># 変換先がUnicodeで指定されている。つまり対応する絵文字がある。</span>
+ 87:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sjis</span> = <span class="ruby-constant">UNICODE_TO_SJIS</span>[<span class="ruby-identifier">converted</span>]
+ 88:             [<span class="ruby-identifier">sjis</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'n'</span>)
+ 89:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">webcode</span> = <span class="ruby-constant">SOFTBANK_UNICODE_TO_WEBCODE</span>[<span class="ruby-identifier">converted</span><span class="ruby-operator">-</span><span class="ruby-value">0x1000</span>]
+ 90:             <span class="ruby-node">&quot;\x1b\x24#{webcode}\x0f&quot;</span>
+ 91:           <span class="ruby-keyword kw">else</span>
+ 92:             <span class="ruby-comment cmt"># キャリア変換テーブルに指定されていたUnicodeに対応する</span>
+ 93:             <span class="ruby-comment cmt"># 携帯側エンコーディングが見つからない(変換テーブルの不備の可能性あり)。</span>
+ 94:             <span class="ruby-identifier">match</span>
+ 95:           <span class="ruby-keyword kw">end</span>
+ 96:         <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+ 97:           <span class="ruby-comment cmt"># 変換先がUnicodeで指定されている。</span>
+ 98:           <span class="ruby-identifier">to_sjis</span> <span class="ruby-value">? </span><span class="ruby-constant">Kconv</span><span class="ruby-operator">::</span><span class="ruby-identifier">kconv</span>(<span class="ruby-identifier">converted</span>, <span class="ruby-constant">Kconv</span><span class="ruby-operator">::</span><span class="ruby-constant">SJIS</span>, <span class="ruby-constant">Kconv</span><span class="ruby-operator">::</span><span class="ruby-constant">UTF8</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">converted</span>
+ 99:         <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+100:           <span class="ruby-comment cmt"># 変換先が定義されていない。</span>
+101:           <span class="ruby-identifier">match</span>
+102:         <span class="ruby-keyword kw">end</span>
+103:       <span class="ruby-keyword kw">end</span>
+104:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000091" class="method-detail">
+        <a name="M000091"></a>
+
+        <div class="method-heading">
+          <a href="#M000091" class="method-signature">
+          <span class="method-name">unicodecr_to_utf8</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>
+のなかでUnicode数値文字参照で表記された絵文字をUTF-8に置換する。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000091-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000091-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 106</span>
+106:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">unicodecr_to_utf8</span>(<span class="ruby-identifier">str</span>)
+107:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/&amp;#x([0-9a-f]{4});/i</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+108:         <span class="ruby-identifier">unicode</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">scanf</span>(<span class="ruby-value str">&quot;%x&quot;</span>).<span class="ruby-identifier">first</span>
+109:         <span class="ruby-keyword kw">if</span> <span class="ruby-constant">UNICODE_TO_SJIS</span>[<span class="ruby-identifier">unicode</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">SOFTBANK_UNICODE_TO_WEBCODE</span>[<span class="ruby-identifier">unicode</span><span class="ruby-operator">-</span><span class="ruby-value">0x1000</span>]
+110:           [<span class="ruby-identifier">unicode</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U'</span>)
+111:         <span class="ruby-keyword kw">else</span>
+112:           <span class="ruby-identifier">match</span>
+113:         <span class="ruby-keyword kw">end</span>
+114:       <span class="ruby-keyword kw">end</span>
+115:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000092" class="method-detail">
+        <a name="M000092"></a>
+
+        <div class="method-heading">
+          <a href="#M000092" class="method-signature">
+          <span class="method-name">utf8_to_unicodecr</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>str</tt>
+のなかでUTF-8で表記された絵文字をUnicode数値文字参照に置換する。
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000092-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000092-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/jpmobile/emoticon.rb, line 117</span>
+117:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">utf8_to_unicodecr</span>(<span class="ruby-identifier">str</span>)
+118:       <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">UTF8_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+119:         <span class="ruby-value str">&quot;&amp;#x%04x;&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">match</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U'</span>).<span class="ruby-identifier">first</span>
+120:       <span class="ruby-keyword kw">end</span>
+121:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

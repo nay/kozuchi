@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding=" UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset= UTF-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Jul 23 19:24:51 +0900 2008</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>jpmobile: A Rails plugin for Japanese mobile-phones</h1>
+<h2>jpmobileとは</h2>
+<p>
+携帯電話特有の機能を Rails
+で利用するためのプラグイン。 以下の機能を備える。
+</p>
+<ul>
+<li>携帯電話のキャリア判別
+
+</li>
+<li>端末位置情報の取得
+
+</li>
+<li>端末製造番号、契約者番号等の取得
+
+</li>
+<li>IPアドレスの検証(キャリアが公開しているIPアドレス帯域からのアクセスか判定)
+
+</li>
+<li>セッションIDをフォーム／リンクに付与(Trans SID)
+
+</li>
+<li>携帯電話ビューへの自動振分け
+
+</li>
+<li>ディスプレイ情報(画面サイズ、ブラウザ画面サイズ、カラー・白黒、色数)の取得
+
+</li>
+<li>GeoKit(<a
+href="http://geokit.rubyforge.org">geokit.rubyforge.org</a>)との連携
+
+</li>
+<li>文字コード変換機能／絵文字のキャリア間相互変換
+
+</li>
+</ul>
+<h2>インストール</h2>
+<h3>svnレポジトリからインストールする場合</h3>
+<p>
+リリース版:
+</p>
+<pre>
+  % ./script/plugin install http://jpmobile.rubyforge.org/svn/tags/rel-x.x.x/jpmobile
+  (x.x.xはバージョン)
+</pre>
+<p>
+開発版:
+</p>
+<pre>
+  % ./script/plugin install git://github.com/darashi/jpmobile.git
+</pre>
+<h3>gemでインストールする場合</h3>
+<pre>
+  # gem install jpmobile
+</pre>
+<p>
+としてgemをインストールした後 RAILS_ROOT/config/environment.rb
+の Rails::Initializer.run do |config| 〜 end 内に
+</p>
+<pre>
+  config.gem &quot;jpmobile&quot;
+</pre>
+<p>
+の行を追加する。
+</p>
+<h2>使用例</h2>
+<h3>携帯電話の識別</h3>
+<h4>Viewの中で一部を切替える例</h4>
+<pre>
+  &lt;% if request.mobile? %&gt;
+    携帯電話からのアクセスです。
+  &lt;% else %&gt;
+    携帯電話からのアクセスではありません。
+  &lt;% end %&gt;
+</pre>
+<h4>別に用意した携帯電話用コントローラへリダイレクトする例</h4>
+<pre>
+  class PcController &lt; ApplicationController
+    before_filter :redirect_if_mobile
+
+    def index
+    end
+
+    private
+    def redirect_if_mobile
+      if request.mobile?
+        pa = params.dup
+        pa[:controller] = &quot;/mobile&quot;
+        redirect_to pa
+      end
+    end
+  end
+
+  class MobileController &lt; ApplicationController
+    after_filter :to_sjis
+
+    def index
+    end
+
+    private
+    def to_sjis
+      @headers[&quot;Content-Type&quot;] = &quot;text/html; charset=Shift_JIS&quot;
+      response.body = response.body.tosjis
+    end
+  end
+</pre>
+<h3>携帯電話viewの自動振分け</h3>
+<p>
+DoCoMo携帯電話からアクセスすると、
+</p>
+<ul>
+<li>index_mobile_docomo.rhtml
+
+</li>
+<li>index_mobile.rhtml
+
+</li>
+<li>index.rhtml
+
+</li>
+</ul>
+<p>
+の順でテンプレートを検索し、最初に見付かったテンプレートが利用される。
+Auの場合は、index_mobile_au.rhtml、Softbankの場合はindex_mobile_softbank.rhtmlが最初に検索される。
+</p>
+<p>
+BUG: 現状、上記の例では index.rhtml
+が存在しない場合に振り分けが行われない(ダミーファイルを置くことで回避可能)。
+</p>
+<h4>キャリアの識別</h4>
+<pre>
+  case request.mobile
+  when Jpmobile::Mobile::Docomo
+    # for DoCoMo
+  when Jpmobile::Mobile::Au
+    # for au
+  when Jpmobile::Mobile::Softbank
+    # for SoftBank
+  when Jpmobile::Mobile::Willcom
+    # for Willcom
+  when Jpmobile::Mobile::Emobile
+    # for Willcom
+  else
+    # for PC
+  end
+</pre>
+<p>
+あるいは
+</p>
+<pre>
+  if request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+    # for DoCoMo
+  end
+</pre>
+<h3>位置情報の取得</h3>
+<h4>取得用リンクの生成</h4>
+<p>
+以下のようなコードで、端末に位置情報を要求するリンクを出力する。
+</p>
+<pre>
+  &lt;%= get_position_link_to(:action=&gt;:gps) %&gt;
+</pre>
+<h4>位置情報の取得</h4>
+<pre>
+  class MobileController &lt; ApplicationController
+    def gps
+      if request.mobile &amp;&amp; pos = request.mobile.position
+        @latitude = pos.lat
+        @longuitude = pos.lon
+      end
+    end
+  end
+</pre>
+<h3>端末情報の取得</h3>
+<p>
+端末側から通知されている場合、request.ident で
+契約に固有の識別子もしくは端末の製造番号を取得できる。
+両方存在する場合は契約に固有のIDが優先される。
+</p>
+<ul>
+<li>契約に固有のID (request.ident_subscriber)
+
+<ul>
+<li>au: EZ番号(サブスクライバ番号)
+
+</li>
+<li>DoCoMo: FOMAカード製造番号
+
+</li>
+<li>EMOBILE: EMnet対応端末から通知されるユニークなユーザID
+
+</li>
+</ul>
+</li>
+<li>端末製造番号 (request.ident_device)
+
+<ul>
+<li>DoCoMo: 端末製造番号(FOMA, MOVA)
+
+</li>
+<li>SoftBank: 製造番号
+
+</li>
+</ul>
+</li>
+</ul>
+<h3>IPの検証</h3>
+<p>
+キャリアが公開しているIPアドレス帯域からのアクセスか判定する。
+</p>
+<pre>
+  request.mobile.valid_ip?
+</pre>
+<h3>セッションIDの付与(Transit SID)</h3>
+<h4>Cookie非対応携帯だけに付与する</h4>
+<pre>
+  class MyController
+    trans_sid
+  end
+</pre>
+<h4>PCにも付与する</h4>
+<pre>
+  class MyController
+    trans_sid :always
+  end
+</pre>
+<h3>端末の画面サイズ</h3>
+<p>
+request.mobile.display で <a
+href="../classes/Jpmobile/Display.html">Jpmobile::Display</a>
+クラスのインスタンスが返る。
+</p>
+<pre>
+  画面幅 &lt;%= request.mobile.display.width %&gt;
+  画面高さ &lt;%= request.mobile.display.height %&gt;
+</pre>
+<h3>GeoKit(<a href="http://geokit.rubyforge.org">geokit.rubyforge.org</a>)との連携</h3>
+<p>
+vandor/plugins/geokit以下にGeoKitがインストールされていると、<a
+href="../classes/Jpmobile/Position.html">Jpmobile::Position</a>にGeoKit::Mappableがincludeされる。したがって、
+</p>
+<pre>
+  request.mobile.position.distance_to('札幌駅')
+</pre>
+<p>
+とすることで、端末と「札幌駅」との距離を求めることができる。詳細は
+<a
+href="http://geokit.rubyforge.org/api/index.html">geokit.rubyforge.org/api/index.html</a>
+参照。
+</p>
+<h3>文字コード変換機能／絵文字のキャリア間相互変換</h3>
+<p>
+JpmobileではControllerにmobile_filterを指定することで
+DoCoMo、Au、SoftBankの絵文字を透過的に扱うことができる。
+</p>
+<pre>
+ class MyController
+   mobile_filter
+ end
+</pre>
+<p>
+また、半角・全角の自動変換を用いる場合は
+</p>
+<pre>
+ class MyController
+   mobile_filter :hankaku=&gt;true
+ end
+</pre>
+<p>
+と指定する。
+</p>
+<p>
+Jpmobile内では、各キャリアの絵文字はUnicode私的領域上にマッピングされ、管理される。
+このとき、DoCoMo、Auは公式サイト記載のマッピングが使用される。
+ただしSoftBankはAuとの重複を避けるため、公式のマッピングに0x1000加算しU+F001以降に割り当てる。
+テンプレート内ではUTF-8でエンコードするか、数値文字参照の&amp;xHHHH;形式で指定する。
+</p>
+<p>
+絵文字は送出時に内蔵の変換表に基づいて変換され、携帯電話のエンコーディングにあわせて送出される。
+携帯電話から受信した絵文字は上記マッピングに基づいてUTF-8でparamsに渡される。
+</p>
+<p>
+mobile_filterを有効にすると以下の処理が自動で行われる。
+</p>
+<ul>
+<li>DoCoMo、Auとの通信時にはShift_JIS、SoftBankとの通信時にはUTF-8が使用される。
+
+</li>
+<li>:hankaku=&gt;true指定時は、カタカナは半角カナに変換されて送出される。携帯電話から送られた半角カナは全角カナに変換される。
+
+</li>
+<li>絵文字はキャリアにあわせて変換されて送出される。
+
+</li>
+<li>携帯電話からの絵文字はUnicode私的領域にマップされ、UTF-8でparamsに格納される。
+
+</li>
+</ul>
+<h2>テストに必要なgemパッケージ</h2>
+<p>
+テストを実行するためには以下のgemパッケージが必要です。
+</p>
+<ul>
+<li>rails
+
+</li>
+<li>rack
+
+</li>
+<li>hpricot
+
+</li>
+<li>spec-fixtures
+
+</li>
+</ul>
+<h2>リンク</h2>
+<ul>
+<li>Project Website: <a href="http://jpmobile-rails.org">jpmobile-rails.org</a>
+
+</li>
+<li>RDoc Documentation: <a
+href="http://jpmobile.rubyforge.org/rdoc">jpmobile.rubyforge.org/rdoc</a>
+
+</li>
+<li>GitHub: <a
+href="http://github.com/darashi/jpmobile">github.com/darashi/jpmobile</a>/
+
+</li>
+<li>RubyForge Project Page: <a
+href="http://rubyforge.org/projects/jpmobile">rubyforge.org/projects/jpmobile</a>
+
+</li>
+<li>Mailing List: <a
+href="http://groups.google.com/group/jpmobile">groups.google.com/group/jpmobile</a>
+
+</li>
+<li>IRC Channel jpmobile@freenode.net
+
+</li>
+</ul>
+<h2>作者</h2>
+<p>
+Copyright 2006 (c) Yohji Shidara, under MIT License.
+</p>
+<p>
+Yohji Shidara &lt;dara@shidara.net&gt;
+</p>
+<p>
+<a href="http://d.hatena.ne.jp/darashi">d.hatena.ne.jp/darashi</a>
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
