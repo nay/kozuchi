@@ -142,6 +142,10 @@ class User < ActiveRecord::Base
     accounts.types_in(:asset).first
   end
 
+  def default_asset_other_than(exclude)
+    accounts.types_in(:asset).delete_if{|a| a.id.to_i == exclude.id.to_i}.first
+  end
+
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
   def login_id
     self.login

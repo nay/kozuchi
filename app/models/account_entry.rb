@@ -122,7 +122,7 @@ class AccountEntry < ActiveRecord::Base
     partner_other_account ||= partner_account.partner_account
     
     # それもなければ適当な資産口座を割り当てる。
-    partner_other_account ||= partner_account.user.default_asset
+    partner_other_account ||= partner_account.user.default_asset_other_than(partner_account)
     return unless partner_other_account
     
     new_minus_link = DealLink.create(:created_user_id => account.user_id)
