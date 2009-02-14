@@ -14,9 +14,14 @@ describe AccountEntry do
 #  end
 
   describe "attributes=" do
-    it "ユーザーIDは一括指定できない" do
-      e = AccountEntry.new(:user_id => 3)
-      e.user_id.should be_nil
+    it "user_idは一括指定できない" do
+      AccountEntry.new(:user_id => 3).user_id.should be_nil
+    end
+    it "deal_idは一括指定できない" do
+      AccountEntry.new(:deal_id => 7).deal_id.should be_nil
+    end
+    it "account_idは一括指定できない" do
+      AccountEntry.new(:account_id => 5).account_id.should be_nil
     end
   end
 

@@ -168,12 +168,12 @@ class Deal < BaseDeal
     
     entry = entry(entry_account_id)
     if !entry
-      entry = account_entries.create(
-                :account_id => entry_account_id,
+      entry = account_entries.build(
                 :friend_link_id => entry_friend_link_id,
                 :amount => entry_amount,
                 :another_entry_account => another_entry_account)
       entry.user_id = user_id
+      entry.account_id = entry_account_id
       entry.save # TODO: save!でなくていいの？
     else
       # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
