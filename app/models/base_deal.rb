@@ -6,7 +6,17 @@ class BaseDeal < ActiveRecord::Base
              :foreign_key => 'deal_id',
              :dependent => :destroy,
              :order => "amount",
-             :include => :account
+             :include => :account do
+
+    # TODO: テスト
+    def build(attributes = {})
+      e = super
+      e.user_id = proxy_owner.user_id
+      e.date = proxy_owner.date
+      e.daily_seq = proxy_owner.daily_seq
+      e
+    end
+  end
 
   belongs_to :user
 

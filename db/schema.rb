@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090214192337) do
+ActiveRecord::Schema.define(:version => 20090214200718) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(:version => 20090214192337) do
     t.integer "settlement_id",        :limit => 11
     t.integer "result_settlement_id", :limit => 11
     t.boolean "initial_balance",                    :default => false, :null => false
+    t.date    "date",                                                  :null => false
+    t.integer "daily_seq",            :limit => 11,                    :null => false
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"

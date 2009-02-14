@@ -15,7 +15,8 @@ account_link_test_user:
   login: account_link_test_user
 account_link_test_target_user:
   login: account_link_test_target_user
-
+deal_test_user:
+  login: deal_test_user
 
 # one:
 #   column: value

@@ -9,32 +9,34 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :friend_link,
              :class_name => 'DealLink',
              :foreign_key => 'friend_link_id'
-  validates_presence_of :amount
-  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
-  attr_reader :new_plus_link
   belongs_to :settlement
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
+
+  validates_presence_of :amount, :account_id
   after_save :update_balance
   after_destroy :update_balance
+  before_create :create_friend_deal
 
-  attr_protected :user_id, :deal_id, :account_id, :friend_link_id
+  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
+  attr_reader :new_plus_link
+  attr_protected :user_id, :deal_id, :friend_link_id, :date, :daily_seq, :settlement_id, :result_settlement_id
 
+  # 精算が紐付いているかどうかを返す。外部キーを見るだけで実際に検索は行わない。
   def settlement_attached?
-    self.settlement || self.result_settlement
+    not (self.settlement_id.blank? && self.result_settlement_id.blank?)
   end
 
-  def another_account_entry
-    deal.another_account_entry(self)
+  # 相手勘定名を返す
+  def mate_account_name
+    raise AssociatedObjectMissingError, "no deal" unless deal
+    deal.mate_account_name_for(account_id)
   end
 
   # ↓↓  call back methods  ↓↓
 
-  # 新規作成時：フレンド連動があれば新しく作る
-  def before_create
-    create_friend_deal
-  end
-  
+  # TODO: 宣言形式にする
   def before_update
+    copy_deal_attributes
     if contents_updated?
       # リンクがあれば切る
       clear_friend_deal
@@ -109,6 +111,7 @@ class AccountEntry < ActiveRecord::Base
   # connected_account が指定されていれば、それが連携対象となっていれば登録する
   # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
   def create_friend_deal
+    return unless account # 他クラス依存を下げるため、accountがなければ無視する
     return unless !friend_link_id # すでにある＝お手玉になる
     partner_account = connected_account
     return unless partner_account
@@ -152,6 +155,13 @@ class AccountEntry < ActiveRecord::Base
 
   private
 
+  def copy_deal_attributes
+    return unless deal # 疎結合にするため
+    self.user_id = deal.user_id
+    self.date = deal.date
+    self.daily_seq = deal.daily_seq
+  end
+
   def connected_account_in_another_entry_other_than(another_account)
     p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
     return nil unless self.another_entry_account
@@ -163,10 +173,9 @@ class AccountEntry < ActiveRecord::Base
 
   # 直後の残高記入のamountを再計算する
   def update_balance
-    raise "could not get deal" unless deal
     next_balance_entry = AccountEntry.find(:first,
     :joins => "inner join deals on account_entries.deal_id = deals.id",
-    :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", self.account_id, deal.date, deal.date, deal.daily_seq],
+    :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", account_id, date, date, daily_seq],
     :order => "deals.date, deals.daily_seq",
     :include => :deal)
     return unless next_balance_entry

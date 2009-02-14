@@ -29,14 +29,12 @@ class Balance < BaseDeal
   def before_create
     self.summary = ""
     e = account_entries.build(:amount => calc_amount, :balance => self.balance)
-    e.user_id = self.user_id
     e.account_id = self.account_id
   end
   
   def before_update
     account_entries.clear
     e = account_entries.build(:amount => calc_amount, :balance => self.balance)
-    e.user_id = self.user_id
     e.account_id = self.account_id
     e.save # TODO: !でなくていいの？
   end

@@ -37,8 +37,10 @@ class Deal < BaseDeal
     !account_entries.detect{|e| e.settlement_attached?}.nil?
   end
 
-  def another_account_entry(entry)
-    account_entries.detect{|e| e.account_id.to_s != entry.account.id.to_s}
+  # 相手勘定名を返す
+  def mate_account_name_for(account_id)
+    # TODO: 諸口対応、不正データ対応
+    account_entries.detect{|e| e.account_id != account_id}.account.name
   end
 
   def before_validation
@@ -171,7 +173,6 @@ class Deal < BaseDeal
       entry = account_entries.build(
                 :amount => entry_amount,
                 :another_entry_account => another_entry_account)
-      entry.user_id = user_id
       entry.account_id = entry_account_id
       entry.friend_link_id = entry_friend_link_id
       entry.save # TODO: save!でなくていいの？

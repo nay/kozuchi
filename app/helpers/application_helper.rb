@@ -54,14 +54,13 @@ EOF
 
   # 口座に注目したときの表記
   def display_account_entry(entry, style = nil)
-    e = entry.another_account_entry
     <<EOS
-      <td class="date" #{style}>#{format_date e.deal.date}</td>
-      <td class="number" #{style}>#{e.deal.daily_seq}</td>
-      <td class="summary" #{style}>#{h e.deal.summary}</td>
-      <td class="account" #{style}>#{h e.account.name}</td>
-      <td class="amount" #{style}>#{number_with_delimiter(e.amount) if e.amount >= 0}</td>
-      <td class="amount" #{style}>#{number_with_delimiter(e.amount.abs) if e.amount < 0}</td>
+      <td class="date" #{style}>#{format_date entry.date}</td>
+      <td class="number" #{style}>#{entry.daily_seq}</td>
+      <td class="summary" #{style}>#{h entry.deal.summary}</td>
+      <td class="account" #{style}>#{h entry.mate_account_name}</td>
+      <td class="amount" #{style}>#{number_with_delimiter(entry.amount.abs) if entry.amount < 0}</td>
+      <td class="amount" #{style}>#{number_with_delimiter(entry.amount) if entry.amount >= 0}</td>
 EOS
   end
   def display_account_entry_header

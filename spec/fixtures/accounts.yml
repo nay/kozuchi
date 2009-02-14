@@ -3,12 +3,22 @@
 account_enrty_test_cache:
   name: 現金
   user: account_entry_test_user
+account_entry_test_food:
+  name: 食費
+  user: account_entry_test_user
 account_link_test_user_1:
   name: target_user
   user: account_link_test_user
 account_link_test_target_user_1:
   name: user
   user: account_link_test_target_user
+deal_test_cache:
+  name: 現金
+  user: deal_test_user
+deal_test_bank:
+  name: 銀行
+  user: deal_test_user
+
 
 # one:
 #   column: value
