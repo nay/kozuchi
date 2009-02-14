@@ -17,6 +17,8 @@ class AccountEntry < ActiveRecord::Base
   after_save :update_balance
   after_destroy :update_balance
 
+  attr_protected :user_id
+
   def settlement_attached?
     self.settlement || self.result_settlement
   end

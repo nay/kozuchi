@@ -28,12 +28,15 @@ class Balance < BaseDeal
 
   def before_create
     self.summary = ""
-    account_entries.build(:user_id => self.user_id, :account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
+    e = account_entries.build(:account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
+    e.user_id = self.user_id
   end
   
   def before_update
     account_entries.clear
-    account_entries.create(:user_id => self.user_id, :account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
+    e = account_entries.build(:account_id => self.account_id, :amount => calc_amount, :balance => self.balance)
+    e.user_id = self.user_id
+    e.save # TODO: !でなくていいの？
   end
 
   # Prepare sugar methods

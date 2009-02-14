@@ -9,12 +9,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090126145440) do
+ActiveRecord::Schema.define(:version => 20090214192337) do
 
   create_table "account_entries", :force => true do |t|
-    t.integer "user_id",              :limit => 11,                    :null => false
-    t.integer "account_id",           :limit => 11,                    :null => false
-    t.integer "deal_id",              :limit => 11,                    :null => false
+    t.integer "user_id",              :limit => 11
+    t.integer "account_id",           :limit => 11
+    t.integer "deal_id",              :limit => 11
     t.integer "amount",               :limit => 11,                    :null => false
     t.integer "balance",              :limit => 11
     t.integer "friend_link_id",       :limit => 11
