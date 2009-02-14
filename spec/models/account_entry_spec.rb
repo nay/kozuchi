@@ -23,6 +23,9 @@ describe AccountEntry do
     it "account_idは一括指定できない" do
       AccountEntry.new(:account_id => 5).account_id.should be_nil
     end
+    it "friend_link_idは一括指定できない" do
+      AccountEntry.new(:friend_link_id => 13).friend_link_id.should be_nil
+    end
   end
 
   describe "create" do
