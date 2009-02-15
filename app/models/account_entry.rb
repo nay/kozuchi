@@ -13,9 +13,12 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   validates_presence_of :amount, :account_id
-  after_save :update_balance
-  after_destroy :update_balance
   before_create :create_friend_deal
+  before_update :copy_deal_attributes, :refresh_friend_link
+  after_save :update_balance
+
+  before_destroy :assert_no_settlement, :clear_friend_deal
+  after_destroy :update_balance
 
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
   attr_reader :new_plus_link
@@ -32,66 +35,6 @@ class AccountEntry < ActiveRecord::Base
     deal.mate_account_name_for(account_id)
   end
 
-  # ↓↓  call back methods  ↓↓
-
-  # TODO: 宣言形式にする
-  def before_update
-    copy_deal_attributes
-    if contents_updated?
-      # リンクがあれば切る
-      clear_friend_deal
-      # 作る
-      create_friend_deal
-    end
-  end
-
-  def contents_updated?
-    stored = AccountEntry.find(self.id)
-
-    # 金額/残高が変更されていたら中身が変わったとみなす
-    stored.amount.to_i != self.amount.to_i || stored.balance.to_i != self.balance.to_i
-  end
-  
-  def before_destroy
-    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
-    p "before_destroy AccountEntry #{self.id}"
-    clear_friend_deal
-  end
-
-  # ↑↑  call back methods  ↑↑
-  
-  # friend_deal とのリンクを消す。相手が未確定なら相手自身も消す。
-  # 消したあとまた作られないようにstaticメソッドをつかう。
-  def clear_friend_deal
-    return unless friend_link
-    another_entry = friend_link.another(self.id)
-    friend_deal = another_entry.deal if another_entry
-    
-    # リンクを消す。
-    AccountEntry.update_all("friend_link_id = null", "friend_link_id = #{self.friend_link_id}")
-    DealLink.delete(self.friend_link_id)
-  
-    # このオブジェクトの状態更新
-    self.friend_link_id = nil
-    self.friend_link = nil
-    
-    # 相手があり、未確定なら相手も消す。連動して配下のentryをけすため destroy
-    friend_deal.destroy if friend_deal && !friend_deal.confirmed
-  end
-  # TODO: Accountへの移動
-  def self.balance_start(user_id, account_id, year, month)
-    start_exclusive = Date.new(year, month, 1)
-    Account::Base.find(account_id).balance_before(start_exclusive) 
-  end
-  
-  # 指定した取引位置での残高を計算する
-  def self.balance_before(account_id, date, daily_seq)
-    AccountEntry.sum(:amount,
-      :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["account_entries.account_id = ? and deals.confirmed = ? and (deals.date < ? or (deals.date = ? && deals.daily_seq < ?))", account_id, true, date, date, daily_seq]
-      ) || 0
-  end
-  
   # リンクされたaccount_entry を返す
   def linked_account_entry
     return nil unless friend_link
@@ -160,6 +103,46 @@ class AccountEntry < ActiveRecord::Base
     self.user_id = deal.user_id
     self.date = deal.date
     self.daily_seq = deal.daily_seq
+  end
+
+  def refresh_friend_link
+    if contents_updated?
+      # リンクがあれば切る
+      clear_friend_deal
+      # 作る
+      create_friend_deal
+    end
+  end
+
+  # friend_deal とのリンクを消す。相手が未確定なら相手自身も消す。
+  # 消したあとまた作られないようにstaticメソッドをつかう。
+  def clear_friend_deal
+    return unless friend_link
+    another_entry = friend_link.another(self.id)
+    friend_deal = another_entry.deal if another_entry
+
+    # リンクを消す。
+    AccountEntry.update_all("friend_link_id = null", "friend_link_id = #{self.friend_link_id}")
+    DealLink.delete(self.friend_link_id)
+
+    # このオブジェクトの状態更新
+    self.friend_link_id = nil
+    self.friend_link = nil
+
+    # 相手があり、未確定なら相手も消す。連動して配下のentryをけすため destroy
+    friend_deal.destroy if friend_deal && !friend_deal.confirmed
+  end
+
+
+  def contents_updated?
+    stored = AccountEntry.find(self.id)
+
+    # 金額/残高が変更されていたら中身が変わったとみなす
+    stored.amount.to_i != self.amount.to_i || stored.balance.to_i != self.balance.to_i
+  end
+
+  def assert_no_settlement
+    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
   end
 
   def connected_account_in_another_entry_other_than(another_account)
