@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090214200718) do
+ActiveRecord::Schema.define(:version => 20090215064620) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -17,18 +17,20 @@ ActiveRecord::Schema.define(:version => 20090214200718) do
     t.integer "deal_id",              :limit => 11
     t.integer "amount",               :limit => 11,                    :null => false
     t.integer "balance",              :limit => 11
-    t.integer "friend_link_id",       :limit => 11
     t.integer "settlement_id",        :limit => 11
     t.integer "result_settlement_id", :limit => 11
     t.boolean "initial_balance",                    :default => false, :null => false
     t.date    "date",                                                  :null => false
     t.integer "daily_seq",            :limit => 11,                    :null => false
+    t.integer "friend_link_id",       :limit => 11
+    t.integer "linked_ex_entry_id",   :limit => 11
+    t.integer "linked_ex_deal_id",    :limit => 11
+    t.integer "linked_user_id",       :limit => 11
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
   add_index "account_entries", ["deal_id"], :name => "account_entries_deal_id_index"
   add_index "account_entries", ["user_id"], :name => "account_entries_user_id_index"
-  add_index "account_entries", ["friend_link_id"], :name => "account_entries_friend_link_id_index"
   add_index "account_entries", ["settlement_id"], :name => "account_entries_settlement_id_index"
   add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
 

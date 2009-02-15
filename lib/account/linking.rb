@@ -32,6 +32,50 @@ module Account::Linking
     @linked_account_summaries = summaries
   end
 
+  # この口座のあるシステムの指定されたEntryと紐づくEntryおよびDealを作成/更新する
+  def update_link_to(linked_ex_entry_id, linked_ex_deal_id, linked_user_id, linked_entry_amount, linked_entry_summary, linked_entry_date)
+    # すでに紐づいたAccountEntryが存在する場合
+    my_entry = account_entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
+    # 存在し、金額が同じ（正負逆の同額）なら変更不要
+    if my_entry
+      return if my_entry.amount == linked_entry_amount * -1
+      # 金額が変わっていた場合は、未確認なら取引を削除、確認済ならリンクを削除する
+      raise AssociatedObjectMissingError, "my_entry.deal is not found" unless my_entry.deal
+      if my_entry.deal.confirmed
+        my_entry.deal.destroy
+      else
+        my_entry.linked_ex_entry_id = nil
+        my_enrty.linked_user_id = nil
+        my_entry.save!(false)
+      end
+    elsif mate_entry = account_entries.find_by_linked_ex_deal_id(linked_ex_deal_id)
+      # まだlinked_ex_entry_idが入っていなくても、今回リクエストのあった相手側のDealとすでに紐付いているAccountEntryがあれば、それの相手が求める勘定となる
+      # entry数が2でないものはデータ不正
+      raise "entry size should be 2" unless mate_entry.deal.account_entries.size == 2
+      my_entry = mate_entry.deal.account_enrtries.detect{|e| e.id != mate_entry.id}
+      my_entry.linked_ex_entry_id = linked_ex_entry_id
+      my_entry.linked_ex_deal_id = linked_ex_deal_id
+      my_entry.linked_user_id = linked_user_id
+      my_entry.save!(false)
+    else
+      # 新しく作成する
+      mate_account = self.partner_account || user.default_asset_other_than(self)
 
+      deal = user.deals.build(
+        :summary => linked_entry_summary,
+        :date => linked_entry_date,
+        :confirmed => false)
+      my_entry = deal.account_entries.build(
+        :account_id => self.id,
+        :amount => linked_entry_amount * -1)
+      my_entry.linked_ex_entry_id = linked_ex_entry_id
+      my_entry.linked_ex_deal_id = linked_ex_deal_id
+      my_entry.linked_user_id = linked_user_id
+      deal.account_entries.build(
+        :account_id => mate_account.id,
+        :amount => linked_entry_amount)
+      deal.save!
+    end
+  end
 
 end

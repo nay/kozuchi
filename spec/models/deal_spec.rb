@@ -22,6 +22,20 @@ describe Deal do
       @deal.save!
       @deal.account_entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
     end
+
+    it "account_entryを手動で足してもcreateできる" do
+      user = users(:deal_test_user)
+      deal = Deal.new(:summary => "test", :date => Date.today)
+      deal.user_id = user.id
+      deal.account_entries.build(
+        :account_id => @cache.id,
+        :amount => -10000)
+      deal.account_entries.build(
+        :account_id => @bank.id,
+        :amount => 10000)
+      deal.save.should be_true
+      deal.account_entries.detect{|e| e.new_record?}.should be_nil
+    end
   end
 
   describe "update" do

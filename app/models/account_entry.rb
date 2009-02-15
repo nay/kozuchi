@@ -13,8 +13,9 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   validates_presence_of :amount, :account_id
+  before_save :copy_deal_attributes
   before_create :create_friend_deal
-  before_update :copy_deal_attributes, :refresh_friend_link
+  before_update :refresh_friend_link
   after_save :update_balance #, :request_linking
 
   before_destroy :assert_no_settlement, :clear_friend_deal
@@ -96,10 +97,11 @@ class AccountEntry < ActiveRecord::Base
     self.daily_seq = deal.daily_seq
   end
 
-#  # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
-#  def request_linking
-#    linked_account.update_link_to(self.id, self.account_id, self.user_id) if linked_account
-#  end
+  # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
+  def request_linking
+    # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
+    account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.summary, self.date) if account && account.linked_account
+  end
 
   def refresh_friend_link
     if contents_updated?
