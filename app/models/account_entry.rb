@@ -15,7 +15,7 @@ class AccountEntry < ActiveRecord::Base
   validates_presence_of :amount, :account_id
   before_create :create_friend_deal
   before_update :copy_deal_attributes, :refresh_friend_link
-  after_save :update_balance
+  after_save :update_balance #, :request_linking
 
   before_destroy :assert_no_settlement, :clear_friend_deal
   after_destroy :update_balance
@@ -41,17 +41,13 @@ class AccountEntry < ActiveRecord::Base
     return friend_link.another(self.id)
   end
   
-  def connected_account
-    return account.linked_account
-  end
-  
   # 新しく連携先取引を作成する
-  # connected_account が指定されていれば、それが連携対象となっていれば登録する
+  # linked_account が指定されていれば、それが連携対象となっていれば登録する
   # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
   def create_friend_deal
     return unless account # 他クラス依存を下げるため、accountがなければ無視する
-    return unless !friend_link_id # すでにある＝お手玉になる
-    partner_account = connected_account
+    return if friend_link_id # すでにある＝お手玉になる
+    partner_account = account.linked_account
     return unless partner_account
     
     # 相方のentry の口座が渡されていれば、その連携先が同じユーザーでこのentryの連携先以外か調べる
@@ -99,6 +95,11 @@ class AccountEntry < ActiveRecord::Base
     self.date = deal.date
     self.daily_seq = deal.daily_seq
   end
+
+#  # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
+#  def request_linking
+#    linked_account.update_link_to(self.id, self.account_id, self.user_id) if linked_account
+#  end
 
   def refresh_friend_link
     if contents_updated?
