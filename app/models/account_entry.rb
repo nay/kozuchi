@@ -42,12 +42,7 @@ class AccountEntry < ActiveRecord::Base
   end
   
   def connected_account
-    return AccountEntry.calc_connected_account(self.account, self.account_to_be_connected)
-  end
-
-  # TODO: connected_accountsは実際には１つしか入れてなかったためこのメソッドはつぶせるとおもわれる
-  def self.calc_connected_account(account, account_to_be_connected)
-    account.linked_account
+    return account.linked_account
   end
   
   # 新しく連携先取引を作成する
@@ -148,7 +143,7 @@ class AccountEntry < ActiveRecord::Base
   def connected_account_in_another_entry_other_than(another_account)
     p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
     return nil unless self.another_entry_account
-    c = AccountEntry.calc_connected_account(self.another_entry_account, nil) # todo to_be_connected. ignore? 
+    c = another_entry_account.linked_account
     c = nil if c && (c.id == another_account.id || c.user.id != another_account.user.id)
     p "returned #{c}"
     return c
