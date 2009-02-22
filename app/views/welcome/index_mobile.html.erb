@@ -23,6 +23,12 @@
          <div><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
       <% end -%>
     </div>
+    <% if request.mobile.docomo? %>
+      <div style="margin-top: 1em;">
+        設定済の方は
+        <%= docomo_utn_button_to "簡単ログイン", login_post_path %>
+      </div>
+    <% end %>
   <% end -%>
 
 </div>
