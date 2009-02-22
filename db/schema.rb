@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090215064620) do
+ActiveRecord::Schema.define(:version => 20090222024854) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -22,7 +22,6 @@ ActiveRecord::Schema.define(:version => 20090215064620) do
     t.boolean "initial_balance",                    :default => false, :null => false
     t.date    "date",                                                  :null => false
     t.integer "daily_seq",            :limit => 11,                    :null => false
-    t.integer "friend_link_id",       :limit => 11
     t.integer "linked_ex_entry_id",   :limit => 11
     t.integer "linked_ex_deal_id",    :limit => 11
     t.integer "linked_user_id",       :limit => 11
@@ -80,10 +79,6 @@ ActiveRecord::Schema.define(:version => 20090215064620) do
     t.string "hashed_password", :limit => 40
   end
 
-  create_table "deal_links", :force => true do |t|
-    t.integer "created_user_id", :limit => 11
-  end
-
   create_table "deals", :force => true do |t|
     t.string   "type",           :limit => 20,                   :null => false
     t.integer  "user_id",        :limit => 11,                   :null => false
@@ -126,6 +121,16 @@ ActiveRecord::Schema.define(:version => 20090215064620) do
     t.boolean "business_use",                      :default => false, :null => false
     t.boolean "use_daily_booking",                 :default => true,  :null => false
   end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "settlements", :force => true do |t|
     t.integer  "user_id",                 :limit => 11

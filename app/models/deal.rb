@@ -1,6 +1,5 @@
 # 異動明細クラス。
 class Deal < BaseDeal
-  attr_accessor :minus_account_friend_link_id, :plus_account_friend_link_id
   has_many   :children,
              :class_name => 'SubordinateDeal',
              :foreign_key => 'parent_deal_id',
@@ -151,20 +150,15 @@ class Deal < BaseDeal
     children.clear
   end
 
-  def update_account_entry(is_minus, is_first, deal_link_for_second)
-    deal_link_id_for_second = deal_link_for_second ? deal_link_for_second.id : nil
+  def update_account_entry(is_minus, is_first)
     if is_minus
       entry_account_id = self.minus_account_id
       entry_amount = self.amount.to_i*(-1)
-      entry_friend_link_id = @minus_account_friend_link_id
-      entry_friend_link_id ||= deal_link_id_for_second if !is_first
       another_entry_account = is_first ? Account::Base.find(self.plus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     else
       entry_account_id = self.plus_account_id
       entry_amount = self.amount.to_i
-      entry_friend_link_id = @plus_account_friend_link_id
-      entry_friend_link_id ||= deal_link_id_for_second if !is_first
       another_entry_account = is_first ? Account::Base.find(self.minus_account_id) : nil
       # second に上記をわたしても無害だが不要なため処理を省く
     end
@@ -175,19 +169,17 @@ class Deal < BaseDeal
                 :amount => entry_amount,
                 :another_entry_account => another_entry_account)
       entry.account_id = entry_account_id
-      entry.friend_link_id = entry_friend_link_id
       entry.save # TODO: save!でなくていいの？
     else
       # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
       # entry.save がされるということは、リンクが消されて新しくDeal が作られるということを意味する。
       if entry_amount != entry.amount || self.old_date != self.date
-        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
-        if entry.linked_account_entry
-          entry.account_to_be_connected = entry.linked_account_entry.account
-        end
+#        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
+#        if entry.linked_account_entry
+#          entry.account_to_be_connected = entry.linked_account_entry.account
+#        end
         entry.amount = entry_amount
         entry.another_entry_account = another_entry_account
-        entry.friend_link_id = deal_link_id_for_second if !is_first && deal_link_id_for_second
         entry.save!
       end
     end
@@ -197,10 +189,11 @@ class Deal < BaseDeal
   def create_relations
     # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
+    return unless self.amount # TODO: 間接でないのをとりあえずこれで判断
     entry = nil
-    entry = update_account_entry(true, true, nil) if self.amount.to_i >= 0     # create minus
-    entry = update_account_entry(false, !entry, entry ? entry.new_plus_link : nil) # create plus
-    update_account_entry(true, false, entry.new_plus_link) if self.amount.to_i < 0   # create_minus
+    entry = update_account_entry(true, true) if self.amount.to_i >= 0     # create minus
+    entry = update_account_entry(false, !entry) # create plus
+    update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
     
     account_entries(true)
 

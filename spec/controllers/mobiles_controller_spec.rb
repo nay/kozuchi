@@ -2,9 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe MobilesController do
 
-  #Delete this example and add some real ones
-  it "should use MobilesController" do
-    controller.should be_an_instance_of(MobilesController)
+  describe "create_or_update" do
   end
 
 end

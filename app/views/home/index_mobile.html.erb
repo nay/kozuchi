@@ -1,8 +1,13 @@
 <% unless flash[:notice].blank? %>
   <%= flash[:notice] %>
 <% end %>
+<p><%= request.user_agent %></p>
 <div>
-<%= button_to "簡単ログインを設定する", mobiles_path  %><br />
-<p><%= request.inspect %></p>
+  <% if request.mobile.docomo? %>
+    <%= docomo_utn_button_to "簡単ログインを設定する", hash_for_mobile_path, :method => :put %>
+  <% else %>
+    not docomo
+    <%= button_to "簡単ログインを設定する", mobile_path, :method => :put %><br />
+  <% end %>
 
 </div>

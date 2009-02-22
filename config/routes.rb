@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
 
-  map.resources :mobiles
+  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
+  map.connect "/mobile", :controller => "mobiles", :action => "destroy", :conditions => {:method => :delete}
+  
   map.home "/home", :controller => "home", :action => "index"
 
   map.signup '/signup', :controller => 'users', :action => 'new', :conditions => {:method => :get}

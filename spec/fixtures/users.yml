@@ -1,8 +1,18 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 common_general:
   login: common_general
+taro:
+  login: taro
+hanako:
+  login: hanako
+home:
+  login: home
 account_entry_test_user:
   login: account_entry_test
+account_entry_test_user_taro:
+  login: account_entry_test_taro
+account_entry_test_user_hanako:
+  login: account_entry_test_hanako
 friend_permission_test_user:
   login: friend_permission_test_user
 friend_permission_test_target_user:
@@ -17,7 +27,10 @@ account_link_test_target_user:
   login: account_link_test_target_user
 deal_test_user:
   login: deal_test_user
-
+no_mobile_ident_user:
+  login: no_mobile_ident_user
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  email: no_mobile_ident_user@everyleaf.com
 # one:
 #   column: value
 #

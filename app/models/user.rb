@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
 #  N_('User|Password')
 #  N_('User|Password confirmation')
   include User::Friend
+  include User::Mobile
 
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
@@ -197,11 +198,6 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     u = find :first, :conditions => ['login = ? and activated_at IS NOT NULL', login] # need to get the salt
     u && u.authenticated?(password) ? u.upgrade!(password) : nil
-  end
-
-  def update_hashed_mobile_identity(identity)
-    self.mobile_identity = self.class.encript(identity, salt)
-    self.save!
   end
 
   # Encrypts some data with the salt.

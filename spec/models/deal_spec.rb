@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Deal do
-  fixtures :accounts, :users
+  fixtures :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions, :users
   set_fixture_class  :accounts => Account::Base
 
   before do
@@ -10,32 +10,96 @@ describe Deal do
   end
 
   describe "create" do
-    before do
-      @deal = new_deal(6, 1, @cache, @bank, 3500)
+
+    describe "連携なし" do
+      before do
+        @deal = new_deal(6, 1, @cache, @bank, 3500)
+      end
+
+      it "成功する" do
+        @deal.save.should be_true
+      end
+
+      it "user_id, date, daily_seqがentriesに引き継がれる" do
+        @deal.save!
+        @deal.account_entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
+      end
+
+      it "account_entryを手動で足してもcreateできる" do
+        user = users(:deal_test_user)
+        deal = Deal.new(:summary => "test", :date => Date.today)
+        deal.user_id = user.id
+        deal.account_entries.build(
+          :account_id => @cache.id,
+          :amount => -10000)
+        deal.account_entries.build(
+          :account_id => @bank.id,
+          :amount => 10000)
+        deal.save.should be_true
+        deal.account_entries.detect{|e| e.new_record?}.should be_nil
+      end
     end
 
-    it "成功する" do
-      @deal.save.should be_true
+    describe "連携あり" do
+      before do
+        @taro = users(:taro)
+        @hanako = users(:hanako)
+        @home = users(:home)
+        raise "@taroと@hanakoは友達" unless @taro.friend?(@hanako) && @hanako.friend?(@taro)
+        raise "@taroと@homeは友達" unless @taro.friend?(@home) && @home.friend?(@taro)
+        raise "@homeと@hanakoは友達" unless @home.friend?(@hanako) && @hanako.friend?(@home)
+        @taro_cache = accounts(:taro_cache)
+        @taro_hanako = accounts(:taro_hanako)
+        @taro_home = accounts(:taro_home)
+        @taro_home_cost = accounts(:taro_home_cost)
+
+        @hanako_cache = accounts(:hanako_cache)
+        @hanako_taro = accounts(:hanako_taro)
+        @hanako_home = accounts(:hanako_home)
+        @hanako_home_cost = accounts(:hanako_home_cost)
+
+        @home_cache = accounts(:home_cache)
+        @home_taro = accounts(:home_taro)
+        @home_hanako = accounts(:home_hanako)
+        @home_income_from_two = accounts(:home_income_from_two)
+
+        raise "前提：@taro_hanakoは@hanako_taroと連携する" unless @taro_hanako.linked_account == @hanako_taro
+        raise "前提：@hanako_taroは@taro_hanakoと連携する" unless @hanako_taro.linked_account == @taro_hanako
+
+        raise "前提：@taro_homeは@home_taroと連携する" unless @taro_home.linked_account == @home_taro
+        raise "前提：@home_taroは@taro_homeと連携する" unless @home_taro.linked_account == @taro_home
+
+        raise "前提：@home_hanakoは@hanako_homeと連携する" unless @home_hanako.linked_account == @hanako_home
+        raise "前提：@hanako_homeは@home_hanakoと連携する" unless @hanako_home.linked_account == @home_hanako
+
+        raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.linked_account == @home_income_from_two
+        raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.linked_account == @home_income_from_two
+        raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.linked_account.nil?
+      end
+
+     describe "Dealに２つEntryがあり、片方のみが連携しているとき" do
+       before do
+         # taro_cache から taro_hanako へ 300円貸した
+         @deal = Deal.new(:summary => "test", :date => Date.today)
+         @deal.user_id = @taro.id
+         @deal.account_entries.build(:account_id => @taro_cache.id, :amount => -300)
+         @deal.account_entries.build(:account_id => @taro_hanako.id, :amount => 300)
+         @deal.save!
+         @linked_entry = @deal.account_entries.detect{|e| e.account_id == @taro_hanako.id}
+         raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
+       end
+       it "片方のEntryにリンクが作られること" do
+         @linked_entry.linked_ex_entry_id.should_not be_nil
+       end
+     end
+
+
     end
 
-    it "user_id, date, daily_seqがentriesに引き継がれる" do
-      @deal.save!
-      @deal.account_entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
-    end
-
-    it "account_entryを手動で足してもcreateできる" do
-      user = users(:deal_test_user)
-      deal = Deal.new(:summary => "test", :date => Date.today)
-      deal.user_id = user.id
-      deal.account_entries.build(
-        :account_id => @cache.id,
-        :amount => -10000)
-      deal.account_entries.build(
-        :account_id => @bank.id,
-        :amount => 10000)
-      deal.save.should be_true
-      deal.account_entries.detect{|e| e.new_record?}.should be_nil
-    end
+#
+#    describe "両側連携" do
+#      # TODO:
+#    end
   end
 
   describe "update" do

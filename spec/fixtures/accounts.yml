@@ -1,11 +1,87 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
+# taro's accounts
+taro_cache:
+  name: 現金
+  user: taro
+  type: Cache
+taro_bank:
+  name: 銀行
+  user: taro
+  type: BankingFacility
+taro_hanako:
+  name: 花子
+  user: taro
+  type: Credit
+taro_home:
+  name: 家計
+  user: taro
+  type: Credit
+taro_home_cost:
+  name: 家計支出
+  user: taro
+  type: Expense
+# hanako's accounts
+hanako_cache:
+  name: 現金
+  user: hanako
+  type: Cache
+hanako_bank:
+  name: 銀行
+  user: hanako
+  type: BankingFacility
+hanako_taro:
+  name: 太郎
+  user: hanako
+  type: Credit
+hanako_home:
+  name: 家計
+  user: hanako
+  type: Credit
+hanako_home_cost:
+  name: 家計支出
+  user: hanako
+  type: Expense
+# home's accounts
+home_cache:
+  name: 現金
+  user: home
+  type: Cache
+home_bank:
+  name: 銀行
+  user: home
+  type: BankingFacility
+home_taro:
+  name: 太郎
+  user: home
+  type: Credit
+home_hanako:
+  name: 花子
+  user: home
+  type: Credit
+home_income_from_two:
+  name: 生活費入金
+  user: home
+  type: Income
+# Others
 account_enrty_test_cache:
   name: 現金
   user: account_entry_test_user
 account_entry_test_food:
   name: 食費
   user: account_entry_test_user
+account_entry_test_cache_in_taro:
+  name: 現金
+  user: account_entry_test_user_taro
+account_entry_test_hanako_in_taro:
+  name: 花子
+  user: account_entry_test_user_taro
+account_entry_test_cache_in_hanako:
+  name: 現金
+  user: account_entry_test_user_hanako
+account_entry_test_taro_in_hanako:
+  name: 太郎
+  user: account_entry_test_user_hanako
 account_link_test_user_1:
   name: target_user
   user: account_link_test_user

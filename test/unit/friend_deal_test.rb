@@ -26,13 +26,15 @@ class FriendDealTest < Test::Unit::TestCase
       :date => Date.parse("2006/05/01")
     )
     first_deal.save!
-    first_deal = Deal.find(first_deal.id)
+    first_deal.reload
 
     first_second_entry = first_deal.entry(accounts(:first_second).id)
-    assert first_second_entry.friend_link
-    friend_link = first_second_entry.friend_link # あとでつかう
-    another_entry = first_second_entry.friend_link.another(first_second_entry.id)
-    assert_equal users(:old2).id, another_entry.user_id 
+    assert first_second_entry.linked_ex_entry_id
+#    ex_entry_id = first_second_entry.linked_ex_entry_id # あとでつかう
+    another_entry = AccountEntry.find(first_second_entry.linked_ex_entry_id)
+    assert_equal false, another_entry.deal.confirmed
+
+    assert_equal users(:old2).id, first_second_entry.linked_user_id
     assert_equal accounts(:second_first).id, another_entry.account_id
     assert 1000*(-1), another_entry.amount
     
@@ -44,12 +46,8 @@ class FriendDealTest < Test::Unit::TestCase
     assert !AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
 
     # 作り直されるのでとりなおす
-    another_entry = first_second_entry.friend_link.another(first_second_entry.id)
+    another_entry = Entry.find(first_second_entry.linked_ex_entry_id)
     assert another_entry
-    
-    friend_link = first_second_entry.friend_link # あとでつかう
-    assert friend_link
-    friend_link_id = friend_link.id
     
     another_entry = AccountEntry.find(another_entry.id)
     assert_equal 1200*(-1), another_entry.amount 
@@ -58,8 +56,6 @@ class FriendDealTest < Test::Unit::TestCase
     first_deal.destroy
     another_entry = AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
     assert !another_entry
-    assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
-    
   end
   
   def test_confirmed
@@ -73,12 +69,11 @@ class FriendDealTest < Test::Unit::TestCase
       :date => Date.parse("2006/05/02")
     )
     first_deal.save!
-    first_deal = Deal.find(first_deal.id)
+    first_deal.reload
 
     first_second_entry = first_deal.entry(accounts(:first_second).id)
-    assert first_second_entry.friend_link
-    friend_link_id = first_second_entry.friend_link.id # あとでつかう
-    another_entry = first_second_entry.friend_link.another(first_second_entry.id)
+    assert first_second_entry.linked_ex_entry_id
+    another_entry = AccountEntry.find_by_linked_ex_entry_id(first_second_entry.linked_ex_entry_id)
     assert_equal users(:old2).id, another_entry.user_id 
     assert_equal accounts(:second_first).id, another_entry.account_id
     assert 1000, another_entry.amount

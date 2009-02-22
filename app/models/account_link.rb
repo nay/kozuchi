@@ -17,6 +17,7 @@ class AccountLink < ActiveRecord::Base
 
   # AcocuntProxyまたはAccountオブジェクトを返す
   def target_account
+    raise AssociatedObjectMissingError, "no target_user for #{self.inspect}. target_user_id = #{self.target_user_id}" unless target_user
     target_user.account(self.target_ex_account_id)
   end
 

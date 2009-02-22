@@ -1,12 +1,22 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe AccountEntry do
-  fixtures :accounts, :users
+  fixtures :accounts, :users, :account_links, :friend_permissions, :friend_requests
   set_fixture_class  :accounts => Account::Base
 
   before do
     @cache = accounts(:account_enrty_test_cache)
     @food = accounts(:account_entry_test_food)
+
+    @user_hanako = users(:account_entry_test_user_hanako)
+    @user_taro = users(:account_entry_test_user_taro)
+    @hanako_in_taro = accounts(:account_entry_test_hanako_in_taro)
+    @cache_in_taro = accounts(:account_entry_test_cache_in_taro)
+    @taro_in_hanako = accounts(:account_entry_test_taro_in_hanako)
+    @cache_in_hanako = accounts(:account_entry_test_cache_in_hanako)
+
+    raise "前提エラー：@user_hanakoと@user_taroが友達ではありません" unless @user_hanako.friend?(@user_taro)
+    raise "前提エラー：@hanako_in_taroに記入したものが@taro_in_hanakoに記入される設定になっていません" unless @hanako_in_taro.linked_account == @taro_in_hanako
   end
 
   describe "attributes=" do
@@ -18,9 +28,6 @@ describe AccountEntry do
     end
     it "account_idは一括指定できる" do
       AccountEntry.new(:account_id => 5).account_id.should == 5
-    end
-    it "friend_link_idは一括指定できない" do
-      AccountEntry.new(:friend_link_id => 13).friend_link_id.should be_nil
     end
     it "dateは一括指定できない" do
       AccountEntry.new(:date => Date.today).date.should be_nil
@@ -34,7 +41,7 @@ describe AccountEntry do
     it "result_settlement_idは一括指定できない" do
       AccountEntry.new(:result_settlement_id => 10).result_settlement_id.should be_nil
     end
-
+    # TODO: linked_系
   end
 
   describe "validate" do
@@ -102,6 +109,33 @@ describe AccountEntry do
       cache_entry.mate_account_name.should == @food.name
     end
   end
+
+  describe "unlink" do
+    before do
+#      @deal = Deal.new(:summary => "test", :date => Date.today)
+#      @deal.user_id = users(:account_entry_test_user_taro)
+#      @deal.account_entries.build(
+#        :account_id => @cache_in_taro.id,
+#        :amount => -200
+#        )
+#      @deal.account_entries.build(
+#        :account_id => @hanako_in_taro.id,
+#        :amount => 200
+#        )
+#      @entry.save!
+
+      @entry = AccountEntry.new(:account_id => @hanako_in_taro.id, :amount => -200)
+      @entry.daily_seq = 1
+      @entry.date = Date.today
+      @entry.linked_ex_entry_id = 18 # 適当
+    end
+    it "linked_ex_entry_idを指定した新規登録なら連携記入がされないこと" do
+      @entry.save!
+      AccountEntry.find_by_linked_ex_entry_id(@entry.id).should be_nil
+    end
+    
+  end
+
 
   # ----- Utilities -----
   def new_account_entry(attributes = {}, manual_attributes = {})

@@ -1,0 +1,55 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+# taro's
+taro_to_hanako:
+  user_id: <%= Fixtures.identify(:taro) %>
+  account_id: <%= Fixtures.identify(:taro_hanako) %>
+  target_user_id: <%= Fixtures.identify(:hanako) %>
+  target_ex_account_id: <%= Fixtures.identify(:hanako_taro) %>
+taro_to_home:
+  user_id: <%= Fixtures.identify(:taro) %>
+  account_id: <%= Fixtures.identify(:taro_home) %>
+  target_user_id: <%= Fixtures.identify(:home) %>
+  target_ex_account_id: <%= Fixtures.identify(:home_taro) %>
+taro_to_home_cost:
+  user_id: <%= Fixtures.identify(:taro) %>
+  account_id: <%= Fixtures.identify(:taro_home_cost) %>
+  target_user_id: <%= Fixtures.identify(:home) %>
+  target_ex_account_id: <%= Fixtures.identify(:home_income_from_two) %>
+# hanako's
+hanako_to_taro:
+  user_id: <%= Fixtures.identify(:hanako) %>
+  account_id: <%= Fixtures.identify(:hanako_taro) %>
+  target_user_id: <%= Fixtures.identify(:taro) %>
+  target_ex_account_id: <%= Fixtures.identify(:taro_hanako) %>
+hanako_to_home:
+  user_id: <%= Fixtures.identify(:hanako) %>
+  account_id: <%= Fixtures.identify(:hanako_home) %>
+  target_user_id: <%= Fixtures.identify(:home) %>
+  target_ex_account_id: <%= Fixtures.identify(:home_hanako) %>
+hanako_to_home_cost:
+  user_id: <%= Fixtures.identify(:hanako) %>
+  account_id: <%= Fixtures.identify(:hanako_home_cost) %>
+  target_user_id: <%= Fixtures.identify(:home) %>
+  target_ex_account_id: <%= Fixtures.identify(:home_income_from_two) %>
+# home's
+home_to_taro:
+  user_id: <%= Fixtures.identify(:home) %>
+  account_id: <%= Fixtures.identify(:home_taro) %>
+  target_user_id: <%= Fixtures.identify(:taro) %>
+  target_ex_account_id: <%= Fixtures.identify(:taro_home) %>
+home_to_hanako:
+  user_id: <%= Fixtures.identify(:home) %>
+  account_id: <%= Fixtures.identify(:home_hanako) %>
+  target_user_id: <%= Fixtures.identify(:hanako) %>
+  target_ex_account_id: <%= Fixtures.identify(:hanako_home) %>
+# Other's
+account_entry_test_taro_to_hanako:
+  user_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
+  account_id: <%= Fixtures.identify(:account_entry_test_hanako_in_taro) %>
+  target_user_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
+  target_ex_account_id: <%= Fixtures.identify(:account_entry_test_taro_in_hanako) %>
+account_entry_test_hanako_to_taro:
+  user_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
+  account_id: <%= Fixtures.identify(:account_entry_test_taro_in_hanako) %>
+  target_user_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
+  target_ex_account_id: <%= Fixtures.identify(:account_entry_test_hanako_in_taro) %>
