@@ -9,8 +9,10 @@ class SessionsController < ApplicationController
   end
 
   def create
-    self.current_user = User.authenticate(params[:login], params[:password])
-    if logged_in?
+    if params[:submit] != "簡単ログイン"
+      self.current_user = User.authenticate(params[:login], params[:password])
+    end
+    if logged_in? # utnを使った簡単ログインの場合、上記をスキップしてここで自動ログインされる
       if params[:remember_me] == "1"
         current_user.remember_me unless current_user.remember_token?
         cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }

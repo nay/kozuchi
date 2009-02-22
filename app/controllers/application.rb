@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   transit_sid
   include AuthenticatedSystem
   init_gettext "kozuchi"
+  before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
   helper :all
   
@@ -22,6 +23,10 @@ class ApplicationController < ActionController::Base
   end
   
   private
+
+  def set_content_type_for_mobile
+    headers["Content-Type"] = "text/html; chartset=Shift_JIS" if request.mobile?
+  end
   
   def IE6?
     request.user_agent =~ /MSIE 6.0/ && !(request.user_agent =~ /Opera/)

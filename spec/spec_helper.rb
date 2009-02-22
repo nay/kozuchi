@@ -45,3 +45,7 @@ Spec::Runner.configure do |config|
   # 
   # For more information take a look at Spec::Example::Configuration and Spec::Runner
 end
+
+def to_sjis(str)
+  NKF.nkf('-m0 -x -Ws', str)
+end

@@ -12,8 +12,13 @@
 	   <p style="text-align:center; font-size: 140%;"><%= link_to 'ホームへ',  :controller => 'home' %></p>
     </div>
   <% else -%>
-    <%= focus_on('login') %>
     <div id="login_form" class="box">
+      <% if request.mobile.docomo? %>
+        <div>
+          <%= docomo_utn_button_to "簡単ログイン", login_post_path, :name => "submit" %>
+        </div>
+        <br />
+      <% end %>
       <% form_tag login_post_path do -%>
         <div><label for="login"><%= _('Login') %></label>
         <%= text_field_tag 'login', flash[:login] %></div>
@@ -23,12 +28,6 @@
          <div><%= submit_tag _('Log in') %></div>
       <% end -%>
     </div>
-    <% if request.mobile.docomo? %>
-      <div style="margin-top: 1em;">
-        設定済の方は
-        <%= docomo_utn_button_to "簡単ログイン", login_post_path %>
-      </div>
-    <% end %>
   <% end -%>
 
 </div>
