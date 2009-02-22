@@ -7,7 +7,7 @@ class MobilesController < ApplicationController
     if request.mobile.ident.blank?
       flash[:notice] = "ご利用の端末では簡単ログインを設定できません。"
     else
-      current_user.update_mobile_identity!(request.mobile.ident)
+      current_user.update_mobile_identity!(request.mobile.ident, request.user_agent)
       flash[:notice] = "簡単ログインを設定しました。"
     end
     redirect_to home_path

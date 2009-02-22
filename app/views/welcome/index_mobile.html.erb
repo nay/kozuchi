@@ -20,7 +20,7 @@
          <div><label for="password"><%= _('Password') %></label>
          <%= password_field_tag 'password' %></div>
          <div class="error"><%= flash[:error] %></div>
-         <div><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
+         <div><%= submit_tag _('Log in') %></div>
       <% end -%>
     </div>
     <% if request.mobile.docomo? %>
