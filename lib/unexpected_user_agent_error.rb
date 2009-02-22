@@ -1,0 +1,2 @@
+class UnexpectedUserAgentError < StandardError
+end

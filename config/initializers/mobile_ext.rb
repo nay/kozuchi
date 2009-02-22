@@ -5,10 +5,8 @@ class Jpmobile::Mobile::AbstractMobile
 end
 
 module Jpmobile::Helpers
-    def docomo_utn_button_to(*args)
-      result = button_to(*args)
-      result.sub(/>/, " utn>")
-    end
+  def docomo_utn_button_to(*args)
+    result = button_to(*args)
+    result.sub(/>/, " utn>")
+  end
 end
-
-#ActionView::Base.class_eval { include Jpmobile::Helpers::Extension }

@@ -289,4 +289,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_mobile
+    raise UnexpectedUserAgentError unless request.mobile?
+  end
 end

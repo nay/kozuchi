@@ -1,7 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
 
-  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
-  map.connect "/mobile", :controller => "mobiles", :action => "destroy", :conditions => {:method => :delete}
+  map.resource :mobile, :member => {"confirm_destroy" => :get}
+#  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
+#  map.confirm_destroy_mobile "/mobile/confirm_destroy", :controller => "mobiles", :action => "confirm_destroy", :conditions => {:method => :get}
+#  map.connect "/mobile", :controller => "mobiles", :action => "destroy", :conditions => {:method => :delete}
   
   map.home "/home", :controller => "home", :action => "index"
 

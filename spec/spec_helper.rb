@@ -49,3 +49,5 @@ end
 def to_sjis(str)
   NKF.nkf('-m0 -x -Ws', str)
 end
+
+include AuthenticatedTestHelper

@@ -48,4 +48,15 @@ describe User::Mobile do
       lambda {@no_mobile_ident_user.update_mobile_identity!("abcdefg", nil)}.should raise_error(RuntimeError)
     end
   end
+
+  describe "clear_mobile_identity!" do
+    before do
+      @user = users(:docomo1_user)
+      raise "前提エラー：mobile_identityがない" if @user.mobile_identity.blank?
+    end
+    it "identityがnilになること" do
+      @user.clear_mobile_identity!
+      @user.mobile_identity.should be_nil
+    end
+  end
 end

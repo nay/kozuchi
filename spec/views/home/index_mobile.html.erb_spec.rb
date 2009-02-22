@@ -1,10 +1,26 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe "/home/index_mobile" do
-
-  describe "docomo" do
+  fixtures :users
+  
+  describe "docomo FOMA" do
     before(:each) do
-      request.user_agent = "DoCoMo/2.0 ISIM0707(c100;TB;W24H16"
+      login_as(:docomo1_user) # TODO
+      set_docomo_foma_to request
+      render '/home/index_mobile'
+      raise "前提エラー：identがとれない" if request.mobile.ident.blank?
+    end
+
+    it "formにutnがついていないこと" do
+      response.should_not include_text(" utn>")
+    end
+  end
+
+  describe "docomo mova" do
+    before(:each) do
+      login_as(:docomo1_user)
+      set_docomo_mova_to request
+      assigns[:mobile_login_available] = true
       render '/home/index_mobile'
     end
 
@@ -13,8 +29,9 @@ describe "/home/index_mobile" do
     end
   end
 
-  describe "not docomo" do
+  describe "AU" do
     before(:each) do
+      login_as(:docomo1_user) # TODO
       request.user_agent = "UP.Browser/3.04-TS11 UP.Link/3.4.4"
       render '/home/index_mobile'
     end

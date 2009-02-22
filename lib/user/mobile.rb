@@ -2,10 +2,7 @@ module User::Mobile
 
   module ClassMethods
     def authenticate_with_mobile_identity(ident, mobile_salt)
-      p encrypt(ident, mobile_salt)
-      user = find_by_mobile_identity(encrypt(ident, mobile_salt))
-      p "found user = #{user.inspect}"
-      user
+      find_by_mobile_identity(encrypt(ident, mobile_salt))
     end
   end
 
@@ -19,4 +16,8 @@ module User::Mobile
     self.save!
   end
 
+  def clear_mobile_identity!
+    self.mobile_identity = nil
+    self.save!
+  end
 end

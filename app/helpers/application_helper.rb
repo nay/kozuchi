@@ -215,5 +215,4 @@ EOS
     content += "</div>"
   end
 
-
 end
