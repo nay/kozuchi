@@ -10,6 +10,8 @@
       <h1 class="mobile_title"><%= h @user.login %>さんの家計簿<br />HOME</h1>
       <%= yield %>
     </div>
-  <% end -%>
+    
+    <div><%= link_to "ログアウト", logout_path %></div>
 
+  <% end -%>
 <% end -%>

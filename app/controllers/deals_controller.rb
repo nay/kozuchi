@@ -7,6 +7,39 @@ class DealsController < ApplicationController
 
   # ----- 入力画面表示系 -----------------------------------------------
 
+  # TODO: 携帯対応でとりあえず入れた。後で調整
+  # dealとbalanceを区別したいのでこの命名
+  def new_deal
+    @deal = Deal.new
+    @accounts_minus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts.types_in(:asset, :income, :expense), true
+     )
+    @accounts_plus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts.types_in(:asset, :expense, :income), false
+     )
+
+  end
+
+  # TODO: モバイル専用
+  def create_deal
+    @deal = Deal.new(params[:deal])
+    @deal.user_id = current_user.id
+    @deal.date = Date.today
+    if @deal.save
+      flash[:notice] = "登録しました。"
+      redirect_to :action => "new_deal"
+    else
+    @accounts_minus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts.types_in(:asset, :income, :expense), true
+     )
+    @accounts_plus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts.types_in(:asset, :expense, :income), false
+     )
+      flash[:notice] = "登録に失敗しました。"
+      render :action => "new_deal"
+    end
+  end
+
   # 指定された行にジャンプするアクション
   def jump
     redirect_to_index(:updated_deal_id => params[:id])

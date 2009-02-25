@@ -1,7 +1,12 @@
 <% unless flash[:notice].blank? %>
   <%= flash[:notice] %>
 <% end %>
-<% if @mobile_login_available %>
+
+<div><%= link_to "記入する", :controller => "deals", :action => "new_deal" %></div>
+
+<% if !current_user.mobile_identity.blank? %>
+  <%= button_to "簡単ログイン設定の削除", confirm_destroy_mobile_path, :method => :get %>
+<% elsif @mobile_login_available %>
   <div>
     <% if request.mobile.docomo? && request.mobile.ident.blank? %>
       <%= docomo_utn_button_to "簡単ログインを設定", hash_for_mobile_path, :method => :put %>
@@ -9,7 +14,4 @@
       <%= button_to "簡単ログインを設定", mobile_path, :method => :put %><br />
     <% end %>
   </div>
-<% end %>
-<% unless current_user.mobile_identity.blank? %>
-  <%= button_to "簡単ログイン設定の削除", confirm_destroy_mobile_path, :method => :get %>
 <% end %>
