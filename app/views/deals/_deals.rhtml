@@ -40,7 +40,7 @@
                   <%= deal.balance ? "残高確認" : h(deal.summary) %>
                 </td>
               <% end %>
-              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.friend_link_id || account_entry.settlement || account_entry.result_settlement %>
+              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.linked_account_entry || account_entry.settlement || account_entry.result_settlement %>
                 <td class="account">
                   <%= h account_entry.account.name %>
                 </td>
