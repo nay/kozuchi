@@ -9,7 +9,11 @@ class AddLinkedExAccountIdToAccountEntries < ActiveRecord::Migration
       for account_entry_id, deal_id, user_id in execute "select id, deal_id, user_id from account_entries where friend_link_id = #{deal_link_id}"
         entries << {:entry_id => account_entry_id, :deal_id => deal_id, :user_id => user_id}
       end
-      raise "There is invalid data for deal_link #{deal_link_id}. entries size is #{entries.size}" unless entries.size == 2
+      if entries.size == 0
+        p "There is invalid data for deal_link #{deal_link_id}. entries size is 0. this link will be Ignored."
+      elsif entries.size != 2
+        raise "There is invalid data for deal_link #{deal_link_id}. entries size is #{entries.size}"
+      end
       execute "update account_entries set linked_ex_entry_id = #{entries.first[:entry_id]}, linked_ex_deal_id = #{entries.first[:deal_id]}, linked_user_id = #{entries.first[:user_id]} where id = #{entries.last[:entry_id]}"
       execute "update account_entries set linked_ex_entry_id = #{entries.last[:entry_id]}, linked_ex_deal_id = #{entries.last[:deal_id]}, linked_user_id = #{entries.last[:user_id]} where id = #{entries.first[:entry_id]}"
     end
