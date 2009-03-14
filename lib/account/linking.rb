@@ -81,7 +81,7 @@ module Account::Linking
   end
 
   def unlink_to(linked_ex_entry_id, linked_user_id)
-    my_entry = account_entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
+    my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
     my_entry.unlink if my_entry
   end
 

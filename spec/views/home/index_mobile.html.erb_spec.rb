@@ -1,8 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe "/home/index_mobile" do
-  fixtures :users
-  
+  fixtures :users, :accounts
+  set_fixture_class  :accounts => Account::Base
+
   describe "docomo FOMA" do
     before(:each) do
       login_as(:docomo1_user) # TODO
@@ -18,7 +19,7 @@ describe "/home/index_mobile" do
 
   describe "docomo mova" do
     before(:each) do
-      login_as(:docomo1_user)
+      login_as(:docomo2_user)
       set_docomo_mova_to request
       assigns[:mobile_login_available] = true
       render '/home/index_mobile'
@@ -31,7 +32,7 @@ describe "/home/index_mobile" do
 
   describe "AU" do
     before(:each) do
-      login_as(:docomo1_user) # TODO
+      login_as(:au1_user)
       request.user_agent = "UP.Browser/3.04-TS11 UP.Link/3.4.4"
       render '/home/index_mobile'
     end

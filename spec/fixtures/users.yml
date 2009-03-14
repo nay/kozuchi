@@ -36,6 +36,15 @@ docomo1_user:
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   email: docomo1@everyleaf.com
   mobile_identity: ff74944a05ac1dcb18392017c6082defcce62df6 # 00000333339 / DoCoMo/1.0/P506iC/ser00000333339
+docomo2_user:
+  login: docomo2_user
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  email: docomo2@everyleaf.com
+au1_user:
+  login: au1_user
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  email: au1@everyleaf.com
+
 # one:
 #   column: value
 #

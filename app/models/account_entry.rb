@@ -34,7 +34,7 @@ class AccountEntry < ActiveRecord::Base
   # リンクされたaccount_entry を返す
   # TODO: 廃止する
   def linked_account_entry
-    linked_ex_entry_id ? AccountEntry.find_by_linked_ex_entry_id(linked_ex_entry_id) : nil
+    linked_ex_entry_id ? AccountEntry.find_by_id(linked_ex_entry_id) : nil
   end
 
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
@@ -43,9 +43,7 @@ class AccountEntry < ActiveRecord::Base
     if !deal.confirmed
       deal.destroy
     else
-      self.linked_ex_entry_id = nil
-      self.linked_user_id = nil
-      self.save!(false)
+      AccountEntry.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
     end
   end
 

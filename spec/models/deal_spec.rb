@@ -91,6 +91,20 @@ describe Deal do
        it "片方のEntryにリンクが作られること" do
          @linked_entry.linked_ex_entry_id.should_not be_nil
        end
+       it "連携したDealの片方を消したら確認してない相手のdealも消される" do
+         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @deal.destroy
+         Deal.find_by_id(@hanako_deal.id).should be_nil
+       end
+       it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
+         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @hanako_deal.confirm
+         @deal.destroy
+         @hanako_deal.reload
+         @hanako_unlinked_entry = @hanako_deal.account_entries.detect{|e| e.account_id == @hanako_taro.id}
+         @hanako_unlinked_entry.reload
+         @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
+       end
      end
 
 

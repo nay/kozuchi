@@ -94,7 +94,18 @@ deal_test_cache:
 deal_test_bank:
   name: 銀行
   user: deal_test_user
-
+docomo1_user_cache:
+  name: 現金
+  type: Cache
+  user: docomo1_user
+docomo2_user_cache:
+  name: 現金
+  type: Cache
+  user: docomo2_user
+au1_user_cache:
+  name: 現金
+  type: Cache
+  user: au1_user
 
 # one:
 #   column: value
