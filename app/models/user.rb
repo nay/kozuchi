@@ -108,7 +108,7 @@ class User < ActiveRecord::Base
             # 変更可能なものでなければ例外を発生する
             raise Account::IllegalClassChangeException.new(old_account_name, new_asset_name) unless account.changable_asset_types.include? target_type
             # object ベースではできないので sql ベースで
-            Account::Base.update_all("type = '#{Account::Asset.asset_name_to_class(new_asset_name)}'", "id = #{account.id}") 
+            Account::Base.update_all("type = '#{Account::Asset.asset_name_to_class(new_asset_name)}', asset_kind = '#{Account::Asset.asset_name_to_class(new_asset_name).to_s.underscore.split("/").last}'", "id = #{account.id}")
           end
         end
       end

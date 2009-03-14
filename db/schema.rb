@@ -64,11 +64,11 @@ ActiveRecord::Schema.define(:version => 20090222024854) do
   create_table "accounts", :force => true do |t|
     t.integer "user_id",            :limit => 11, :null => false
     t.string  "name",               :limit => 32, :null => false
-    t.integer "account_type_code",  :limit => 11
-    t.integer "asset_type_code",    :limit => 11
     t.integer "sort_key",           :limit => 11
     t.integer "partner_account_id", :limit => 11
     t.text    "type"
+    t.integer "account_type_code",  :limit => 11
+    t.integer "asset_type_code",    :limit => 11
   end
 
   add_index "accounts", ["user_id"], :name => "accounts_user_id_index"

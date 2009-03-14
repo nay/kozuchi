@@ -4,6 +4,8 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
+  before_create :set_asset_kind # TODO: 臨時措置
+
   # TODO: クラスベースがちょっと大変過ぎる＆別アプリケーション化にとって厳しいので揺り戻し
   def base_type
     :asset
@@ -163,7 +165,7 @@ class Account::Asset < Account::Base
   # asset_type が債権でもクレジットカードでもないのに、精算ルールを持っていてはいけない。
   def validates_rule_applicable
     unless self.class.rule_applicable?
-      errors.add(:asset_type_code, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
+      errors.add(:asset_kind, "精算ルールが適用されています。") unless AccountRule.find_binded_with(id).empty?
     end
   end
   # 精算口座として使われていたら例外を出す。
@@ -171,6 +173,12 @@ class Account::Asset < Account::Base
   def assert_rule_not_associated(force = true)
     # 精算口座として使われていたら削除できない
     raise Account::RuleAssociatedAccountException.new(name) unless associated_account_rules(force).empty?
+  end
+
+  private
+  def set_asset_kind
+    # TODO: 実装に応じて不要になる
+    self.asset_kind = self.class.to_s.underscore.split("/").last
   end
 
 end
