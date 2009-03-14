@@ -73,9 +73,11 @@ ActionController::Routing::Routes.draw do |map|
     :requirements => {:controller => /deals|profit_and_loss|assets|balance_sheet/,
                       :year => /[0-9]*/, :month => /[0-9]*/}
 
+  map.daily_deals 'deals/:year/:month/:day', :action => 'daily', :controller => "deals"
+
   # daily summary
   map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
-  
+  map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
 
   
   # Install the default route as the lowest priority.

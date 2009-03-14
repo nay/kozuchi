@@ -90,3 +90,6 @@ table.simple th, table.simple td {
 table.simple .firstSummary {
   border-top: 1px solid #888888;
 }
+table.simple.book td {
+  border: 1px solid #888888;
+}

@@ -5,6 +5,22 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => :destroy
 
+  # 貸し方勘定名を返す
+  def debtor_account_name
+    # TODO: 実装はあとで変えたい
+    account_entries.detect{|e| e.amount >= 0}.account.name
+  end
+  def debtor_amount
+    # TODO: 実装はあとで変えたい
+    account_entries.detect{|e| e.amount >= 0}.amount
+  end
+  # 借り方勘定名を返す
+  def creditor_account_name
+    # TODO: 実装はあとで変えたい
+    account_entries.detect{|e| e.amount < 0}.account.name
+  end
+
+
   after_save :create_relations, :create_children
 
   def plus_account_id

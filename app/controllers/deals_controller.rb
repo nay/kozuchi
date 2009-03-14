@@ -1,24 +1,17 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
+  before_filter :require_mobile, :only => :destroy
   before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date
+  before_filter :find_date, :only => [:expenses, :daily]
+  before_filter :find_deal, :only => :destroy
   include ApplicationHelper
 
   # ----- 入力画面表示系 -----------------------------------------------
 
   def expenses
-    # 日がとれなかったら今のところ例外
-    raise InvalidParameterError unless params[:year] && params[:month] && params[:day]
-    begin
-      @date = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
-    rescue => e
-      raise InvalidParameterError, "Could not create date. The original error is #{e.to_s}"
-    end
-
-    # 支出サマリー
     @expenses = current_user.accounts.flows(@date, @date + 1, ["accounts.type = ?", "Expense"]) # TODO: Account整理
-
   end
 
   # TODO: 携帯対応でとりあえず入れた。後で調整
@@ -83,6 +76,18 @@ class DealsController < ApplicationController
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
   end
 
+  # １日の記入履歴の表示（携帯向けだが制限はしない、本当はidnexで兼ねたい）
+  def daily
+    @deals = current_user.deals.find(:all, :conditions => ["created_at >= ? and created_at < ?", @date.to_time, (@date + 1).to_time], :order => "created_at desc", :include => {:account_entries => :account})
+  end
+
+  # 記入の削除（携帯向け。一般をここに統合するまで制限する）
+  def destroy
+    @deal.destroy
+    flash[:notice] = "削除しました。"
+    redirect_to daily_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
+  end
+
   # キーワードで検索したときに一覧を出す
   def search
     raise InvalidParameterError if params[:keyword].blank?
@@ -116,6 +121,24 @@ class DealsController < ApplicationController
   end
 
   private
+
+  def find_deal
+    @deal = current_user.deals.find(params[:id])
+  end
+
+  def find_date
+    raise InvalidParameterError unless @date = extract_date(params)
+  end
+
+  def extract_date(params)
+    return nil unless params[:year] && params[:month] && params[:day]
+    begin
+      return Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
+    rescue => e
+      return nil
+    end
+  end
+
   
   def redirect_to_index(options = {})
     if options[:updated_deal_id]
