@@ -1,6 +1,8 @@
 class AccountDealsController < ApplicationController 
   layout 'main'
   before_filter :check_account
+  before_filter :find_account, :only => [:balance]
+  before_filter :require_mobile, :only => [:balance]
   
   use_calendar :account_deals_path
   
@@ -51,5 +53,15 @@ class AccountDealsController < ApplicationController
     @balance_end = @account_entries.size > 0 ? (@account_entries.last.balance || @account_entries.last.balance_estimated) : @balance_start 
     @flow_end = flow_sum
   end
-  
+
+  # 携帯専用：残高表示
+  def balance
+    
+  end
+
+  private
+  def find_account
+    @account = current_user.accounts.find(params[:account_id])
+  end
+
 end

@@ -3,6 +3,7 @@
 <% end %>
 
 <div><%= link_to "記入する", :controller => "deals", :action => "new_deal" %></div>
+<div><%= link_to "残高確認", account_balance_path(:account_id => current_user.default_asset.id) %></div>
 
 <% if !current_user.mobile_identity.blank? %>
   <%= button_to "簡単ログイン設定の削除", confirm_destroy_mobile_path, :method => :get %>

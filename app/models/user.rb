@@ -121,6 +121,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  # TODO: 関連に移行
+  def assets
+    accounts.types_in(:asset)
+  end
+
   # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
   def account(account_id)
      accounts.find(account_id)

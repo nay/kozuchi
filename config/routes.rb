@@ -66,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # account_deals
   map.account_deals 'accounts/:account_id/deals/:year/:month', :action => 'monthly', :controller => 'account_deals', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
+  map.account_balance 'accounts/:account_id/balance', :action => "balance", :controller => "account_deals"
 
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',

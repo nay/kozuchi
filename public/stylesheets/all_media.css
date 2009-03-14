@@ -71,3 +71,9 @@ table.listing .timestamp {
   font-weight: bold;
   font-size: 110%;
 }
+.amount {
+  text-align: right;
+}
+.resultAmount {
+  font-size: 150%;
+}
