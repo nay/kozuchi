@@ -72,6 +72,11 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:year/:month', :action => 'index',
     :requirements => {:controller => /deals|profit_and_loss|assets|balance_sheet/,
                       :year => /[0-9]*/, :month => /[0-9]*/}
+
+  # daily summary
+  map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
+  
+
   
   # Install the default route as the lowest priority.
   # TODO: except sessions, 

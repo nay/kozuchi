@@ -3,6 +3,7 @@
 <% end %>
 
 <div><%= link_to "記入する", :controller => "deals", :action => "new_deal" %></div>
+<div><%= today = Date.today; link_to "今日の支出", daily_expenses_path(:year => today.year, :month => today.month, :day => today.day) %></div>
 <div><%= link_to "残高確認", account_balance_path(:account_id => current_user.default_asset.id) %></div>
 
 <% if !current_user.mobile_identity.blank? %>

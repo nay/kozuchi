@@ -143,6 +143,7 @@ class User < ActiveRecord::Base
   include User::AccountLinking
   
   has_many :deals, :class_name => 'BaseDeal', :extend => User::DealsExtension
+  has_many :account_entries
   
   def default_asset
     accounts.types_in(:asset).first

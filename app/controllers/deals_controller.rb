@@ -7,6 +7,20 @@ class DealsController < ApplicationController
 
   # ----- 入力画面表示系 -----------------------------------------------
 
+  def expenses
+    # 日がとれなかったら今のところ例外
+    raise InvalidParameterError unless params[:year] && params[:month] && params[:day]
+    begin
+      @date = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
+    rescue => e
+      raise InvalidParameterError, "Could not create date. The original error is #{e.to_s}"
+    end
+
+    # 支出サマリー
+    @expenses = current_user.accounts.flows(@date, @date + 1, ["accounts.type = ?", "Expense"]) # TODO: Account整理
+
+  end
+
   # TODO: 携帯対応でとりあえず入れた。後で調整
   # dealとbalanceを区別したいのでこの命名
   def new_deal

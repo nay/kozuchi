@@ -77,3 +77,16 @@ table.listing .timestamp {
 .resultAmount {
   font-size: 150%;
 }
+table.simple {
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+table.simple th {
+  text-align: left;
+}
+table.simple th, table.simple td {
+  padding: 2px 0;
+}
+table.simple .firstSummary {
+  border-top: 1px solid #888888;
+}
