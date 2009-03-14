@@ -34,6 +34,7 @@ class DealsController < ApplicationController
     @deal.date = Date.today
     if @deal.save
       flash[:notice] = "登録しました。"
+      flash[:saved] = true
       redirect_to :action => "new_deal"
     else
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
