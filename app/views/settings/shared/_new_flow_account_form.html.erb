@@ -1,10 +1,13 @@
+<%
+  # 前提 ： @accountがあること、account_type_name、path が locals で渡されること
+%>
 <div class="form_box">
-  <% form_for :account, @account, settings_incomes_path do |f| %>
-    <div class="flatField"><%= f.label :name, term(@account_type) + "名" %></div>
+  <% form_for :account, @account, path do |f| %>
+    <div class="flatField"><%= f.label :name, account_type_name + "名" %></div>
     <div class="flatField"><%= f.text_field :name, :size => 16, :class => "text" %></div>
     <div class="flatField"><%= f.label :sort_key, "並び順" %></div>
     <div class="flatField"><%= f.text_field :sort_key, :size => 2, :class => "amount" %></div>
-    <div class="flatField"><%= f.submit "新しい#{term @account_type}を追加", :class => "button" %></div>
+    <div class="flatField"><%= f.submit "新しい#{account_type_name}を追加", :class => "button" %></div>
     <div class="clearFlat"></div>
     <p class="guide">※並び順が小さいものほど、各機能で上に表示されます。</p>
   <% end %>

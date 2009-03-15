@@ -1,6 +1,5 @@
 class Settings::IncomesController < Settings::AccountsController
 
-  before_filter :set_account_type
   before_filter :find_account, :only => [:destroy]
 
   # 一覧表示する。
@@ -13,7 +12,7 @@ class Settings::IncomesController < Settings::AccountsController
   def create
     @account = current_user.incomes.build(params[:account])
     if @account.save
-      flash[:notice]="#{@account.class.type_name}「#{ERB::Util.h @account.name}」を登録しました。"
+      flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_incomes_path
     else
       @accounts = current_user.incomes(true)
@@ -31,10 +30,10 @@ class Settings::IncomesController < Settings::AccountsController
       @accounts << account
     end
     if all_saved
-      flash[:notice] = "すべての#{term @account_type}を変更しました。"
+      flash[:notice] = "すべての#{Account::Income.human_name}を変更しました。"
       redirect_to settings_incomes_path
     else
-      flash[:notice] = "変更できなかった#{term @account_type}があります。"
+      flash.now[:notice] = "変更できなかった#{Account::Income.human_name}があります。"
       @accounts.sort!{|a, b| a.sort_key.to_i <=> b.sort_key.to_i}
       @account = Account::Income.new
       render :action => "index"
@@ -44,7 +43,7 @@ class Settings::IncomesController < Settings::AccountsController
   def destroy
     begin
       @account.destroy
-      flash[:notice]="#{term @account_type}「#{ERB::Util.h @account.name}」を削除しました。"
+      flash[:notice]="「#{ERB::Util.h @account.name}」を削除しました。"
     rescue Account::UsedAccountException => err
       flash[:errors]= [err.message]
     end
@@ -52,9 +51,6 @@ class Settings::IncomesController < Settings::AccountsController
   end
 
   private
-  def set_account_type
-    @account_type = :income
- end
   def find_account
     @account = current_user.incomes.find(params[:id])
   end

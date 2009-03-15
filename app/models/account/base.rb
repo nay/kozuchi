@@ -7,6 +7,12 @@ class Account::Base < ActiveRecord::Base
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
   
+  # DBを検索してDBに格納された名前を得る
+  # オブジェクトに格納されたnameが格納された名前と異なる場合があるので用意
+  def stored_name
+    raise "not stored" if new_record?
+    self.class.find(self.id).name
+  end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群
   # すぐ下の派生クラスの配列を返す。Base は口座種別、Assetは資産種別となる

@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
+  has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る

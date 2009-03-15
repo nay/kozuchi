@@ -4,6 +4,8 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :settings do |settings|
     settings.resources :incomes
     settings.connect "incomes", :controller => "incomes", :action => "update_all", :conditions => {:method => :put}
+    settings.resources :expenses
+    settings.connect "expenses", :controller => "expenses", :action => "update_all", :conditions => {:method => :put}
   end
 
 

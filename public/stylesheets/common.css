@@ -195,3 +195,12 @@ h1.mobile_title {
 .clearFlat {
     clear:left;
 }
+/* operation link line */
+div.operation {
+    text-align: right;
+}
+div.operation a {
+    text-decoration: none;
+    color: #886644;
+    font-size: 90%;
+}
