@@ -144,11 +144,6 @@ class User < ActiveRecord::Base
     BaseDeal.exists?(self.id, date)
   end
   
-  # このユーザーが使える asset_type (Class) リストを返す
-  # deprecated
-  def available_asset_types
-    Account::Asset.types.find_all{|type| !type.business_only? || preferences.business_use? }
-  end
 
   def available_asset_kinds
     if preferences.business_use? && defined?(EXTENSION_ASSET_KINDS) && EXTENSION_ASSET_KINDS[:business]

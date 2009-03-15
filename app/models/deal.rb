@@ -215,30 +215,6 @@ class Deal < BaseDeal
 
   end
   
-#  def create_children
-#    for i in 0..1
-#      next unless account_entries[i].account.kind_of? Account::Asset
-#      account_rule = account_entries[i].account.account_rule(true)
-#      # 精算ルールに従って従属行を用意する
-#      if account_rule
-#        # どこからからルール適用口座への異動額
-#        new_amount = account_entries[i].amount
-#        # 適用口座がクレジットカードなら、出金元となっているときだけルールを適用する。債権なら入金先となっているときだけ適用する。
-#        if (account_rule.account.kind_of?(Account::CreditCard) && new_amount < 0) ||(account_rule.account.kind_of?(Account::Credit) && new_amount > 0)
-#          children.create(
-#            :minus_account_id => account_rule.account_id,
-#            :plus_account_id => account_rule.associated_account_id,
-#            :amount => new_amount,
-#            :user_id => self.user_id,
-#            :date => account_rule.payment_date(self.date),
-##            :date => self.date  >> 1,
-#            :summary => "",
-#            :confirmed => false)
-#        end
-#      end
-#    end
-#  end
-  
   def refreshed?
     return true if new_record?
     @refreshed ||= false

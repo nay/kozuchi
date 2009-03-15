@@ -100,27 +100,7 @@ class Account::BaseTest < ActiveSupport::TestCase
     assert_equal Account::Base::UsedAccountException.new_message('口座', '貯金箱'), a.delete_errors[0]
   end
   
-  # 精算先口座に指定されていたら消せない
-  def test_deletable_rule_associated
-    a = accounts(:first_bank)
-    assert_equal false, a.deletable?
-    assert_equal 1, a.delete_errors.size
-    assert_equal Account::RuleAssociatedAccountException.new_message('銀行'), a.delete_errors[0]
-  end
 
-  # 精算先口座に指定されていたら消せない。データもある場合は２つエラーが用意できる。
-  def test_deletable_rule_associated
-    d = Deal.new(:user_id => users(:old).id, :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:first_bank).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
-    d.save!
-    a = accounts(:first_bank)
-    assert_equal false, a.associated_account_rules.empty?
-    assert_equal false, a.deletable?
-    assert_equal 2, a.delete_errors.size
-    assert_equal Account::Base::UsedAccountException.new_message('口座', '銀行'), a.delete_errors[0]
-    assert_equal Account::RuleAssociatedAccountException.new_message('銀行'), a.delete_errors[1]
-  end
-
-  
   # ----- 削除のテスト
  
   # 使われていないものが消せるテスト
@@ -138,26 +118,6 @@ class Account::BaseTest < ActiveSupport::TestCase
     assert_nothing_raised {Account::Base.find(a.id)}
   end
 
-  # [1vs1精算]
-  #
-  # 精算先口座に指定されていたら消せないことのテスト
-  def test_delete_rule_associated
-    a = accounts(:first_bank)
-    assert_raise(Account::RuleAssociatedAccountException) {a.destroy}
-    assert_nothing_raised {Account::Base.find(a.id)}
-  end
-  
-  # [1vs1精算]
-  # 
-  # 精算対象口座に指定されていたらルールも一緒に消されることのテスト
-  def test_delete_with_rule
-    r = account_rules(:first_account_rule)
-    assert_not_nil r
-    a = accounts(:first_credit_card)
-    a.destroy
-    assert_raise(ActiveRecord::RecordNotFound) {AccountRule.find(r.id)}
-  end
-  
  # 更新のテスト
 
  # 勘定名を変えられることのテスト

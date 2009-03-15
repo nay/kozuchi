@@ -12,12 +12,6 @@
     <%= select 'account[]', :asset_kind, @asset_kinds_options_container, :object => account %>
   </td>
   <td>
-    <% if account.account_rule %>
-      <span class="system">精算ルール</span>
-    <% end %>
-    <% if !account.associated_account_rules.empty? %>
-      <span class="system">精算口座</span>
-    <% end %>
     <% if account.linked? %>
       <span class="system">取引連動</span>
     <% end %>
