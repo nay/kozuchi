@@ -15,7 +15,7 @@ class Preferences < ActiveRecord::Base
   def after_save
     unless self.business_use?
       # 資本金タイプの口座はすべて債権タイプに変更する
-      Account::Base.update_all("type = 'Credit'", "type = 'CapitalFund'")
+      Account::Base.update_all("asset_kind = 'credit'", "asset_kind = 'capital_fund'")
     end
   end
   

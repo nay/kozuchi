@@ -114,7 +114,7 @@ class Account::Base < ActiveRecord::Base
     begin
       assert_not_used(false) # キャッシュを使う
       return true
-    rescue Account::UsedAccountException => err
+    rescue Account::Base::UsedAccountException => err
       delete_errors << err.message
       return false
     end
@@ -164,7 +164,7 @@ class Account::Base < ActiveRecord::Base
   # 口座の初期設定を行う
   def self.create_default_accounts(user_id)
     # 口座
-    Account::Cache.create_accounts(user_id, ['現金'])
+    Account::Asset.create_accounts(user_id, :cache, ['現金'])
     # 支出
     Account::Expense.create_accounts(user_id, ['食費','住居・備品','水・光熱費','被服・美容費','医療費','理容衛生費','交際費','交通費','通信費','教養費','娯楽費','税金','保険料','雑費','予備費','教育費','自動車関連費'])
     # 収入
@@ -192,7 +192,7 @@ class Account::Base < ActiveRecord::Base
   # force:: true ならその時点でデータベースを新しく調べる。 false ならキャッシュを利用する。
   def assert_not_used(force = true)
     # 使われていたら消せない
-    raise Account::UsedAccountException.new(self.class.type_name, name) if self.any_entry(force)
+    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if self.any_entry(force)
   end
 
 end
@@ -208,7 +208,8 @@ end
 #Account::Asset.sort_types
 
 # データがある勘定を削除したときに発生する例外
-class Account::UsedAccountException < Exception
+# TODO: なんとかしたい
+class Account::Base::UsedAccountException < Exception
   def initialize(account_type_name, account_name)
     super(self.class.new_message(account_type_name, account_name))
   end

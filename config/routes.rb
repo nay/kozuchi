@@ -6,6 +6,8 @@ ActionController::Routing::Routes.draw do |map|
     settings.connect "incomes", :controller => "incomes", :action => "update_all", :conditions => {:method => :put}
     settings.resources :expenses
     settings.connect "expenses", :controller => "expenses", :action => "update_all", :conditions => {:method => :put}
+    settings.resources :assets
+    settings.connect "assets", :controller => "assets", :action => "update_all", :conditions => {:method => :put}
   end
 
 
@@ -94,5 +96,4 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default route as the lowest priority.
   # TODO: except sessions, 
   map.connect ':controller/:action/:id'
-  map.connect ':controller/:year/:month/:day', :action => 'index', :requirements => {:controller => /daily_booking/}
 end

@@ -129,10 +129,10 @@ class DealController < ApplicationController
   # 記入エリアの準備
   def prepare_select_deal_tab
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :income, :expense), true
+      @user.accounts, true
      )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :expense, :income), false
+      @user.accounts, false
      )
     unless @deal
       @deal = Deal.new(params[:deal])
@@ -143,7 +143,7 @@ class DealController < ApplicationController
   end
   
   def prepare_select_balance_tab
-    @accounts_for_balance = @user.accounts.types_in(:asset)
+    @accounts_for_balance = current_user.assets
     @deal ||=  Balance.new(:account_id => @accounts_for_balance.id)
   end
 

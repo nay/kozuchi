@@ -44,7 +44,7 @@ class Settings::ExpensesController < Settings::AccountsController
     begin
       @account.destroy
       flash[:notice]="「#{ERB::Util.h @account.name}」を削除しました。"
-    rescue Account::UsedAccountException => err
+    rescue Account::Base::UsedAccountException => err
       flash[:errors]= [err.message]
     end
     redirect_to settings_expenses_path

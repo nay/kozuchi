@@ -19,10 +19,10 @@ class DealsController < ApplicationController
   def new_deal
     @deal = Deal.new
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :income, :expense), true
+      @user.accounts, true
      )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :expense, :income), false
+      @user.accounts, false
      )
 
   end
@@ -38,10 +38,10 @@ class DealsController < ApplicationController
       redirect_to :action => "new_deal"
     else
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :income, :expense), true
+      @user.accounts, true
      )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts.types_in(:asset, :expense, :income), false
+      @user.accounts, false
      )
       flash[:notice] = "登録に失敗しました。"
       render :action => "new_deal"

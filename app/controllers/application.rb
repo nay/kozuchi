@@ -232,8 +232,8 @@ class ApplicationController < ActionController::Base
 
   # 資産口座が1つ以上あり、全部で２つ以上の口座がないとダメ
   def check_account
-    raise "no user" unless @user
-    if @user.accounts.types_in(:asset).size < 1 || @user.accounts.size < 2
+    raise "no user" unless current_user
+    if current_user.assets.size < 1 || current_user.accounts.size < 2
       render("book/need_accounts")
       return false
     end
@@ -279,7 +279,6 @@ class ApplicationController < ActionController::Base
       t.add_menu('取引連動',:controller => '/settings/account_links', :action => 'index')
       t.add_menu('受け皿', :controller => '/settings/partner_account', :action => 'index')
       t.add_menu('カスタマイズ', :controller => '/settings/preferences',:action => 'index')
-      t.add_menu('精算ルール', :controller => '/settings/account_rules',:action => 'index')
     end
     
     @side_menues.create_menu_tree('ヘルプ') do |t|

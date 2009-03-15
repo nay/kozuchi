@@ -11,7 +11,7 @@ class AccountsBalanceReport
     @minus = Accounts.new
     @capital_fund = Accounts.new
     accounts.each do |account|
-      if account.kind_of? Account::CapitalFund
+      if account.asset_kind == :capital_fund
         @capital_fund << account
       elsif account.balance >= 0
         @plus << account

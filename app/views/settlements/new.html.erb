@@ -4,7 +4,7 @@
   <table>
     <tr>
       <th>口座</th>
-      <td><%= select_account('settlement', 'account_id', [:credit, :credit_card], true, {}, :onChange => change_condition)%></td>
+      <td><%= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, :onChange => change_condition %></td>
     </tr>
     <tr>
       <th>期間</th>

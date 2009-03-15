@@ -2,7 +2,8 @@
 # TODO: なぜか user :old ではうまくいかない。
 first_cache:
   name: 現金
-  type: Cache
+  type: Asset
+  asset_kind: cache
   user_id: <%= Fixtures.identify(:old) %>
   sort_key: 1
 
@@ -14,31 +15,36 @@ first_food:
 
 first_second:
   name: second
-  type: Credit
+  type: Asset
+  asset_kind: credit
   user_id: <%= Fixtures.identify(:old) %>
   sort_key: 2
 
 second_cache:
   name: 現金
-  type: Cache
+  type: Asset
+  asset_kind: credit
   user_id: <%= Fixtures.identify(:old2) %>
   sort_key: 1
 
 second_first:
   name: first
-  type: Credit
+  type: Asset
+  asset_kind: credit
   user_id: <%= Fixtures.identify(:old2) %>
   sort_key: 2
 
 first_credit_card:
   name: カード
-  type: CreditCard
+  type: Asset
+  asset_kind: credit_card
   user_id: <%= Fixtures.identify(:old) %>
   sort_key: 4
 
 first_bank:
   name: 銀行
-  type: BankingFacility
+  type: Asset
+  asset_kind: banking_facility
   user_id: <%= Fixtures.identify(:old) %>
   sort_key: 5
 
@@ -56,7 +62,8 @@ second_food:
 
 deletable_one:
   name: 貯金箱
-  type: Cache
+  type: Asset
+  asset_kind: cache
   user_id: <%= Fixtures.identify(:old) %>
   sort_key: 3
 

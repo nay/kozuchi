@@ -107,24 +107,11 @@ EOS
 
 
   # optgroup を使わずに口座を選ばせるリストを表示する
-  def select_account(object, method, account_type, with_asset_type = true, options = {}, html_options = {})
-    accounts = @user.accounts.types_in(account_type)
+  def select_account(object, method, asset_kinds, with_asset_type = true, options = {}, html_options = {})
+    accounts = current_user.assets.find(:all, :conditions => ["asset_kind in (?)", asset_kinds.map{|k| k.to_s}], :order => "sort_key")
     select(object, method, accounts.collect{|a| [with_asset_type ?  a.name_with_asset_type : a.name, a.id] }, options, html_options)
   end
 
-
-  def account_options(user, account_type)
-    options = ''
-    accounts = user.accounts.types_in(account_type)
-    unless accounts.empty?
-      options += "<optgroup label='#{accounts.first.class.type_name}'>"
-      for account in accounts
-        options += "<option value='#{account.id}'>#{account.name}</option>"
-      end
-      options += "</optgroup>"
-    end
-    options
-  end
 
   def format_year(year)
     "#{year}年"

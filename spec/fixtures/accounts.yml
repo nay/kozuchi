@@ -4,19 +4,23 @@
 taro_cache:
   name: 現金
   user: taro
-  type: Cache
+  type: Asset
+  asset_kind: cache
 taro_bank:
   name: 銀行
   user: taro
-  type: BankingFacility
+  type: Asset
+  asset_kind: banking_facility
 taro_hanako:
   name: 花子
   user: taro
-  type: Credit
+  type: Asset
+  asset_kind: credit
 taro_home:
   name: 家計
   user: taro
-  type: Credit
+  type: Asset
+  asset_kind: credit
 taro_home_cost:
   name: 家計支出
   user: taro
@@ -25,19 +29,23 @@ taro_home_cost:
 hanako_cache:
   name: 現金
   user: hanako
-  type: Cache
+  type: Asset
+  asset_kind: cache
 hanako_bank:
   name: 銀行
   user: hanako
-  type: BankingFacility
+  type: Asset
+  asset_kind: banking_facility
 hanako_taro:
   name: 太郎
   user: hanako
-  type: Credit
+  type: Asset
+  asset_kind: credit
 hanako_home:
   name: 家計
   user: hanako
-  type: Credit
+  type: Asset
+  asset_kind: credit
 hanako_home_cost:
   name: 家計支出
   user: hanako
@@ -46,19 +54,23 @@ hanako_home_cost:
 home_cache:
   name: 現金
   user: home
-  type: Cache
+  type: Asset
+  asset_kind: cache
 home_bank:
   name: 銀行
   user: home
-  type: BankingFacility
+  type: Asset
+  asset_kind: banking_facility
 home_taro:
   name: 太郎
   user: home
-  type: Credit
+  type: Asset
+  asset_kind: credit
 home_hanako:
   name: 花子
   user: home
-  type: Credit
+  type: Asset
+  asset_kind: credit
 home_income_from_two:
   name: 生活費入金
   user: home
@@ -67,21 +79,31 @@ home_income_from_two:
 account_enrty_test_cache:
   name: 現金
   user: account_entry_test_user
+  type: Asset
+  asset_kind: cache
 account_entry_test_food:
   name: 食費
   user: account_entry_test_user
 account_entry_test_cache_in_taro:
   name: 現金
   user: account_entry_test_user_taro
+  type: Asset
+  asset_kind: cache
 account_entry_test_hanako_in_taro:
   name: 花子
   user: account_entry_test_user_taro
+  type: Asset
+  asset_kind: credit
 account_entry_test_cache_in_hanako:
   name: 現金
   user: account_entry_test_user_hanako
+  type: Asset
+  asset_kind: cache
 account_entry_test_taro_in_hanako:
   name: 太郎
   user: account_entry_test_user_hanako
+  type: Asset
+  asset_kind: credit
 account_link_test_user_1:
   name: target_user
   user: account_link_test_user
@@ -91,20 +113,27 @@ account_link_test_target_user_1:
 deal_test_cache:
   name: 現金
   user: deal_test_user
+  type: Asset
+  asset_kind: cache
 deal_test_bank:
   name: 銀行
   user: deal_test_user
+  type: Asset
+  asset_kind: banking_facility
 docomo1_user_cache:
   name: 現金
-  type: Cache
   user: docomo1_user
+  type: Asset
+  asset_kind: cache
 docomo2_user_cache:
   name: 現金
-  type: Cache
+  type: Asset
+  asset_kind: cache
   user: docomo2_user
 au1_user_cache:
   name: 現金
-  type: Cache
+  type: Asset
+  asset_kind: cache
   user: au1_user
 
 # one:

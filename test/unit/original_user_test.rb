@@ -78,15 +78,15 @@ class OriginalUserTest < ActiveSupport::TestCase
     assert_not_nil User.authenticate('old', 'testtest')
   end
 
-  # account.types_in が正しく動作することのテスト
-  def test_accounts_types_in
-    assert_equal 5, users(:old).accounts.types_in(:asset).size
-    assert_equal 0, users(:old).accounts.types_in.size
-    assert_equal 7, users(:old).accounts.types_in(:asset, :expense).size
-    assert_equal 2, users(:old).accounts.types_in(:cache).size
-    assert_equal 1, users(:old).accounts.types_in(:banking_facility).size
-    assert_equal 3, users(:old).accounts.types_in(:cache, :credit).size
-  end
+#  # account.types_in が正しく動作することのテスト
+#  def test_accounts_types_in
+#    assert_equal 5, users(:old).accounts.types_in(:asset).size
+#    assert_equal 0, users(:old).accounts.types_in.size
+#    assert_equal 7, users(:old).accounts.types_in(:asset, :expense).size
+#    assert_equal 2, users(:old).accounts.types_in(:cache).size
+#    assert_equal 1, users(:old).accounts.types_in(:banking_facility).size
+#    assert_equal 3, users(:old).accounts.types_in(:cache, :credit).size
+#  end
   
   def test_default_asset
     user = users(:old)
@@ -94,9 +94,9 @@ class OriginalUserTest < ActiveSupport::TestCase
     assert_equal accounts(:first_cache).id, user.default_asset.id
   end
 
-  def test_available_asset_types
-    assert_equal 4, users(:old).available_asset_types.size
-    assert_equal 5, users(:old2).available_asset_types.size
+  def test_available_asset_kinds
+    assert_equal 4, users(:old).available_asset_kinds.size
+    assert_equal 5, users(:old2).available_asset_kinds.size
   end
   
 end

@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
   has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
+  has_many  :assets, :class_name => "Account::Asset", :order => "sort_key"
+  has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
   has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る
@@ -83,38 +85,11 @@ class User < ActiveRecord::Base
   
     # 指定した account_type のものだけを抽出する
     # TODO: 遅いので修正する
-    def types_in(*account_types)
-      account_types = account_types.flatten
-      self.select{|a| account_types.detect{|t| a.type_in?(t)} }
-    end
+#    def types_in(*account_types)
+#      account_types = account_types.flatten
+#      self.select{|a| account_types.detect{|t| a.type_in?(t)} }
+#    end
     
-    # ハッシュに指定された内容に更新する。typeも変更する。
-    # udpate も update_all もすでにあるので一応別名でつけた。
-    def update_all_with(all_attributes)
-      return unless all_attributes
-      Account::Base.transaction do
-        for account in self
-          account_attributes = all_attributes[account.id.to_s]
-          next unless account_attributes
-          account_attributes = account_attributes.clone
-          # user_id は指定させない
-          account_attributes.delete(:user_id)
-          # 資産種類を変える場合はクラスを変える必要があるのでとっておく
-          new_asset_name = account_attributes.delete(:asset_name)
-          old_account_name = account.name
-          account.attributes = account_attributes
-          account.save!
-          # type の変更
-          if new_asset_name && new_asset_name != account.asset_name
-            target_type = Account::Asset.asset_name_to_class(new_asset_name)
-            # 変更可能なものでなければ例外を発生する
-            raise Account::IllegalClassChangeException.new(old_account_name, new_asset_name) unless account.changable_asset_types.include? target_type
-            # object ベースではできないので sql ベースで
-            Account::Base.update_all("type = '#{Account::Asset.asset_name_to_class(new_asset_name)}', asset_kind = '#{Account::Asset.asset_name_to_class(new_asset_name).to_s.underscore.split("/").last}'", "id = #{account.id}")
-          end
-        end
-      end
-    end
     private
     def with_joined_scope(conditions, &block)
       with_scope :find => {:conditions => conditions, :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id"} do
@@ -123,10 +98,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  # TODO: 関連に移行
-  def assets
-    accounts.types_in(:asset)
-  end
+#  # TODO: 関連に移行
+#  def assets
+#    accounts.types_in(:asset)
+#  end
 
   # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
   def account(account_id)
@@ -148,11 +123,11 @@ class User < ActiveRecord::Base
   has_many :account_entries
   
   def default_asset
-    accounts.types_in(:asset).first
+    assets.first
   end
 
   def default_asset_other_than(exclude)
-    accounts.types_in(:asset).delete_if{|a| a.id.to_i == exclude.id.to_i}.first
+    assets.detect{|a| a.id.to_i != exclude.id.to_i}
   end
 
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
@@ -170,9 +145,19 @@ class User < ActiveRecord::Base
   end
   
   # このユーザーが使える asset_type (Class) リストを返す
+  # deprecated
   def available_asset_types
     Account::Asset.types.find_all{|type| !type.business_only? || preferences.business_use? }
   end
+
+  def available_asset_kinds
+    if preferences.business_use? && defined?(EXTENSION_ASSET_KINDS) && EXTENSION_ASSET_KINDS[:business]
+      Account::Asset::BASIC_KINDS.merge(EXTENSION_ASSET_KINDS[:business])
+    else
+      Account::Asset::BASIC_KINDS
+    end
+  end
+
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password

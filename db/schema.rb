@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090314151301) do
+ActiveRecord::Schema.define(:version => 20090315043430) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -27,11 +27,11 @@ ActiveRecord::Schema.define(:version => 20090314151301) do
     t.integer "linked_user_id",       :limit => 11
   end
 
-  add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
-  add_index "account_entries", ["deal_id"], :name => "account_entries_deal_id_index"
-  add_index "account_entries", ["user_id"], :name => "account_entries_user_id_index"
-  add_index "account_entries", ["settlement_id"], :name => "account_entries_settlement_id_index"
-  add_index "account_entries", ["result_settlement_id"], :name => "account_entries_result_settlement_id_index"
+  add_index "account_entries", ["account_id"], :name => "index_account_entries_on_account_id"
+  add_index "account_entries", ["deal_id"], :name => "index_account_entries_on_deal_id"
+  add_index "account_entries", ["user_id"], :name => "index_account_entries_on_user_id"
+  add_index "account_entries", ["settlement_id"], :name => "index_account_entries_on_settlement_id"
+  add_index "account_entries", ["result_settlement_id"], :name => "index_account_entries_on_result_settlement_id"
 
   create_table "account_link_requests", :force => true do |t|
     t.integer  "account_id",           :limit => 11
@@ -50,7 +50,8 @@ ActiveRecord::Schema.define(:version => 20090314151301) do
     t.datetime "updated_at"
   end
 
-  add_index "account_links", ["target_ex_account_id"], :name => "account_links_target_ex_account_id_index"
+  add_index "account_links", ["account_id"], :name => "index_account_links_on_account_id"
+  add_index "account_links", ["target_ex_account_id"], :name => "index_account_links_on_target_ex_account_id"
 
   create_table "account_rules", :force => true do |t|
     t.integer "user_id",               :limit => 11,                :null => false
@@ -70,8 +71,8 @@ ActiveRecord::Schema.define(:version => 20090314151301) do
     t.string  "asset_kind"
   end
 
-  add_index "accounts", ["user_id"], :name => "accounts_user_id_index"
-  add_index "accounts", ["partner_account_id"], :name => "accounts_partner_account_id_index"
+  add_index "accounts", ["user_id"], :name => "index_accounts_on_user_id"
+  add_index "accounts", ["partner_account_id"], :name => "index_accounts_on_partner_account_id"
 
   create_table "admin_users", :force => true do |t|
     t.string "name"
@@ -90,13 +91,8 @@ ActiveRecord::Schema.define(:version => 20090314151301) do
     t.datetime "updated_at"
   end
 
-  add_index "deals", ["user_id"], :name => "deals_user_id_index"
-  add_index "deals", ["parent_deal_id"], :name => "deals_parent_deal_id_index"
-
-  create_table "engine_schema_info", :id => false, :force => true do |t|
-    t.string  "engine_name"
-    t.integer "version",     :limit => 11
-  end
+  add_index "deals", ["user_id"], :name => "index_deals_on_user_id"
+  add_index "deals", ["parent_deal_id"], :name => "index_deals_on_parent_deal_id"
 
   create_table "friend_permissions", :force => true do |t|
     t.integer  "user_id",    :limit => 11
