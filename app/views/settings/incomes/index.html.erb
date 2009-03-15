@@ -1,0 +1,19 @@
+<%= render :partial => "form" %>
+
+<%= render :partial => 'shared/information' %>
+<%= error_messages @account %>
+
+<div class="bottom_box">
+  <%  form_tag settings_incomes_path, :method => :put do %>
+  <table class="masters" width="100%">
+    <tr>
+      <th><%= Account::Income.human_name %>名</th>
+      <th>並び順</th>
+      <th>変更</th>
+      <th>削除</th>
+    </tr>
+    <%= render :partial => "account", :collection => @accounts %>
+  </table>
+  <% end  -%>
+
+</div>

@@ -1,5 +1,12 @@
 ActionController::Routing::Routes.draw do |map|
 
+  # settings
+  map.namespace :settings do |settings|
+    settings.resources :incomes
+    settings.connect "incomes", :controller => "incomes", :action => "update_all", :conditions => {:method => :put}
+  end
+
+
   map.resource :mobile, :member => {"confirm_destroy" => :get}
 #  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
 #  map.confirm_destroy_mobile "/mobile/confirm_destroy", :controller => "mobiles", :action => "confirm_destroy", :conditions => {:method => :get}
@@ -79,7 +86,9 @@ ActionController::Routing::Routes.draw do |map|
   map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
   map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
 
-  
+
+
+
   # Install the default route as the lowest priority.
   # TODO: except sessions, 
   map.connect ':controller/:action/:id'

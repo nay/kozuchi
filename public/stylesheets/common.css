@@ -3,181 +3,195 @@
 /* dark blue : #041A61 */
 
 * {
-  margin:0;
-  padding:0;
+    margin:0;
+    padding:0;
 }
 
 #page {
-	background-color: #fffff9;
-	margin-left: 8px;
-	margin-bottom: 8px;
-	padding: 1em;
+    background-color: #fffff9;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    padding: 1em;
 }
 
 #side {
-	float: right;
-	width: 38%;
+    float: right;
+    width: 38%;
 }
 
 /* -------- header -------*/
 #header {
-  height: 2em;
-  margin-bottom: 8px;
+    height: 2em;
+    margin-bottom: 8px;
 }
 /* 反転エリア */
 #header, #header * {
-  color: #041A61;
-  font-weight: bold;
-  padding: 4px;
+    color: #041A61;
+    font-weight: bold;
+    padding: 4px;
 }
 
 #home_icon {
-  margin: 0;
-  padding: 0;
-  float:left;
+    margin: 0;
+    padding: 0;
+    float:left;
 }
 #home_icon img {
-  padding: 0;
-  margin: 0;
-  height: 2em;
-  width: 2em;
+    padding: 0;
+    margin: 0;
+    height: 2em;
+    width: 2em;
 }
 #header_title {
-  float: left;
+    float: left;
 }
 #header_menu {
-  float: right;
+    float: right;
 }
 #header_menu .current {
-  color: #ff7fbf;
+    color: #ff7fbf;
 }
 
 /* 大きな文字 */
 span.large {
-  font-size: 1.3em;
+    font-size: 1.3em;
 }
 .box {
-	border: 4px dotted #ffddbc;
-	background-color: white;
-	margin-bottom: 1em;
-	padding: 1em; 
+    border: 4px dotted #ffddbc;
+    background-color: white;
+    margin-bottom: 1em;
+    padding: 1em;
 }
 .box h2 {
-	font-size: 120%;
-	color: #fcbf7f;
-	text-align: center;
+    font-size: 120%;
+    color: #fcbf7f;
+    text-align: center;
 }
 .navigation {
-	text-align: right;
-	margin-bottom: 1em;
+    text-align: right;
+    margin-bottom: 1em;
 }
 
 h1 {
-	color: #041A61;
+    color: #041A61;
 }
 
 p {
-	padding-left: 1em;
-	padding-right: 1em;
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .strong {
-	color: #ff6347;
+    color: #ff6347;
 }
 
 /* general input fields padding */
 
 input, select {
-  padding: 0px 1px;
-  font-size: 100%;
-  margin: 4px;
+    padding: 0px 1px;
+    font-size: 100%;
+    margin: 4px;
 }
 select {
 }
 
 option {
-  font-size: 100%;
-  padding: 2px;
+    font-size: 100%;
+    padding: 2px;
 }
 
 
 /*　------ メッセージ欄 ------- */
 #notice {
-  padding: 8px;
-  background-color: gold;
-  margin-bottom: 4px;
+    padding: 8px;
+    background-color: gold;
+    margin-bottom: 4px;
 }
 
 #errors {
-  padding: 8px;
-  background-color: orange;
+    padding: 8px;
+    background-color: orange;
 }
 
 /* ------ ボタン ---------- */
 button, input.button, td.button input {
-  white-space: nowrap;
-  text-decoration: none;
-  border: 4px outset #FFDDBC;
-  background-color: #FFDDBC;
-  color: black;
-  font-weight: bold;
-  padding: 1px 4px;
-  font-size: 100%;
-  margin: 4px;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 4px outset #FFDDBC;
+    background-color: #FFDDBC;
+    color: black;
+    font-weight: bold;
+    padding: 1px 4px;
+    font-size: 100%;
+    margin: 4px;
 }
 
 /* ----- simple form ----- */
 table.simple_form th {
-  text-align: right;
-  color: #041A61;
-  padding-right: 4px;
+    text-align: right;
+    color: #041A61;
+    padding-right: 4px;
 }
 table.simple_form .operation {
-  text-align: center;
+    text-align: center;
 }
 
 /* -------- footer -------*/
 #footer {
-  clear: both;
-  margin-top: 16px;
-  border-bottom:1px dashed #041A61;
-  color: #041A61;
-  text-align:right;
-  font-size:small;
-  padding-bottom:2px;
-  padding-top:16px;
+    clear: both;
+    margin-top: 16px;
+    border-bottom:1px dashed #041A61;
+    color: #041A61;
+    text-align:right;
+    font-size:small;
+    padding-bottom:2px;
+    padding-top:16px;
 }
 
 .information {
-  margin: 1em 6em;
-  border: 2px dotted darkgoldenrod;
-  background-color: #fff0f5;
-  padding: 1em 2em;
-  text-align: left;
+    margin: 1em 6em;
+    border: 2px dotted darkgoldenrod;
+    background-color: #fff0f5;
+    padding: 1em 2em;
+    text-align: left;
 }
 .information h3 {
-  margin-top: 0;
-  text-align: center;
+    margin-top: 0;
+    text-align: center;
 }
 .information h4 {
-  color: lightcoral;	
+    color: lightcoral;
 }
 .information ul {
-  padding-left: 1em;
+    padding-left: 1em;
 }
 .error, .errorExplanation {
-  color: #ff6347;	
+    color: #ff6347;
 }
 .errorExplanation h2 {
-	font-size: 120%;
+    font-size: 120%;
 }
 .errorExplanation ul {
-	padding-left: 4em;
+    padding-left: 4em;
 }
 
 h1.mobile_title {
     text-align: center;
     fon-size: 120%;
+}
+
+/* line form style */
+.flatField {
+    float:left;
+    padding: 8px 0;
+    height: 30px;
+    line-height: 32px;
+}
+.flatField .button {
+    margin: 0;
+}
+.clearFlat {
+    clear:left;
 }

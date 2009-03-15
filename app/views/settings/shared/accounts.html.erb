@@ -67,6 +67,9 @@
           <% end %>
         </td> 
       </tr>
+      <% unless @account.errors.empty? %>
+        <tr><td colspan="4"><%= error_messages_for :object => @account %></td></tr>
+      <% end %>
     <% end %>
   </table>
   <% end  -%>

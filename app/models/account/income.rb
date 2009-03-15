@@ -4,6 +4,11 @@ class Account::Income < Account::Base
   short_name '収入'
   connectable_type Account::Expense
 
+  # TODO: Rails 2.2 で国際化対応
+  def self.human_name
+    '収入内訳'
+  end
+
   def base_type
     :income
   end

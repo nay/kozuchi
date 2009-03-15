@@ -3,6 +3,37 @@ module ApplicationHelper
   include LoginEngine
   include TermHelper
 
+  # 国際化にあわせたリファクタリングするまでの臨時措置。一行でエラーを表示する。attrを無視する。
+  def error_message(obj)
+    message = ""
+    obj.errors.each do |attr, msg|
+      message << msg
+    end
+    message
+  end
+
+  # 国際化に合わせるまでの臨時措置。attrを無視した従来の検証エラーに対応した表示ヘルパー。
+  # flash_validation_errorからこちらにまず移行するために用意。
+  def error_messages(obj)
+    return "" if obj.errors.empty?
+    messages = '<div id="errors" class="middle_box">'
+    if obj.errors.size > 1
+      messages << "<div>エラーがありました。ご確認ください。</div>\n"
+      messages << "<ul>\n"
+      obj.errors.each do |attr, msg|
+        messages << "<li>#{msg}</li>"
+      end
+      messages << "</ul>"
+    else
+      # TODO: とりあえずなので適当な書き方
+      obj.errors.each do |attr, msg|
+        messages << msg
+      end
+    end
+    messages << "</div>"
+    messages
+  end
+
   def html_tag(&block)
     inner_content = capture(&block)
     content = <<EOF
