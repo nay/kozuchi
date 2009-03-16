@@ -18,6 +18,7 @@ class Settings::AssetsController < Settings::AccountsController
       redirect_to settings_assets_path
     else
       @accounts = current_user.assets(true)
+      set_asset_kinds_option_container
       render :action => "index"
     end
   end

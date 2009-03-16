@@ -19,7 +19,7 @@
       <tr>
         <td><%= h account.name_with_asset_type %></td>
         <td>
-          <select name="account[partner_account_id]" id="account_partner_account_id" style="width:16em;"><% # todo セレクトボックス長さ %>
+          <select name="account[partner_account_id]" id="account_partner_account_id" style="width:16em;">
             <option value="">-- 設定なし --</option>
             <%= options_from_collection_for_select(
               @partner_account_candidates[account], "id", "name_with_asset_type", account.partner_account_id) %>

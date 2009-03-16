@@ -12,7 +12,7 @@ class Account::Income < Account::Base
   def base_type
     :income
   end
-  def likable_to?(target_base_type)
+  def linkable_to?(target_base_type)
     target_base_type == :expense
   end
 
