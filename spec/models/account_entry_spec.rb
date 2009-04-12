@@ -21,10 +21,10 @@ describe AccountEntry do
 
   describe "attributes=" do
     it "user_idは一括指定できない" do
-      AccountEntry.new(:user_id => 3).user_id.should be_nil
+      AccountEntry.new(:user_id => 3).user_id.should_not == 3
     end
     it "deal_idは一括指定できない" do
-      AccountEntry.new(:deal_id => 7).deal_id.should be_nil
+      AccountEntry.new(:deal_id => 7).deal_id.should_not == 7
     end
     it "account_idは一括指定できる" do
       AccountEntry.new(:account_id => 5).account_id.should == 5
