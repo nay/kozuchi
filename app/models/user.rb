@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
   has_many  :assets, :class_name => "Account::Asset", :order => "sort_key"
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
-  has_many  :accounts, :class_name => 'Account::Base', :dependent => :destroy, :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
+  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
@@ -167,8 +167,8 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   before_save :encrypt_password
   before_create :make_activation_code
-  before_destroy :destroy_deals
   attr_accessible :login, :email, :password, :password_confirmation
+  after_destroy :destroy_deals, :destroy_accounts
 
   # Activates the user in the database.
   def activate
@@ -355,6 +355,10 @@ class User < ActiveRecord::Base
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
     BaseDeal.find_all_by_user_id(self.id).each{|d| d.destroy }
+  end
+  def destroy_accounts
+    # アカウントを削除する場合の口座削除処理。dependentだと順序が思うようでないので自前でやる
+    Account::Base.find_all_by_user_id(self.id).each{|a| a.destroy}
   end
 
   
