@@ -11,6 +11,14 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
+  def capital_fund?
+    asset_kind == "capital_fund"
+  end
+
+  def credit_card?
+    asset_kind == "credit_card"
+  end
+
 
   # TODO: Rails 2.2
   def self.human_name
