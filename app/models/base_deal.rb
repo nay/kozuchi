@@ -33,6 +33,7 @@ class BaseDeal < ActiveRecord::Base
   
 #  named_scope :without_balance, :conditions => "type = 'Deal'" # user.dealsからのアクセスのため
 
+
   def year
     split_date if !@year && self[:date]
     @year

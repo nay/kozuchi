@@ -20,6 +20,8 @@ class AccountEntry < ActiveRecord::Base
   attr_reader :new_plus_link
   attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
 
+  attr_writer :skip_unlinking
+
   # 精算が紐付いているかどうかを返す。外部キーを見るだけで実際に検索は行わない。
   def settlement_attached?
     not (self.settlement_id.blank? && self.result_settlement_id.blank?)
@@ -41,6 +43,9 @@ class AccountEntry < ActiveRecord::Base
   def unlink
     raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
     if !deal.confirmed
+      # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
+      # オブジェクトとしては別物なので困ってしまう
+      deal.account_entries.detect{|e| e.id == self.id}.skip_unlinking = true
       deal.destroy
     else
       AccountEntry.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
@@ -123,6 +128,7 @@ class AccountEntry < ActiveRecord::Base
   end
 
   def request_unlinking
+    return if @skip_unlinking
         # TODO: linked_account_idもほしい　関連づけかえられてたら困る
     account.linked_account.unlink_to(self.id, self.user_id) if account && account.linked_account
   end

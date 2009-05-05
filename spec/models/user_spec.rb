@@ -30,6 +30,27 @@ describe User do
         AccountLinkRequest.find(:first, :include => :account, :conditions => "accounts.user_id = #{@user.id}").should be_nil
       end
     end
+    describe "精算があるとき" do
+      before do
+        d = new_deal(12, 1, accounts(:taro_cache), accounts(:taro_hanako), 2000, 2009)
+        d.save!
+        s = Settlement.new
+        s.user_id = d.user_id
+        s.account_id = accounts(:taro_hanako).id
+        s.result_partner_account_id = accounts(:taro_cache).id # TODO: わからなかった。Specほしい
+        s.result_date = Date.new(2009, 4, 1) # TODO: 同上
+        s.name = "テスト"
+        s.target_entries << d.account_entries.detect{|e| e.account_id == accounts(:taro_hanako).id}
+        s.save!
+      end
+      it "成功する" do
+        @user.destroy
+        User.find_by_id(@user.id).should be_nil
+        Settlement.find_by_user_id(@user.id).should be_nil
+      end
+    end
+
+
   end
 
   def new_deal(month, day, from, to, amount, year = 2008)

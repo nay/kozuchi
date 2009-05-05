@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   include User::Friend
   include User::Mobile
 
+  has_many  :settlements, :dependent => :destroy
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
   has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
