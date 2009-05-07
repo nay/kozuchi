@@ -4,6 +4,14 @@
         lines.concat current_user.assets.map{|a| a.to_csv}
         lines.concat current_user.expenses.map{|a| a.to_csv}
         lines.concat current_user.incomes.map{|a| a.to_csv}
+        for d in current_user.deals
+          if d.kind_of? Balance
+            lines << d.to_csv
+          else
+            lines.concat d.to_csv_lines
+          end
+        end
+        lines.concat current_user.settlements.map{|s| s.to_csv}
 -%>
 <% for line in lines -%>
 <%= line %>

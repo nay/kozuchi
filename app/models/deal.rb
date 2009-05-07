@@ -17,6 +17,12 @@ class Deal < BaseDeal
     end
   end
 
+  def to_csv_lines
+    csv_lines = [["deal", id, date.to_s(:db), daily_seq, "\"#{summary}\"", confirmed].join(',')]
+    account_entries.each{|e| csv_lines << e.to_csv}
+    csv_lines
+  end
+
   # 貸し方勘定名を返す
   def debtor_account_name
     # TODO: 実装はあとで変えたい

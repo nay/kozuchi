@@ -32,6 +32,10 @@ class AccountEntry < ActiveRecord::Base
     xml.entry(amount, xml_attributes)
   end
 
+  def to_csv
+    ["entry", self.deal_id, self.account_id, self.settlement_id, self.result_settlement_id, amount].join(',')
+  end
+
   # 精算が紐付いているかどうかを返す。外部キーを見るだけで実際に検索は行わない。
   def settlement_attached?
     not (self.settlement_id.blank? && self.result_settlement_id.blank?)

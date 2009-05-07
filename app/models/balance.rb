@@ -22,6 +22,9 @@ class Balance < BaseDeal
     end
   end
 
+  def to_csv
+    ["balance", self.id, date.to_s(:db), daily_seq, "\"#{summary}\"", account_id, balance].join(",")
+  end
 
   def initial_balance?
     entry.initial_balance?

@@ -30,6 +30,10 @@ class Settlement < ActiveRecord::Base
     end
   end
 
+  def to_csv
+    ["settlement", id, account_id, "\"#{name}\"", "\"#{description}\""].join(',')
+  end
+
   def target_sum
     sum = 0
     target_entries.each{|e| sum += e.amount}
