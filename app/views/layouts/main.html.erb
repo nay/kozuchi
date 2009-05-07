@@ -30,18 +30,7 @@
         <span class="large"><%= title %></span>
         <span> - <%= sub_title %></span>
       </div>
-      <div id="header_menu">
-        <% h_menues = @header_menues %>
-        <% for menu in h_menues %>
-          <% if menu_tree && menu.name != menu_tree.name %>
-            <%= link_to(menu.name, menu.url)%>
-          <% else %>
-            <span class="current"><%= menu.name %></span>
-          <% end %>
-          <% break if menu == h_menues.last %>
-          <span> | </span>
-        <% end %>
-      </div>
+      <%= render :partial => "shared/menu_groups" %>
     </div>
     <div id="sidebar">
       <div id="user_and_today" class="top_box" <%= user_color_style %>>

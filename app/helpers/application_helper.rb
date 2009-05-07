@@ -3,6 +3,15 @@ module ApplicationHelper
   include LoginEngine
   include TermHelper
 
+  # 上部メニューで使う
+  def link_to_menu_group(menu_group, path)
+    if menu_group != @menu_group
+      link_to menu_group, path
+    else
+      content_tag("span", menu_group, :class => "current")
+    end
+  end
+
   # 国際化にあわせたリファクタリングするまでの臨時措置。一行でエラーを表示する。attrを無視する。
   def error_message(obj)
     message = ""

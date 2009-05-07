@@ -1,5 +1,5 @@
 class Settings::ExpensesController < Settings::AccountsController
-
+  before_filter {|controller| controller.menu_group = "基本設定"}
   before_filter :find_account, :only => [:destroy]
 
   # 一覧表示する。

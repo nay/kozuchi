@@ -1,6 +1,7 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
+  before_filter {|controller| controller.menu_group = "家計簿"}
   before_filter :require_mobile, :only => :destroy
   before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date

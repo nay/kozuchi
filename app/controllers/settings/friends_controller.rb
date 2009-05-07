@@ -1,6 +1,7 @@
 # フレンド設定
 class Settings::FriendsController < ApplicationController
   layout 'main'
+  before_filter {|controller| controller.menu_group = "高度な設定"}
 
   def index
     @requests = current_user.friend_requests.not_determined

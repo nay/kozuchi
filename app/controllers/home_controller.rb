@@ -1,4 +1,5 @@
 class HomeController < ApplicationController
+  before_filter {|controller| controller.menu_group = "ホーム"}
 
   def index
     prepare_assets_summary
@@ -25,4 +26,5 @@ class HomeController < ApplicationController
     @expenses_summary = LineGraph.new(expenses, ["支出合計"])
     @months_for_expenses = ["月"].concat(expenses_dates.map{|d| "#{d.month}月"})
   end
+
 end

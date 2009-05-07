@@ -1,0 +1,17 @@
+<div id="header_menu">
+  <%= link_to_menu_group 'ホーム', :controller => "/home", :action => 'index' %>
+  <span> | </span>
+  <%= link_to_menu_group '家計簿', :controller => "/deals", :action => 'index' %>
+  <span> | </span>
+  <%= link_to_menu_group '精算',  :controller => '/settlements', :action => 'new' %>
+  <span> | </span>
+  <%= link_to_menu_group '基本設定', :controller => "/settings/assets", :action => "index" %>
+  <span> | </span>
+  <%= link_to_menu_group '高度な設定', :controller => "/settings/friends", :action => "index" %>
+  <span> | </span>
+  <%= link_to_menu_group 'データ管理', export_path %>
+  <span> | </span>
+  <%= link_to_menu_group 'ヘルプ', :controller => "/help", :action => "index" %>
+  <span> | </span>
+  <%= link_to_menu_group 'ログアウト', logout_path %>
+</div>

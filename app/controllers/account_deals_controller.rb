@@ -1,5 +1,6 @@
 class AccountDealsController < ApplicationController 
   layout 'main'
+  before_filter {|controller| controller.menu_group = "家計簿"}
   before_filter :check_account
   before_filter :find_account, :only => [:balance]
   before_filter :require_mobile, :only => [:balance]

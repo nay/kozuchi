@@ -14,18 +14,7 @@
         <span class="large"><%= h @user.login %>さんの家計簿</span>
         <span> - ホーム</span>
       </div>
-      <div id="header_menu">
-        <% h_menues = @header_menues %>
-        <% for menu in h_menues %>
-          <% if menu.name != 'ホーム' %>
-            <%= link_to(menu.name, menu.url)%>
-          <% else %>
-            <span class="current"><%= menu.name %></span>
-          <% end %>
-          <% break if menu == h_menues.last %>
-          <span> | </span>
-        <% end %>
-      </div>
+      <%= render :partial => "shared/menu_groups" %>
     </div>
 
     <%= yield %>

@@ -1,7 +1,7 @@
 # 1件のDealに対する処理のコントローラ
 class DealController < ApplicationController
   include ApplicationHelper
-  
+
   before_filter :load_target_date
   
   # 取引入力画面を表示する。以下をデフォルト表示できる。

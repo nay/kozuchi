@@ -1,6 +1,7 @@
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
   layout 'main'
+  before_filter {|controller| controller.menu_group = "ヘルプ"}
   
   # 特徴
   def index

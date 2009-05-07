@@ -12,7 +12,9 @@ class ApplicationController < ActionController::Base
   helper :all
   
   before_filter :load_menues
-  
+
+  attr_writer :menu_group
+
   def self.use_calendar(url_method = nil)
     include WithCalendar
     write_inheritable_attribute(:calendar_url_method, url_method)

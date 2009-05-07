@@ -1,6 +1,7 @@
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   layout 'main'
+  before_filter {|controller| controller.menu_group = "精算"}
   before_filter :check_credit_account, :except => [:view, :delete, :print_form]
   before_filter :load_settlement, :only => [:view, :delete, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]

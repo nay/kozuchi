@@ -2,6 +2,7 @@ class ProfitAndLossController < ApplicationController
   include WithCalendar
   layout 'main'
   helper :graph
+  before_filter {|controller| controller.menu_group = "家計簿"}
   before_filter :check_account, :load_target_date, :prepare_update_profit_and_loss
 
   def index
