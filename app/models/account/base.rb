@@ -6,7 +6,9 @@ class Account::Base < ActiveRecord::Base
   has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
-  
+
+  attr_accessor :serialized_id
+
   # DBを検索してDBに格納された名前を得る
   # オブジェクトに格納されたnameが格納された名前と異なる場合があるので用意
   def stored_name
@@ -170,7 +172,22 @@ class Account::Base < ActiveRecord::Base
     # 収入
     Account::Income.create_accounts(user_id, ['給料', '賞与', '利子・配当', '贈与'] )
   end
-  
+
+  def to_xml(options = {})
+    options[:indent] ||= 4
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.account(self.name, serialized_attributes)
+  end
+
+  private
+  def serialized_attributes
+    attrs = {:type => self.class.name.split('::').last.underscore}
+    attrs[:id] = "account#{self.serialized_id}" unless self.serialized_id.blank?
+    attrs
+  end
+
+
   protected
   def self.create_accounts(user_id, names, sort_key_start = 1)
     sort_key = sort_key_start

@@ -102,6 +102,11 @@ class Account::Asset < Account::Base
     self.class.asset_name
   end
 
+  private
+  def serialized_attributes
+    super.merge({:asset_kind => self.asset_kind})
+  end
+
 end
 
 class Account::RuleAssociatedAccountException < Exception
