@@ -5,6 +5,18 @@ class Deal < BaseDeal
              :foreign_key => 'parent_deal_id',
              :dependent => :destroy
 
+  def to_xml(options = {})
+    options[:indent] ||= 4
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.deal(:id => "deal#{self.id}", :date => self.date.to_s(:db), :position => self.daily_seq, :confirmed => self.confirmed) do
+      xml.description self.summary
+      xml.entries do
+        account_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
+      end
+    end
+  end
+
   # 貸し方勘定名を返す
   def debtor_account_name
     # TODO: 実装はあとで変えたい

@@ -22,6 +22,16 @@ class AccountEntry < ActiveRecord::Base
 
   attr_writer :skip_unlinking
 
+  def to_xml(options = {})
+    options[:indent] ||= 4
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml_attributes = {:account => "account#{self.account_id}"}
+    xml_attributes[:settlement] = "settlement#{self.settlement_id}" unless self.settlement_id.blank?
+    xml_attributes[:result_settlement] = "settlement#{self.result_settlement_id}" unless self.result_settlement_id.blank?
+    xml.entry(amount, xml_attributes)
+  end
+
   # 精算が紐付いているかどうかを返す。外部キーを見るだけで実際に検索は行わない。
   def settlement_attached?
     not (self.settlement_id.blank? && self.result_settlement_id.blank?)

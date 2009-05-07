@@ -20,6 +20,16 @@ class Settlement < ActiveRecord::Base
 
   attr_accessor :result_date, :result_partner_account_id
 
+  def to_xml(options = {})
+    options[:indent] ||= 4
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.settlement(:id => "settlement#{self.id}", :account => "account#{self.account_id}") do
+      xml.name name
+      xml.description description
+    end
+  end
+
   def target_sum
     sum = 0
     target_entries.each{|e| sum += e.amount}

@@ -10,4 +10,10 @@ xml.kozuchi(:timestamp => Time.now.to_s(:db).gsub(/\s/, 'T'), :user => current_u
     current_user.incomes.each{|a| a.to_xml(:builder => xml, :skip_instruct => true)}
 #    current_user.assets.each{|a| xml.target! << a.to_xml(:skip_instruct => true)}
   end
+  xml.deals do
+    current_user.deals.each{|d| d.to_xml(:builder => xml, :skip_instruct => true)}
+  end
+  xml.settlements do
+    current_user.settlements.each{|s| s.to_xml(:builder => xml, :skip_instruct => true)}
+  end
 end

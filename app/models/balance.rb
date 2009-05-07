@@ -12,6 +12,17 @@ class Balance < BaseDeal
   after_save :update_initial_balance
   after_destroy :update_initial_balance
 
+  def to_xml(options = {})
+    options[:indent] ||= 4
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.balance(:id => "balance#{self.id}", :date => self.date.to_s(:db), :position => self.daily_seq, :account => "account#{self.account_id}") do
+      xml.description self.summary
+      xml.amount self.balance
+    end
+  end
+
+
   def initial_balance?
     entry.initial_balance?
   end
