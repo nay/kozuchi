@@ -48,7 +48,7 @@ describe "Account::Asset" do
       @csv = @credit_card.to_csv
     end
     it "想定の形であること" do
-      @csv.should == "asset,#{@credit_card.id},credit_card,\"クレジットカード\""
+      @csv.should == "asset,#{@credit_card.id},credit_card,#{@credit_card.sort_key},\"クレジットカード\""
     end
   end
 
