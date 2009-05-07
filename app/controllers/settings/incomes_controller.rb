@@ -1,6 +1,7 @@
 class Settings::IncomesController < Settings::AccountsController
+  menu_group "基本設定"
+  menu "収入内訳"
 
-  before_filter {|controller| controller.menu_group = "基本設定"}
   before_filter :find_account, :only => [:destroy]
 
   # 一覧表示する。

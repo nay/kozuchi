@@ -1,0 +1,9 @@
+<%
+        lines = []
+        lines.concat current_user.assets.map{|a| a.to_csv}
+        lines.concat current_user.expenses.map{|a| a.to_csv}
+        lines.concat current_user.incomes.map{|a| a.to_csv}
+-%>
+<% for line in lines -%>
+<%= line %>
+<% end -%>

@@ -30,11 +30,11 @@ describe "Account::Asset" do
         raise "no @credit_card" unless @credit_card
         @xml = @credit_card.to_xml(:camelize => true, :skip_types => true, :only => [:name])
       end
-      it "XMLにtypeが含まれること" do
-        @xml.should =~ /type="asset"/
+      it "要素名が型にちなんでいること" do
+        @xml.should =~ /<asset.*>.*<\/asset>/
       end
       it "XMLにasset_kindが含まれること" do
-        @xml.should =~ /asset_kind="credit_card"/
+        @xml.should =~ /type="credit_card"/
       end
       it "XMLにidが含まれること" do
         @xml.should =~ /id="account/
@@ -48,7 +48,7 @@ describe "Account::Asset" do
       @csv = @credit_card.to_csv
     end
     it "想定の形であること" do
-      @csv.should == "account,#{@credit_card.id},asset,credit_card,\"クレジットカード\""
+      @csv.should == "asset,#{@credit_card.id},credit_card,\"クレジットカード\""
     end
   end
 

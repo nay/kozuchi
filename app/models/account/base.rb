@@ -175,17 +175,21 @@ class Account::Base < ActiveRecord::Base
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    xml.account(self.name, serialized_attributes)
+    xml.tag!(serialized_type_name, self.name, serialized_attributes)
   end
 
   def to_csv
     attrs = serialized_attributes
-    ["account", id, attrs[:type], attrs[:asset_kind], "\"#{name}\""].join(',')
+    [serialized_type_name, id, attrs[:type], attrs[:position], "\"#{name}\""].join(',')
   end
 
   private
   def serialized_attributes
-    {:type => self.class.name.split('::').last.underscore, :id => "account#{self.id}"}
+    {:id => "account#{self.id}", :position => self.sort_key}
+  end
+
+  def serialized_type_name
+    self.class.name.split('::').last.underscore
   end
 
 

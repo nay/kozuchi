@@ -1,6 +1,7 @@
 class Settings::PartnerAccountController < ApplicationController
   layout 'main'
-  before_filter {|controller| controller.menu_group = "高度な設定"}
+  menu_group "高度な設定"
+  menu "受け皿"
 
   # 受け皿初期画面
   def index

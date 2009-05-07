@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_filter {|controller| controller.menu_group = "ホーム"}
+  menu_group "ホーム"
 
   def index
     prepare_assets_summary

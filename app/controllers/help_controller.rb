@@ -1,7 +1,10 @@
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
   layout 'main'
-  before_filter {|controller| controller.menu_group = "ヘルプ"}
+  menu_group "ヘルプ"
+  menu "小槌の特徴", :only => [:index]
+  menu "できること", :only => [:functions]
+  menu "FAQ", :only => [:faq]
   
   # 特徴
   def index

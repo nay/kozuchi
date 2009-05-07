@@ -11,9 +11,17 @@ class ApplicationController < ActionController::Base
   before_filter :login_required, :load_user, :set_ssl
   helper :all
   
-  before_filter :load_menues
+  attr_writer :menu_group, :menu
 
-  attr_writer :menu_group
+  # メニューグループを指定する
+  def self.menu_group(menu_group, options = {})
+    before_filter(options) {|controller| controller.menu_group = menu_group}
+  end
+  # メニューを指定する
+  def self.menu(menu, options = {})
+    before_filter(options) {|controller| controller.menu = menu}
+  end
+  
 
   def self.use_calendar(url_method = nil)
     include WithCalendar

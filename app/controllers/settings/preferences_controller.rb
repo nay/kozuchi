@@ -2,7 +2,8 @@
 class Settings::PreferencesController < ApplicationController
   before_filter :require_post, :only => [:update]
   layout 'main'
-  before_filter {|controller| controller.menu_group = "高度な設定"}
+  menu_group "高度な設定"
+  menu "カスタマイズ"
 
   def index
     @preferences = @user.preferences

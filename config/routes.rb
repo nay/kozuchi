@@ -91,7 +91,10 @@ ActionController::Routing::Routes.draw do |map|
   map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
 
 
-  map.export 'export', :controller => "export", :action => "index"
+  map.with_options(:controller => "export") do |export|
+    export.export 'export', :action => "index"
+    export.export_file 'export/:filename.:format', :action => "whole"
+  end
 
   # Install the default route as the lowest priority.
   # TODO: except sessions, 

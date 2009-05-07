@@ -12,6 +12,17 @@ module ApplicationHelper
     end
   end
 
+  # サイドメニューで使う
+  def link_to_menu(menu, path)
+    content_tag "div", :class => "side_menu#{'_current' if menu == @menu}" do
+      if menu == @menu
+        content_tag "span", menu
+      else
+        link_to menu, path
+      end
+    end
+  end
+
   # 国際化にあわせたリファクタリングするまでの臨時措置。一行でエラーを表示する。attrを無視する。
   def error_message(obj)
     message = ""

@@ -1,2 +1,12 @@
-<h1>Export#index</h1>
-<p>Find me in app/views/export/index.html.erb</p>
+<table class="masters">
+  <tr>
+    <th>XML形式</th>
+    <td><%= link_to "#{@export_file_name}.xml", export_file_path(:filename => @export_file_name, :format => :xml) %>
+        （<%= link_to "ダウンロード", export_file_path(:filename => @export_file_name, :format => :xml, :download => 1) %>）</td>
+  </tr>
+  <tr>
+    <th>CSV形式</th>
+    <td><%= link_to "#{@export_file_name}.csv", export_file_path(:filename => @export_file_name, :format => :csv) %>
+    （<%= link_to "ダウンロード", export_file_path(:filename => @export_file_name, :format => :csv, :download => 1) %>）</td>
+  </tr>
+</table>

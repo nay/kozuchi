@@ -104,7 +104,7 @@ class Account::Asset < Account::Base
 
   private
   def serialized_attributes
-    super.merge({:asset_kind => self.asset_kind})
+    super.merge({:type => self.asset_kind})
   end
 
 end

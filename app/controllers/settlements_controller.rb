@@ -1,7 +1,12 @@
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   layout 'main'
-  before_filter {|controller| controller.menu_group = "精算"}
+  menu_group "精算"
+  menu "新しい精算", :only => [:new, :cerate]
+  menu "一覧", :only => [:index]
+  menu "詳細", :only => [:view]
+
+#  before_filter {|controller| controller.menu_group = "精算"}
   before_filter :check_credit_account, :except => [:view, :delete, :print_form]
   before_filter :load_settlement, :only => [:view, :delete, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
@@ -47,7 +52,6 @@ class SettlementsController < ApplicationController
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in selected_deal_ids
       entry = AccountEntry.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", @user.id, deal_id, @settlement.account.id])
-      p "deal_id = #{deal_id}, entry = #{entry}"
       next unless entry
       @settlement.target_entries << entry
     end

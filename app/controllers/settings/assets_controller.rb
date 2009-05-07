@@ -1,5 +1,7 @@
 class Settings::AssetsController < Settings::AccountsController
-  before_filter {|controller| controller.menu_group = "基本設定"}
+  menu_group "基本設定"
+  menu "口座"
+
   before_filter :find_account, :only => [:destroy]
 
   # 一覧表示する。

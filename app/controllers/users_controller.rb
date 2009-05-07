@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :login_required, :except => [:destroy, :edit]
-  before_filter {|controller| controller.menu_group = "基本設定"}
+  menu_group "基本設定"
   before_filter :password_token_required, :only => [:edit_password, :update_password]
 #  layout 'login'
 
