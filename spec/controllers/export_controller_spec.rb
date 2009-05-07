@@ -1,14 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ExportController do
-
-  #Delete these examples and add some real ones
-  it "should use ExportController" do
-    controller.should be_an_instance_of(ExportController)
-  end
-
+  fixtures :users
 
   describe "GET 'index'" do
+    before do
+      login_as :taro
+    end
     it "should be successful" do
       get 'index'
       response.should be_success
