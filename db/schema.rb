@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090315043430) do
+ActiveRecord::Schema.define(:version => 20090507005028) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20090315043430) do
     t.integer  "sender_ex_account_id", :limit => 11
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id",              :limit => 11
   end
 
   create_table "account_links", :force => true do |t|
