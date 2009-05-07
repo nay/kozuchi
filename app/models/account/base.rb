@@ -7,8 +7,6 @@ class Account::Base < ActiveRecord::Base
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
 
-  attr_accessor :serialized_id
-
   # DBを検索してDBに格納された名前を得る
   # オブジェクトに格納されたnameが格納された名前と異なる場合があるので用意
   def stored_name
@@ -182,14 +180,12 @@ class Account::Base < ActiveRecord::Base
 
   def to_csv
     attrs = serialized_attributes
-    ["account", attrs[:id], attrs[:type], attrs[:asset_kind], "\"#{name}\""].join(',')
+    ["account", id, attrs[:type], attrs[:asset_kind], "\"#{name}\""].join(',')
   end
 
   private
   def serialized_attributes
-    attrs = {:type => self.class.name.split('::').last.underscore}
-    attrs[:id] = "account#{self.serialized_id}" unless self.serialized_id.blank?
-    attrs
+    {:type => self.class.name.split('::').last.underscore, :id => "account#{self.id}"}
   end
 
 
