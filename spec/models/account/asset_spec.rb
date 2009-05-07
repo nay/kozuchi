@@ -52,4 +52,14 @@ describe "Account::Asset" do
     end
   end
 
+  describe "to_csv" do
+    before do
+      raise "no @credit_card" unless @credit_card
+      @csv = @credit_card.to_csv
+    end
+    it "想定の形であること" do
+      @csv.should == 'account,,asset,credit_card,"クレジットカード"'
+    end
+  end
+
 end

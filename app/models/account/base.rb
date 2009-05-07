@@ -180,6 +180,11 @@ class Account::Base < ActiveRecord::Base
     xml.account(self.name, serialized_attributes)
   end
 
+  def to_csv
+    attrs = serialized_attributes
+    ["account", attrs[:id], attrs[:type], attrs[:asset_kind], "\"#{name}\""].join(',')
+  end
+
   private
   def serialized_attributes
     attrs = {:type => self.class.name.split('::').last.underscore}
