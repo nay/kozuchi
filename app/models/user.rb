@@ -120,7 +120,7 @@ class User < ActiveRecord::Base
 
   include User::AccountLinking
   
-  has_many :deals, :class_name => 'BaseDeal', :extend => User::DealsExtension
+  has_many :deals, :class_name => 'BaseDeal', :include => [:account_entries], :extend => User::DealsExtension
   has_many :account_entries
   
   def default_asset

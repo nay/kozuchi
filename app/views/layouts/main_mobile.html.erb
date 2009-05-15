@@ -1,8 +1,7 @@
 <%= render :partial => "shared/doctype" %>
-<% menu_tree, current_menu = @side_menues.load(request.path, @menu_name, self) %>
 
-<% title = menu_tree ? menu_tree.name : controller.class.controller_name -%>
-<% sub_title = current_menu ? current_menu.name : controller.action_name -%>
+<% title = @menu_group || controller.class.controller_name -%>
+<% sub_title = @menu || controller.action_name -%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
     <%= render :partial => "shared/html_header" -%>

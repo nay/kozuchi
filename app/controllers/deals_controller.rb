@@ -26,7 +26,9 @@ class DealsController < ApplicationController
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, false
      )
-
+#     text = render_to_string :template => "deals/test.html.erb"
+#     p text
+#     render :text => "aaa"
   end
 
   # TODO: モバイル専用

@@ -16,14 +16,14 @@ class Balance < BaseDeal
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    xml.balance(:id => "balance#{self.id}", :date => self.date.to_s(:db), :position => self.daily_seq, :account => "account#{self.account_id}") do
+    xml.balance(:id => "balance#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :account => "account#{self.account_id}") do
       xml.description self.summary
       xml.amount self.balance
     end
   end
 
   def to_csv
-    ["balance", self.id, date.to_s(:db), daily_seq, "\"#{summary}\"", account_id, balance].join(",")
+    ["balance", self.id, date_as_str, daily_seq, "\"#{summary}\"", account_id, balance].join(",")
   end
 
   def initial_balance?
@@ -53,14 +53,6 @@ class Balance < BaseDeal
     e.save # TODO: !でなくていいの？
   end
 
-  # Prepare sugar methods
-  def after_find
-    set_old_date
-#    raise "Invalid Balance #{id} with no account_entries" if account_entries.empty?
-#    @account_id = account_entries[0].account_id
-#    @balance = account_entries[0].balance
-  end
-  
   def account_id
     @account_id ||= (entry ? entry.account_id : nil)
     @account_id

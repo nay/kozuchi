@@ -5,8 +5,8 @@ class BaseDeal < ActiveRecord::Base
   has_many   :account_entries,
              :foreign_key => 'deal_id',
              :dependent => :destroy,
-             :order => "amount",
-             :include => :account do
+             :order => "amount" do
+#             :include => :account do
 
     # TODO: テスト
     def build(attributes = {})
@@ -33,6 +33,11 @@ class BaseDeal < ActiveRecord::Base
   
 #  named_scope :without_balance, :conditions => "type = 'Deal'" # user.dealsからのアクセスのため
 
+
+  # 高速化のため、Castを経ないでDateを文字列として得られるメソッドを用意
+  def date_as_str
+    @attributes["date"]
+  end
 
   def year
     split_date if !@year && self[:date]
@@ -173,10 +178,6 @@ class BaseDeal < ActiveRecord::Base
   end
   
 
-  def set_old_date
-    @old_date = self.date
-  end
-  
   def confirm
     BaseDeal.transaction do
       BaseDeal.update_all("confirmed = #{boolean_to_s(true)}", "id = #{self.id}")
@@ -191,7 +192,12 @@ class BaseDeal < ActiveRecord::Base
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。
   def set_daily_seq
-    self.daily_seq = nil if self.date != @old_date
+    if new_record?
+      self.daily_seq = nil
+    else
+      stored_self = BaseDeal.find(self.id)
+      self.daily_seq = nil if self.date != stored_self.date
+    end
   
     # 番号が入っていればそのまま
     return if self.daily_seq

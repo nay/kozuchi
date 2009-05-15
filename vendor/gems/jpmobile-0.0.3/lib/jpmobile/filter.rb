@@ -43,7 +43,7 @@ module Jpmobile
         @counter -= 1
         return unless @counter.zero?
         if respond_to?(:to_external) && apply_outgoing?(controller)
-          controller.response.body = to_external(controller.response.body, controller)
+          controller.response.body = to_external(controller.response.body, controller) if controller.response.body # nay:エラー時 nilになるようなので追加
           after_after(controller) if respond_to? :after_after
         end
       end

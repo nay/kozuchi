@@ -9,7 +9,7 @@ class Deal < BaseDeal
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    xml.deal(:id => "deal#{self.id}", :date => self.date.to_s(:db), :position => self.daily_seq, :confirmed => self.confirmed) do
+    xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
       xml.description self.summary
       xml.entries do
         account_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
@@ -18,7 +18,7 @@ class Deal < BaseDeal
   end
 
   def to_csv_lines
-    csv_lines = [["deal", id, date.to_s(:db), daily_seq, "\"#{summary}\"", confirmed].join(',')]
+    csv_lines = [["deal", id, date_as_str, daily_seq, "\"#{summary}\"", confirmed].join(',')]
     account_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
   end
@@ -132,24 +132,6 @@ class Deal < BaseDeal
   def before_update
     clear_entries_before_update    
     children.clear
-  end
-
-  # Prepare sugar methods
-  def after_find
-    set_old_date
-    # account_enrties がまだできていないときにやるとパフォーマンスロスになるので refresh_account_infoに移動
-#    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-##    raise "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-#    return unless account_entries.size == 2
-#    
-#    for et in account_entries
-#      if et.amount >= 0
-#        @plus_account_id = et.account_id
-#        @amount = et.amount
-#      else
-#        @minus_account_id = et.account_id
-#      end
-#    end
   end
   
   def before_destroy
