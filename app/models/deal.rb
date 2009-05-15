@@ -10,7 +10,7 @@ class Deal < BaseDeal
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
-      xml.description self.summary
+      xml.description XMLUtil.escape(self.summary)
       xml.entries do
         account_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
       end

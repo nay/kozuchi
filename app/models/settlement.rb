@@ -25,8 +25,8 @@ class Settlement < ActiveRecord::Base
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     xml.settlement(:id => "settlement#{self.id}", :account => "account#{self.account_id}") do
-      xml.name name
-      xml.description description
+      xml.name XMLUtil.escape(name)
+      xml.description XMLUtil.escape(description)
     end
   end
 
@@ -54,12 +54,12 @@ class Settlement < ActiveRecord::Base
       # この精算にひもづいた entry に対応する entryを全部これにひもづける
       for e in target_entries
         # 本来あるはずのリンクがない（先方が故意に消したなど）場合は新しく作る
-        e.create_friend_deal unless e.linked_account_entry
+        e.request_linking unless e.linked_account_entry
         submitted.target_entries << e.linked_account_entry
       end
       # この精算の result_entry のひもづけ
       raise "異常なデータです。精算取引がありません。" unless self.result_entry
-      result_entry.create_friend_deal unless result_entry.linked_account_entry
+      result_entry.request_linking unless result_entry.linked_account_entry
       submitted.result_entry = result_entry.linked_account_entry
       
       self.submitted_settlement_id = submitted.id

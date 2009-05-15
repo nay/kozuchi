@@ -11,15 +11,6 @@ class ExportController < ApplicationController
     options = {:layout => false}
     options[:content_type] = "application/octet-stream" if params[:download] == "1"
     render options
-#    respond_to do |format|
-#      format.xml { render :layout => false}
-#      format.csv {
-#        lines = []
-#        lines << current_user.assets.each{|a| a.to_csv}
-#        lines << current_user.expenses.each{|a| a.to_csv}
-#
-#      }
-#    end
   end
 
 end

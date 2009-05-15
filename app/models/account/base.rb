@@ -175,7 +175,7 @@ class Account::Base < ActiveRecord::Base
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    xml.tag!(serialized_type_name, self.name, serialized_attributes)
+    xml.tag!(serialized_type_name, XMLUtil.escape(self.name), serialized_attributes)
   end
 
   def to_csv

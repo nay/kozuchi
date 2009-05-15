@@ -112,16 +112,7 @@ class AccountEntry < ActiveRecord::Base
     update_balance
   end
 
-  private
-
-  def copy_deal_attributes
-    return unless deal # 疎結合にするため
-    self.user_id = deal.user_id
-    self.date = deal.date
-    self.daily_seq = deal.daily_seq
-  end
-
-  # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
+  # コールバックのほか、精算提出などで単独でも呼ばれる
   def request_linking
 
     # すでにあるときは基本的に連動しないが、金額を更新しようとしている時はリンク解除して連携をやりなおす
@@ -140,6 +131,18 @@ class AccountEntry < ActiveRecord::Base
     self.linked_user_id = account.linked_account.user_id
     self.save!
   end
+
+
+  private
+
+  def copy_deal_attributes
+    return unless deal # 疎結合にするため
+    self.user_id = deal.user_id
+    self.date = deal.date
+    self.daily_seq = deal.daily_seq
+  end
+
+  # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
 
   def request_unlinking
     return if @skip_unlinking
