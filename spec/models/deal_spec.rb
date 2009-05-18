@@ -105,6 +105,26 @@ describe Deal do
          @hanako_unlinked_entry.reload
          @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
        end
+       it "連携があり確認済のときに金額を変更したら相手とのリンクが切られて新しく記入される" do
+         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @hanako_deal.confirm
+#         @deal.account_entries.each{|e| e.amount *= 2}
+#        効かない；；
+         @deal.plus_account_id = @deal.plus_account_id
+         @deal.minus_account_id = @deal.minus_account_id
+         @deal.amount = @deal.amount * 2
+
+#         p @deal.account_entries.map{|e| e.amount}
+         @deal.save!
+         @deal.reload
+         p @deal.account_entries.map{|e| e.amount}
+         new_entry = @deal.account_entries(true).detect{|e| e.account_id == @taro_hanako.id}
+         new_entry.linked_ex_entry_id.should_not be_nil
+         @linked_entry.reload
+         @linked_entry.linked_ex_deal_id.should_not == @hanako_deal.id
+         @hanako_deal.reload
+         p @hanako_deal.account_entries(true).map{|e| e.linked_ex_entry_id}
+       end
      end
 
 

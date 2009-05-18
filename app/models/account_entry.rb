@@ -10,6 +10,7 @@ class AccountEntry < ActiveRecord::Base
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   validates_presence_of :amount, :account_id
+  before_update :store_old_amount
   before_save :copy_deal_attributes
   after_save :update_balance, :request_linking
 
@@ -63,6 +64,9 @@ class AccountEntry < ActiveRecord::Base
       deal.destroy
     else
       AccountEntry.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
+      self.linked_ex_entry_id = nil
+      self.linked_ex_deal_id = nil
+      self.linked_user_id = nil
     end
   end
 
@@ -114,10 +118,9 @@ class AccountEntry < ActiveRecord::Base
 
   # コールバックのほか、精算提出などで単独でも呼ばれる
   def request_linking
-
     # すでにあるときは基本的に連動しないが、金額を更新しようとしている時はリンク解除して連携をやりなおす
     if self.linked_ex_entry_id
-      if !new_record? && AccountEntry.find(self.id).amount.to_i != self.amount.to_i
+      if @old_amount && @old_amount.to_i != self.amount.to_i
         # TODO account_idも抱える必要がある
         request_unlinking
       else
@@ -134,6 +137,10 @@ class AccountEntry < ActiveRecord::Base
 
 
   private
+
+  def store_old_amount
+    @old_amount = self.class.find(self.id).amount
+  end
 
   def copy_deal_attributes
     return unless deal # 疎結合にするため
