@@ -75,5 +75,6 @@ Rails::Initializer.run do |config|
 #  }
 #  config.action_mailer.smtp_settings = {:address => "192.168.0.102"}
 
-#  config.action_controller.fragment_cache_store = :file_store, File.join(RAILS_ROOT, "tmp/cache")
+ config.action_controller.cache_store = :file_store, File.join(RAILS_ROOT, "tmp/cache")
+ config.action_controller.fragment_cache_store = :file_store, File.join(RAILS_ROOT, "tmp/cache")
 end

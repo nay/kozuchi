@@ -1,3 +1,4 @@
+p "export xml view"
 xml.instruct!
 xml.kozuchi(:timestamp => Time.now.to_s(:db).gsub(/\s/, 'T'), :user => current_user.login, :version => KOZUCHI_VERSION) do
   xml.assets do

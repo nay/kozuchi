@@ -1,6 +1,7 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
+  cache_sweeper :export_sweeper, :only => [:create_deal, :destroy, :delete_deal, :confirm] # TODO: アクションでしぼる
   menu_group "家計簿"
   menu "仕訳帳"
   before_filter :require_mobile, :only => :destroy

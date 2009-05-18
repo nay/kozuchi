@@ -1,6 +1,7 @@
 # 1件のDealに対する処理のコントローラ
 class DealController < ApplicationController
   include ApplicationHelper
+  cache_sweeper :export_sweeper, :only => [:save]
 
   before_filter :load_target_date
   

@@ -2,5 +2,6 @@
 class Settings::AccountsController < ApplicationController
   layout 'main'
   include TermHelper
+  cache_sweeper :export_sweeper
   
 end

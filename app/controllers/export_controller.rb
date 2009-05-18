@@ -2,6 +2,7 @@ class ExportController < ApplicationController
   layout 'main'
   menu_group "データ管理"
   menu "エクスポート"
+  after_filter :cache_export, :only => [:whole]
 
   def index
     @export_file_name = "kozuchi-#{Date.today.to_s(:db)}"
@@ -10,7 +11,22 @@ class ExportController < ApplicationController
   def whole
     options = {:layout => false}
     options[:content_type] = "application/octet-stream" if params[:download] == "1"
-    render options
+    if fragment_exist? fragment_key
+      options[:content_type] ||= "text/xml" if params[:format] == 'xml'
+      render options.merge(:text => read_fragment(fragment_key))
+      p "used cache"
+    else
+      render options
+    end
+  end
+
+  private
+  def fragment_key
+    ExportSweeper.key(params[:format], current_user.id)
+  end
+  def cache_export
+    return unless params[:format]
+    write_fragment(fragment_key, response.body) unless fragment_exist?(fragment_key)
   end
 
 end
