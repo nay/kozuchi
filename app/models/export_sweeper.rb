@@ -1,5 +1,5 @@
 class ExportSweeper < ActionController::Caching::Sweeper
-  observe Deal, Account::Base, Settlement, User
+  observe BaseDeal, Account::Base, Settlement, User
 
   def self.key(format, user_id, host_with_port)
     "#{host_with_port}/export/whole/#{format.to_s}/whole-#{user_id}-#{format.to_s}"

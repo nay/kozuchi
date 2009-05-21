@@ -29,7 +29,7 @@
     <h4>詳細</h4>
 	<p>一覧から詳細を選ぶと、精算データの詳細が見られます。（表示の都合上メニューにもありますがメニューから選ぶ必要性はあまりないでしょう）</p>
   </div>
-  <h3>基本設定</h3>
+  <h3>設定</h3>
   <div class="paragraph">
     <h4>口座</h4>
     <p>銀行口座など、資産の内訳（お財布の種類）を設定します。<br/>新しいユーザーでは現金（通常は持ち歩く財布を意味しています）だけが設定されています。自由に追加してお使いください。並び順は、選択リストの順序に影響します。</p>
@@ -40,8 +40,10 @@
     <p>給料など、収入の内訳（お金の入ってくる源の分類）を設定します。※設定、選択リストは同上です。</p>
     <h4>プロフィール</h4>
     <p>パスワードを含むユーザー情報を変更できます。</p>
+    <h4>カスタマイズ</h4>
+    <p>ユーザーカラーと、仕訳帳のスクロールバーの高さを指定できます。ユーザーカラーは、一人の人間が複数の家計簿（「自分」と「家計」など）をつける場合に、どちらの家計簿か間違えにくくなるなどの利点があります。濃い目の色を設定されることをお奨めします。</p>
   </div>
-  <h3>高度な設定</h3>
+  <h3>連携</h3>
   <div class="paragraph">
     <a name="friend">
     <h4>フレンド</h4>
@@ -63,8 +65,92 @@
     <p class="example">"生活費は必ず某銀行に振り込まれるんだけど"</p>
     <p>取引連携で記入される場合に、入ってきたお金がどこに行くのかを指定することができます。例えば、"生活費" としてフレンド「夫」さんから「家計」ユーザーの「某銀行」口座にいつも入る場合、"生活費" の受け皿口座を「某銀行」にするとそのように設定できます。<br />
     受け皿で登録されたとおりでない場合があっても、仕訳帳から普通に変更できます。</p>
-    <h4>カスタマイズ</h4>
-    <p>ユーザーカラーと、仕訳帳のスクロールバーの高さを指定できます。ユーザーカラーは、一人の人間が複数の家計簿（「自分」と「家計」など）をつける場合に、どちらの家計簿か間違えにくくなるなどの利点があります。濃い目の色を設定されることをお奨めします。</p>
   </div>
+  <h3>データ管理</h3>
+  <div class="paragraph">
+    <a name="export">
+    <h4>エクスポート</h4>
+    </a>
+    <p>口座、費目、収入内訳、家計簿記入データ、精算データをXMLまたはCSVで出力します。フレンド、取引連携状態等はエクスポートされません。</p>
+    <p>XMLのフォーマットは次のようになります。</p>
+    <pre style="border:1px solid #888888; padding: 4px; margin-left: 20px;">
+&lt;kozuchi version="0.16.7" timestamp="2009-05-21T14:27:07" user="yourname"&gt;
+
+  &lt;!-- 口座リスト --&gt;
+  &lt;assets&gt;
+    &lt;!-- typeに口座種別、positionに並び順、idにシステム上の識別子、要素に口座名が入ります --&gt;
+    &lt;asset type="cache" position="1" id="account1"&gt現金&lt;/asset&gt;
+    ...
+    ...
+  &lt/assets&gt;
+
+  &lt;!-- 費目リスト --&gt;
+  &lt;expenses&gt;
+    &lt;!-- positionに並び順、idにシステム上の識別子、要素に費目名が入ります --&gt;
+    &lt;expense position="1" id="account2"&gt;食費&lt;/expense&gt;
+    ...
+    ...
+  &lt;/expenses&gt;
+
+  &lt;!-- 収入内訳リスト --&gt;
+  &lt;incomes&gt;
+    &lt;!-- positionに並び順、idにシステム上の識別子、要素に収入内訳名が入ります --&gt;
+    &lt;income position="1" id="account2"&gt;食費&lt;/income&gt;
+    ...
+    ...
+  &lt;/incomes&gt;
+
+  &lt;!-- 記入データリスト --&gt;
+  &lt;deals&gt;
+
+    &lt;!-- １件の記入 --&gt;
+    &lt;!-- dateに日付、confirmedに確認状態かどうか、positionに１日の中での記入順、idにシステム上の識別子が入ります --&gt;
+    &lt;deal date="2009-05-15" confirmed=true" position="1" id="deal1" &gt;
+      &lt;!-- 摘要 --&gt;
+      &lt;description&gt;昼食&lt;description&gt;
+      &lt;!-- 識別子'account1'の勘定（口座または費目または収入内訳）から識別子'account2'の勘定への800円の移動 --&gt;
+      &lt;entries&gt;
+        &lt;entry account="account1">-800&lt;/entry&gt;
+        &lt;entry account="account2">800&lt;/entry&gt;
+        &lt;!-- 精算と紐付いていれば entryのsettlement属性に精算の識別子が入ります --&gt;
+      &lt;/entries&gt;
+    &lt;/deal&gt;
+    ...
+    ...
+    &lt;!-- 残高記入 （通常の記入と混在）--&gt;
+    &lt;balance account="account23" date="2009-05-21" position="2" id="balance745"&gt;
+      &lt;description/&gt;
+      &lt;amount&gt;1300&lt;/amount&gt;
+    &lt;/balance&gt;
+    ...
+    ...
+  &lt;/deals&gt;
+
+  &lt;!-- 精算リスト --&gt;
+  &lt;settlements&gt;
+    &lt;!-- １件の精算 --&gt;
+    &lt;!-- accountに対象勘定識別子、idにこの精算のシステム内識別子 --&gt;
+    &lt;settlement account="account24" id="settlement1"&gt;
+      &lt;name&gt;カードXの精算&lt;/name&gt;
+      &lt;description&gt;精算データの備考です&lt;/description&gt;
+    &lt;/settlement&gt;
+    ...
+    ...
+  &lt;/settlements&gt;
   
+&lt;/kozuchi&gt;
+    </pre>
+    <p>CSVのフォーマットはファイル先頭から順に次のようになります。</p>
+    <table style="margin-left:20px; border:1px solid #888888; padding: 4px;">
+      <tr><th>行の種類</th><th>行のフォーマット</th></tr>
+      <tr><td>先頭行</td><td>バージョン、出力日時、ユーザー</td></tr>
+      <tr><td>口座行</td><td>asset,口座識別子,口座種別,並び順,口座名</td></tr>
+      <tr><td>費目行</td><td>expense,費目識別子,,並び順,費目名</td></tr>
+      <tr><td>収入内訳行</td><td>income,収入内訳識別子,,並び順,収入内訳名</td></tr>
+      <tr><td>記入の開始行<br />（entryで始まる後続行とセット）</td><td>deal,記入識別子,日付,１日のなかでの記入順,摘要,確認状態</td></tr>
+      <tr><td>記入の内容行（１勘定分）</td><td>entry,記入識別子,勘定識別子,精算識別子,自分が精算結果取引となっている精算識別子,金額</td></tr>
+      <tr><td>残高記入行</td><td>balance,残高記入識別子,日付,１日のなかでの記入順,摘要,勘定識別子,金額</td></tr>
+      <tr><td>精算行</td><td>settlement,精算識別子,勘定識別子,名前,備考</td></tr>
+    </table>
+  </div>
 </div>
