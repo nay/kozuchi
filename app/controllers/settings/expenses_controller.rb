@@ -1,5 +1,5 @@
 class Settings::ExpensesController < Settings::AccountsController
-  menu_group "基本設定"
+  menu_group "設定"
   menu "費目"
 
   before_filter :find_account, :only => [:destroy]

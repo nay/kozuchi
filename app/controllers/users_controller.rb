@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   skip_before_filter :login_required, :except => [:destroy, :edit]
-  menu_group "基本設定"
+  menu_group "設定"
+  menu "プロフィール", :only => [:edit, :update]
+
   before_filter :password_token_required, :only => [:edit_password, :update_password]
 #  layout 'login'
   cache_sweeper :export_sweeper, :only => [:destroy]

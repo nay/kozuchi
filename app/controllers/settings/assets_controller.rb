@@ -1,5 +1,5 @@
 class Settings::AssetsController < Settings::AccountsController
-  menu_group "基本設定"
+  menu_group "設定"
   menu "口座"
 
   before_filter :find_account, :only => [:destroy]

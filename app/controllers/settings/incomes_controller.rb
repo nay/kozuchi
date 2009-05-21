@@ -1,5 +1,5 @@
 class Settings::IncomesController < Settings::AccountsController
-  menu_group "基本設定"
+  menu_group "設定"
   menu "収入内訳"
 
   before_filter :find_account, :only => [:destroy]

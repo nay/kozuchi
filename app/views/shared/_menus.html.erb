@@ -10,16 +10,16 @@
   <%= link_to_menu '新しい精算', :controller => '/settlements', :action => 'new' %>
   <%= link_to_menu '一覧', :controller => '/settlements', :action => 'index' %>
   <%= link_to_menu '詳細', :controller => '/settlements', :action => 'view' %>
-<% when '基本設定' %>
+<% when '設定' %>
   <%= link_to_menu '口座', :controller => '/settings/assets', :action => 'index' %>
   <%= link_to_menu '費目', :controller => '/settings/expenses',:action => 'index' %>
   <%= link_to_menu '収入内訳', :controller => '/settings/incomes',:action => 'index' %>
   <%= link_to_menu 'プロフィール', :controller => '/users',:action => 'edit' %>
-<% when '高度な設定' %>
+  <%= link_to_menu 'カスタマイズ', :controller => '/settings/preferences',:action => 'index' %>
+<% when '連携' %>
   <%= link_to_menu 'フレンド', :controller => '/settings/friends',:action => 'index' %>
   <%= link_to_menu '取引連動',:controller => '/settings/account_links', :action => 'index' %>
   <%= link_to_menu '受け皿', :controller => '/settings/partner_account', :action => 'index' %>
-  <%= link_to_menu 'カスタマイズ', :controller => '/settings/preferences',:action => 'index' %>
 <% when 'データ管理' %>
   <%= link_to_menu 'エクスポート', export_path %>
 <% when 'ヘルプ' %>

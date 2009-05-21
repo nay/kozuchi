@@ -1,7 +1,7 @@
 # フレンド設定
 class Settings::FriendsController < ApplicationController
   layout 'main'
-  menu_group "高度な設定"
+  menu_group "連携"
   menu "フレンド"
 
   def index

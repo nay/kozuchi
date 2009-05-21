@@ -1,6 +1,6 @@
 class Settings::AccountLinksController < ApplicationController
   layout 'main'
-  menu_group "高度な設定"
+  menu_group "連携"
   menu "取引連動"
 
   before_filter :find_account, :only => [:destroy, :create_or_update]

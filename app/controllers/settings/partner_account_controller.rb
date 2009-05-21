@@ -1,6 +1,6 @@
 class Settings::PartnerAccountController < ApplicationController
   layout 'main'
-  menu_group "高度な設定"
+  menu_group "連携"
   menu "受け皿"
 
   # 受け皿初期画面
