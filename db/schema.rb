@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090507005028) do
+ActiveRecord::Schema.define(:version => 20090521044900) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -74,11 +74,6 @@ ActiveRecord::Schema.define(:version => 20090507005028) do
 
   add_index "accounts", ["user_id"], :name => "index_accounts_on_user_id"
   add_index "accounts", ["partner_account_id"], :name => "index_accounts_on_partner_account_id"
-
-  create_table "admin_users", :force => true do |t|
-    t.string "name"
-    t.string "hashed_password", :limit => 40
-  end
 
   create_table "deals", :force => true do |t|
     t.string   "type",           :limit => 20,                   :null => false

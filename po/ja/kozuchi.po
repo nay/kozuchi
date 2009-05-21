@@ -92,18 +92,6 @@ msgstr ""
 msgid "AccountRule|Payment day"
 msgstr ""
 
-#: app/models/admin_user.rb:-
-msgid "admin user"
-msgstr ""
-
-#: app/models/admin_user.rb:-
-msgid "AdminUser|Name"
-msgstr ""
-
-#: app/models/admin_user.rb:-
-msgid "AdminUser|Hashed password"
-msgstr ""
-
 #: app/models/base_deal.rb:-
 msgid "deal"
 msgstr ""

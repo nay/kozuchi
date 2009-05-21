@@ -22,7 +22,7 @@ class ExportController < ApplicationController
 
   private
   def fragment_key
-    ExportSweeper.key(params[:format], current_user.id)
+    ExportSweeper.key(params[:format], current_user.id, request.host_with_port)
   end
   def cache_export
     return unless params[:format]

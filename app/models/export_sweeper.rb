@@ -1,8 +1,12 @@
 class ExportSweeper < ActionController::Caching::Sweeper
   observe Deal, Account::Base, Settlement, User
 
-  def self.key(format, user_id)
-    "export/whole/#{format.to_s}/whole-#{user_id}-#{format.to_s}"
+  def self.key(format, user_id, host_with_port)
+    "#{host_with_port}/export/whole/#{format.to_s}/whole-#{user_id}-#{format.to_s}"
+  end
+
+  def key(format, user_id)
+    self.class.key(format, user_id, request.host_with_port)
   end
 
   def after_save(record)
@@ -16,7 +20,7 @@ class ExportSweeper < ActionController::Caching::Sweeper
   private
   def expire(record)
     user_id = record.kind_of?(User) ? record.id : record.user_id
-    expire_fragment(self.class.key(:xml, user_id))
-    expire_fragment(self.class.key(:csv, user_id))
+    expire_fragment(key(:xml, user_id))
+    expire_fragment(key(:csv, user_id))
   end
 end
