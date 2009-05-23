@@ -89,11 +89,17 @@ class Balance < BaseDeal
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
     raise "no account_id" unless account_id
+    conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
+#    unless new_record? # Rails 2.1.0では不要だったが2.2.2では必要になった 子のcreateが行われた後くるかどうかが変わったらしい
+#      conditions.first << " and deals.id != ?"
+#      conditions << self.id
+#    end
     initial_balance_entry = AccountEntry.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => ["account_entries.account_id = ? and deals.type='Balance'", account_id], :order => "deals.date, deals.daily_seq", :readonly => false)
-    # 現在ひとつもないなら特に仕事なし
-    return unless initial_balance_entry
+      :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
+    raise "no initial balance entry after saving a balance" unless initial_balance_entry
+#    # 現在ひとつもないなら特に仕事なし
+#    return unless initial_balance_entry
     # すでにマークがついていたら仕事なし
     return if initial_balance_entry.initial_balance?
 

@@ -20,12 +20,12 @@
         <br />
       <% end %>
       <% form_tag login_post_path do -%>
-        <div><label for="login"><%= _('Login') %></label>
+        <div><label for="login">ログイン</label>
         <%= text_field_tag 'login', flash[:login], :size => 10 %></div>
-         <div><label for="password"><%= _('Password') %></label>
+         <div><label for="password">パスワード</label>
          <%= password_field_tag 'password', "", :size => 10 %></div>
          <div class="error"><%= flash[:error] %></div>
-         <div><%= submit_tag _('Log in') %></div>
+         <div><%= submit_tag "ログイン" %></div>
       <% end -%>
     </div>
   <% end -%>

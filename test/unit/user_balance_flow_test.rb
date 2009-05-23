@@ -37,7 +37,12 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     # 4/1  食費 300
     # 4/30 残高 1000 （不明金 2700）
     create_deal 3, 20, @cache, @food, 500
+    assert_equal -500, balance_sum(@first_user, 3, 21, "accounts.type != 'Income' and accounts.type != 'Expense'")
+
     ib = create_balance 3, 31, @cache, 4000
+    assert_equal 4000, balance_sum(@first_user, 3, 21, "accounts.type != 'Income' and accounts.type != 'Expense'")
+    assert_equal 4000, balance_sum(@first_user, 3, 31, "accounts.type != 'Income' and accounts.type != 'Expense'")
+
     assert ib.account_entries.first.initial_balance?
     
     create_deal 4, 1, @cache, @food, 300

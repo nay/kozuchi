@@ -15,13 +15,13 @@
     <%= focus_on('login') %>
     <div id="login_form" class="box">
       <% form_tag login_post_path do -%>
-        <div><label for="login"><%= _('Login') %></label>
+        <div><label for="login">ログインID</label>
         <%= text_field_tag 'login', flash[:login] %></div>
-         <div><label for="password"><%= _('Password') %></label>
+         <div><label for="password">パスワード</label>
          <%= password_field_tag 'password' %></div>
          <div style="margin-top: 0.5em; margin-bottom: 0.5em;"><%= check_box_tag 'remember_me' %><label for="remember_me">ログイン状態を記憶（２週間）</label></div>
          <div class="error"><%= flash[:error] %></div>
-         <div><%= submit_tag _('Log in'), :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
+         <div><%= submit_tag "ログイン", :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
          <div><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', forgot_password_path %></div>
 
       <% end -%>

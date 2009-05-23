@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   mobile_filter
   transit_sid
   include AuthenticatedSystem
-  init_gettext "kozuchi"
   before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
   helper :all

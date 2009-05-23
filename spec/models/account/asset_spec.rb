@@ -1,7 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe "Account::Asset" do
-  fixtures :users
+  fixtures :users, :accounts
+  set_fixture_class  :accounts => Account::Base
+  
   before do
     @user = users(:taro)
     @capital_fund = @user.assets.create!(:name => "資本金", :asset_kind => "capital_fund")
@@ -50,6 +52,54 @@ describe "Account::Asset" do
     it "想定の形であること" do
       @csv.should == "asset,#{@credit_card.id},credit_card,#{@credit_card.sort_key},\"クレジットカード\""
     end
+  end
+
+  describe "balance_before" do
+    before do
+      @year = 2009
+      @current_user = users(:taro)
+      @cache = accounts(:taro_cache)
+    end
+    it "記入が１つもないとき0であること" do
+      @cache.balance_before(Date.new(2009, 4, 1)).should == 0
+    end
+    describe "残高記入がシステム内になく、4/1に400円の食費を払った記入だけがある場合" do
+      before do
+        create_deal :taro_cache, :taro_food, 400, 4, 1
+      end
+      it "4/2より前の残高は-400であること" do
+        @cache.balance_before(Date.new(2009, 4, 2)).should == -400
+      end
+      it "4/1より前の残高は0であること" do
+        @cache.balance_before(Date.new(2009, 4, 1)).should == 0
+      end
+    end
+    describe "4/1に400円の食費を払い、4/2に残高3000円を記入した場合" do
+      before do
+        create_deal :taro_cache, :taro_food, 400, 4, 1
+        create_balance :taro_cache, 3000, 4, 2
+      end
+      it "4/3より前の残高は3000であること" do
+        @cache.balance_before(Date.new(2009, 4, 3)).should == 3000
+      end
+      it "4/1より前の残高は3400であること" do
+        @cache.balance_before(Date.new(2009, 4, 1)).should == 3400
+      end
+
+    end
+#  def balance_before(date, daily_seq = 0, ignore_initial = false) do
+  end
+
+
+  # 現金→食費の取引記入をする
+  def create_deal(from, to, amount, month, day, attributes = {})
+    attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => Fixtures.identify(from), :plus_account_id => Fixtures.identify(to), :user_id => @current_user.id, :date => Date.new(@year, month, day)}.merge(attributes)
+    Deal.create!(attributes)
+  end
+
+  # 現金の残高記入をする
+  def create_balance(account_fixture_name, balance, month, day)
+    Balance.create!(:summary => "", :balance => balance, :account_id => Fixtures.identify(account_fixture_name), :user_id => @user.id, :date => Date.new(@year, month, day))
   end
 
 end

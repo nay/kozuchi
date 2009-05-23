@@ -3,8 +3,6 @@
 
 require 'digest/sha1'
 class User < ActiveRecord::Base
-#  N_('User|Password')
-#  N_('User|Password confirmation')
   include User::Friend
   include User::Mobile
 
@@ -19,7 +17,8 @@ class User < ActiveRecord::Base
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
+        # TODO: 要確認 Rails 2.2.2 では distinctがないとおかしな値に
+        sum("distinct account_entries.amount",
           :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
         ).to_i
       end
@@ -53,7 +52,7 @@ class User < ActiveRecord::Base
     # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
     def flow_sum(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
+        sum("distinct account_entries.amount",
           :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true]
         ).to_i
       end

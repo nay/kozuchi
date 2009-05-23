@@ -6,6 +6,10 @@ taro_cache:
   user: taro
   type: Asset
   asset_kind: cache
+taro_food:
+  name: 食費
+  user: taro
+  type: Expense
 taro_bank:
   name: 銀行
   user: taro
