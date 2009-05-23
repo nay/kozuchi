@@ -1,8 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first_account_rule:
-  user_id: <%= Fixtures.identify(:old) %>
-  account: first_credit_card
-  associated_account: first_bank
-  closing_day: 0
-  payment_term_months: 1
-  payment_day: 0
