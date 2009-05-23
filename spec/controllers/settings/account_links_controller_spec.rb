@@ -1,10 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Settings::AccountLinksController do
+  fixtures :users
 
-  #Delete this example and add some real ones
-  it "should use Settings::AccountLinksController" do
-    controller.should be_an_instance_of(Settings::AccountLinksController)
+  before do
+    login_as :taro
+  end
+
+  describe "GET 'index'" do
+    it "成功すること" do
+      get :index
+      response.should be_success
+    end
   end
 
 end
