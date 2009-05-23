@@ -1,0 +1,158 @@
+--- !ruby/object:Gem::Specification 
+name: jpmobile
+version: !ruby/object:Gem::Version 
+  version: 0.0.4
+platform: ruby
+authors: 
+- dara
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2009-03-04 00:00:00 +09:00
+default_executable: 
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: actionpack
+  type: :runtime
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 2.2.2
+    version: 
+- !ruby/object:Gem::Dependency 
+  name: rspec
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 1.1.12
+    version: 
+- !ruby/object:Gem::Dependency 
+  name: rspec-rails
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 1.1.12
+    version: 
+- !ruby/object:Gem::Dependency 
+  name: rspec-fixture
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 0.0.2
+    version: 
+description: A Rails plugin for Japanese mobile-phones
+email: dara@shidara.net
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- README
+- CHANGELOG
+files: 
+- README
+- CHANGELOG
+- Rakefile
+- test/au_test.rb
+- test/autoload_test.rb
+- test/docomo_test.rb
+- test/emoticon_functional_test.rb
+- test/emoticon_test.rb
+- test/filter_test.rb
+- test/helper.rb
+- test/helpers_test.rb
+- test/softbank_test.rb
+- test/willcom_test.rb
+- lib/jpmobile
+- lib/jpmobile/datum_conv.rb
+- lib/jpmobile/email.rb
+- lib/jpmobile/emoticon
+- lib/jpmobile/emoticon/au.rb
+- lib/jpmobile/emoticon/conversion_table.rb
+- lib/jpmobile/emoticon/docomo.rb
+- lib/jpmobile/emoticon/softbank.rb
+- lib/jpmobile/emoticon/z_combine.rb
+- lib/jpmobile/emoticon.rb
+- lib/jpmobile/filter.rb
+- lib/jpmobile/helpers.rb
+- lib/jpmobile/hook_abstract_request.rb
+- lib/jpmobile/hook_action_controller.rb
+- lib/jpmobile/hook_action_view.rb
+- lib/jpmobile/mobile
+- lib/jpmobile/mobile/abstract_mobile.rb
+- lib/jpmobile/mobile/au.rb
+- lib/jpmobile/mobile/display.rb
+- lib/jpmobile/mobile/docomo.rb
+- lib/jpmobile/mobile/emobile.rb
+- lib/jpmobile/mobile/softbank.rb
+- lib/jpmobile/mobile/willcom.rb
+- lib/jpmobile/mobile/z_display_info_docomo.rb
+- lib/jpmobile/mobile/z_ip_addresses_au.rb
+- lib/jpmobile/mobile/z_ip_addresses_docomo.rb
+- lib/jpmobile/mobile/z_ip_addresses_emobile.rb
+- lib/jpmobile/mobile/z_ip_addresses_softbank.rb
+- lib/jpmobile/mobile/z_ip_addresses_willcom.rb
+- lib/jpmobile/position.rb
+- lib/jpmobile/request_with_mobile.rb
+- lib/jpmobile/trans_sid.rb
+- lib/jpmobile/util.rb
+- lib/jpmobile/version.rb
+- lib/jpmobile.rb
+- tools/generate_au_emoticon_table.rb
+- tools/generate_docomo_emoticon_table.rb
+- tools/generate_emoticon_conversion_table.rb
+- tools/generate_softbank_emoticon_table.rb
+- tools/list_gps_unsupported_au.rb
+- tools/update_display_info_docomo.rb
+- tools/update_ip_addresses_au.rb
+- tools/update_ip_addresses_willcom.rb
+has_rdoc: true
+homepage: http://jpmobile.rubyforge.org
+post_install_message: 
+rdoc_options: 
+- --quiet
+- --title
+- jpmobile documentation
+- --opname
+- index.html
+- --line-numbers
+- --main
+- README
+- --inline-source
+- --exclude
+- ^(examples|extras)/
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: jpmobile
+rubygems_version: 1.3.1
+signing_key: 
+specification_version: 2
+summary: A Rails plugin for Japanese mobile-phones
+test_files: []
+
