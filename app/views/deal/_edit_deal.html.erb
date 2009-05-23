@@ -15,15 +15,10 @@
     <div id="tabsheet" class="tabsheet">
       <div>
       <input type="hidden" name="tab_name" value="deal"/>
-      <% # どうやら text_field 経由だと オーバーライドした summary をあらわせないので %>
-      <% if @deal.subordinate? %>
-        <input type="text" disabled="true" class="readonly" value="<%= @deal.summary %>" size="40"/>
-      <% else %>
-        <%= text_field("deal", "summary", {:size => "40", :tabindex => '10'}) %>
-      <% end %>
+      <%= text_field("deal", "summary", {:size => "40", :tabindex => '10'}) %>
 	  </div>
       <div id="patterns"><%= render :partial => "patterns" %></div>
-      <%= text_field("deal", "amount", {:size => "8", :disabled => @deal.subordinate? || @deal.settlement_attached?, :class => @deal.subordinate? ? 'readonly' : '', :tabindex => '11'}) %>
+      <%= text_field("deal", "amount", {:size => "8", :disabled => @deal.settlement_attached?, :class => '', :tabindex => '11'}) %>
       <span>円</span>
       <%= render :partial => 'shared/account_entry_fields' %>
       <button type="submit" tabindex="14">記入</button>

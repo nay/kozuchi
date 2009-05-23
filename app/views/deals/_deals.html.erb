@@ -40,17 +40,11 @@
                   <%= deal.balance ? "残高確認" : h(deal.summary) %>
                 </td>
               <% end %>
-              <% if deal.parent_for(account_entry.account.id) || deal.child_for(account_entry.account.id) || account_entry.linked_account_entry || account_entry.settlement || account_entry.result_settlement %>
+              <% if account_entry.linked_account_entry || account_entry.settlement || account_entry.result_settlement %>
                 <td class="account">
                   <%= h account_entry.account.name %>
                 </td>
                 <td class="jump">
-                  <% if deal.parent_for(account_entry.account.id) %>
-                    <%= link_to('→主' ,{:action => 'jump', :id => deal.parent.id}) %>
-                  <% end %>
-                  <% if deal.child_for(account_entry.account.id) %>
-                    <%= link_to('→従',{:action => 'jump', :id => deal.child_for(account_entry.account.id).id}) %>
-                  <% end %>
                   <% if account_entry.linked_account_entry %>
                     <span <%="class='unconfirmed'" unless account_entry.linked_account_entry.deal.confirmed %>><%= h account_entry.linked_account_entry.deal.user.login_id %></span>
                   <% end %>

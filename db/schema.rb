@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090521044900) do
+ActiveRecord::Schema.define(:version => 20090521071751) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -76,19 +76,17 @@ ActiveRecord::Schema.define(:version => 20090521044900) do
   add_index "accounts", ["partner_account_id"], :name => "index_accounts_on_partner_account_id"
 
   create_table "deals", :force => true do |t|
-    t.string   "type",           :limit => 20,                   :null => false
-    t.integer  "user_id",        :limit => 11,                   :null => false
-    t.date     "date",                                           :null => false
-    t.integer  "daily_seq",      :limit => 11,                   :null => false
-    t.string   "summary",        :limit => 64,                   :null => false
-    t.boolean  "confirmed",                    :default => true, :null => false
-    t.integer  "parent_deal_id", :limit => 11
+    t.string   "type",       :limit => 20,                   :null => false
+    t.integer  "user_id",    :limit => 11,                   :null => false
+    t.date     "date",                                       :null => false
+    t.integer  "daily_seq",  :limit => 11,                   :null => false
+    t.string   "summary",    :limit => 64,                   :null => false
+    t.boolean  "confirmed",                :default => true, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "deals", ["user_id"], :name => "index_deals_on_user_id"
-  add_index "deals", ["parent_deal_id"], :name => "index_deals_on_parent_deal_id"
 
   create_table "friend_permissions", :force => true do |t|
     t.integer  "user_id",    :limit => 11

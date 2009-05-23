@@ -1,9 +1,5 @@
 # 異動明細クラス。
 class Deal < BaseDeal
-  has_many   :children,
-             :class_name => 'SubordinateDeal',
-             :foreign_key => 'parent_deal_id',
-             :dependent => :destroy
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -119,19 +115,10 @@ class Deal < BaseDeal
     return false
   end
   
-  # 子取引のなかに指定された口座IDが含まれればそれをかえす
-  def child_for(account_id)
-    for child in children
-      return child if child.has_account(account_id)
-    end
-    return false
-  end
-
   # ↓↓  call back methods  ↓↓
 
   def before_update
     clear_entries_before_update    
-    children.clear
   end
   
   def before_destroy
@@ -163,7 +150,6 @@ class Deal < BaseDeal
 
   def clear_relations
     account_entries.clear
-    children.clear
   end
 
   def update_account_entry(is_minus, is_first)

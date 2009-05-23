@@ -103,18 +103,6 @@ class BaseDeal < ActiveRecord::Base
     sum
   end
 
-  def subordinate?
-    false
-  end
-
-  def parent_for(account_id)
-    return nil
-  end
-  
-  def child_for(account_id)
-    return nil
-  end
-  
   def balance
     return nil
   end

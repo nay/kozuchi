@@ -64,7 +64,7 @@ class DealController < ApplicationController
   # 明細変更状態にするAjaxアクション
   def edit_deal
     load_and_assert_back_to
-    @deal = BaseDeal.find(params[:id]) # Deal だとsubordinate がとってこられない。とれてもいいんだけど。
+    @deal = Deal.find(params[:id])
     @tab_name = 'deal'
     prepare_select_deal_tab
     render(:action => "new", :layout => false)
@@ -93,9 +93,9 @@ class DealController < ApplicationController
       deal = BaseDeal.get(params[:deal][:id].to_i, @user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       deal.attributes = params[:deal]
-      # 精算ルール以外の理由で未確認のものは確認にする
+      # 未確認のものは確認にする
       # モデルでやると相互作用による更新を見分けるのが大変なのでここでやる
-      deal.confirmed = true if !deal.confirmed && !deal.subordinate?
+      deal.confirmed = true if !deal.confirmed
     else
       deal = Deal.new(params[:deal])
       deal.user_id = @user.id
