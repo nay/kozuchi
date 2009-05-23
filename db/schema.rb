@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090521071751) do
+ActiveRecord::Schema.define(:version => 20090523142041) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :limit => 11
@@ -53,15 +53,6 @@ ActiveRecord::Schema.define(:version => 20090521071751) do
 
   add_index "account_links", ["account_id"], :name => "index_account_links_on_account_id"
   add_index "account_links", ["target_ex_account_id"], :name => "index_account_links_on_target_ex_account_id"
-
-  create_table "account_rules", :force => true do |t|
-    t.integer "user_id",               :limit => 11,                :null => false
-    t.integer "account_id",            :limit => 11,                :null => false
-    t.integer "associated_account_id", :limit => 11,                :null => false
-    t.integer "closing_day",           :limit => 11, :default => 0, :null => false
-    t.integer "payment_term_months",   :limit => 11, :default => 1, :null => false
-    t.integer "payment_day",           :limit => 11, :default => 0, :null => false
-  end
 
   create_table "accounts", :force => true do |t|
     t.integer "user_id",            :limit => 11, :null => false

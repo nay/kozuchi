@@ -79,15 +79,7 @@ class Account::Asset < Account::Base
 
   # ---------- 機能
 
-#  has_one :account_rule,
-#          :dependent => :destroy,
-#          :foreign_key => 'account_id'
-#  has_many :associated_account_rules,
-#           :class_name => 'AccountRule',
-#           :foreign_key => 'associated_account_id'
-
   validate :validates_partner_account
-
 
   def self.create_accounts(user_id, asset_kind, names, sort_key_start = 1)
     sort_key = sort_key_start
