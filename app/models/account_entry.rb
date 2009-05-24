@@ -70,48 +70,6 @@ class AccountEntry < ActiveRecord::Base
     end
   end
 
-#  # 新しく連携先取引を作成する
-#  # linked_account が指定されていれば、それが連携対象となっていれば登録する
-#  # 指定されていなければ、連携対象が１つなら登録し、１つでなければ警告ログを吐いて登録しない
-#  def create_friend_deal
-#    return unless account # 他クラス依存を下げるため、accountがなければ無視する
-#    return if friend_link_id # すでにある＝お手玉になる
-#    partner_account = account.linked_account
-#    return unless partner_account
-#
-#    # 相方のentry の口座が渡されていれば、その連携先が同じユーザーでこのentryの連携先以外か調べる
-#    partner_other_account = connected_account_in_another_entry_other_than(partner_account)
-#    # ※相方の連携先がこの口座の連携先なら、default_assetを介して２つ作るままとする。
-#    # 相方 entry の連携先もこれから作る Deal となるため、相方用 deal_link を用意する。
-#    # この相方用 link は、相方処理のために取り出せるよう、インスタンス変数に格納しておく
-#    @new_plus_link = partner_other_account ? DealLink.create(:created_user_id => account.user_id) : nil
-#
-#    # 二重接続でない場合の相方口座としては、先方ユーザーにおける受け皿設定があればそれを利用する。
-#    partner_other_account ||= partner_account.partner_account
-#
-#    # それもなければ適当な資産口座を割り当てる。
-#    partner_other_account ||= partner_account.user.default_asset_other_than(partner_account)
-#    return unless partner_other_account
-#
-#    new_minus_link = DealLink.create(:created_user_id => account.user_id)
-#
-#    self.friend_link_id = new_minus_link.id
-#
-#    friend_deal = Deal.new(
-#              :minus_account_id => partner_account.id,
-#              :minus_account_friend_link_id => new_minus_link.id,
-#              :plus_account_id => partner_other_account.id,
-#              :plus_account_friend_link_id => @new_plus_link ? @new_plus_link.id : nil,
-#              :amount => self.amount,
-#              :user_id => partner_account.user_id,
-#              :date => self.deal.date,
-#              :summary => self.deal.summary,
-#              :confirmed => false
-#    )
-#    friend_deal.save!
-#
-#  end
-
   def after_confirmed
     update_balance
   end
@@ -157,35 +115,6 @@ class AccountEntry < ActiveRecord::Base
     account.linked_account.unlink_to(self.id, self.user_id) if account && account.linked_account
   end
 
-#  def refresh_friend_link
-#    if contents_updated?
-#      # リンクがあれば切る
-#      clear_friend_deal
-#      # 作る
-#      create_friend_deal
-#    end
-#  end
-
-  # friend_deal とのリンクを消す。相手が未確定なら相手自身も消す。
-  # 消したあとまた作られないようにstaticメソッドをつかう。
-#  def clear_friend_deal
-#    return unless friend_link
-#    another_entry = friend_link.another(self.id)
-#    friend_deal = another_entry.deal if another_entry
-#
-#    # リンクを消す。
-#    AccountEntry.update_all("friend_link_id = null", "friend_link_id = #{self.friend_link_id}")
-#    DealLink.delete(self.friend_link_id)
-#
-#    # このオブジェクトの状態更新
-#    self.friend_link_id = nil
-#    self.friend_link = nil
-#
-#    # 相手があり、未確定なら相手も消す。連動して配下のentryをけすため destroy
-#    friend_deal.destroy if friend_deal && !friend_deal.confirmed
-#  end
-
-
   def contents_updated?
     stored = AccountEntry.find(self.id)
 
@@ -196,15 +125,6 @@ class AccountEntry < ActiveRecord::Base
   def assert_no_settlement
     raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
   end
-
-#  def connected_account_in_another_entry_other_than(another_account)
-#    p "connected_account_in_another_entry_other_than : another_entry_account = #{self.another_entry_account}"
-#    return nil unless self.another_entry_account
-#    c = another_entry_account.linked_account
-#    c = nil if c && (c.id == another_account.id || c.user.id != another_account.user.id)
-#    p "returned #{c}"
-#    return c
-#  end
 
   # 直後の残高記入のamountを再計算する
   def update_balance

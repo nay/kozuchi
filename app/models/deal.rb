@@ -1,5 +1,9 @@
 # 異動明細クラス。
 class Deal < BaseDeal
+  before_validation :regulate_amount
+  before_update :clear_entries_before_update
+  after_save :create_relations
+  before_destroy :destroy_entries
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -34,9 +38,6 @@ class Deal < BaseDeal
     account_entries.detect{|e| e.amount < 0}.account.name
   end
 
-
-  after_save :create_relations
-
   def plus_account_id
     refresh_account_info unless refreshed?
     @plus_account_id
@@ -70,11 +71,6 @@ class Deal < BaseDeal
   def mate_account_name_for(account_id)
     # TODO: 諸口対応、不正データ対応
     account_entries.detect{|e| e.account_id != account_id}.account.name
-  end
-
-  def before_validation
-    # もし金額にカンマが入っていたら正規化する
-    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
   end
 
   def validate
@@ -115,20 +111,6 @@ class Deal < BaseDeal
     return false
   end
   
-  # ↓↓  call back methods  ↓↓
-
-  def before_update
-    clear_entries_before_update    
-  end
-  
-  def before_destroy
-    account_entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
-    # フレンドリンクまたは本体までを消す
- #   clear_friend_deals
-  end
-
-  # ↑↑  call back methods  ↑↑
-  
   def entry(account_id)
     raise "no account_id in Deal.entry()" unless account_id
     r = account_entries.detect{|e| e.account_id.to_s == account_id.to_s}
@@ -137,6 +119,16 @@ class Deal < BaseDeal
   end
 
   private
+
+  # before_destroy
+  def destroy_entries
+    account_entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
+  end
+
+  def regulate_amount
+    # もし金額にカンマが入っていたら正規化する
+    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
+ end
 
   def clear_entries_before_update
     for entry in account_entries

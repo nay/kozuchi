@@ -97,9 +97,8 @@ class Balance < BaseDeal
     initial_balance_entry = AccountEntry.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
       :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
-    raise "no initial balance entry after saving a balance" unless initial_balance_entry
-#    # 現在ひとつもないなら特に仕事なし
-#    return unless initial_balance_entry
+    # 現在ひとつもないなら特に仕事なし
+    return unless initial_balance_entry # destroyの際はこれが起きる可能性がある
     # すでにマークがついていたら仕事なし
     return if initial_balance_entry.initial_balance?
 

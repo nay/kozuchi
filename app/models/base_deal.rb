@@ -2,6 +2,8 @@ require 'time'
 
 class BaseDeal < ActiveRecord::Base
   set_table_name "deals"
+
+  # TODO:廃止予定
   has_many   :account_entries,
              :foreign_key => 'deal_id',
              :dependent => :destroy,
