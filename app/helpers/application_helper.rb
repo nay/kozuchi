@@ -62,7 +62,7 @@ module ApplicationHelper
 #{inner_content}
 </html>
 EOF
-#    concat content, block.binding
+    concat content, block.binding
   end
   
   def head_tag(*stylesheets, &block)
@@ -79,7 +79,7 @@ EOF
     #{inner_content}
   </head>
 EOF
-#    concat content, block.binding
+    concat content, block.binding
   end
 
   def body_tag(&block)
@@ -92,7 +92,7 @@ EOF
     </div>
   </body>
 EOF
-#    concat content, block.binding
+    concat content, block.binding
   end
 
   # 通信欄
