@@ -25,8 +25,6 @@ class BaseDeal < ActiveRecord::Base
   attr_writer :insert_before
   attr_accessor :old_date
   
-  include ModelHelper
-
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
@@ -166,11 +164,15 @@ class BaseDeal < ActiveRecord::Base
                   :joins => "as dl inner join account_entries as et on dl.id = et.deal_id"
     ).nil?
   end
+
+  def self.confirm_without_callback(id)
+    update_all(sanitize_sql_for_assignment(["confirmed = ?", true]), ["id = ?", id])
+  end
   
 
   def confirm
     BaseDeal.transaction do
-      BaseDeal.update_all("confirmed = #{boolean_to_s(true)}", "id = #{self.id}")
+      BaseDeal.confirm_without_callback(self.id)
       # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
       # TODO: コールバックは見直し必要か
       reload
