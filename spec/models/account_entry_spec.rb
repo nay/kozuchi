@@ -19,6 +19,28 @@ describe AccountEntry do
     raise "前提エラー：@hanako_in_taroに記入したものが@taro_in_hanakoに記入される設定になっていません" unless @hanako_in_taro.linked_account == @taro_in_hanako
   end
 
+  describe "formatted_amount=" do
+    it "コンマ入りの数字が正規化されて代入される" do
+      new_account_entry(:formatted_amount => "10,000").amount.should == 10000
+    end
+  end
+  describe "formatted_amount" do
+    it "コンマ入りで入れてもゲッタでは,がつかない" do
+      new_account_entry(:formatted_amount => "10,000").formatted_amount.should == 10000
+    end
+  end
+  describe "formatted_balance=" do
+    it "コンマ入りの数字が正規化されて代入される" do
+      new_account_entry(:formatted_balance => "10,500").balance.should == 10500
+    end
+  end
+  describe "formatted_balance" do
+    it "コンマ入りで入れてもゲッタでは,がつかない" do
+      new_account_entry(:formatted_balance => "10,500").formatted_balance.should == 10500
+    end
+  end
+
+
   describe "attributes=" do
     it "user_idは一括指定できない" do
       AccountEntry.new(:user_id => 3).user_id.should_not == 3

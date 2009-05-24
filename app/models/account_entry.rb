@@ -23,6 +23,24 @@ class AccountEntry < ActiveRecord::Base
 
   attr_writer :skip_unlinking
 
+  # コンマ混じりの文字列でamountを代入できる
+  def formatted_amount=(formatted_amount)
+    self.amount = formatted_amount.class == String ? formatted_amount.gsub(/,/,'') : formatted_amount
+  end
+  # フィールドで利用できるよう用意するがこちらは,をつけない
+  def formatted_amount
+    self.amount
+  end
+
+  # コンマ混じりの文字列でbalanceを代入できる
+  def formatted_balance=(formatted_balance)
+    self.balance = formatted_balance.class == String ? formatted_balance.gsub(/,/,'') : formatted_balance
+  end
+  # フィールドで利用できるよう用意するがこちらは,をつけない
+  def formatted_balance
+    self.balance
+  end
+
   def to_xml(options = {})
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -95,6 +113,7 @@ class AccountEntry < ActiveRecord::Base
 
 
   private
+
 
   def store_old_amount
     @old_amount = self.class.find(self.id).amount
