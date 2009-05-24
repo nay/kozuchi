@@ -128,7 +128,7 @@ class Deal < BaseDeal
   def regulate_amount
     # もし金額にカンマが入っていたら正規化する
     self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
- end
+  end
 
   def clear_entries_before_update
     for entry in account_entries

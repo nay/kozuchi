@@ -6,9 +6,12 @@
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Balance < BaseDeal
   attr_writer :account_id, :balance
-  
+  validates_presence_of :account_id
   validates_presence_of :balance, :message => '残高を入力してください。'
 
+  before_validation :regulate_balance, :set_blank_summary
+  before_create :build_entry
+  before_update :update_entry
   after_save :update_initial_balance
   after_destroy :update_initial_balance
 
@@ -30,29 +33,11 @@ class Balance < BaseDeal
     entry.initial_balance?
   end
 
-  # TODO: 関連にかえていく
+  # 関連にするとDealとincludeが揃わなくなるので関連にしない
   def entry
     account_entries.first
   end
   
-  def before_validation
-    # もし金額にカンマが入っていたら正規化する
-    @balance = @balance.gsub(/,/,'')  if @balance.class == String
-  end
-
-  def before_create
-    self.summary = ""
-    e = account_entries.build(:amount => calc_amount, :balance => self.balance)
-    e.account_id = self.account_id
-  end
-  
-  def before_update
-    account_entries.clear
-    e = account_entries.build(:amount => calc_amount, :balance => self.balance)
-    e.account_id = self.account_id
-    e.save # TODO: !でなくていいの？
-  end
-
   def account_id
     @account_id ||= (entry ? entry.account_id : nil)
     @account_id
@@ -70,16 +55,40 @@ class Balance < BaseDeal
   # amount（最初の残高以外は不明金として扱われる）を再計算して更新
   # 自分が「最初の残高」なら、最初の残高を考慮しない残高計算をする
   def update_amount
-    e = account_entries.first
+    e = entry
     amount = e.balance.to_i - balance_before(e.initial_balance?)
     e.update_attribute(:amount, amount)
   end
-  
-  def asset
-    Account::Base.find(self.account_id)
-  end
-  
+
   private
+
+  # before_validation
+  def set_blank_summary
+    self.summary = ""
+  end
+
+  # before_create
+  def build_entry
+    raise "no user_id" unless self.user_id
+    e = account_entries.build(:balance => self.balance, :account_id => self.account_id)
+    e.amount = calc_amount
+    e
+  end
+
+
+  # before_update
+  def update_entry
+    account_entries.clear
+    build_entry.save! # TODO: :auto_saveオプションに移行？
+  end
+
+  # before_validation
+  def regulate_balance
+    # もし金額にカンマが入っていたら正規化する
+    @balance = @balance.gsub(/,/,'')  if @balance.class == String
+  end
+
+
   def calc_amount
     current_initial_balance = AccountEntry.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
@@ -90,10 +99,6 @@ class Balance < BaseDeal
   def update_initial_balance
     raise "no account_id" unless account_id
     conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
-#    unless new_record? # Rails 2.1.0では不要だったが2.2.2では必要になった 子のcreateが行われた後くるかどうかが変わったらしい
-#      conditions.first << " and deals.id != ?"
-#      conditions << self.id
-#    end
     initial_balance_entry = AccountEntry.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
       :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
@@ -111,6 +116,12 @@ class Balance < BaseDeal
   
   def balance_before(ignore_initial = false)
     raise "date or daily_seq is nil!" unless self.date && self.daily_seq
-    asset.balance_before(self.date, self.daily_seq, ignore_initial)
+    account.balance_before(self.date, self.daily_seq, ignore_initial)
   end
+
+  def account
+    Account::Base.find(self.account_id)
+  end
+
+
 end

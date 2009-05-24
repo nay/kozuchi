@@ -54,11 +54,21 @@ describe AccountEntry do
   end
 
   describe "create" do
-    it "account_id, amount, date, daily_seq があれば、user_id, deal_id の値によらず成功する" do
+    it "account_id, amount, date, daily_seq, user_id があれば、deal_id の値によらず成功する" do
       e = AccountEntry.new(:amount => 400, :account_id => @cache.id)
       e.date = Date.today
       e.daily_seq = 1
+      e.user_id = 1
       e.save.should be_true
+    end
+    it "user_idがないと例外" do
+      lambda{new_account_entry({}, :user_id => nil).save}.should raise_error(RuntimeError)
+    end
+    it "dateがないと例外" do
+      lambda{new_account_entry({}, :date => nil).save}.should raise_error(RuntimeError)
+    end
+    it "daily_seqがないと例外" do
+      lambda{new_account_entry({}, :daily_seq => nil).save}.should raise_error(RuntimeError)
     end
   end
 
@@ -128,6 +138,7 @@ describe AccountEntry do
       @entry.daily_seq = 1
       @entry.date = Date.today
       @entry.linked_ex_entry_id = 18 # 適当
+      @entry.user_id = Fixtures.identify(:taro)
     end
     it "linked_ex_entry_idを指定した新規登録なら連携記入がされないこと" do
       @entry.save!
@@ -140,7 +151,7 @@ describe AccountEntry do
   # ----- Utilities -----
   def new_account_entry(attributes = {}, manual_attributes = {})
       e = AccountEntry.new({:amount => 2980, :account_id => @cache.id}.merge(attributes))
-      manual_attributes = {:date => Date.today, :daily_seq => 1}.merge(manual_attributes)
+      manual_attributes = {:date => Date.today, :daily_seq => 1, :user_id => 1}.merge(manual_attributes)
       manual_attributes.keys.each do |key|
         e.send("#{key}=", manual_attributes[key])
       end

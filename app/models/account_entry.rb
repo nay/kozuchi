@@ -101,10 +101,15 @@ class AccountEntry < ActiveRecord::Base
   end
 
   def copy_deal_attributes
-    return unless deal # 疎結合にするため
-    self.user_id = deal.user_id
-    self.date = deal.date
-    self.daily_seq = deal.daily_seq
+    # 基本的にDealからコピーするがDealがないケースも許容する
+    if deal
+      self.user_id = deal.user_id
+      self.date = deal.date
+      self.daily_seq = deal.daily_seq
+    end
+    raise "no user_id" unless self.user_id
+    raise "no date" unless self.date
+    raise "no daily_seq" unless self.daily_seq
   end
 
   # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する

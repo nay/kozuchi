@@ -7,18 +7,9 @@ class BaseDeal < ActiveRecord::Base
   has_many   :account_entries,
              :foreign_key => 'deal_id',
              :dependent => :destroy,
-             :order => "amount" do
-#             :include => :account do
+             :order => "amount"
+#             :include => :account
 
-    # TODO: テスト
-    def build(attributes = {})
-      e = super
-      e.user_id = proxy_owner.user_id
-      e.date = proxy_owner.date
-      e.daily_seq = proxy_owner.daily_seq
-      e
-    end
-  end
 
   belongs_to :user
 
@@ -31,8 +22,6 @@ class BaseDeal < ActiveRecord::Base
   
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   
-#  named_scope :without_balance, :conditions => "type = 'Deal'" # user.dealsからのアクセスのため
-
 
   # 高速化のため、Castを経ないでDateを文字列として得られるメソッドを用意
   def date_as_str
@@ -95,14 +84,6 @@ class BaseDeal < ActiveRecord::Base
     false
   end
 
-  # entry に対するブロックを渡してもらい、条件に当てはまる entry の amount の合計を返す。
-  def amount_if_entry
-    entries = account_entries.select{|e| yield e}
-    sum = 0
-    entries.each{|e| sum += e.amount}
-    sum
-  end
-
   def balance
     return nil
   end
@@ -121,20 +102,6 @@ class BaseDeal < ActiveRecord::Base
                     datebox.end_exclusive],
                   :order => "date, daily_seq")
   end
-
-#  def self.get_for_account(user_id, account_id, datebox)
-#    BaseDeal.find(:all,
-#                 :select => "dl.*",
-#                  :conditions => ["dl.user_id = ? and et.account_id = ? and dl.date >= ? and dl.date < ?",
-#                    user_id,
-#                    account_id,
-#                    datebox.start_inclusive,
-#                    datebox.end_exclusive],
-#                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
-#                  :order => "dl.date, dl.daily_seq"
-#    
-#    )
-#  end
 
   # start_date から end_dateまでの、accounts に関連するデータを取得する。
   def self.get_for_accounts(user_id, start_date, end_date, accounts)
