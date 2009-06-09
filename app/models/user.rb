@@ -12,13 +12,13 @@ class User < ActiveRecord::Base
   has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
   has_many  :assets, :class_name => "Account::Asset", :order => "sort_key"
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
-  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
+#  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
+  has_many  :accounts, :class_name => 'Account::Base', :order => 'accounts.sort_key' do
 
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
       with_joined_scope(conditions) do
-        # TODO: 要確認 Rails 2.2.2 では distinctがないとおかしな値に
-        sum("distinct account_entries.amount",
+        sum("account_entries.amount",
           :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
         ).to_i
       end
@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
     # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
     def flow_sum(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("distinct account_entries.amount",
+        sum("account_entries.amount",
           :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true]
         ).to_i
       end
