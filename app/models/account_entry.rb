@@ -18,6 +18,7 @@ class AccountEntry < ActiveRecord::Base
   after_destroy :update_balance, :request_unlinking
 
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
+  attr_accessor :skip_linking # 要請されて作る場合、リンクしにいくのは不要なので
   attr_reader :new_plus_link
   attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
 
@@ -74,6 +75,7 @@ class AccountEntry < ActiveRecord::Base
 
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
   def unlink
+    p "unlink"
     raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
     if !deal.confirmed
       # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
@@ -94,21 +96,29 @@ class AccountEntry < ActiveRecord::Base
 
   # コールバックのほか、精算提出などで単独でも呼ばれる
   def request_linking
-    # すでにあるときは基本的に連動しないが、金額を更新しようとしている時はリンク解除して連携をやりなおす
-    if self.linked_ex_entry_id
-      if @old_amount && @old_amount.to_i != self.amount.to_i
-        # TODO account_idも抱える必要がある
-        request_unlinking
-      else
-        return
-      end
-    end
+    return if skip_linking
+    p "request_linking of #{self.id}"
+#    # すでにあるときは基本的に連動しないが、金額を更新しようとしている時はリンク解除して連携をやりなおす
+#    if self.linked_ex_entry_id
+#      if @old_amount && @old_amount.to_i != self.amount.to_i
+#        # TODO account_idも抱える必要がある
+#        request_unlinking
+#      else
+#        return
+#      end
+#    end
     return if !account || !account.linked_account || !self.deal
 
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
     self.linked_ex_entry_id, self.linked_ex_deal_id = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date)
     self.linked_user_id = account.linked_account.user_id
-    self.save!
+
+    update_links_without_callback
+  end
+
+  def update_links_without_callback
+    raise "new_record!" if new_record?
+    AccountEntry.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
   end
 
 
