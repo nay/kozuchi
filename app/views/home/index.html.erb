@@ -1,6 +1,7 @@
 <% content_for :head do -%>
   <%= include_html5jp :line %>
 <% end -%>
+<%= render :partial => 'shared/information' %>
   <div>
   <p style="padding: 1em;"><%= h @user.login%>さん、ようこそWeb家計簿「小槌」へ！ → <%= link_to'家計簿を記入する', :controller => 'deals', :action => 'index' %></p>
   </div>

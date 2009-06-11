@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  
+  helper_method :original_user
   attr_writer :menu_group, :menu
 
   # メニューグループを指定する
@@ -30,6 +30,17 @@ class ApplicationController < ActionController::Base
   def self.calendar_url_method
     read_inheritable_attribute(:calendar_url_method)
   end
+
+  def original_user
+    @original_user ||= User.find_by_id(session[:original_user_id]) if session[:original_user_id]
+    @original_user
+  end
+
+  def original_user=(user)
+    session[:original_user_id] = user ? user.id : nil
+    @original_user = user || false
+  end
+
   
   private
 

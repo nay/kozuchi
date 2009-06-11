@@ -8,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
     settings.connect "expenses", :controller => "expenses", :action => "update_all", :conditions => {:method => :put}
     settings.resources :assets
     settings.connect "assets", :controller => "assets", :action => "update_all", :conditions => {:method => :put}
+    settings.resources :single_logins
   end
 
 
@@ -25,7 +26,8 @@ ActionController::Routing::Routes.draw do |map|
   map.login_post '/login', :controller => 'sessions', :action => 'create', :conditions => {:method => :post}
 
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'  
-  
+  map.single_login '/singe_login', :controller => 'sessions', :action => 'update', :conditions => {:method => :put}
+
   map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate'
 
   # 互換性のため

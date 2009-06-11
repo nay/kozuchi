@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   include User::Friend
   include User::Mobile
 
+  has_many  :single_logins, :dependent => :destroy
   has_many  :settlements, :dependent => :destroy
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
