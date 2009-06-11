@@ -1,4 +1,4 @@
-<% if current_user %>
+<% if current_user && (original_user || !current_user.single_logins.empty?)%>
 <div id="singleLogins">
   <% if original_user %>
     <%= link_to h(original_user.login), single_login_path(:login => original_user.login), :method => :put, :class => "singleLoginButton returnToOriginal" %>

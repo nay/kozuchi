@@ -205,6 +205,10 @@ div.operation a {
     font-size: 90%;
 }
 
+#singleLogins {
+    margin-bottom: 20px;
+}
+
 a.singleLoginButton {
     float:right;
     display: block;
