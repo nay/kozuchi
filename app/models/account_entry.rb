@@ -97,16 +97,7 @@ class AccountEntry < ActiveRecord::Base
   # コールバックのほか、精算提出などで単独でも呼ばれる
   def request_linking
     return if skip_linking
-    p "request_linking of #{self.id}"
-#    # すでにあるときは基本的に連動しないが、金額を更新しようとしている時はリンク解除して連携をやりなおす
-#    if self.linked_ex_entry_id
-#      if @old_amount && @old_amount.to_i != self.amount.to_i
-#        # TODO account_idも抱える必要がある
-#        request_unlinking
-#      else
-#        return
-#      end
-#    end
+#    p "request_linking of #{self.id}"
     return if !account || !account.linked_account || !self.deal
 
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。

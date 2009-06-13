@@ -34,22 +34,26 @@ module Account::Linking
 
   # 要請されて、この口座のあるシステムの指定されたEntryと紐づくEntryおよびDealを作成/更新する
   def update_link_to(linked_ex_entry_id, linked_ex_deal_id, linked_user_id, linked_entry_amount, linked_entry_summary, linked_entry_date)
-    p "update_link_to of #{self.id}. linked_ex_deal_id = #{linked_ex_deal_id}"
+#    p "update_link_to of #{self.id}. linked_ex_deal_id = #{linked_ex_deal_id}"
     # すでに紐づいたAccountEntryが存在する場合
     my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
     # 存在し、確認済で金額が同じ（正負逆の同額）なら変更不要
     if my_entry
-      p "my_entry exists"
+#      p "my_entry exists"
       if !my_entry.deal.confirmed? || my_entry.amount != linked_entry_amount * -1
         # 未確認か金額が変わっていた場合は、未確認なら取引を削除、確認済ならリンクを削除する
+        # これにより、その相手の処理ではこのifに来ず、mate_entryとして先に処理されたものを発見できる
         my_entry.unlink
+        # 同じ取引内に、今回リクエストのあった相手側のDealとすでに紐付いているEntryがあったら、そのリンクも同時に削除する
+        my_entry.deal.account_entries(true).select{|e| e.id != my_entry.id && e.linked_ex_deal_id = linked_ex_deal_id && e.linked_user_id == linked_user_id}.each do |co_linked_entry|
+          co_linked_entry.unlink
+        end
         my_entry = nil
       end
     else
-      p "going to find mate_entry with #{linked_ex_deal_id}, #{linked_user_id}"
+#      p "going to find mate_entry with #{linked_ex_deal_id}, #{linked_user_id}"
       mate_entry = user.account_entries.find_by_linked_ex_deal_id_and_linked_user_id(linked_ex_deal_id, linked_user_id)
       if mate_entry
-        p "mate_entry exists"
         # まだlinked_ex_entry_idが入っていなくても、今回リクエストのあった相手側のDealとすでに紐付いているAccountEntryがあれば、それの相手が求める勘定となる
         # entry数が2でないものはデータ不正
         raise "entry size should be 2" unless mate_entry.deal.account_entries.size == 2
@@ -78,12 +82,12 @@ module Account::Linking
         :amount => linked_entry_amount * -1, :skip_linking => true)
       my_entry.linked_ex_entry_id = linked_ex_entry_id
       my_entry.linked_ex_deal_id = linked_ex_deal_id
-      p "linked_ex_deal_id = #{linked_ex_deal_id}"
+#      p "linked_ex_deal_id = #{linked_ex_deal_id}"
       my_entry.linked_user_id = linked_user_id
       deal.account_entries.build(
         :account_id => mate_account.id,
         :amount => linked_entry_amount, :skip_linking => true)
-      p "going to save a new deal"
+ #     p "going to save a new deal"
       deal.save!
     end
 
