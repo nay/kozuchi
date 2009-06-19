@@ -21,6 +21,8 @@ class Settlement < ActiveRecord::Base
   attr_accessor :result_date, :result_partner_account_id
   attr_reader :deal_ids
 
+  before_validation_on_create :set_target_entries
+
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
   end
@@ -127,5 +129,17 @@ class Settlement < ActiveRecord::Base
   def after_destroy
     self.result_entry.deal.destroy if self.result_entry
   end
-  
+
+  private
+  def set_target_entries
+    return unless deal_ids || !target_entries.empty?
+    # 対象取引を追加していく
+    # TODO: 未確定などまずいやつは追加を禁止したい
+    for deal_id in deal_ids
+      entry = AccountEntry.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id])
+      next unless entry
+      target_entries << entry
+    end
+  end
+
 end

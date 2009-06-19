@@ -42,22 +42,9 @@ class SettlementsController < ApplicationController
   end
 
   def create
-    @settlement = Settlement.new
-    @settlement.user_id = @user.id
-    @settlement.attributes = params[:settlement]
+    @settlement = current_user.settlements.new(params[:settlement])
     @settlement.result_date = to_date(params[:result_date])
-    # params から s_ ではじまるkeyをすべてとってIDとして扱う
-#    selected_deal_ids = params[:deal_ids].keys.map{|k| k.to_i}
-      
-     #params.keys.find_all{|key| key.match(/^s_[0-9]*/)}.map{|key| key[2,key.length-2].to_i}
     
-    # 対象取引を追加していく
-    # TODO: 未確定などまずいやつは追加を禁止したい
-    for deal_id in @settlement.deal_ids
-      entry = AccountEntry.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", @user.id, deal_id, @settlement.account.id])
-      next unless entry
-      @settlement.target_entries << entry
-    end
     if @settlement.save
       redirect_to :action => 'index'
     else
