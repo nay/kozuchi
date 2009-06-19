@@ -16,7 +16,7 @@ taro_bank:
   type: Asset
   asset_kind: banking_facility
 taro_card:
-  name: クレジットカード
+  name: クレジットカードＸ
   user: taro
   type: Asset
   asset_kind: credit_card

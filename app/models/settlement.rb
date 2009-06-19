@@ -132,7 +132,7 @@ class Settlement < ActiveRecord::Base
 
   private
   def set_target_entries
-    return unless deal_ids || !target_entries.empty?
+    return if !deal_ids || !target_entries.empty?
     # 対象取引を追加していく
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in deal_ids
