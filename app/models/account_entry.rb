@@ -96,6 +96,7 @@ class AccountEntry < ActiveRecord::Base
 
   # コールバックのほか、精算提出などで単独でも呼ばれる
   def request_linking
+    return if !changed? # 内容が変更されていななら何もしない
     return if skip_linking
 #    p "request_linking of #{self.id}"
     return if !account || !account.linked_account || !self.deal

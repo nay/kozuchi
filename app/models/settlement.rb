@@ -19,6 +19,11 @@ class Settlement < ActiveRecord::Base
   belongs_to :user
 
   attr_accessor :result_date, :result_partner_account_id
+  attr_reader :deal_ids
+
+  def deal_ids=(ids_hash)
+    @deal_ids = ids_hash.keys.map{|k| k.to_i}
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 4

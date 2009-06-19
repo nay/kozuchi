@@ -1,4 +1,4 @@
-<% change_condition = remote_function(:update => 'settlement_details', :url => {:action => 'change_condition'}, :with => 'Form.serialize(\'settlement_conditions\')') %>
+<% change_condition = remote_function(:update => 'settlement_details', :url => {:action => 'change_condition'}, :with => 'Form.serialize(\'settlement_conditions\')', :method => :get) %>
 <div><%= format_date(@start_date)%>から <%= format_date(@end_date)%>の <%= @settlement.account.name %> の未精算取引 は 全<%= @deals.size %>件あります。</div>
 <% unless @entries.empty? %>
 <div>
@@ -18,7 +18,7 @@
       <% style = selected ? "" : "style=\"background-color: #dddddd;\""%>
       <tr>
         <td <%= style%>>
-          <%= check_box_tag("s_#{entry.deal.id}", "1", selected, :onClick => change_condition)%>
+          <%= check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => change_condition)%>
         </td>
         <%= display_account_entry entry, style%>
       </tr>

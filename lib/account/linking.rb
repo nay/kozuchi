@@ -39,7 +39,6 @@ module Account::Linking
     my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
     # 存在し、確認済で金額が同じ（正負逆の同額）なら変更不要
     if my_entry
-#      p "my_entry exists"
       if !my_entry.deal.confirmed? || my_entry.amount != linked_entry_amount * -1
         # 未確認か金額が変わっていた場合は、未確認なら取引を削除、確認済ならリンクを削除する
         # これにより、その相手の処理ではこのifに来ず、mate_entryとして先に処理されたものを発見できる

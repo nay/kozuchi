@@ -49,10 +49,10 @@
                     <span <%="class='unconfirmed'" unless account_entry.linked_account_entry.deal.confirmed %>><%= h account_entry.linked_account_entry.deal.user.login_id %></span>
                   <% end %>
                   <% if account_entry.settlement %>
-                    <%= link_to '精算', :controller => 'settlements', :action => 'view', :id => account_entry.settlement.id %>
+                    <%= link_to '精算', settlement_path(:id => account_entry.settlement_id) %>
                   <% end %>
                   <% if account_entry.result_settlement %>
-                    <%= link_to '精算', :controller => 'settlements', :action => 'view', :id => account_entry.result_settlement.id %>
+                    <%= link_to '精算', settlement_path(:id => account_entry.result_settlement_id) %>
                   <% end %>
                 </td>
               <% else %>

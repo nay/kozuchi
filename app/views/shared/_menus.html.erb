@@ -7,9 +7,7 @@
   <%= link_to_menu '資産表', :controller => '/assets', :action => 'index' %>
   <%= link_to_menu '貸借対照表', :controller => '/balance_sheet', :action => 'index' %>
 <% when '精算' %>
-  <%= link_to_menu '新しい精算', :controller => '/settlements', :action => 'new' %>
-  <%= link_to_menu '一覧', :controller => '/settlements', :action => 'index' %>
-  <%= link_to_menu '詳細', :controller => '/settlements', :action => 'view' %>
+  <%= render :partial => 'settlements/menu' %>
 <% when '設定' %>
   <%= link_to_menu '口座', :controller => '/settings/assets', :action => 'index' %>
   <%= link_to_menu '費目', :controller => '/settings/expenses',:action => 'index' %>

@@ -65,11 +65,15 @@ ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => "welcome"
   
-  map.connect ':controller', :action => 'index'
-  
+
+  # Settlements
+  map.resources :settlements, :collection => {:change_condition => :get}, :member => {:print_form => :get, :submit => :put}
 #  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
-  map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'
-  map.connect 'settlement/:id/:action', :controller => 'settlements'
+#  map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'
+ # map.connect 'settlement/:id/:action', :controller => 'settlements'
+
+  map.connect ':controller', :action => 'index', :conditions => {:method => :get}
+
 
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'

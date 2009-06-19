@@ -15,6 +15,11 @@ taro_bank:
   user: taro
   type: Asset
   asset_kind: banking_facility
+taro_card:
+  name: クレジットカード
+  user: taro
+  type: Asset
+  asset_kind: credit_card
 taro_hanako:
   name: 花子
   user: taro

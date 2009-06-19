@@ -5,11 +5,11 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
   menu "一覧", :only => [:index]
-  menu "詳細", :only => [:view]
+  menu "詳細", :only => [:show]
 
 #  before_filter {|controller| controller.menu_group = "精算"}
-  before_filter :check_credit_account, :except => [:view, :delete, :print_form]
-  before_filter :load_settlement, :only => [:view, :delete, :print_form, :submit, :confirm]
+  before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
+  before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
 
   # 新しい精算口座を作る
@@ -36,22 +36,24 @@ class SettlementsController < ApplicationController
     @settlement.name = "#{@settlement.account.name}の精算"
 
     load_deals
-    @selected_deals.delete_if{|d| params["s_#{d.id}".to_sym] != "1"} unless params[:clear_selection]
+    @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
 
     render :partial => 'settlement_details'
   end
-  
+
   def create
     @settlement = Settlement.new
     @settlement.user_id = @user.id
     @settlement.attributes = params[:settlement]
     @settlement.result_date = to_date(params[:result_date])
     # params から s_ ではじまるkeyをすべてとってIDとして扱う
-    selected_deal_ids = params.keys.find_all{|key| key.match(/^s_[0-9]*/)}.map{|key| key[2,key.length-2].to_i}
+#    selected_deal_ids = params[:deal_ids].keys.map{|k| k.to_i}
+      
+     #params.keys.find_all{|key| key.match(/^s_[0-9]*/)}.map{|key| key[2,key.length-2].to_i}
     
     # 対象取引を追加していく
     # TODO: 未確定などまずいやつは追加を禁止したい
-    for deal_id in selected_deal_ids
+    for deal_id in @settlement.deal_ids
       entry = AccountEntry.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", @user.id, deal_id, @settlement.account.id])
       next unless entry
       @settlement.target_entries << entry
@@ -62,7 +64,7 @@ class SettlementsController < ApplicationController
       @start_date = to_date(params[:start_date])
       @end_date = to_date(params[:end_date])
       load_deals
-      @selected_deals.delete_if{|d| params["s_#{d.id}".to_sym] != "1"} unless params[:clear_selection]
+      @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
       render :action => 'new'
     end
   end
@@ -76,7 +78,7 @@ class SettlementsController < ApplicationController
   end
   
   # 1件を削除する
-  def delete
+  def destroy
     if @settlement
       name = @settlement.name
       account_name = @settlement.account.name
@@ -88,7 +90,7 @@ class SettlementsController < ApplicationController
     redirect_to :action => 'index'
   end
   
-  def view
+  def show
     unless @settlement
       render :action => 'no_settlement'
       return
@@ -98,7 +100,7 @@ class SettlementsController < ApplicationController
   # 立替精算依頼書
   def print_form
     if params[:format] == "csv"
-      @headers["Content-Type"] = 'text/plain; charset=Shift_JIS'
+      headers["Content-Type"] = 'text/plain; charset=Shift_JIS'
       render :action => 'print_form_csv', :layout => false
       return
     end
@@ -110,7 +112,7 @@ class SettlementsController < ApplicationController
     submitted = @settlement.submit
     
     flash[:notice] = "#{submitted.user.login}さんに提出済としました。"
-    redirect_to :action => 'view', :id => @settlement.id
+    redirect_to settlement_path(:id => @settlement.id)
   end
   
   protected

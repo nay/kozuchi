@@ -1,4 +1,4 @@
-<% i = Iconv.new('SHIFT_JIS', 'UTF-8')%>
+<% i = Iconv.new('SHIFT_JIS', 'UTF-8') %>
 <% for entry in @settlement.target_entries %>
 <%= entry.deal.date %>,<%= i.iconv entry.deal.summary%>,<%= i.iconv entry.mate_account_name %>,<%= entry.amount%>
 <% end %>

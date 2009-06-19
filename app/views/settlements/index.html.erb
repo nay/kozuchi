@@ -13,27 +13,6 @@
 		<th>状態</th>
         <th>詳細</th>
       </tr>
-      <% for s in @settlements %>
-		<tr>
-	      <% unless s.result_entry -%>
-		  <td colspan="6">請求(ID:<%= s.id%>、「<%= s.name %>」、相手先：<%= s.account ? s.account.name : '？' %>)のデータが破損しています。精算取引がありません。管理者に連絡してください。</td>
-		  <% else -%>
-          <td class="date"><%= format_date s.result_entry.deal.date %></td>
-          <td><%= s.name %></td>
-          <td><%= s.account.name %></td>
-          <td style="text-align:right;"><%= s.target_entries.size %></td>
-          <td class="amount"><%= number_with_delimiter s.target_sum.abs %></td>
-          <td><%= format_datetime s.created_at %></td>
-		  <% end -%>
-		  <td>
-		  	<% if s.submitted_settlement_id -%>
-			  提出済
-			<% elsif s.kind_of?(SubmittedSettlement) %>
-			  受理
-			<% end -%>
-		  </td>
-          <td><%= link_to '詳細', :action => 'view', :id => s.id %></td>
-		</tr>
-      <% end %>
+      <%= render :partial => 'settlement', :collection => @settlements %>
     </table>
 </div>
