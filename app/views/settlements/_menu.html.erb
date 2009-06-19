@@ -1,0 +1,5 @@
+  <%= link_to_menu '新しい精算', :controller => '/settlements', :action => 'new' %>
+  <%= link_to_menu '一覧', :controller => '/settlements', :action => 'index' %>
+  <% if action_name == 'show' %>
+  <%= link_to_menu '詳細', '' %>
+  <% end %>
