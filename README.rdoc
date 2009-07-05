@@ -36,8 +36,5 @@ GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
 It's intended to control self-signup, but it is not implemeneted yet.
 Just leave it.
 
-# USER_MANAGEMENT_TYPE
-#   open : Anybody can make new user.
-#   closed : Admin function only.
 KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
 
