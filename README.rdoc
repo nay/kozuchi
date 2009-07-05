@@ -1,0 +1,43 @@
+= Kosuzhi
+== How to set up
+* Create your config/database.yml from examples, such as database.mysql.yml
+* Create your config/initializers/hosting.rb from hosting.rb.example
+
+== hosting.rb
+
+=== LOGIN_ENGINE_SALT
+
+This is required for support of old users (from Login Engine era).
+If you are new to kozuchi set up, just leave it.
+
+LOGIN_ENGINE_SALT     = "koban"
+
+=== KOZUCHI_SSL
+
+Set true if you want to use SSL.
+You may also have to configure other things.
+
+KOZUCHI_SSL           = false
+
+=== SKIP_MAIL
+
+Set true if you want to skip sending email for signup, etc.
+
+SKIP_MAIL             = true
+
+=== GOOGLE_ANALYTICS_CODE
+
+You can specify your google analytics code here.
+
+GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
+
+=== USER_MANAGEMENT_TYPE
+
+It's intended to control self-signup, but it is not implemeneted yet.
+Just leave it.
+
+# USER_MANAGEMENT_TYPE
+#   open : Anybody can make new user.
+#   closed : Admin function only.
+KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
+
