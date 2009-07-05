@@ -87,7 +87,6 @@ class UserBalanceFlowTest < Test::Unit::TestCase
   end
 
   # １つの口座について、残高の更新によって初期残高が変更になるケースでbalance_sum, balances が正しいことを確認する
-  # このケースは現状、失敗する。原因は複雑なので保留中。
   def test_balance_with_initial_change
     # 現金
     # 3/20 食費 500
@@ -117,6 +116,7 @@ class UserBalanceFlowTest < Test::Unit::TestCase
     assert_equal 1000, ib2.amount
 
     ib.reload
+    assert_equal ib2.date, ib2.entry.date
     assert_equal false, ib.account_entries.first.initial_balance?
     assert_equal 3500, ib.amount
 

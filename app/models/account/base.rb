@@ -141,12 +141,17 @@ class Account::Base < ActiveRecord::Base
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
   def balance_before(date, daily_seq = 0, ignore_initial = false)
+#    p "balance_before : #{date.to_s(:db)} - #{daily_seq} : #{ignore_initial}"
     # 確認済のものだけカウントする
-    conditions = ["deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))", true, date, date, daily_seq]
+#    conditions = ["deals.confirmed = ? and (deals.date < ? or (deals.date = ? and deals.daily_seq < ?))", true, date, date, daily_seq]
+    conditions = ["deals.confirmed = ? and (account_entries.date < ? or (account_entries.date = ? and account_entries.daily_seq < ?))", true, date, date, daily_seq]
     if !ignore_initial
       conditions.first.replace("(#{conditions.first}) or account_entries.initial_balance = ?")
       conditions << true
     end
+#    p entries.find(:all,
+#      :joins => "inner join deals on account_entries.deal_id = deals.id",
+#      :conditions => conditions).inspect
     entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
       :conditions => conditions

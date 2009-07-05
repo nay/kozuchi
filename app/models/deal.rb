@@ -202,7 +202,8 @@ class Deal < BaseDeal
   # 高速化のため、after_find でやっていたのを lazy にしてここへ
   def refresh_account_info
     @refreshed = true
-    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
+# TODO:
+#    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
     return unless account_entries.size == 2
     
     for et in account_entries

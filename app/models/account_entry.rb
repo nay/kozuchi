@@ -123,7 +123,7 @@ class AccountEntry < ActiveRecord::Base
 
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
-    if deal
+    if deal && deal.kind_of?(Deal) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
       self.user_id = deal.user_id
       self.date = deal.date
       self.daily_seq = deal.daily_seq
@@ -159,6 +159,8 @@ class AccountEntry < ActiveRecord::Base
     :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", account_id, date, date, daily_seq],
     :order => "deals.date, deals.daily_seq",
     :include => :deal)
+#    p "update balance at #{self.inspect}"
+#    p "next_balance_entry = #{next_balance_entry.inspect}"
     return unless next_balance_entry
     next_balance_entry.deal.update_amount # TODO: 効率
   end

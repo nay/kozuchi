@@ -63,8 +63,14 @@ class Balance < BaseDeal
   # これを順々にやれば残高不正は修正できると思われる
   def update_amount
     e = entry
+#    p "balance_before(true) = #{balance_before(true)}"
+#    p "balance_before(false) = #{balance_before(false)}"
     amount = e.balance.to_i - balance_before(e.initial_balance?)
-    e.update_attribute(:amount, amount)
+    AccountEntry.update_all("amount = #{amount}", ["id = ?", e.id])
+#    p "update_amount : amount = #{amount}"
+    entry.amount = amount
+    # このAccountEntryについて、以降の残高を調整する必要はないはずなのでコールバック阻止（ループ防止）
+#    e.update_attribute(:amount, amount)
   end
 
   private
