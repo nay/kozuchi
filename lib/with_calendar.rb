@@ -5,7 +5,11 @@ module WithCalendar
   # params[:month]:: 月
   def change_month
     write_target_date(params[:year], params[:month]) # TODO: よびだされた側のアクションでしてここではなくしたい
-    redirect_to self.class.calendar_url_method ? send(self.class.calendar_url_method, params) : calendar_target_url
+    # TODO: params 内の actionが悪さをするので応急処置
+    url_params = params.dup
+    url_params.delete(:action)
+    url_params.delete(:controller)
+    redirect_to self.class.calendar_url_method ? send(self.class.calendar_url_method, url_params) : calendar_target_url
   end
   
   private
