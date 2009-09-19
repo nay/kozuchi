@@ -4,8 +4,8 @@ class ExceptionMailer < ActionMailer::Base
 
     @charset = 'utf-8'
     subject '[KOZUCHI] bug report'
-    from 'kozuchi-bugs@goas.no-ip.org'
-    recipients 'kozuchi-bugs@goas.no-ip.org'
+    from 'kozuchi-bugs@everyleaf.com'
+    recipients 'kozuchi-bugs@everyleaf.com'
 
     body :now => Time.now, :exception => e
   end
