@@ -5,7 +5,7 @@
     <div id="calendar" class="top_box">
     </div>
 
-    <% form_tag ({:action => 'change_month'}, :method => 'get', :id => 'month_form') do %>
+    <% form_tag({:action => 'change_month'}, :method => 'get', :id => 'month_form') do %>
       <% if calendar %>
         <%= render :partial => calendar %>
       <% end %>

@@ -3,7 +3,7 @@
 		  <%= text_field_tag :keyword, "", :size => 14 %> <%= submit_tag '明細を検索', :class => 'button', :onClick => "if($('keyword').value == '') {alert('キーワードを入力してください。'); return false;}" %>
 		<% end -%>
     </div>
-	<%= render (:partial => "shared/calendar", :locals => {:year => @target_date[:year], :month => @target_date[:month]}) %>
+	<%= render(:partial => "shared/calendar", :locals => {:year => @target_date[:year], :month => @target_date[:month]}) %>
 	<div style="clear:right;"></div>
     <div id="monthly_contents">
       <%= render :partial => 'monthly_contents' %>
