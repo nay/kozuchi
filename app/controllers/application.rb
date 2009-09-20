@@ -116,7 +116,7 @@ class ApplicationController < ActionController::Base
 
 
   def set_ssl
-    if defined? KOZUCHI_SSL && KOZUCHI_SSL
+    if (defined? KOZUCHI_SSL) && KOZUCHI_SSL
       request.env["HTTPS"] = "on"
     end
   end
