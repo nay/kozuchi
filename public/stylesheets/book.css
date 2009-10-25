@@ -422,3 +422,18 @@ p.deprecated {
   padding: 0.2em 0;
   color: red;
 }
+
+#money_counting {
+  padding: 4px;
+  border: 1px solid #ffee88;
+  background-color: #ffffdd;
+}
+#money_counting .field {
+  text-align: right;
+  width: 150px;
+  margin: 0 16px;
+  float: left;
+}
+#money_counting .field input {
+  text-align: right;
+}
