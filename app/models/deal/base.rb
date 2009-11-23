@@ -1,6 +1,6 @@
 require 'time'
 
-class BaseDeal < ActiveRecord::Base
+class Deal::Base < ActiveRecord::Base
   set_table_name "deals"
 
   # TODO:廃止予定
@@ -96,11 +96,11 @@ class BaseDeal < ActiveRecord::Base
   end
   
   def self.get(deal_id, user_id)
-    return BaseDeal.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
+    return Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
   end
 
   def self.get_for_month(user_id, datebox)
-    BaseDeal.find(:all,
+    Deal::Base.find(:all,
                   :include => {:account_entries => :account},
                   :conditions => [
                     "deals.user_id = ? and date >= ? and date < ?",
@@ -116,7 +116,7 @@ class BaseDeal < ActiveRecord::Base
     raise "no start_date" unless start_date
     raise "no end" unless end_date
     raise "no accounts" unless accounts
-    BaseDeal.find(:all,
+    Deal::Base.find(:all,
                  :select => "distinct dl.*",
                   :conditions => ["dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
                     user_id,
@@ -129,7 +129,7 @@ class BaseDeal < ActiveRecord::Base
   end
   
   def self.exists?(user_id, date)
-    !BaseDeal.find(:first,
+    !Deal::Base.find(:first,
                  :select => "dl.id",
                   :conditions => ["dl.user_id = ? and dl.date >= ? and dl.date < ?",
                     user_id,
@@ -145,8 +145,8 @@ class BaseDeal < ActiveRecord::Base
   
 
   def confirm
-    BaseDeal.transaction do
-      BaseDeal.confirm_without_callback(self.id)
+    Deal::Base.transaction do
+      Deal::Base.confirm_without_callback(self.id)
       # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
       # TODO: コールバックは見直し必要か
       reload
@@ -161,7 +161,7 @@ class BaseDeal < ActiveRecord::Base
     if new_record?
       self.daily_seq = nil
     else
-      stored_self = BaseDeal.find(self.id)
+      stored_self = Deal::Base.find(self.id)
       self.daily_seq = nil if self.date != stored_self.date
     end
   
@@ -173,14 +173,14 @@ class BaseDeal < ActiveRecord::Base
       # 日付が違ったら例外
       raise "An inserting point should be in the same date with the target." if @insert_before.date != self.date
 
-      Deal.connection.update(
+      Deal::Base.connection.update(
         "update deals set daily_seq = daily_seq +1 where user_id = #{self.user_id} and date = '#{self.date.strftime('%Y-%m-%d')}' and ( daily_seq > #{@insert_before.daily_seq}  or (daily_seq = #{@insert_before.daily_seq} and id >= #{@insert_before.id}));"
       )
       self.daily_seq = @insert_before.daily_seq;
 
     # 挿入先が指定されていなければ新規
     else
-      max = BaseDeal.maximum(:daily_seq,
+      max = Deal::Base.maximum(:daily_seq,
         :conditions => ["user_id = ? and date = ?",
           self.user_id,
           self.date]

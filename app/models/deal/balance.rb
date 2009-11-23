@@ -3,7 +3,7 @@
 
 # * 登録時は、account_id, balanceをセットしてsaveする。
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
-class Balance < BaseDeal
+class Deal::Balance < Deal::Base
   attr_writer :account_id, :balance
   validates_presence_of :account_id
   validates_presence_of :balance, :message => '残高を入力してください。'
@@ -110,6 +110,7 @@ class Balance < BaseDeal
 
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
+    p "update_initial_balance"
     raise "no account_id" unless account_id
     conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
     initial_balance_entry = AccountEntry.find(:first, 

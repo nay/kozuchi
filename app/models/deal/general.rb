@@ -1,5 +1,5 @@
 # 異動明細クラス。
-class Deal < BaseDeal
+class Deal::General < Deal::Base
   before_validation :regulate_amount
   before_update :clear_entries_before_update
   after_save :create_relations
@@ -87,7 +87,7 @@ class Deal < BaseDeal
     return [] if summary_key.empty?
     # まず summary と 日付(TODO: created_at におきかえたい)のセットを返す
     p "search_by_summary : summary_key = #{summary_key}"
-    results = find_by_sql("select summary as summary, max(date) as date from deals where user_id = #{user_id} and type='Deal' and summary like '#{summary_key}%' group by summary limit #{limit}")
+    results = find_by_sql("select summary as summary, max(date) as date from deals where user_id = #{user_id} and type='General' and summary like '#{summary_key}%' group by summary limit #{limit}")
     p "results.size = #{results.size}"
     return [] if results.size == 0
     conditions = ""
@@ -95,7 +95,7 @@ class Deal < BaseDeal
       conditions += " or " unless conditions.empty?
       conditions += "(summary = '#{r.summary}' and date = '#{r.date}')"
     end
-    return Deal.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
+    return Deal::General.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
     rescue => err
     p err
     p err.backtrace
@@ -112,7 +112,7 @@ class Deal < BaseDeal
   end
   
   def entry(account_id)
-    raise "no account_id in Deal.entry()" unless account_id
+    raise "no account_id in Deal::General.entry()" unless account_id
     r = account_entries.detect{|e| e.account_id.to_s == account_id.to_s}
 #    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
     r

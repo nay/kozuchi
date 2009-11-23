@@ -1,8 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Deal do
+describe Deal::General do
   fixtures :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions, :users
-  set_fixture_class  :accounts => Account::Base
+  set_fixture_class  :accounts => Account::Base, :deals => Deal::Base
 
   before do
     @cache = accounts(:deal_test_cache)
@@ -27,7 +27,7 @@ describe Deal do
 
       it "account_entryを手動で足してもcreateできる" do
         user = users(:deal_test_user)
-        deal = Deal.new(:summary => "test", :date => Date.today)
+        deal = Deal::General.new(:summary => "test", :date => Date.today)
         deal.user_id = user.id
         deal.account_entries.build(
           :account_id => @cache.id,
@@ -80,7 +80,7 @@ describe Deal do
      describe "Dealに２つEntryがあり、片方のみが連携しているとき" do
        before do
          # taro_cache から taro_hanako へ 300円貸した
-         @deal = Deal.new(:summary => "test", :date => Date.today)
+         @deal = Deal::General.new(:summary => "test", :date => Date.today)
          @deal.user_id = @taro.id
          @deal.account_entries.build(:account_id => @taro_cache.id, :amount => -300)
          @deal.account_entries.build(:account_id => @taro_hanako.id, :amount => 300)
@@ -92,12 +92,12 @@ describe Deal do
          @linked_entry.linked_ex_entry_id.should_not be_nil
        end
        it "連携したDealの片方を消したら確認してない相手のdealも消される" do
-         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
          @deal.destroy
-         Deal.find_by_id(@hanako_deal.id).should be_nil
+         Deal::General.find_by_id(@hanako_deal.id).should be_nil
        end
        it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
-         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
          @hanako_deal.confirm
          @deal.destroy
          @hanako_deal.reload
@@ -106,7 +106,7 @@ describe Deal do
          @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
        end
        it "連携があり確認済のときに金額を変更したら相手とのリンクが切られて新しく記入される" do
-         @hanako_deal = Deal.find(@linked_entry.linked_ex_deal_id)
+         @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
          @hanako_deal.confirm
 #         @deal.account_entries.each{|e| e.amount *= 2}
 #        効かない；；
@@ -149,7 +149,7 @@ describe Deal do
   end
 
   def new_deal(month, day, from, to, amount, year = 2008)
-    d = Deal.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
+    d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
   end

@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Balance do
+describe Deal::Balance do
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
 
@@ -112,6 +112,6 @@ describe Balance do
   end
 
   def new_balance(attributes={})
-    Balance.new({:date => Date.today, :user_id => Fixtures.identify(:taro), :account_id => Fixtures.identify(:taro_cache), :balance => 1000}.merge(attributes))
+    Deal::Balance.new({:date => Date.today, :user_id => Fixtures.identify(:taro), :account_id => Fixtures.identify(:taro_cache), :balance => 1000}.merge(attributes))
   end
 end
