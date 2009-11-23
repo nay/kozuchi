@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
       with_joined_scope(conditions) do
         find(:all, :select => "accounts.*, sum(account_entries.amount) as unknown",
           :include => nil,
-          :conditions => ["deals.type = 'Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
+          :conditions => ["deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
           :group => 'accounts.id'
         ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1}
       end
@@ -120,7 +120,7 @@ class User < ActiveRecord::Base
 
   include User::AccountLinking
   
-  has_many :deals, :class_name => 'BaseDeal', :include => [:account_entries], :extend => User::DealsExtension
+  has_many :deals, :class_name => 'Deal::Base', :include => [:account_entries], :extend => User::DealsExtension
   has_many :account_entries
   
   def default_asset
@@ -142,7 +142,7 @@ class User < ActiveRecord::Base
   end
   
   def deal_exists?(date)
-    BaseDeal.exists?(self.id, date)
+    Deal::Base.exists?(self.id, date)
   end
   
 
@@ -355,7 +355,7 @@ class User < ActiveRecord::Base
   private
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
-    BaseDeal.find_all_by_user_id(self.id).each{|d| d.destroy }
+    Deal::Base.find_all_by_user_id(self.id).each{|d| d.destroy }
   end
   def destroy_accounts
     # アカウントを削除する場合の口座削除処理。dependentだと順序が思うようでないので自前でやる

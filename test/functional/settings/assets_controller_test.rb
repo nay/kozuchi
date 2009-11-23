@@ -77,7 +77,7 @@ class Settings::AssetsControllerTest < Test::Unit::TestCase
 #
 #  # delete のテスト。使ってから消す。失敗する。
 #  def test_delete_used
-#    d = Deal.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+#    d = Deal::General.new(:user_id => 1, :minus_account_id => 1, :plus_account_id => 10, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
 #    d.save!
 #    get :delete, {:id => 10}, {:user_id => 1}
 #    assert_redirected_to :action => 'index'

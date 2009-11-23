@@ -43,7 +43,7 @@ class Account::Asset < Account::Base
   def unknown_flow(start_date, end_date)
     entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => ["deals.type = 'Balance' and confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance = ?", true, start_date, end_date, false]) || 0
+      :conditions => ["deals.type = 'Deal::Balance' and confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance = ?", true, start_date, end_date, false]) || 0
   end
 
   # ---------- 口座種別の静的属性を設定するためのメソッド群

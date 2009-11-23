@@ -106,7 +106,7 @@ class Settlement < ActiveRecord::Base
         plus_account_id = self.account_id
         minus_account_id = self.result_partner_account_id
       end
-      result_deal = Deal.new(
+      result_deal = Deal::General.new(
         :minus_account_id => minus_account_id,
         :plus_account_id => plus_account_id,
         :amount => amount.abs,

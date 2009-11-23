@@ -211,11 +211,11 @@ class UserBalanceFlowTest < Test::Unit::TestCase
   private
   def create_deal(month, day, from, to, amount)
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :user_id => to.user_id, :date => Date.new(@year, month, day)}
-    Deal.create!(attributes)
+    Deal::General.create!(attributes)
   end
   
   def create_balance(month, day, account, balance)
-    Balance.create!(:summary => "", :balance => balance, :account_id => account.id, :user_id => account.user_id, :date => Date.new(@year, month, day))
+    Deal::Balance.create!(:summary => "", :balance => balance, :account_id => account.id, :user_id => account.user_id, :date => Date.new(@year, month, day))
   end
   
   def balance_sum(user, month, day, conditions = "accounts.type != 'Income' and accounts.type != 'Expense'")

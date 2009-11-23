@@ -18,7 +18,7 @@ class FriendDealTest < Test::Unit::TestCase
   # フレンド取引のテスト
 #  def test_not_confirmed
 #    # 作成
-#    first_deal = Deal.new(
+#    first_deal = Deal::General.new(
 #      :summary => 'second へ貸した',
 #      :amount => 1000,
 #      :minus_account_id => accounts(:first_cache).id,
@@ -58,7 +58,7 @@ class FriendDealTest < Test::Unit::TestCase
   
 #  def test_confirmed
 #    # 作成
-#    first_deal = Deal.new(
+#    first_deal = Deal::General.new(
 #      :summary => 'second に借りた',
 #      :amount => 1000,
 #      :minus_account_id => accounts(:first_second).id,
@@ -90,7 +90,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_deal.attributes = {:amount => 1200}
 #    first_deal.save!
 #
-#    friend_deal = Deal.find(friend_deal.id)
+#    friend_deal = Deal::General.find(friend_deal.id)
 #    assert !friend_deal.entry(accounts(:second_first).id).linked_ex_deal_id # リンクがきれたはず。
 #
 #    assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
@@ -115,7 +115,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    # 新しい相手を削除すると自分のリンクはきえるが自分は残る
 #    new_friend_deal.destroy
 #
-#    first_deal = Deal.find(first_deal.id)
+#    first_deal = Deal::General.find(first_deal.id)
 #
 #    assert !first_deal.entry(accounts(:first_second).id).linked_ex_deal_id
 #

@@ -1,7 +1,7 @@
 # 口座への記入データクラス
 class AccountEntry < ActiveRecord::Base
   belongs_to :deal,
-             :class_name => 'BaseDeal',
+             :class_name => 'Deal::Base',
              :foreign_key => 'deal_id'
   belongs_to :account,
              :class_name => 'Account::Base',
@@ -123,7 +123,7 @@ class AccountEntry < ActiveRecord::Base
 
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
-    if deal && deal.kind_of?(Deal) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
+    if deal && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
       self.user_id = deal.user_id
       self.date = deal.date
       self.daily_seq = deal.daily_seq

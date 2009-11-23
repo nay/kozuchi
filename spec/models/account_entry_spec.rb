@@ -133,7 +133,7 @@ describe AccountEntry do
     it "相手勘定が１つなら、相手勘定の名前が返される" do
       deal = new_deal(3, 3, @cache, @food, 180)
       deal.save!
-#        deal = Deal.new(:summary => "買い物", :date => Date.today)
+#        deal = Deal::General.new(:summary => "買い物", :date => Date.today)
 #        deal.account_entries.build(:amount => 180, :account_id => @food.id)
 #        deal.account_entries.build(:amount => -180, :account_id => @cache.id)
 #        deal.save!
@@ -144,7 +144,7 @@ describe AccountEntry do
 
   describe "unlink" do
     before do
-#      @deal = Deal.new(:summary => "test", :date => Date.today)
+#      @deal = Deal::General.new(:summary => "test", :date => Date.today)
 #      @deal.user_id = users(:account_entry_test_user_taro)
 #      @deal.account_entries.build(
 #        :account_id => @cache_in_taro.id,
@@ -182,7 +182,7 @@ describe AccountEntry do
   
   # TODO: dealの作り方をなおすまでとりあえず
   def new_deal(month, day, from, to, amount, year = 2008)
-    d = Deal.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
+    d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
   end
