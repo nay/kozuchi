@@ -32,7 +32,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_second_entry = first_deal.entry(accounts(:first_second).id)
 #    assert first_second_entry.linked_ex_entry_id
 ##    ex_entry_id = first_second_entry.linked_ex_entry_id # あとでつかう
-#    another_entry = AccountEntry.find(first_second_entry.linked_ex_entry_id)
+#    another_entry = Entry::Base.find(first_second_entry.linked_ex_entry_id)
 #    assert_equal false, another_entry.deal.confirmed
 #
 #    assert_equal users(:old2).id, first_second_entry.linked_user_id
@@ -44,15 +44,15 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_deal.save!
 #
 #    # とりなおす
-#    another_entry = AccountEntry.find(first_second_entry.linked_ex_entry_id)
+#    another_entry = Entry::Base.find(first_second_entry.linked_ex_entry_id)
 #    assert another_entry
 #
-#    another_entry = AccountEntry.find(another_entry.id)
+#    another_entry = Entry::Base.find(another_entry.id)
 #    assert_equal 1200*(-1), another_entry.amount
 #
 #    # 相手が未確定な状態で削除したら相手は消える
 #    first_deal.destroy
-#    another_entry = AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
+#    another_entry = Entry::Base.find(:first, :conditions => "id = #{another_entry.id}")
 #    assert !another_entry
 #  end
   
@@ -71,7 +71,7 @@ class FriendDealTest < Test::Unit::TestCase
 #
 #    first_second_entry = first_deal.entry(accounts(:first_second).id)
 #    assert first_second_entry.linked_ex_entry_id
-#    another_entry = AccountEntry.find_by_linked_ex_entry_id(first_second_entry.id)
+#    another_entry = Entry::Base.find_by_linked_ex_entry_id(first_second_entry.id)
 #    assert_equal users(:old2).id, another_entry.user_id
 #    assert_equal accounts(:second_first).id, another_entry.account_id
 #    assert 1000, another_entry.amount

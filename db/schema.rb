@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091123010819) do
+ActiveRecord::Schema.define(:version => 20091123034257) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :default => 0
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20091123010819) do
     t.integer "linked_ex_entry_id"
     t.integer "linked_ex_deal_id"
     t.integer "linked_user_id"
+    t.string  "type"
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"

@@ -3,14 +3,14 @@ class Settlement < ActiveRecord::Base
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'
 
   has_many :target_entries,
-           :class_name => 'AccountEntry',
+           :class_name => 'Entry::General',
            :foreign_key => 'settlement_id',
            :order => 'deals.date, deals.daily_seq',
            :include => :deal,
            :dependent => :nullify
 
   has_one  :result_entry,
-           :class_name => 'AccountEntry',
+           :class_name => 'Entry::General',
            :foreign_key => 'result_settlement_id',
            :include => :deal
 
@@ -136,7 +136,7 @@ class Settlement < ActiveRecord::Base
     # 対象取引を追加していく
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in deal_ids
-      entry = AccountEntry.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id])
+      entry = Entry::General.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id])
       next unless entry
       target_entries << entry
     end

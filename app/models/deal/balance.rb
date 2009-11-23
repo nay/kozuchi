@@ -4,6 +4,20 @@
 # * 登録時は、account_id, balanceをセットしてsaveする。
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Deal::Balance < Deal::Base
+
+  has_many   :account_entries, :class_name => "Entry::Balance",
+             :foreign_key => 'deal_id',
+             :dependent => :destroy,
+             :order => "amount" do
+    def build(attributes = {})
+      record = super
+      record.user_id = proxy_owner.user_id
+      record.date = proxy_owner.date
+      record.daily_seq = proxy_owner.daily_seq
+      record
+    end
+  end
+
   attr_writer :account_id, :balance
   validates_presence_of :account_id
   validates_presence_of :balance, :message => '残高を入力してください。'
@@ -12,6 +26,8 @@ class Deal::Balance < Deal::Base
   before_update :update_entry
   after_save :reset_attributes, :update_initial_balance
   after_destroy :update_initial_balance
+
+
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -66,7 +82,7 @@ class Deal::Balance < Deal::Base
 #    p "balance_before(true) = #{balance_before(true)}"
 #    p "balance_before(false) = #{balance_before(false)}"
     amount = e.balance.to_i - balance_before(e.initial_balance?)
-    AccountEntry.update_all("amount = #{amount}", ["id = ?", e.id])
+    Entry::Base.update_all("amount = #{amount}", ["id = ?", e.id])
 #    p "update_amount : amount = #{amount}"
     entry.amount = amount
     # このAccountEntryについて、以降の残高を調整する必要はないはずなのでコールバック阻止（ループ防止）
@@ -103,7 +119,7 @@ class Deal::Balance < Deal::Base
 
 
   def calc_amount
-    current_initial_balance = AccountEntry.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
+    current_initial_balance = Entry::Base.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
     self.balance.to_i - balance_before(this_will_be_initial)
   end
@@ -113,7 +129,7 @@ class Deal::Balance < Deal::Base
     p "update_initial_balance"
     raise "no account_id" unless account_id
     conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
-    initial_balance_entry = AccountEntry.find(:first, 
+    initial_balance_entry = Entry::Base.find(:first, 
       :joins => "inner join deals on deals.id = account_entries.deal_id",
       :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
     # 現在ひとつもないなら特に仕事なし
@@ -122,8 +138,8 @@ class Deal::Balance < Deal::Base
     return if initial_balance_entry.initial_balance?
 
     # マークがついていない＝状態が変わったので修正する
-    AccountEntry.update_all(["initial_balance = ?", false], ["account_id = ?", account_id])
-    AccountEntry.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
+    Entry::Base.update_all(["initial_balance = ?", false], ["account_id = ?", account_id])
+    Entry::Base.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
     self.entry.initial_balance = true if self.entry.id == initial_balance_entry.id
   end
   

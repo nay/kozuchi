@@ -23,7 +23,7 @@ describe User do
         @user.destroy
         User.find_by_id(@user.id).should be_nil
         # TODO AccountLinkRequest
-        [Deal::Base, AccountEntry, AccountLink, AccountLinkRequest, Account::Base, Friend::Permission, Friend::Request, Settlement, Preferences].each do |klass|
+        [Deal::Base, Entry::Base, AccountLink, AccountLinkRequest, Account::Base, Friend::Permission, Friend::Request, Settlement, Preferences].each do |klass|
           klass.find_by_user_id(@user.id).should be_nil
         end
 #        AccountLinkRequest.find_by_sender_id(@user.id).should be_nil

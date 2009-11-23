@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe AccountEntry do
+describe Entry::Base do
   fixtures :accounts, :users, :account_links, :friend_permissions, :friend_requests
   set_fixture_class  :accounts => Account::Base
 
@@ -43,25 +43,25 @@ describe AccountEntry do
 
   describe "attributes=" do
     it "user_idは一括指定できない" do
-      AccountEntry.new(:user_id => 3).user_id.should_not == 3
+      Entry::General.new(:user_id => 3).user_id.should_not == 3
     end
     it "deal_idは一括指定できない" do
-      AccountEntry.new(:deal_id => 7).deal_id.should_not == 7
+      Entry::General.new(:deal_id => 7).deal_id.should_not == 7
     end
     it "account_idは一括指定できる" do
-      AccountEntry.new(:account_id => 5).account_id.should == 5
+      Entry::General.new(:account_id => 5).account_id.should == 5
     end
     it "dateは一括指定できない" do
-      AccountEntry.new(:date => Date.today).date.should be_nil
+      Entry::General.new(:date => Date.today).date.should be_nil
     end
     it "daily_seqは一括指定できない" do
-      AccountEntry.new(:daily_seq => 3).daily_seq.should be_nil
+      Entry::General.new(:daily_seq => 3).daily_seq.should be_nil
     end
     it "settlement_idは一括指定できない" do
-      AccountEntry.new(:settlement_id => 10).settlement_id.should be_nil
+      Entry::General.new(:settlement_id => 10).settlement_id.should be_nil
     end
     it "result_settlement_idは一括指定できない" do
-      AccountEntry.new(:result_settlement_id => 10).result_settlement_id.should be_nil
+      Entry::General.new(:result_settlement_id => 10).result_settlement_id.should be_nil
     end
     # TODO: linked_系
   end
@@ -77,7 +77,7 @@ describe AccountEntry do
 
   describe "create" do
     it "account_id, amount, date, daily_seq, user_id があれば、deal_id の値によらず成功する" do
-      e = AccountEntry.new(:amount => 400, :account_id => @cache.id)
+      e = Entry::General.new(:amount => 400, :account_id => @cache.id)
       e.date = Date.today
       e.daily_seq = 1
       e.user_id = 1
@@ -156,7 +156,7 @@ describe AccountEntry do
 #        )
 #      @entry.save!
 
-      @entry = AccountEntry.new(:account_id => @hanako_in_taro.id, :amount => -200)
+      @entry = Entry::General.new(:account_id => @hanako_in_taro.id, :amount => -200)
       @entry.daily_seq = 1
       @entry.date = Date.today
       @entry.linked_ex_entry_id = 18 # 適当
@@ -164,7 +164,7 @@ describe AccountEntry do
     end
     it "linked_ex_entry_idを指定した新規登録なら連携記入がされないこと" do
       @entry.save!
-      AccountEntry.find_by_linked_ex_entry_id(@entry.id).should be_nil
+      Entry::Base.find_by_linked_ex_entry_id(@entry.id).should be_nil
     end
     
   end
@@ -172,7 +172,7 @@ describe AccountEntry do
 
   # ----- Utilities -----
   def new_account_entry(attributes = {}, manual_attributes = {})
-      e = AccountEntry.new({:amount => 2980, :account_id => @cache.id}.merge(attributes))
+      e = Entry::General.new({:amount => 2980, :account_id => @cache.id}.merge(attributes))
       manual_attributes = {:date => Date.today, :daily_seq => 1, :user_id => 1}.merge(manual_attributes)
       manual_attributes.keys.each do |key|
         e.send("#{key}=", manual_attributes[key])

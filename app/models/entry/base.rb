@@ -1,20 +1,17 @@
-# 口座への記入データクラス
-class AccountEntry < ActiveRecord::Base
-  belongs_to :deal,
-             :class_name => 'Deal::Base',
-             :foreign_key => 'deal_id'
+# １口座への１記入を表す
+class Entry::Base < ActiveRecord::Base
+  set_table_name 'account_entries'
+  unsavable
+  
   belongs_to :account,
              :class_name => 'Account::Base',
              :foreign_key => 'account_id'
-  belongs_to :settlement
-  belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   validates_presence_of :amount, :account_id
   before_update :store_old_amount
   before_save :copy_deal_attributes
   after_save :update_balance, :request_linking
 
-  before_destroy :assert_no_settlement
   after_destroy :update_balance, :request_unlinking
 
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
@@ -70,7 +67,7 @@ class AccountEntry < ActiveRecord::Base
   # リンクされたaccount_entry を返す
   # TODO: 廃止する
   def linked_account_entry
-    linked_ex_entry_id ? AccountEntry.find_by_id(linked_ex_entry_id) : nil
+    linked_ex_entry_id ? Entry::Base.find_by_id(linked_ex_entry_id) : nil
   end
 
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
@@ -83,7 +80,7 @@ class AccountEntry < ActiveRecord::Base
       deal.account_entries.detect{|e| e.id == self.id}.skip_unlinking = true
       deal.destroy
     else
-      AccountEntry.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
+      Entry::Base.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
       self.linked_ex_entry_id = nil
       self.linked_ex_deal_id = nil
       self.linked_user_id = nil
@@ -110,7 +107,7 @@ class AccountEntry < ActiveRecord::Base
 
   def update_links_without_callback
     raise "new_record!" if new_record?
-    AccountEntry.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
+    Entry::Base.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
   end
 
 
@@ -142,7 +139,7 @@ class AccountEntry < ActiveRecord::Base
   end
 
   def contents_updated?
-    stored = AccountEntry.find(self.id)
+    stored = Entry::Base.find(self.id)
 
     # 金額/残高が変更されていたら中身が変わったとみなす
     stored.amount.to_i != self.amount.to_i || stored.balance.to_i != self.balance.to_i
@@ -154,7 +151,7 @@ class AccountEntry < ActiveRecord::Base
 
   # 直後の残高記入のamountを再計算する
   def update_balance
-    next_balance_entry = AccountEntry.find(:first,
+    next_balance_entry = Entry::Base.find(:first,
     :joins => "inner join deals on account_entries.deal_id = deals.id",
     :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", account_id, date, date, daily_seq],
     :order => "deals.date, deals.daily_seq",

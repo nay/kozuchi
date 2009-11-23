@@ -5,6 +5,19 @@ class Deal::General < Deal::Base
   after_save :create_relations
   before_destroy :destroy_entries
 
+  has_many   :account_entries, :class_name => "Entry::General",
+             :foreign_key => 'deal_id',
+             :dependent => :destroy,
+             :order => "amount" do
+    def build(attributes = {})
+      record = super
+      record.user_id = proxy_owner.user_id
+      record.date = proxy_owner.date
+      record.daily_seq = proxy_owner.daily_seq
+      record
+    end
+  end
+
   def to_xml(options = {})
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
