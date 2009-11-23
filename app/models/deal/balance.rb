@@ -128,10 +128,11 @@ class Deal::Balance < Deal::Base
   def update_initial_balance
     p "update_initial_balance"
     raise "no account_id" unless account_id
-    conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
-    initial_balance_entry = Entry::Base.find(:first, 
-      :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
+#    conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
+#    initial_balance_entry = Entry::Base.find(:first,
+#      :joins => "inner join deals on deals.id = account_entries.deal_id",
+#      :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
+    initial_balance_entry = Entry::Balance.of(account_id).ordered.first
     # 現在ひとつもないなら特に仕事なし
     return unless initial_balance_entry # destroyの際はこれが起きる可能性がある
     # すでにマークがついていたら仕事なし

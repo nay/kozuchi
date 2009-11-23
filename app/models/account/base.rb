@@ -4,6 +4,7 @@ class Account::Base < ActiveRecord::Base
   include Account::Common
   
   has_many :entries, :class_name => "Entry::Base", :foreign_key => "account_id"
+  has_many :balances, :class_name => "Entry::Balance", :foreign_key => "account_id"
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
 

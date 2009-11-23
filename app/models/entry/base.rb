@@ -21,6 +21,14 @@ class Entry::Base < ActiveRecord::Base
 
   attr_writer :skip_unlinking
 
+  named_scope :confirmed, :confirmed => true
+  named_scope :from, Proc.new{|d| ["date >= ?", d]}
+  named_scope :before, Proc.new{|d| ["date < ?", d]}
+  named_scope :ordered, :order => "date, daily_seq"
+  named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
+  named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
+
+
   # コンマ混じりの文字列でamountを代入できる
   def formatted_amount=(formatted_amount)
     self.amount = formatted_amount.class == String ? formatted_amount.gsub(/,/,'') : formatted_amount
@@ -151,11 +159,12 @@ class Entry::Base < ActiveRecord::Base
 
   # 直後の残高記入のamountを再計算する
   def update_balance
-    next_balance_entry = Entry::Base.find(:first,
-    :joins => "inner join deals on account_entries.deal_id = deals.id",
-    :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", account_id, date, date, daily_seq],
-    :order => "deals.date, deals.daily_seq",
-    :include => :deal)
+    next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.first(:include => :deal)
+#    next_balance_entry = Entry::Base.find(:first,
+#    :joins => "inner join deals on account_entries.deal_id = deals.id",
+#    :conditions => ["deals.type = 'Balance' and account_id = ? and (deals.date > ? or (deals.date = ? and deals.daily_seq > ?))", account_id, date, date, daily_seq],
+#    :order => "deals.date, deals.daily_seq",
+#    :include => :deal)
 #    p "update balance at #{self.inspect}"
 #    p "next_balance_entry = #{next_balance_entry.inspect}"
     return unless next_balance_entry
