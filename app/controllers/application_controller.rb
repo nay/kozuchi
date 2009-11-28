@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 #  include LoginEngine
 #  include LoginEngine::AuthenticatedSystem
   mobile_filter
-  transit_sid
+  trans_sid
   include AuthenticatedSystem
   before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
