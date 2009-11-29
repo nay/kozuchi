@@ -80,6 +80,14 @@ class DealsController < ApplicationController
     today = DateBox.today
     @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+
+    # 旧 deal#new でやっていたrender_component内の準備を以下にとりあえず移動
+    @back_to = {:controller => 'deals', :action => 'index'}
+
+    # deal / balance それぞれのフォーム初期化処理
+    @tab_name = params[:tab_name] || 'deal'
+    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+#    render :layout => false
   end
 
   # １日の記入履歴の表示（携帯向けだが制限はしない、本当はidnexで兼ねたい）
@@ -168,14 +176,39 @@ class DealsController < ApplicationController
       @deals = Deal::Base.get_for_month(@user.id, @target_month)
       # TODO: 外にだしたい
       session[:target_month] = @target_month
-    rescue Exception
-      flash[:notice] = "不正な日付です。 " + @target_month.to_s
+    rescue Exception => e
+      p e.to_s
+      e.backtrace.each do |t|
+        p t
+      end
+      flash.now[:notice] = "不正な日付です。 " + @target_month.to_s
       @deals = Array.new
     end
   end
   
   def specify_month
     redirect_to_index and return false if !params[:year] || !params[:month]
+  end
+
+  # 記入エリアの準備
+  def prepare_select_deal_tab
+    @accounts_minus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts, true
+     )
+    @accounts_plus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts, false
+     )
+    unless @deal
+      @deal = Deal::General.new(params[:deal])
+      @deal.date = target_date # セッションから判断した日付を入れる
+    end
+
+    @patterns = [] # 入力支援
+  end
+
+  def prepare_select_balance_tab
+    @accounts_for_balance = current_user.assets
+    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
   end
 
 end

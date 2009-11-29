@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
       with_joined_scope(conditions) do
         find(:all, :select => "accounts.*, sum(account_entries.amount) as unknown",
           :include => nil,
-          :conditions => ["deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
+          :conditions => ["deals.type = 'Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
           :group => 'accounts.id'
         ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1}
       end

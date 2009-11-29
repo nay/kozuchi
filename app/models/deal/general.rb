@@ -99,9 +99,7 @@ class Deal::General < Deal::Base
     begin
     return [] if summary_key.empty?
     # まず summary と 日付(TODO: created_at におきかえたい)のセットを返す
-    p "search_by_summary : summary_key = #{summary_key}"
     results = find_by_sql("select summary as summary, max(date) as date from deals where user_id = #{user_id} and type='General' and summary like '#{summary_key}%' group by summary limit #{limit}")
-    p "results.size = #{results.size}"
     return [] if results.size == 0
     conditions = ""
     for r in results
@@ -109,10 +107,8 @@ class Deal::General < Deal::Base
       conditions += "(summary = '#{r.summary}' and date = '#{r.date}')"
     end
     return Deal::General.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
-    rescue => err
-    p err
-    p err.backtrace
-    return []
+    rescue
+     return []
     end
   end
 
@@ -147,7 +143,7 @@ class Deal::General < Deal::Base
     for entry in account_entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
-        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}" 
+#        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
         entry.destroy
       end
     end

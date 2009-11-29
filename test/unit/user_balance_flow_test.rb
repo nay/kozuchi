@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 # Userオブジェクトの残高・移動系メソッドの動作を確認するテスト
-class UserBalanceFlowTest < Test::Unit::TestCase
+class UserBalanceFlowTest < ActiveSupport::TestCase
   set_fixture_class  :accounts => Account::Base
   
   # ------------------  set_up  ----------------------
@@ -241,7 +241,7 @@ class UserBalanceFlowTest < Test::Unit::TestCase
   end
   
   def unknown(user, month, account)
-    unknowns = user.accounts.unknowns(*date_range(month))    
+    unknowns = user.accounts.unknowns(*date_range(month))
     unknowns.detect{|a| a.id == account.id}.unknown
   end
     

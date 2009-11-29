@@ -126,7 +126,6 @@ class Deal::Balance < Deal::Base
 
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
-    p "update_initial_balance"
     raise "no account_id" unless account_id
 #    conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
 #    initial_balance_entry = Entry::Base.find(:first,

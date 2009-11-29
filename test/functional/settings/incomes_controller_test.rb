@@ -4,7 +4,7 @@ require 'settings/incomes_controller'
 # Re-raise errors caught by the controller.
 class Settings::IncomesController; def rescue_action(e) raise e end; end
 
-class Settings::IncomesControllerTest < Test::Unit::TestCase
+class Settings::IncomesControllerTest < ActionController::TestCase
   fixtures :users, "account/accounts"
   set_fixture_class  "account/accounts".to_sym => 'account/base'
 

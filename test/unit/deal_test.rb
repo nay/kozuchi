@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class DealTest < Test::Unit::TestCase
+class DealTest < ActiveSupport::TestCase
   
   # 取引保存時に、daily_seq が正しくつくことのテスト
   def test_daily_seq

@@ -4,7 +4,7 @@ require 'sessions_controller'
 # Re-raise errors caught by the controller.
 class SessionsController; def rescue_action(e) raise e end; end
 
-class SessionsControllerTest < Test::Unit::TestCase
+class SessionsControllerTest < ActionController::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
   # Then, you can remove it from this and the units test.
   include AuthenticatedTestHelper
@@ -49,7 +49,10 @@ class SessionsControllerTest < Test::Unit::TestCase
   def test_should_delete_token_on_logout
     login_as :quentin
     get :destroy
-    assert_equal @response.cookies["auth_token"], []
+#    assert_equal [], @response.cookies["auth_token"]
+#   I don't know this is right, but in 2.3.5 it seemed to be changed
+    assert_nil @response.cookies["auth_token"]
+
   end
 
   def test_should_login_with_cookie

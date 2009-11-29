@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 # 初期残高フラグの制御に関するテスト
-class InitialBalanceTest < Test::Unit::TestCase
+class InitialBalanceTest < ActiveSupport::TestCase
   
   def setup
     @cache = accounts(:first_cache)

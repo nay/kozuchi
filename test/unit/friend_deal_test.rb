@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class FriendDealTest < Test::Unit::TestCase
+class FriendDealTest < ActiveSupport::TestCase
   
   def setup
     @user1 = users(:old)

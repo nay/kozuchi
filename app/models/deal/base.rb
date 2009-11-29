@@ -101,7 +101,6 @@ class Deal::Base < ActiveRecord::Base
 
   def self.get_for_month(user_id, datebox)
     Deal::Base.find(:all,
-                  :include => {:account_entries => :account},
                   :conditions => [
                     "deals.user_id = ? and date >= ? and date < ?",
                     user_id,

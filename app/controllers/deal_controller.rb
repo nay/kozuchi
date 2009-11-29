@@ -9,14 +9,14 @@ class DealController < ApplicationController
   # params[:tab_name]]:: deal または　balance # TODO: 変えたい
   # params[:back_to][:controller]:: (必須) save 後に処理を戻す先のコントローラ
   # params[:back_to][:action]:: (必須) save 後に処理を戻す先のアクション
-  def new
-    load_and_assert_back_to
-
-    # deal / balance それぞれのフォーム初期化処理
-    @tab_name = params[:tab_name] || 'deal'
-    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
-    render :layout => false
-  end
+#  def new
+#    load_and_assert_back_to
+#
+#    # deal / balance それぞれのフォーム初期化処理
+#    @tab_name = params[:tab_name] || 'deal'
+#    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+#    render :layout => false
+#  end
   
   # params[:back_to][:controller]:: 処理が終わったときに帰る Controller
   # params[:back_to][:action]:: 処理が終わったときに帰る Action

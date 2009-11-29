@@ -7,6 +7,12 @@ class Entry::Base < ActiveRecord::Base
              :class_name => 'Account::Base',
              :foreign_key => 'account_id'
 
+  # TODO: account.deals を使っているところのためにとりあえず
+  belongs_to :deal,
+             :class_name => 'Deal::Base',
+             :foreign_key => 'deal_id'
+
+
   validates_presence_of :amount, :account_id
   before_update :store_old_amount
   before_save :copy_deal_attributes
@@ -21,9 +27,9 @@ class Entry::Base < ActiveRecord::Base
 
   attr_writer :skip_unlinking
 
-  named_scope :confirmed, :confirmed => true
-  named_scope :from, Proc.new{|d| ["date >= ?", d]}
-  named_scope :before, Proc.new{|d| ["date < ?", d]}
+  named_scope :confirmed, :conditions => {:confirmed => true}
+  named_scope :date_from, Proc.new{|d| {:conditions => ["date >= ?", d]}} # TODO: 名前バッティングで from → date_from にした
+  named_scope :before, Proc.new{|d| {:conditions => ["date < ?", d]}}
   named_scope :ordered, :order => "date, daily_seq"
   named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
@@ -80,7 +86,7 @@ class Entry::Base < ActiveRecord::Base
 
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
   def unlink
-    p "unlink"
+#    p "unlink"
     raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
     if !deal.confirmed
       # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定

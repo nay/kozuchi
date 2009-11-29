@@ -4,5 +4,5 @@ class Entry::Balance < Entry::Base
              :foreign_key => 'deal_id'
 
 
-  named_scope :without_initial, :initial_balance => false
+  named_scope :without_initial, :conditions => {:initial_balance => false}
 end

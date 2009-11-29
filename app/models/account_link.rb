@@ -23,17 +23,17 @@ class AccountLink < ActiveRecord::Base
 
   private
   def create_target_request
-    p "create_target_request"
+#    p "create_target_request"
     if skip_requesting
       self.skip_requesting = nil
       return
     end
-    p "check friend"
+#    p "check friend"
     # テストなどでtarget_userレコードを用意しないケースもあるので、存在しなければ書き込みしない。
     # 存在してもフレンドでなければ書き込みしない。
     # TODO: target_userがProxyなら反対側のデータを見るようにしたい
     return unless target_user && target_user.friend?(user_id)
-    p "going to do create_link_request"
+#    p "going to do create_link_request"
     target_account.create_link_request(user_id, account_id)
   end
 

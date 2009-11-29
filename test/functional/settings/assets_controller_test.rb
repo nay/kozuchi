@@ -4,7 +4,7 @@ require 'settings/assets_controller'
 # Re-raise errors caught by the controller.
 class Settings::AssetsController; def rescue_action(e) raise e end; end
 
-class Settings::AssetsControllerTest < Test::Unit::TestCase
+class Settings::AssetsControllerTest < ActionController::TestCase
 #  fixtures :users, "account/accounts"
 #  set_fixture_class  "account/accounts".to_sym => 'account/base'
 
