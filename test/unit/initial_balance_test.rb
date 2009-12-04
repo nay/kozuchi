@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 # 初期残高フラグの制御に関するテスト
-class InitialBalanceTest < Test::Unit::TestCase
+class InitialBalanceTest < ActiveSupport::TestCase
   
   def setup
     @cache = accounts(:first_cache)
@@ -25,13 +25,13 @@ class InitialBalanceTest < Test::Unit::TestCase
   private
   # 現金の残高記入をする
   def create_balance(balance, month, day)
-    Balance.create!(:summary => "", :balance => balance, :account_id => @cache.id, :user_id => @cache.user_id, :date => Date.new(@year, month, day))
+    Deal::Balance.create!(:summary => "", :balance => balance, :account_id => @cache.id, :user_id => @cache.user_id, :date => Date.new(@year, month, day))
   end
   
   # 現金→食費の取引記入をする
   def create_deal(amount, month, day, attributes = {})
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => @cache.id, :plus_account_id => @food.id, :user_id => @cache.user_id, :date => Date.new(@year, month, day)}.merge(attributes)
-    Deal.create!(attributes)
+    Deal::General.create!(attributes)
   end
   
 end

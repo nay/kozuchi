@@ -24,7 +24,7 @@ class Account::Expense < Account::Base
   def self.raw_sum_of(user_id, start_date, end_date)
 
     # 支出項目の残高の合計を得る - 月初から月末までのAccountEntryのamount合計を得る。
-    AccountEntry.sum(:amount,
+    Entry::Base.sum(:amount,
       :joins => "inner join accounts on account_entries.account_id = accounts.id inner join deals on deals.id = account_entries.deal_id",
       :conditions => ["account_entries.user_id = ? and accounts.type = 'Expense' and deals.date >= ? and deals.date < ?", user_id, start_date, end_date]
     ) || 0

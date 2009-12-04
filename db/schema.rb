@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090611043338) do
+ActiveRecord::Schema.define(:version => 20091123034257) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :default => 0
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20090611043338) do
     t.integer "linked_ex_entry_id"
     t.integer "linked_ex_deal_id"
     t.integer "linked_user_id"
+    t.string  "type"
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"
@@ -105,6 +106,31 @@ ActiveRecord::Schema.define(:version => 20090611043338) do
     t.string  "color",               :limit => 32
     t.boolean "business_use",                      :default => false, :null => false
     t.boolean "use_daily_booking",                 :default => true,  :null => false
+  end
+
+  create_table "reusable_account_entries", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "account_id"
+    t.integer  "reusable_deal_id"
+    t.integer  "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "reusable_bookings", :force => true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.integer  "position",   :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "reusable_deals", :force => true do |t|
+    t.integer  "reusable_booking_id"
+    t.integer  "user_id"
+    t.string   "summary",             :limit => 64
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sessions", :force => true do |t|

@@ -5,7 +5,7 @@
         lines.concat current_user.expenses.map{|a| a.to_csv}
         lines.concat current_user.incomes.map{|a| a.to_csv}
         for d in current_user.deals
-          if d.kind_of? Balance
+          if d.kind_of? Deal::Balance
             lines << d.to_csv
           else
             lines.concat d.to_csv_lines

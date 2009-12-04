@@ -51,3 +51,10 @@ def to_sjis(str)
 end
 
 include AuthenticatedTestHelper
+
+class ActionController::TestRequest
+  def session_options_with_session_key
+    {:key => '_session_id'}.merge(session_options_without_session_key)
+  end
+  alias_method_chain :session_options, :session_key
+end

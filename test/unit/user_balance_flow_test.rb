@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 # Userオブジェクトの残高・移動系メソッドの動作を確認するテスト
-class UserBalanceFlowTest < Test::Unit::TestCase
+class UserBalanceFlowTest < ActiveSupport::TestCase
   set_fixture_class  :accounts => Account::Base
   
   # ------------------  set_up  ----------------------
@@ -211,11 +211,11 @@ class UserBalanceFlowTest < Test::Unit::TestCase
   private
   def create_deal(month, day, from, to, amount)
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :user_id => to.user_id, :date => Date.new(@year, month, day)}
-    Deal.create!(attributes)
+    Deal::General.create!(attributes)
   end
   
   def create_balance(month, day, account, balance)
-    Balance.create!(:summary => "", :balance => balance, :account_id => account.id, :user_id => account.user_id, :date => Date.new(@year, month, day))
+    Deal::Balance.create!(:summary => "", :balance => balance, :account_id => account.id, :user_id => account.user_id, :date => Date.new(@year, month, day))
   end
   
   def balance_sum(user, month, day, conditions = "accounts.type != 'Income' and accounts.type != 'Expense'")
@@ -241,7 +241,7 @@ class UserBalanceFlowTest < Test::Unit::TestCase
   end
   
   def unknown(user, month, account)
-    unknowns = user.accounts.unknowns(*date_range(month))    
+    unknowns = user.accounts.unknowns(*date_range(month))
     unknowns.detect{|a| a.id == account.id}.unknown
   end
     

@@ -3,7 +3,8 @@ class Account::Base < ActiveRecord::Base
 
   include Account::Common
   
-  has_many :entries, :class_name => "AccountEntry", :foreign_key => "account_id"
+  has_many :entries, :class_name => "Entry::Base", :foreign_key => "account_id"
+  has_many :balances, :class_name => "Entry::Balance", :foreign_key => "account_id"
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
 
@@ -96,7 +97,7 @@ class Account::Base < ActiveRecord::Base
 
   # any_entry:: 削除可能性チェックのために用意。削除可能性チェック結果表示のための一覧では include すること。
   has_one                 :any_entry,
-                          :class_name => 'AccountEntry',
+                          :class_name => 'Entry::Base',
                           :foreign_key => 'account_id'
   
 #  attr_accessor :balance, 
@@ -160,7 +161,7 @@ class Account::Base < ActiveRecord::Base
 
   # 指定した期間の支出合計額（不明金を換算しない）を得る
   def raw_sum_in(start_date, end_date)
-    AccountEntry.sum(:amount,
+    Entry::Base.sum(:amount,
       :joins => "inner join deals on deals.id = account_entries.deal_id",
       :conditions => ["account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date]
     ) || 0

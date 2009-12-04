@@ -2,3 +2,6 @@ log
 nbproject
 tmp
 .*~
+.DS_Store
+doc/*
+

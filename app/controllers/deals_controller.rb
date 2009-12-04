@@ -20,7 +20,7 @@ class DealsController < ApplicationController
   # TODO: 携帯対応でとりあえず入れた。後で調整
   # dealとbalanceを区別したいのでこの命名
   def new_deal
-    @deal = Deal.new
+    @deal = Deal::General.new
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, true
      )
@@ -34,7 +34,7 @@ class DealsController < ApplicationController
 
   # TODO: モバイル専用
   def create_deal
-    @deal = Deal.new(params[:deal])
+    @deal = Deal::General.new(params[:deal])
     @deal.user_id = current_user.id
     @deal.date = Date.today
     if @deal.save
@@ -70,7 +70,7 @@ class DealsController < ApplicationController
     @target_date = target_date()
     
     # TODO: 整理して共通化
-    @updated_deal = params[:updated_deal_id] ? BaseDeal.find(params[:updated_deal_id]) : nil
+    @updated_deal = params[:updated_deal_id] ? Deal::Base.find(params[:updated_deal_id]) : nil
     if @updated_deal
       @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date
     else
@@ -80,6 +80,14 @@ class DealsController < ApplicationController
     today = DateBox.today
     @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+
+    # 旧 deal#new でやっていたrender_component内の準備を以下にとりあえず移動
+    @back_to = {:controller => 'deals', :action => 'index'}
+
+    # deal / balance それぞれのフォーム初期化処理
+    @tab_name = params[:tab_name] || 'deal'
+    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+#    render :layout => false
   end
 
   # １日の記入履歴の表示（携帯向けだが制限はしない、本当はidnexで兼ねたい）
@@ -106,7 +114,7 @@ class DealsController < ApplicationController
 
   # 取引の削除を受け付ける
   def delete_deal
-    deal = BaseDeal.find(params[:id])
+    deal = Deal::Base.find(params[:id])
     deal_info = format_deal(deal)
     deal.destroy
     flash[:notice] = "#{deal_info} を削除しました。"
@@ -115,7 +123,7 @@ class DealsController < ApplicationController
   
   # 確認処理
   def confirm
-    deal = BaseDeal.get(params[:id], @user.id)
+    deal = Deal::Base.get(params[:id], @user.id)
     raise "Could not get deal #{params[:id]}" unless deal
     
     deal.confirm
@@ -148,7 +156,7 @@ class DealsController < ApplicationController
   
   def redirect_to_index(options = {})
     if options[:updated_deal_id]
-      updated_deal = BaseDeal.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
+      updated_deal = Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
       raise ActiveRecord::RecordNotFound unless updated_deal
       year = updated_deal.year
       month = updated_deal.month
@@ -165,17 +173,42 @@ class DealsController < ApplicationController
     # todo preference のロード整備
     @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
     begin
-      @deals = BaseDeal.get_for_month(@user.id, @target_month)
+      @deals = Deal::Base.get_for_month(@user.id, @target_month)
       # TODO: 外にだしたい
       session[:target_month] = @target_month
-    rescue Exception
-      flash[:notice] = "不正な日付です。 " + @target_month.to_s
+    rescue Exception => e
+      p e.to_s
+      e.backtrace.each do |t|
+        p t
+      end
+      flash.now[:notice] = "不正な日付です。 " + @target_month.to_s
       @deals = Array.new
     end
   end
   
   def specify_month
     redirect_to_index and return false if !params[:year] || !params[:month]
+  end
+
+  # 記入エリアの準備
+  def prepare_select_deal_tab
+    @accounts_minus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts, true
+     )
+    @accounts_plus = ApplicationHelper::AccountGroup.groups(
+      @user.accounts, false
+     )
+    unless @deal
+      @deal = Deal::General.new(params[:deal])
+      @deal.date = target_date # セッションから判断した日付を入れる
+    end
+
+    @patterns = [] # 入力支援
+  end
+
+  def prepare_select_balance_tab
+    @accounts_for_balance = current_user.assets
+    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
   end
 
 end

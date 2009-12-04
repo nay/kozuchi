@@ -71,7 +71,7 @@ module Account::Linking
       mate_account = self.partner_account || user.default_asset_other_than(self)
       raise "#user #{user.login} 側で相手勘定を決められませんでした" unless mate_account
 
-      deal = Deal.new(
+      deal = Deal::General.new(
         :summary => linked_entry_summary,
         :date => linked_entry_date,
         :confirmed => false)

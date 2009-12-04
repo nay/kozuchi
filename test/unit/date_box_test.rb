@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class DateBoxTest < Test::Unit::TestCase
+class DateBoxTest < ActiveSupport::TestCase
 
   def test_set
     values = {"year" => "2004", "month" => "4"}

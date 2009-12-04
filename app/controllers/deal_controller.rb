@@ -9,14 +9,14 @@ class DealController < ApplicationController
   # params[:tab_name]]:: deal または　balance # TODO: 変えたい
   # params[:back_to][:controller]:: (必須) save 後に処理を戻す先のコントローラ
   # params[:back_to][:action]:: (必須) save 後に処理を戻す先のアクション
-  def new
-    load_and_assert_back_to
-
-    # deal / balance それぞれのフォーム初期化処理
-    @tab_name = params[:tab_name] || 'deal'
-    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
-    render :layout => false
-  end
+#  def new
+#    load_and_assert_back_to
+#
+#    # deal / balance それぞれのフォーム初期化処理
+#    @tab_name = params[:tab_name] || 'deal'
+#    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+#    render :layout => false
+#  end
   
   # params[:back_to][:controller]:: 処理が終わったときに帰る Controller
   # params[:back_to][:action]:: 処理が終わったときに帰る Action
@@ -57,14 +57,14 @@ class DealController < ApplicationController
   # 新規編集でサマリが編集されたときにくるAjaxメソッド
   def update_patterns
     summary_key = params[:keyword]
-    @patterns = Deal.search_by_summary(@user.id, summary_key, 5)
+    @patterns = Deal::General.search_by_summary(@user.id, summary_key, 5)
     render(:partial => 'patterns')
   end
 
   # 明細変更状態にするAjaxアクション
   def edit_deal
     load_and_assert_back_to
-    @deal = Deal.find(params[:id])
+    @deal = Deal::General.find(params[:id])
     @tab_name = 'deal'
     prepare_select_deal_tab
     render(:action => "new", :layout => false)
@@ -73,7 +73,7 @@ class DealController < ApplicationController
   # 残高変更状態にするAjaxアクション
   def edit_balance
     load_and_assert_back_to  
-    @deal = Balance.find(params[:id])
+    @deal = Deal::Balance.find(params[:id])
     @tab_name = 'balance'
     prepare_select_balance_tab
     render(:action => "new", :layout => false)
@@ -90,14 +90,14 @@ class DealController < ApplicationController
   def save_deal
     # 更新のとき
     if params[:deal][:id]
-      deal = BaseDeal.get(params[:deal][:id].to_i, @user.id)
+      deal = Deal::Base.get(params[:deal][:id].to_i, @user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       deal.attributes = params[:deal]
       # 未確認のものは確認にする
       # モデルでやると相互作用による更新を見分けるのが大変なのでここでやる
       deal.confirmed = true if !deal.confirmed
     else
-      deal = Deal.new(params[:deal])
+      deal = Deal::General.new(params[:deal])
       deal.user_id = @user.id
     end
     deal.save!
@@ -108,12 +108,12 @@ class DealController < ApplicationController
   def save_balance
     # 更新のとき
     if params[:deal][:id]
-      balance = Balance.get(params[:deal][:id].to_i, @user.id)
+      balance = Deal::Balance.get(params[:deal][:id].to_i, @user.id)
       raise "no balance #{params[:deal][:id]}" unless balance
 
       balance.attributes = params[:deal]
     else
-      balance = Balance.new(params[:deal])
+      balance = Deal::Balance.new(params[:deal])
       balance.user_id = @user.id
     end
     balance.save!
@@ -136,7 +136,7 @@ class DealController < ApplicationController
       @user.accounts, false
      )
     unless @deal
-      @deal = Deal.new(params[:deal])
+      @deal = Deal::General.new(params[:deal])
       @deal.date = target_date # セッションから判断した日付を入れる
     end
 
@@ -145,7 +145,7 @@ class DealController < ApplicationController
   
   def prepare_select_balance_tab
     @accounts_for_balance = current_user.assets
-    @deal ||=  Balance.new(:account_id => @accounts_for_balance.id)
+    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
   end
 
 end

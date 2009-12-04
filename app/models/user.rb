@@ -120,8 +120,8 @@ class User < ActiveRecord::Base
 
   include User::AccountLinking
   
-  has_many :deals, :class_name => 'BaseDeal', :include => [:account_entries], :extend => User::DealsExtension
-  has_many :account_entries
+  has_many :deals, :class_name => 'Deal::Base', :include => [:account_entries], :extend => User::DealsExtension
+  has_many :account_entries, :class_name => "Entry::Base"
   
   def default_asset
     assets.first
@@ -142,7 +142,7 @@ class User < ActiveRecord::Base
   end
   
   def deal_exists?(date)
-    BaseDeal.exists?(self.id, date)
+    Deal::Base.exists?(self.id, date)
   end
   
 
@@ -355,7 +355,7 @@ class User < ActiveRecord::Base
   private
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
-    BaseDeal.find_all_by_user_id(self.id).each{|d| d.destroy }
+    Deal::Base.find_all_by_user_id(self.id).each{|d| d.destroy }
   end
   def destroy_accounts
     # アカウントを削除する場合の口座削除処理。dependentだと順序が思うようでないので自前でやる

@@ -14,7 +14,6 @@ class ExportController < ApplicationController
     if fragment_exist? fragment_key
       options[:content_type] ||= "text/xml" if params[:format] == 'xml'
       render options.merge(:text => read_fragment(fragment_key))
-      p "used cache"
     else
       render options
     end

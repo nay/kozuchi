@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class FriendDealTest < Test::Unit::TestCase
+class FriendDealTest < ActiveSupport::TestCase
   
   def setup
     @user1 = users(:old)
@@ -18,7 +18,7 @@ class FriendDealTest < Test::Unit::TestCase
   # フレンド取引のテスト
 #  def test_not_confirmed
 #    # 作成
-#    first_deal = Deal.new(
+#    first_deal = Deal::General.new(
 #      :summary => 'second へ貸した',
 #      :amount => 1000,
 #      :minus_account_id => accounts(:first_cache).id,
@@ -32,7 +32,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_second_entry = first_deal.entry(accounts(:first_second).id)
 #    assert first_second_entry.linked_ex_entry_id
 ##    ex_entry_id = first_second_entry.linked_ex_entry_id # あとでつかう
-#    another_entry = AccountEntry.find(first_second_entry.linked_ex_entry_id)
+#    another_entry = Entry::Base.find(first_second_entry.linked_ex_entry_id)
 #    assert_equal false, another_entry.deal.confirmed
 #
 #    assert_equal users(:old2).id, first_second_entry.linked_user_id
@@ -44,21 +44,21 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_deal.save!
 #
 #    # とりなおす
-#    another_entry = AccountEntry.find(first_second_entry.linked_ex_entry_id)
+#    another_entry = Entry::Base.find(first_second_entry.linked_ex_entry_id)
 #    assert another_entry
 #
-#    another_entry = AccountEntry.find(another_entry.id)
+#    another_entry = Entry::Base.find(another_entry.id)
 #    assert_equal 1200*(-1), another_entry.amount
 #
 #    # 相手が未確定な状態で削除したら相手は消える
 #    first_deal.destroy
-#    another_entry = AccountEntry.find(:first, :conditions => "id = #{another_entry.id}")
+#    another_entry = Entry::Base.find(:first, :conditions => "id = #{another_entry.id}")
 #    assert !another_entry
 #  end
   
 #  def test_confirmed
 #    # 作成
-#    first_deal = Deal.new(
+#    first_deal = Deal::General.new(
 #      :summary => 'second に借りた',
 #      :amount => 1000,
 #      :minus_account_id => accounts(:first_second).id,
@@ -71,7 +71,7 @@ class FriendDealTest < Test::Unit::TestCase
 #
 #    first_second_entry = first_deal.entry(accounts(:first_second).id)
 #    assert first_second_entry.linked_ex_entry_id
-#    another_entry = AccountEntry.find_by_linked_ex_entry_id(first_second_entry.id)
+#    another_entry = Entry::Base.find_by_linked_ex_entry_id(first_second_entry.id)
 #    assert_equal users(:old2).id, another_entry.user_id
 #    assert_equal accounts(:second_first).id, another_entry.account_id
 #    assert 1000, another_entry.amount
@@ -90,7 +90,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    first_deal.attributes = {:amount => 1200}
 #    first_deal.save!
 #
-#    friend_deal = Deal.find(friend_deal.id)
+#    friend_deal = Deal::General.find(friend_deal.id)
 #    assert !friend_deal.entry(accounts(:second_first).id).linked_ex_deal_id # リンクがきれたはず。
 #
 #    assert !DealLink.find(:first, :conditions => "id = #{friend_link_id}")
@@ -115,7 +115,7 @@ class FriendDealTest < Test::Unit::TestCase
 #    # 新しい相手を削除すると自分のリンクはきえるが自分は残る
 #    new_friend_deal.destroy
 #
-#    first_deal = Deal.find(first_deal.id)
+#    first_deal = Deal::General.find(first_deal.id)
 #
 #    assert !first_deal.entry(accounts(:first_second).id).linked_ex_deal_id
 #

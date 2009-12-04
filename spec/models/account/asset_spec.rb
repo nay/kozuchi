@@ -94,12 +94,12 @@ describe "Account::Asset" do
   # 現金→食費の取引記入をする
   def create_deal(from, to, amount, month, day, attributes = {})
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => Fixtures.identify(from), :plus_account_id => Fixtures.identify(to), :user_id => @current_user.id, :date => Date.new(@year, month, day)}.merge(attributes)
-    Deal.create!(attributes)
+    Deal::General.create!(attributes)
   end
 
   # 現金の残高記入をする
   def create_balance(account_fixture_name, balance, month, day)
-    Balance.create!(:summary => "", :balance => balance, :account_id => Fixtures.identify(account_fixture_name), :user_id => @user.id, :date => Date.new(@year, month, day))
+    Deal::Balance.create!(:summary => "", :balance => balance, :account_id => Fixtures.identify(account_fixture_name), :user_id => @user.id, :date => Date.new(@year, month, day))
   end
 
 end
