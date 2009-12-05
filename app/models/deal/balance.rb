@@ -5,7 +5,7 @@
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Deal::Balance < Deal::Base
 
-  has_many   :account_entries, :class_name => "Entry::Balance",
+  has_many   :entries, :class_name => "Entry::Balance",
              :foreign_key => 'deal_id',
              :dependent => :destroy,
              :order => "amount" do
@@ -50,7 +50,7 @@ class Deal::Balance < Deal::Base
 
   # 関連にするとDealとincludeが揃わなくなるので関連にしない
   def entry
-    account_entries.first
+    entries.first
   end
   
   def account_id
@@ -105,7 +105,7 @@ class Deal::Balance < Deal::Base
   # before_create
   def build_entry
     raise "no user_id" unless self.user_id
-    e = account_entries.build(:formatted_balance => self.balance, :account_id => self.account_id)
+    e = entries.build(:formatted_balance => self.balance, :account_id => self.account_id)
     e.amount = calc_amount
     e
   end
@@ -113,7 +113,7 @@ class Deal::Balance < Deal::Base
 
   # before_update
   def update_entry
-    account_entries.clear
+    entries.clear
     build_entry.save! # TODO: :auto_saveオプションに移行？
   end
 
@@ -127,9 +127,9 @@ class Deal::Balance < Deal::Base
   # 対象口座のinitial_balance値を更新する
   def update_initial_balance
     raise "no account_id" unless account_id
-#    conditions = ["account_entries.account_id = ? and deals.type='Balance'", account_id]
+#    conditions = ["entries.account_id = ? and deals.type='Balance'", account_id]
 #    initial_balance_entry = Entry::Base.find(:first,
-#      :joins => "inner join deals on deals.id = account_entries.deal_id",
+#      :joins => "inner join deals on deals.id = entries.deal_id",
 #      :conditions => conditions, :order => "deals.date, deals.daily_seq", :readonly => false)
     initial_balance_entry = Entry::Balance.of(account_id).ordered.first
     # 現在ひとつもないなら特に仕事なし

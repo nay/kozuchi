@@ -14,12 +14,12 @@
     <th class="amount">残高</th>
   </tr>
   <% for d in @deals -%>
-  <% for e in d.account_entries -%>
+  <% for e in d.entries -%>
   <tr>
-  	  <% if e == d.account_entries.first -%>
-  	  <td class="date" rowspan="<%=d.account_entries.size%>"><%= d.date %></td>
-	  <td class="summary" rowspan="<%=d.account_entries.size%>"><%= d.summary %></td>
-	  <td rowspan="<%=d.account_entries.size%>" style="text-align:center;"><%= link_to '→', {:action => 'jump', :id => d.id}, {:class => 'arrow'}%></td>
+  	  <% if e == d.entries.first -%>
+  	  <td class="date" rowspan="<%=d.entries.size%>"><%= d.date %></td>
+	  <td class="summary" rowspan="<%=d.entries.size%>"><%= d.summary %></td>
+	  <td rowspan="<%=d.entries.size%>" style="text-align:center;"><%= link_to '→', {:action => 'jump', :id => d.id}, {:class => 'arrow'}%></td>
 	  <% end -%>
 	  <td class="account"><%= e.account.name %></td>
       <td class="amount"><%= number_with_delimiter(e.amount) if e.amount  > 0 && !e.initial_balance? %></td>

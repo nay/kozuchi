@@ -5,7 +5,7 @@ class Deal::General < Deal::Base
   after_save :create_relations
   before_destroy :destroy_entries
 
-  has_many   :account_entries, :class_name => "Entry::General",
+  has_many   :entries, :class_name => "Entry::General",
              :foreign_key => 'deal_id',
              :dependent => :destroy,
              :order => "amount" do
@@ -25,30 +25,30 @@ class Deal::General < Deal::Base
     xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
       xml.description XMLUtil.escape(self.summary)
       xml.entries do
-        account_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
+        entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
       end
     end
   end
 
   def to_csv_lines
     csv_lines = [["deal", id, date_as_str, daily_seq, "\"#{summary}\"", confirmed].join(',')]
-    account_entries.each{|e| csv_lines << e.to_csv}
+    entries.each{|e| csv_lines << e.to_csv}
     csv_lines
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
     # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount >= 0}.account.name
+    entries.detect{|e| e.amount >= 0}.account.name
   end
   def debtor_amount
     # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount >= 0}.amount
+    entries.detect{|e| e.amount >= 0}.amount
   end
   # 借り方勘定名を返す
   def creditor_account_name
     # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount < 0}.account.name
+    entries.detect{|e| e.amount < 0}.account.name
   end
 
   def plus_account_id
@@ -77,13 +77,13 @@ class Deal::General < Deal::Base
   end
 
   def settlement_attached?
-    !account_entries.detect{|e| e.settlement_attached?}.nil?
+    !entries.detect{|e| e.settlement_attached?}.nil?
   end
 
   # 相手勘定名を返す
   def mate_account_name_for(account_id)
     # TODO: 諸口対応、不正データ対応
-    account_entries.detect{|e| e.account_id != account_id}.account.name
+    entries.detect{|e| e.account_id != account_id}.account.name
   end
 
   def validate
@@ -114,7 +114,7 @@ class Deal::General < Deal::Base
 
   # 自分の取引のなかに指定された口座IDが含まれるか
   def has_account(account_id)
-    for entry in account_entries
+    for entry in entries
       return true if entry.account.id == account_id
     end
     return false
@@ -122,7 +122,7 @@ class Deal::General < Deal::Base
   
   def entry(account_id)
     raise "no account_id in Deal::General.entry()" unless account_id
-    r = account_entries.detect{|e| e.account_id.to_s == account_id.to_s}
+    r = entries.detect{|e| e.account_id.to_s == account_id.to_s}
 #    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
     r
   end
@@ -131,7 +131,7 @@ class Deal::General < Deal::Base
 
   # before_destroy
   def destroy_entries
-    account_entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
+    entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end
 
   def regulate_amount
@@ -140,7 +140,7 @@ class Deal::General < Deal::Base
   end
 
   def clear_entries_before_update
-    for entry in account_entries
+    for entry in entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
 #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
@@ -150,7 +150,7 @@ class Deal::General < Deal::Base
   end
 
   def clear_relations
-    account_entries.clear
+    entries.clear
   end
 
   def update_account_entry(is_minus, is_first)
@@ -168,7 +168,7 @@ class Deal::General < Deal::Base
     
     entry = entry(entry_account_id)
     if !entry
-      entry = account_entries.build(
+      entry = entries.build(
                 :amount => entry_amount,
                 :another_entry_account => another_entry_account)
       entry.account_id = entry_account_id
@@ -198,7 +198,7 @@ class Deal::General < Deal::Base
     entry = update_account_entry(false, !entry) # create plus
     update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
     
-    account_entries(true)
+    entries(true)
 
   end
   
@@ -212,10 +212,10 @@ class Deal::General < Deal::Base
   def refresh_account_info
     @refreshed = true
 # TODO:
-#    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-    return unless account_entries.size == 2
+#    p "Invalid Deal Object #{self.id} with #{entries.size} entries." unless entries.size == 2
+    return unless entries.size == 2
     
-    for et in account_entries
+    for et in entries
       if et.amount >= 0
         @plus_account_id = et.account_id
         @amount = et.amount

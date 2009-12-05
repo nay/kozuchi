@@ -40,7 +40,7 @@ describe User do
         s.result_partner_account_id = accounts(:taro_cache).id # TODO: わからなかった。Specほしい
         s.result_date = Date.new(2009, 4, 1) # TODO: 同上
         s.name = "テスト"
-        s.target_entries << d.account_entries.detect{|e| e.account_id == accounts(:taro_hanako).id}
+        s.target_entries << d.entries.detect{|e| e.account_id == accounts(:taro_hanako).id}
         s.save!
       end
       it "成功する" do

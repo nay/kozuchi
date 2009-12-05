@@ -91,7 +91,7 @@ class Entry::Base < ActiveRecord::Base
     if !deal.confirmed
       # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
       # オブジェクトとしては別物なので困ってしまう
-      deal.account_entries.detect{|e| e.id == self.id}.skip_unlinking = true
+      deal.entries.detect{|e| e.id == self.id}.skip_unlinking = true
       deal.destroy
     else
       Entry::Base.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")

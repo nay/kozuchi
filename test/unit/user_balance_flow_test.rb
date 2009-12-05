@@ -43,7 +43,7 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
     assert_equal 4000, balance_sum(@first_user, 3, 21, "accounts.type != 'Income' and accounts.type != 'Expense'")
     assert_equal 4000, balance_sum(@first_user, 3, 31, "accounts.type != 'Income' and accounts.type != 'Expense'")
 
-    assert ib.account_entries.first.initial_balance?
+    assert ib.entries.first.initial_balance?
     
     create_deal 4, 1, @cache, @food, 300
     create_balance 4, 30, @cache, 1000
@@ -70,14 +70,14 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
     # 4/1  食費 300  (残高3700)
     create_deal 3, 20, @cache, @food, 500
     ib = create_balance 3, 31, @cache, 4000
-    assert ib.account_entries.first.initial_balance?
+    assert ib.entries.first.initial_balance?
 
     create_deal 4, 1, @cache, @food, 300
 
     ib2 = create_balance 3, 19, @cache, 0
-    assert ib2.account_entries.first.initial_balance?
+    assert ib2.entries.first.initial_balance?
     ib.reload
-    assert_equal false, ib.account_entries.first.initial_balance?
+    assert_equal false, ib.entries.first.initial_balance?
 
     # 3/1の資産合計は0
     assert_equal 0, balance_sum(@first_user, 3, 1, "accounts.type != 'Income' and accounts.type != 'Expense'")
@@ -102,7 +102,7 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
     #
     create_deal 3, 20, @cache, @food, 500
     ib = create_balance 3, 31, @cache, 4000
-    assert ib.account_entries.first.initial_balance?
+    assert ib.entries.first.initial_balance?
 
     create_deal 4, 1, @cache, @food, 300
 
@@ -112,12 +112,12 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
     ib2.date = new_date
     ib2.save!
 
-    assert_equal true, ib2.account_entries.first.initial_balance?
+    assert_equal true, ib2.entries.first.initial_balance?
     assert_equal 1000, ib2.amount
 
     ib.reload
     assert_equal ib2.date, ib2.entry.date
-    assert_equal false, ib.account_entries.first.initial_balance?
+    assert_equal false, ib.entries.first.initial_balance?
     assert_equal 3500, ib.amount
 
     # 3/1の資産合計は1000

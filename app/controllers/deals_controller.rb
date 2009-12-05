@@ -92,7 +92,7 @@ class DealsController < ApplicationController
 
   # １日の記入履歴の表示（携帯向けだが制限はしない、本当はidnexで兼ねたい）
   def daily
-    @deals = current_user.deals.find(:all, :conditions => ["created_at >= ? and created_at < ?", @date.to_time, (@date + 1).to_time], :order => "created_at desc", :include => {:account_entries => :account})
+    @deals = current_user.deals.find(:all, :conditions => ["created_at >= ? and created_at < ?", @date.to_time, (@date + 1).to_time], :order => "created_at desc", :include => {:entries => :account})
   end
 
   # 記入の削除（携帯向け。一般をここに統合するまで制限する）

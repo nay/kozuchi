@@ -151,7 +151,7 @@ class Account::Base < ActiveRecord::Base
       conditions << true
     end
 #    p entries.find(:all,
-#      :joins => "inner join deals on account_entries.deal_id = deals.id",
+#      :joins => "inner join deals on entries.deal_id = deals.id",
 #      :conditions => conditions).inspect
     entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",

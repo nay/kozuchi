@@ -22,7 +22,7 @@
           <% edit_target = deal.balance ? 'edit_balance' : 'edit_deal' %>
           <% first = true %>
 
-          <% for account_entry in deal.account_entries %>
+          <% for account_entry in deal.entries %>
             <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed %>>
               <td class="date">
                 <% if first %>
@@ -33,7 +33,7 @@
                 <%= deal.daily_seq if first %>
               </td>
               <% if first %>
-                <td class="summary" rowspan="<%=deal.account_entries.size%>">
+                <td class="summary" rowspan="<%=deal.entries.size%>">
                   <% if !deal.confirmed %>
                     <%= link_to_remote('確認' , {:update => 'book', :url => { :action => 'confirm', :id => deal }}, :class => 'small_button', :alt => '確認状態にします。' ) %>
                   <% end %>
@@ -64,8 +64,8 @@
               <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
               <% if first %>
-                <td rowspan="<%=deal.account_entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'edit_box', :url => { :controller => 'deal', :action => edit_target, :id => deal, 'back_to[controller]' => 'deals', 'back_to[action]' => 'index'}, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" ) %></td>
-                <td rowspan="<%=deal.account_entries.size%>" class="action">
+                <td rowspan="<%=deal.entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'edit_box', :url => { :controller => 'deal', :action => edit_target, :id => deal, 'back_to[controller]' => 'deals', 'back_to[action]' => 'index'}, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" ) %></td>
+                <td rowspan="<%=deal.entries.size%>" class="action">
                   <% unless deal.settlement_attached? %>
                     <%= link_to '削除' ,{:action => 'delete_deal', :id => deal}, :confirm => "#{format_deal(deal)}を削除します。よろしいですか？" %>
                   <% end %>

@@ -134,10 +134,10 @@ describe Entry::Base do
       deal = new_deal(3, 3, @cache, @food, 180)
       deal.save!
 #        deal = Deal::General.new(:summary => "買い物", :date => Date.today)
-#        deal.account_entries.build(:amount => 180, :account_id => @food.id)
-#        deal.account_entries.build(:amount => -180, :account_id => @cache.id)
+#        deal.entries.build(:amount => 180, :account_id => @food.id)
+#        deal.entries.build(:amount => -180, :account_id => @cache.id)
 #        deal.save!
-      cache_entry = deal.account_entries.detect{|e| e.account_id == @cache.id}
+      cache_entry = deal.entries.detect{|e| e.account_id == @cache.id}
       cache_entry.mate_account_name.should == @food.name
     end
   end
@@ -146,11 +146,11 @@ describe Entry::Base do
     before do
 #      @deal = Deal::General.new(:summary => "test", :date => Date.today)
 #      @deal.user_id = users(:account_entry_test_user_taro)
-#      @deal.account_entries.build(
+#      @deal.entries.build(
 #        :account_id => @cache_in_taro.id,
 #        :amount => -200
 #        )
-#      @deal.account_entries.build(
+#      @deal.entries.build(
 #        :account_id => @hanako_in_taro.id,
 #        :amount => 200
 #        )

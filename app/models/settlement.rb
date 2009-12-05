@@ -116,7 +116,7 @@ class Settlement < ActiveRecord::Base
         :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする      
       )
       result_deal.save!
-      self.result_entry = result_deal.account_entries.detect{|e| e.account_id.to_s == self.account_id.to_s}
+      self.result_entry = result_deal.entries.detect{|e| e.account_id.to_s == self.account_id.to_s}
     end
     self.result_entry.save!
   end

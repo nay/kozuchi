@@ -5,10 +5,10 @@
     <% for pattern in @patterns %>
       <tr>
         <td><div class="clickable_text" onClick="setEditDeal('<%= pattern.summary %>', '<%= pattern.amount%>', '<%= pattern.minus_account_id%>', '<%= pattern.plus_account_id%>');"><%= pattern.summary %></div></td>
-        <td><%= number_with_delimiter(pattern.account_entries[1].amount) %></td>
-        <td>[<%= pattern.account_entries[0].account.name %>]</td>
+        <td><%= number_with_delimiter(pattern.entries[1].amount) %></td>
+        <td>[<%= pattern.entries[0].account.name %>]</td>
         <td> → </td>
-        <td>[<%= pattern.account_entries[1].account.name %>]</td>
+        <td>[<%= pattern.entries[1].account.name %>]</td>
       </tr>
     <% end -%>
     </table>

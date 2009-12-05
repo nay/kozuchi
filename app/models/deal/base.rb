@@ -3,21 +3,6 @@ require 'time'
 class Deal::Base < ActiveRecord::Base
   set_table_name "deals"
 
-#  # TODO:廃止予定
-#  has_many   :account_entries, :class_name => "Entry::Base",
-#             :foreign_key => 'deal_id',
-#             :dependent => :destroy,
-#             :order => "amount" do
-#    def build(attributes = {})
-#      record = super
-#      record.user_id = proxy_owner.user_id
-#      record.date = proxy_owner.date
-#      record.daily_seq = proxy_owner.daily_seq
-#      record
-#    end
-#  end
-
-
   belongs_to :user
 
   attr_writer :insert_before
@@ -149,7 +134,7 @@ class Deal::Base < ActiveRecord::Base
       # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
       # TODO: コールバックは見直し必要か
       reload
-      account_entries.each{|e| e.after_confirmed}
+      entries.each{|e| e.after_confirmed}
     end
   end
 

@@ -91,7 +91,7 @@ class DealTest < ActiveSupport::TestCase
   def test_initial_balance
     # 2008/5/1 に残高を記入して、4月末時点での残高を照合すると、同じ残高となる
     balance = create_balance(320000, 5, 1)
-    assert_equal 320000, balance.account_entries.first.amount
+    assert_equal 320000, balance.entries.first.amount
     assert_equal 320000, balance_before(5, 2)
     assert_equal 320000, balance_before(5, 1)
     # 5/1〜5/2の間の不明金は0

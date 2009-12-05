@@ -51,7 +51,7 @@
       </table>
 	  <% end -%>
       <table class="book">
-        <% for entry in @account_entries %>
+        <% for entry in @entries %>
           <% if entry.balance %>
             <tr class="balance_line">
               <td class="date"><%= format_date(entry.deal.date) %></td>
