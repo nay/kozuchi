@@ -9,13 +9,13 @@ describe Deal::General do
     @bank = accounts(:deal_test_bank)
   end
 
-#  describe "new" do
-#
+  describe "new" do
+
 #    it "複数行のDealオブジェクトの作成に成功すること" do
-#      deal = Deal::General.new(:summary => "複数行", :date => Date.new)
+#      deal = Deal::General.new(:summary => "複数行", :date => Date.new, :debtor_entries_attributes => {})
 #    end
-#
-#  end
+
+  end
 
 
   describe "create" do

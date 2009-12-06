@@ -35,7 +35,7 @@ class Deal::Balance < Deal::Base
     xml.instruct! unless options[:skip_instruct]
     xml.balance(:id => "balance#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :account => "account#{self.account_id}") do
       xml.description XMLUtil.escape(self.summary)
-      xml.amount self.balance
+      xml.amount self.readonly_entries.first.try(:balance)
     end
   end
 

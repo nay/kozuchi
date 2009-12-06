@@ -5,6 +5,9 @@ class Deal::Base < ActiveRecord::Base
 
   belongs_to :user
 
+  # 実験的に読み出し専用の共通的なentryを設定
+  has_many :readonly_entries, :include => :account, :class_name => "Entry::Base", :foreign_key => 'deal_id', :readonly => true
+
   attr_writer :insert_before
   attr_accessor :old_date
   
@@ -13,7 +16,7 @@ class Deal::Base < ActiveRecord::Base
   validates_presence_of :date
   
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
-  
+  named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
 
   # 高速化のため、Castを経ないでDateを文字列として得られるメソッドを用意
   def date_as_str

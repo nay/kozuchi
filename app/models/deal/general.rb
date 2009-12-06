@@ -1,15 +1,8 @@
 # 異動明細クラス。
 class Deal::General < Deal::Base
-  before_validation :regulate_amount
-  before_update :clear_entries_before_update
-  after_save :create_relations
-  before_destroy :destroy_entries
 
-  has_many   :entries, :class_name => "Entry::General",
-             :foreign_key => 'deal_id',
-             :dependent => :destroy,
-             :order => "amount" do
-    def build(attributes = {})
+  module EntriesAssociationExtension
+    def build(*args)
       record = super
       record.user_id = proxy_owner.user_id
       record.date = proxy_owner.date
@@ -18,6 +11,30 @@ class Deal::General < Deal::Base
     end
   end
 
+  before_validation :regulate_amount
+  before_update :clear_entries_before_update
+  after_save :create_relations
+  before_destroy :destroy_entries
+
+  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
+    e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account
+    e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account
+    e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
+  end
+
+# TODO: 関連かメソッドか悩み中。作成用をdebtor, creditorにするなら関連
+#  # entries から抽出してキャッシュする
+#  # entries は更新しない
+#  def debtor_entries(force = false)
+#    @debtor_entries = nil if force == true
+#    @debtor_entries ||= entries.find_all{|e| e.amount >= 0}
+#  end
+#
+#  def creditor_entries(force = false)
+#    @creditor_entries = nil if force == true
+#    @creditor_entries ||= entries.find_all{|e| e.amount < 0}
+#  end
+
   def to_xml(options = {})
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -25,25 +42,26 @@ class Deal::General < Deal::Base
     xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
       xml.description XMLUtil.escape(self.summary)
       xml.entries do
-        entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
+        # include で検索している前提
+        readonly_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
       end
     end
   end
 
   def to_csv_lines
     csv_lines = [["deal", id, date_as_str, daily_seq, "\"#{summary}\"", confirmed].join(',')]
-    entries.each{|e| csv_lines << e.to_csv}
+    readonly_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
-    # TODO: 実装はあとで変えたい
-    entries.detect{|e| e.amount >= 0}.account.name
+    debtor_entries # 一度全部とる
+    debtor_entries.size == 1 ? debtor_entries.first.account.name : "諸口"
   end
+
   def debtor_amount
-    # TODO: 実装はあとで変えたい
-    entries.detect{|e| e.amount >= 0}.amount
+    debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
   end
   # 借り方勘定名を返す
   def creditor_account_name

@@ -8,13 +8,13 @@
 <div><%= link_to "記入履歴", daily_deals_path(:year => today.year, :month => today.month, :day => today.day) %></div>
 
 <% if !current_user.mobile_identity.blank? %>
-  <%= button_to "簡単ログイン設定の削除", confirm_destroy_mobile_path, :method => :get %>
+  <%= button_to "簡単ログイン設定の削除", confirm_destroy_mobile_device_path, :method => :get %>
 <% elsif @mobile_login_available %>
   <div>
     <% if request.mobile.docomo? && request.mobile.ident.blank? %>
-      <%= docomo_utn_button_to "簡単ログインを設定", hash_for_mobile_path, :method => :put %>
+      <%= docomo_utn_button_to "簡単ログインを設定", hash_for_mobile_device_path, :method => :put %>
     <% else %>
-      <%= button_to "簡単ログインを設定", mobile_path, :method => :put %><br />
+      <%= button_to "簡単ログインを設定", mobile_device_path, :method => :put %><br />
     <% end %>
   </div>
 <% end %>

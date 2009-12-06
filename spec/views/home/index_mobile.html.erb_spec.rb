@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../mobile_spec_helper')
 
 describe "/home/index_mobile" do
   fixtures :users, :accounts
