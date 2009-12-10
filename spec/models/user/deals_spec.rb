@@ -12,7 +12,7 @@ describe "user.deals" do
       @deal.save!
     end
     it "成功すること" do
-      users(:taro).deals.created_on(Date.new(2009, 12, 6)).include?(@deal).should be_true
+      users(:taro).deals.created_on(Date.today).include?(@deal).should be_true
     end
   end
 
