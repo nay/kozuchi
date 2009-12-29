@@ -10,15 +10,56 @@ describe Deal::General do
   end
 
   describe "new" do
+    it "複数行のDealオブジェクトの作成に成功すること" do
 
-#    it "複数行のDealオブジェクトの作成に成功すること" do
-#      deal = Deal::General.new(:summary => "複数行", :date => Date.new, :debtor_entries_attributes => {})
-#    end
-
+      # 食費 1300   現金 1000
+      #            銀行  300
+      deal = Deal::General.new(:summary => "複数行", :date => Date.new,
+        :debtor_entries_attributes => [{
+          :account_id => Fixtures.identify(:taro_food),
+          :amount => 1300
+        }],
+        :creditor_entries_attributes => [{
+          :account_id => Fixtures.identify(:taro_cache),
+          :amount => -1000
+        },
+        {
+          :account_id => Fixtures.identify(:taro_bank),
+          :amount => -300
+        }
+        ]
+      )
+      deal.debtor_entries.size.should == 1
+      deal.creditor_entries.size.should == 2
+    end
   end
 
+  describe "valid?" do
+    it "数字の合った複合Dealが検証をとおること" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
+      deal.valid?.should be_true
+    end
+    it "数字の合わない複合Dealが検証を通らないこと" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -200})
+      deal.valid?.should be_false
+    end
+    it "amountが0のEntryを含む複合Dealが検証を通らないこと" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1300, :taro_bank => 0})
+      deal.valid?.should be_false
+    end
+  end
 
   describe "create" do
+
+    it "数字の合った複合Dealが作成できること" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
+      deal.save.should be_true
+    end
+    it "カンマ入り数字による複合Dealが作成できること" do
+      deal = new_complex_deal(3, 1, {:taro_food => '1,300'},{:taro_cache => '-1,000', :taro_bank => '-300'})
+      deal.save.should be_true
+      deal.debtor_entries.any?{|e| e.amount.to_i == 1300}.should be_true
+    end
 
     describe "連携なし" do
       before do
@@ -161,6 +202,21 @@ describe Deal::General do
     d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
+  end
+
+  # debtors {account_id => amout, account_id => amount} のように記述
+  def new_complex_deal(month, day, debtors, creditors, options = {})
+    summary = options[:summary] || "#{month}/#{day}の記入"
+    date = Date.new(options[:year] || 2010, month, day)
+
+    deal = Deal::General.new(:summary => summary, :date => date,
+      :debtor_entries_attributes => debtors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value} },
+      :creditor_entries_attributes => creditors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}
+    )
+    
+    key = debtors.keys.first
+    deal.user_id = (key.kind_of?(Symbol) ? Fixtures.identify(key) : key)
+    deal
   end
 
 end

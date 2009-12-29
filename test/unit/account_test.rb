@@ -101,23 +101,6 @@ class Account::BaseTest < ActiveSupport::TestCase
   end
   
 
-  # ----- 削除のテスト
- 
-  # 使われていないものが消せるテスト
-  def test_delete
-    a = accounts(:deletable_one)
-    assert_nothing_raised {a.destroy}
-  end
-  
-  # データが使われていたら消せないことのテスト
-  def test_delete_used
-    d = Deal::General.new(:user_id => users(:old), :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:deletable_one).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
-    d.save!
-    a = accounts(:deletable_one)
-    assert_raise(Account::Base::UsedAccountException) {a.destroy}
-    assert_nothing_raised {Account::Base.find(a.id)}
-  end
-
  # 更新のテスト
 
  # 勘定名を変えられることのテスト

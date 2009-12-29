@@ -7,4 +7,13 @@ class Entry::General < Entry::Base
 
   before_destroy :assert_no_settlement
 
+  validates_numericality_of :amount, :only_integer => true
+
+  validate :validate_amount_is_not_zero
+
+  private
+  def validate_amount_is_not_zero
+    errors.add :amount, "に0を指定することはできません。" if self.amount.to_i == 0
+  end
+
 end

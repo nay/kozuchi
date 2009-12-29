@@ -14,6 +14,8 @@ class Entry::Base < ActiveRecord::Base
 
 
   validates_presence_of :amount, :account_id
+  validate :validate_account_id_is_users
+
   before_update :store_old_amount
   before_save :copy_deal_attributes
   after_save :update_balance, :request_linking
@@ -34,24 +36,30 @@ class Entry::Base < ActiveRecord::Base
   named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
 
-
-  # コンマ混じりの文字列でamountを代入できる
-  def formatted_amount=(formatted_amount)
-    self.amount = formatted_amount.class == String ? formatted_amount.gsub(/,/,'') : formatted_amount
+  def amount=(a)
+    self[:amount] = a.kind_of?(String) ? a.gsub(/,/, '') : a
   end
-  # フィールドで利用できるよう用意するがこちらは,をつけない
-  def formatted_amount
-    self.amount
+  def balance=(a)
+    self[:balance] = a.kind_of?(String) ? a.gsub(/,/, '') : a
   end
 
-  # コンマ混じりの文字列でbalanceを代入できる
-  def formatted_balance=(formatted_balance)
-    self.balance = formatted_balance.class == String ? formatted_balance.gsub(/,/,'') : formatted_balance
-  end
-  # フィールドで利用できるよう用意するがこちらは,をつけない
-  def formatted_balance
-    self.balance
-  end
+#  # コンマ混じりの文字列でamountを代入できる
+#  def formatted_amount=(formatted_amount)
+#    self.amount = formatted_amount.class == String ? formatted_amount.gsub(/,/,'') : formatted_amount
+#  end
+#  # フィールドで利用できるよう用意するがこちらは,をつけない
+#  def formatted_amount
+#    self.amount
+#  end
+#
+#  # コンマ混じりの文字列でbalanceを代入できる
+#  def formatted_balance=(formatted_balance)
+#    self.balance = formatted_balance.class == String ? formatted_balance.gsub(/,/,'') : formatted_balance
+#  end
+#  # フィールドで利用できるよう用意するがこちらは,をつけない
+#  def formatted_balance
+#    self.balance
+#  end
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -126,6 +134,17 @@ class Entry::Base < ActiveRecord::Base
 
 
   private
+
+  def validate_account_id_is_users
+    return true if !account_id
+    unless account
+      errors.add(:account_id, "が見つかりません。")
+      return true
+    end
+#    p "account.user_id = #{account.user_id} : self.user_id = #{user_id}"
+    # user_id がnilのときは別のエラーになるのでここで比較しない
+    errors.add(:account_id, "が不正です。") if !user_id.nil? && account.user_id.to_i != user_id.to_i
+  end
 
 
   def store_old_amount

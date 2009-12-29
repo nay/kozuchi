@@ -11,29 +11,20 @@ class Deal::General < Deal::Base
     end
   end
 
-  before_validation :regulate_amount
-  before_update :clear_entries_before_update
-  after_save :create_relations
-  before_destroy :destroy_entries
-
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
     e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account
     e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account
     e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
 
-# TODO: 関連かメソッドか悩み中。作成用をdebtor, creditorにするなら関連
-#  # entries から抽出してキャッシュする
-#  # entries は更新しない
-#  def debtor_entries(force = false)
-#    @debtor_entries = nil if force == true
-#    @debtor_entries ||= entries.find_all{|e| e.amount >= 0}
-#  end
-#
-#  def creditor_entries(force = false)
-#    @creditor_entries = nil if force == true
-#    @creditor_entries ||= entries.find_all{|e| e.amount < 0}
-#  end
+  accepts_nested_attributes_for :debtor_entries, :creditor_entries
+
+  validate :validate_entries
+#  before_validation :regulate_amount
+  before_update :clear_entries_before_update
+  after_save :create_relations
+  before_destroy :destroy_entries
+
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -147,15 +138,23 @@ class Deal::General < Deal::Base
 
   private
 
+  def validate_entries
+
+    # amount 合計が 0 でなければならない
+    sum = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.inject(0) {|r, e| r += e.amount.to_i}
+    errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
+  end
+
+
   # before_destroy
   def destroy_entries
     entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end
 
-  def regulate_amount
-    # もし金額にカンマが入っていたら正規化する
-    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
-  end
+#  def regulate_amount
+#    # もし金額にカンマが入っていたら正規化する
+#    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
+#  end
 
   def clear_entries_before_update
     for entry in entries

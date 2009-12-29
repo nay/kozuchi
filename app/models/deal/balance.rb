@@ -105,7 +105,7 @@ class Deal::Balance < Deal::Base
   # before_create
   def build_entry
     raise "no user_id" unless self.user_id
-    e = entries.build(:formatted_balance => self.balance, :account_id => self.account_id)
+    e = entries.build(:balance => self.balance, :account_id => self.account_id)
     e.amount = calc_amount
     e
   end
