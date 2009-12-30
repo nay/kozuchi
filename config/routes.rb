@@ -11,6 +11,8 @@ ActionController::Routing::Routes.draw do |map|
     settings.resources :single_logins
   end
 
+  map.resources :general_deals
+
 
   map.resource :mobile_device, :member => {"confirm_destroy" => :get}, :controller => "mobiles"
 #  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
@@ -79,9 +81,18 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  # account_deals
-  map.account_deals 'accounts/:account_id/deals/:year/:month', :action => 'monthly', :controller => 'account_deals', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
-  map.account_balance 'accounts/:account_id/balance', :action => "balance", :controller => "account_deals"
+  # AccountDealsController
+  # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
+  map.with_options :controller => 'account_deals', :path_prefix => 'accounts/:account_id' do |account_deals|
+    account_deals.account_deals 'deals/:year/:month', :action => 'monthly', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
+    account_deals.account_balance 'balance', :action => "balance"
+    account_deals.account_general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
+    ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |deal_type|
+      account_deals.send("account_#{deal_type.pluralize}", "#{deal_type.pluralize}", :action => "create_#{deal_type}", :conditions => {:method => :post})
+      account_deals.send("new_account_#{deal_type}", "new_#{deal_type}", :action => "new_#{deal_type}", :conditions => {:method => :get})
+      account_deals.send("edit_account_#{deal_type}", "#{deal_type.pluralize}/:id", :action => "edit_#{deal_type}", :conditions => {:method => :get})
+    end
+  end
 
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',

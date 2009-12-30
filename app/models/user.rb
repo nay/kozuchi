@@ -14,7 +14,20 @@ class User < ActiveRecord::Base
   has_many  :assets, :class_name => "Account::Asset", :order => "sort_key"
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
 #  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
+
+  ACCOUNTS_OPTIONS_ASC = ['Account::Asset', 'Account::Income', 'Account::Expense']
+  ACCOUNTS_OPTIONS_DESC = ['Account::Expense', 'Account::Asset', 'Account::Income']
   has_many  :accounts, :class_name => 'Account::Base', :order => 'accounts.sort_key' do
+
+    def grouped_options(is_asc = true)
+      grouped = group_by{|a| a.class}.map{|key, value| [key, value.map{|a| [a.name, a.id]}]}
+      order = is_asc ? ACCOUNTS_OPTIONS_ASC : ACCOUNTS_OPTIONS_DESC
+      grouped.sort!{|a, b|
+        # 昇順／降順が対照的でないため独自ロジック
+        order.index(a[0].name) <=> order.index(b[0].name)
+      }
+      grouped.map{|g| g[0] = g[0].human_name; g}
+    end
 
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
@@ -121,6 +134,10 @@ class User < ActiveRecord::Base
   include User::AccountLinking
   
   has_many :deals, :class_name => 'Deal::Base', :extend => User::DealsExtension
+  # 作成用
+  has_many :general_deals, :class_name => "Deal::General", :foreign_key => "user_id"
+  has_many :balance_deals, :class_name => "Deal::Balance", :foreign_key => "user_id"
+
   has_many :entries, :class_name => "Entry::Base"
   
   def default_asset

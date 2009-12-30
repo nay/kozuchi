@@ -19,6 +19,7 @@ class Deal::General < Deal::Base
 
   accepts_nested_attributes_for :debtor_entries, :creditor_entries
 
+  before_validation :fill_amount_to_one_side
   validate :validate_entries
 #  before_validation :regulate_amount
   before_update :clear_entries_before_update
@@ -242,5 +243,13 @@ class Deal::General < Deal::Base
     end
         
   end
-  
+
+  def fill_amount_to_one_side
+    if creditor_entries.size == 1 && creditor_entries.first.amount.nil? && !debtor_entries.any?{|e| e.amount.nil?}
+      creditor_entries.first.amount = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+    elsif debtor_entries.size == 1 && debtor_entries.first.amount.nil? && !creditor_entries.any?{|e| e.amount.nil?}
+      debtor_entries.first.amount = creditor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+    end
+  end
+
 end

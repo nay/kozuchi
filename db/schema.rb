@@ -9,13 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091123034257) do
+ActiveRecord::Schema.define(:version => 20091230031445) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",              :default => 0
     t.integer "account_id",           :default => 0
     t.integer "deal_id",              :default => 0
-    t.integer "amount",               :default => 0,     :null => false
+    t.integer "amount"
     t.integer "balance"
     t.integer "settlement_id"
     t.integer "result_settlement_id"

@@ -1,98 +1,103 @@
-    <%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month}) %>
+<%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month}) %>
 
-    <div id="monthly_contents">
+  <%= datebox %>
+  <div id="deal_forms">
+  <%= render :partial => 'new_creditor_general_deal' %>
+  </div>
 
-      <!-- 通信欄-->
-      <% if flash[:notice] || flash[:notice].to_s != ""%>
-        <div id="notice"><%=flash[:notice]%></div>
+<div id="monthly_contents">
+
+  <!-- 通信欄-->
+  <% if flash[:notice] || flash[:notice].to_s != ""%>
+    <div id="notice"><%=flash[:notice]%></div>
+  <% end %>
+  <div class="title"><%= h @account.name %>の出納一覧（<%= @year %>年<%= @month %>月）</div>
+  <table class="book_header">
+    <tr>
+      <th class="date">日付</th>
+      <th class="number"> </th>
+      <th>摘要</th>
+      <th class="account">　</th>
+      <th class="amount">
+        <% if @account.kind_of?(Account::Asset) -%>
+                              入金
+        <% elsif @account.kind_of?(Account::Income) -%>
+                              戻し
+        <% else -%>
+                              支出
+        <% end -%>
+      </th>
+      <th class="amount">
+        <% if @account.kind_of?(Account::Asset) -%>
+                              出金
+        <% elsif @account.kind_of?(Account::Income) -%>
+                              収入
+        <% else -%>
+                              戻し
+        <% end -%>
+      </th>
+      <th class="amount">
+        <% if @account.kind_of?(Account::Asset) -%>
+                              残高
+        <% else %>
+                              合計
+        <% end -%>
+      </th>
+    </tr>
+  </table>
+  <% if @account.kind_of?(Account::Asset) -%>
+    <table class="book">
+      <tr>
+        <td class="date"> </td>
+        <td class="number"> </td>
+        <td>期首残高</td>
+        <td class="amount"><%= number_with_delimiter(@balance_start) %></td>
+      </tr>
+    </table>
+  <% end -%>
+  <table class="book">
+    <% for entry in @entries %>
+      <% if entry.balance %>
+        <tr class="balance_line">
+          <td class="date"><%= format_date(entry.deal.date) %></td>
+          <td class="number"><%=entry.deal.daily_seq%></td>
+          <td>残高確認</td>
+          <td class="account">不明金</td>
+          <td class="amount"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
+          <td class="amount"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
+          <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum))%></td>
+        </tr>
+      <% else %>
+        <tr <%= 'class="unconfirmed"' if !entry.deal.confirmed %>>
+          <td class="date"><%= format_date(entry.deal.date) %></td>
+          <td class="number"><%= entry.deal.daily_seq%></td>
+          <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed %><%= h entry.deal.summary%></td>
+          <td class="account"><%= h entry.account.name %></td>
+          <td class="amount"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
+          <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
+          <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance_estimated : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum)) : '*' %></td>
+        </tr>
       <% end %>
-      <div class="title"><%= h @account.name %>の出納一覧（<%= @year %>年<%= @month %>月）</div>
-      <table class="book_header">
-        <tr>
-          <th class="date">日付</th>
-          <th class="number"> </th>
-          <th>摘要</th>
-          <th class="account">　</th>
-          <th class="amount">
-          	  <% if @account.kind_of?(Account::Asset) -%>
-			    入金
-			  <% elsif @account.kind_of?(Account::Income) -%>
-			    戻し
-			  <% else -%>
-			    支出
-			  <% end -%>
-		  </th>
-          <th class="amount">
-          	  <% if @account.kind_of?(Account::Asset) -%>
-			    出金
-			  <% elsif @account.kind_of?(Account::Income) -%>
-			    収入
-			  <% else -%>
-			    戻し
-			  <% end -%>
-		  </th>
-          <th class="amount">
-          	  <% if @account.kind_of?(Account::Asset) -%>
-			    残高
-			  <% else %>
-			    合計
-			  <% end -%>
-		  </th>
-        </tr>
-      </table>
-	  <% if @account.kind_of?(Account::Asset) -%>
-      <table class="book">
-        <tr>
-          <td class="date"> </td>
-          <td class="number"> </td>
-            <td>期首残高</td>
-            <td class="amount"><%= number_with_delimiter(@balance_start) %></td>
-        </tr>
-      </table>
-	  <% end -%>
-      <table class="book">
-        <% for entry in @entries %>
-          <% if entry.balance %>
-            <tr class="balance_line">
-              <td class="date"><%= format_date(entry.deal.date) %></td>
-              <td class="number"><%=entry.deal.daily_seq%></td>
-              <td>残高確認</td>
-              <td class="account">不明金</td>
-              <td class="amount"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
-              <td class="amount"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
-              <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum))%></td>
-            </tr>
-          <% else %>
-            <tr <%= 'class="unconfirmed"' if !entry.deal.confirmed %>>
-              <td class="date"><%= format_date(entry.deal.date) %></td>
-              <td class="number"><%= entry.deal.daily_seq%></td>
-              <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed %><%= h entry.deal.summary%></td>
-              <td class="account"><%= h entry.account.name %></td>
-              <td class="amount"><%= number_with_delimiter(entry.amount.abs) if entry.amount < 0 && !entry.balance%></td>
-              <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.balance %></td>
-              <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance_estimated : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum)) : '*' %></td>
-            </tr>
-          <% end %>
-        <% end %>
-      </table>
-	  <% if @account.kind_of?(Account::Asset) -%>
-      <table class="book">
-        <tr>
-          <td class="date"> </td>
-          <td class="number"> </td>
-          <td >期末残高</td>
-          <td class="amount"><%= number_with_delimiter(@balance_end) %></td>
-        </tr>
-      </table>
-	  <% else -%>
-      <table class="book">
-        <tr>
-          <td class="date"> </td>
-          <td class="number"> </td>
-          <td >期末合計</td>
-          <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Income) ? @flow_end * -1 : @flow_end) %></td>
-        </tr>
-      </table>
-	  <% end -%>
+    <% end %>
+  </table>
+  <% if @account.kind_of?(Account::Asset) -%>
+    <table class="book">
+      <tr>
+        <td class="date"> </td>
+        <td class="number"> </td>
+        <td >期末残高</td>
+        <td class="amount"><%= number_with_delimiter(@balance_end) %></td>
+      </tr>
+    </table>
+  <% else -%>
+    <table class="book">
+      <tr>
+        <td class="date"> </td>
+        <td class="number"> </td>
+        <td >期末合計</td>
+        <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Income) ? @flow_end * -1 : @flow_end) %></td>
+      </tr>
+    </table>
+  <% end -%>
 
-    </div>
+</div>

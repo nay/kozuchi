@@ -13,7 +13,7 @@ class Entry::General < Entry::Base
 
   private
   def validate_amount_is_not_zero
-    errors.add :amount, "に0を指定することはできません。" if self.amount.to_i == 0
+    errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0
   end
 
 end

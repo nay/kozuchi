@@ -3,11 +3,27 @@ class AccountDealsController < ApplicationController
   menu_group "家計簿"
   menu "口座別出納"
   before_filter :check_account
-  before_filter :find_account, :only => [:balance]
+  before_filter :find_account, :except => [:index]
   before_filter :require_mobile, :only => [:balance]
   
   use_calendar :account_deals_path
-  
+
+  # 更新系
+  def create_creditor_general_deal
+    @deal = @user.general_deals.new(params[:deal])
+
+    if @deal.save
+      flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+      render :update do |page|
+        page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
+      end
+    else
+      render :update do |page|
+        page[:deal_forms].replace_html :partial => 'new_creditor_general_deal'
+      end
+    end
+  end
+
   def index
     year, month = read_target_date
     redirect_to account_deals_path(:year => year, :month => month, :account_id => current_user.accounts.first.id)
@@ -54,12 +70,23 @@ class AccountDealsController < ApplicationController
     end
     @balance_end = @entries.size > 0 ? (@entries.last.balance || @entries.last.balance_estimated) : @balance_start 
     @flow_end = flow_sum
+
+    # 登録用
+    @deal = Deal::General.new
+    @deal.debtor_entries.build
+    @deal.creditor_entries.build
   end
 
   # 携帯専用：残高表示
   def balance
     
   end
+
+
+  def new_balance_deal
+    render :partial => 'new_balance_deal'
+  end
+
 
   private
   def find_account

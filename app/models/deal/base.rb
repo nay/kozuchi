@@ -10,13 +10,18 @@ class Deal::Base < ActiveRecord::Base
 
   attr_writer :insert_before
   attr_accessor :old_date
-  
+
+  before_validation :set_required_data_in_entries
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
   
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
+
+  def human_name
+    "記入 #{date}-#{daily_seq}"
+  end
 
   # 高速化のため、Castを経ないでDateを文字列として得られるメソッドを用意
   def date_as_str
@@ -188,5 +193,20 @@ class Deal::Base < ActiveRecord::Base
     end
   end
   
+
+  private
+
+  def set_required_data_in_entries
+    self.creditor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+    self.debtor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+  end
 
 end
