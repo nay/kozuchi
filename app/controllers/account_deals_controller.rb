@@ -8,21 +8,59 @@ class AccountDealsController < ApplicationController
   
   use_calendar :account_deals_path
 
-  # 更新系
-  def create_creditor_general_deal
-    @deal = @user.general_deals.new(params[:deal])
+
+  ['creditor_general_deal', 'debtor_general_deal'].each do |deal_type|
+
+    # new_xxx
+    define_method "new_#{deal_type}" do
+      @deal = @user.general_deals.build
+      @deal.build_simple_entries
+      flash[:deal_type] = deal_type # reloadに強い
+      render :partial => "new_#{deal_type}"
+    end
+
+    # create_xxx
+    define_method "create_#{deal_type}" do
+      @deal = @user.general_deals.new(params[:deal])
+
+      if @deal.save
+        flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+        flash[:deal_type] = deal_type
+        flash[:day] = @deal.date.day
+        render :update do |page|
+          page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
+        end
+      else
+        render :update do |page|
+          page[:deal_forms].replace_html :partial => "new_#{deal_type}"
+        end
+      end
+    end
+  end
+
+  def new_balance_deal
+    @deal = @user.balance_deals.build
+    flash[:deal_type] = 'balance_deal'
+    render :partial => 'new_balance_deal'
+  end
+
+  def create_balance_deal
+    @deal = @user.balance_deals.build(params[:deal])
 
     if @deal.save
       flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+      flash[:deal_type] = 'balance_deal'
+      flash[:day] = @deal.date.day
       render :update do |page|
         page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
       end
     else
       render :update do |page|
-        page[:deal_forms].replace_html :partial => 'new_creditor_general_deal'
+        page[:deal_forms].replace_html :partial => "new_balance_deal"
       end
     end
   end
+
 
   def index
     year, month = read_target_date
@@ -55,7 +93,7 @@ class AccountDealsController < ApplicationController
           account_entry.unknown_amount = account_entry.balance - balance_estimated
           balance_estimated = account_entry.balance
           flow_sum -= account_entry.amount unless account_entry.initial_balance?
-        # 通常明細
+          # 通常明細
         else
           # 確定のときだけ残高に反映
           if deal.confirmed
@@ -73,8 +111,7 @@ class AccountDealsController < ApplicationController
 
     # 登録用
     @deal = Deal::General.new
-    @deal.debtor_entries.build
-    @deal.creditor_entries.build
+    @deal.build_simple_entries
   end
 
   # 携帯専用：残高表示
@@ -82,10 +119,6 @@ class AccountDealsController < ApplicationController
     
   end
 
-
-  def new_balance_deal
-    render :partial => 'new_balance_deal'
-  end
 
 
   private

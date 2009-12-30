@@ -11,7 +11,6 @@ class Deal::Base < ActiveRecord::Base
   attr_writer :insert_before
   attr_accessor :old_date
 
-  before_validation :set_required_data_in_entries
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
@@ -196,17 +195,5 @@ class Deal::Base < ActiveRecord::Base
 
   private
 
-  def set_required_data_in_entries
-    self.creditor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
-    end
-    self.debtor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
-    end
-  end
 
 end

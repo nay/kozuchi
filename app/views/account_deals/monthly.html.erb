@@ -1,8 +1,14 @@
 <%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month}) %>
 
-  <%= datebox %>
+<div id="datebox">
+  <form id="datebox_form">
+    <%= text_field :date, :year, :size => 4, :max_length => 4, :tabindex => 1, :value => @year %>
+    <%= text_field :date, :month, :size => 2, :max_length => 2, :tabindex => 2, :value => @month %>
+    <%= text_field :date, :day, :size => 2, :max_length => 2, :tabindex => 3, :value => flash[:day] %>
+  </form>
+</div>
   <div id="deal_forms">
-  <%= render :partial => 'new_creditor_general_deal' %>
+  <%= render :partial => flash[:deal_type] ? "new_#{flash[:deal_type]}" : 'new_creditor_general_deal' %>
   </div>
 
 <div id="monthly_contents">

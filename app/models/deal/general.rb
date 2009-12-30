@@ -19,12 +19,24 @@ class Deal::General < Deal::Base
 
   accepts_nested_attributes_for :debtor_entries, :creditor_entries
 
+  before_validation :set_required_data_in_entries
   before_validation :fill_amount_to_one_side
   validate :validate_entries
 #  before_validation :regulate_amount
   before_update :clear_entries_before_update
   after_save :create_relations
   before_destroy :destroy_entries
+
+
+  def build_simple_entries
+    if creditor_entries.empty? && debtor_entries.empty?
+      debtor_entries.build
+      creditor_entries.build
+    else
+      raise "Deal is not empty"
+    end
+    self
+  end
 
 
   def to_xml(options = {})
@@ -140,10 +152,12 @@ class Deal::General < Deal::Base
   private
 
   def validate_entries
-
     # amount 合計が 0 でなければならない
     sum = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.inject(0) {|r, e| r += e.amount.to_i}
     errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
+
+    # 両サイドが１つだけで、かつ同じ口座ではいけない
+    errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.size == 1 && debtor_entries.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
   end
 
 
@@ -252,4 +266,16 @@ class Deal::General < Deal::Base
     end
   end
 
+  def set_required_data_in_entries
+    self.creditor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+    self.debtor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+  end
 end

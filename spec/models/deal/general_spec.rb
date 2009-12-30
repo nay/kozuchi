@@ -215,7 +215,10 @@ describe Deal::General do
     )
     
     key = debtors.keys.first
-    deal.user_id = (key.kind_of?(Symbol) ? Fixtures.identify(key) : key)
+    account_id = key.kind_of?(Symbol) ? Fixtures.identify(key) : key
+    account = Account::Base.find_by_id(account_id)
+    raise "no account" unless account
+    deal.user_id = account.user_id
     deal
   end
 

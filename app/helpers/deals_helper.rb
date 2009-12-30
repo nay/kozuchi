@@ -5,7 +5,7 @@ module DealsHelper
       if current_caption == caption
         caption
       else
-        link_to_remote caption, {:update => "deal_forms", :url => url}, html_options
+        link_to_remote caption, {:update => "deal_forms", :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}"}, html_options
       end
     end
   end
