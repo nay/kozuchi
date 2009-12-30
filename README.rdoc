@@ -1,4 +1,4 @@
-= Kosuzhi
+= Kozuchi
 == How to set up
 * Create your config/database.yml from examples, such as database.mysql.yml
 * Create your config/initializers/hosting.rb from hosting.rb.example
