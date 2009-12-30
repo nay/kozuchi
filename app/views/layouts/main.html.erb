@@ -17,6 +17,7 @@
     <%= javascript_include_tag "book" %>
     <%= include_html5jp :circle %>
     <%= render :partial => "shared/google_analytics" %>
+    <%= yield :head %>
   </head>
   <body>
     <a name="top"></a>

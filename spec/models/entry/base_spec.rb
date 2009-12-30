@@ -19,27 +19,16 @@ describe Entry::Base do
     raise "前提エラー：@hanako_in_taroに記入したものが@taro_in_hanakoに記入される設定になっていません" unless @hanako_in_taro.linked_account == @taro_in_hanako
   end
 
-  describe "formatted_amount=" do
+  describe "amount=" do
     it "コンマ入りの数字が正規化されて代入される" do
-      new_account_entry(:formatted_amount => "10,000").amount.should == 10000
+      new_account_entry(:amount => "10,000").amount.to_i.should == 10000
     end
   end
-  describe "formatted_amount" do
-    it "コンマ入りで入れてもゲッタでは,がつかない" do
-      new_account_entry(:formatted_amount => "10,000").formatted_amount.should == 10000
-    end
-  end
-  describe "formatted_balance=" do
+  describe "balance=" do
     it "コンマ入りの数字が正規化されて代入される" do
-      new_account_entry(:formatted_balance => "10,500").balance.should == 10500
+      new_account_entry(:balance => "10,500").balance.to_i.should == 10500
     end
   end
-  describe "formatted_balance" do
-    it "コンマ入りで入れてもゲッタでは,がつかない" do
-      new_account_entry(:formatted_balance => "10,500").formatted_balance.should == 10500
-    end
-  end
-
 
   describe "attributes=" do
     it "user_idは一括指定できない" do
@@ -73,6 +62,9 @@ describe Entry::Base do
     it "account_idが指定されていないと検証エラー" do
       new_account_entry(:account_id => nil).valid?.should be_false
     end
+    it "account_idが対応するユーザーのものでないと検証エラー" do
+      new_account_entry({:account_id => Fixtures.identify(:taro_cache), :amount => 300}, {:user_id => Fixtures.identify(:hanako)}).should_not be_valid
+    end
   end
 
   describe "create" do
@@ -80,7 +72,7 @@ describe Entry::Base do
       e = Entry::General.new(:amount => 400, :account_id => @cache.id)
       e.date = Date.today
       e.daily_seq = 1
-      e.user_id = 1
+      e.user_id = Fixtures.identify(:account_entry_test_user)
       e.save.should be_true
     end
     it "user_idがないと例外" do
@@ -134,10 +126,10 @@ describe Entry::Base do
       deal = new_deal(3, 3, @cache, @food, 180)
       deal.save!
 #        deal = Deal::General.new(:summary => "買い物", :date => Date.today)
-#        deal.account_entries.build(:amount => 180, :account_id => @food.id)
-#        deal.account_entries.build(:amount => -180, :account_id => @cache.id)
+#        deal.entries.build(:amount => 180, :account_id => @food.id)
+#        deal.entries.build(:amount => -180, :account_id => @cache.id)
 #        deal.save!
-      cache_entry = deal.account_entries.detect{|e| e.account_id == @cache.id}
+      cache_entry = deal.entries.detect{|e| e.account_id == @cache.id}
       cache_entry.mate_account_name.should == @food.name
     end
   end
@@ -146,11 +138,11 @@ describe Entry::Base do
     before do
 #      @deal = Deal::General.new(:summary => "test", :date => Date.today)
 #      @deal.user_id = users(:account_entry_test_user_taro)
-#      @deal.account_entries.build(
+#      @deal.entries.build(
 #        :account_id => @cache_in_taro.id,
 #        :amount => -200
 #        )
-#      @deal.account_entries.build(
+#      @deal.entries.build(
 #        :account_id => @hanako_in_taro.id,
 #        :amount => 200
 #        )
@@ -160,7 +152,7 @@ describe Entry::Base do
       @entry.daily_seq = 1
       @entry.date = Date.today
       @entry.linked_ex_entry_id = 18 # 適当
-      @entry.user_id = Fixtures.identify(:taro)
+      @entry.user_id = Fixtures.identify(:account_entry_test_user_taro)
     end
     it "linked_ex_entry_idを指定した新規登録なら連携記入がされないこと" do
       @entry.save!
@@ -173,7 +165,8 @@ describe Entry::Base do
   # ----- Utilities -----
   def new_account_entry(attributes = {}, manual_attributes = {})
       e = Entry::General.new({:amount => 2980, :account_id => @cache.id}.merge(attributes))
-      manual_attributes = {:date => Date.today, :daily_seq => 1, :user_id => 1}.merge(manual_attributes)
+      user_id = e.account.try(:user_id)
+      manual_attributes = {:date => Date.today, :daily_seq => 1, :user_id => user_id}.merge(manual_attributes)
       manual_attributes.keys.each do |key|
         e.send("#{key}=", manual_attributes[key])
       end

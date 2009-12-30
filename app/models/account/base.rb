@@ -1,4 +1,5 @@
 class Account::Base < ActiveRecord::Base
+
   set_table_name "accounts"
 
   include Account::Common
@@ -37,6 +38,13 @@ class Account::Base < ActiveRecord::Base
   def type_in?(type)
     t = self.class.sym_to_class(type) unless type.kind_of?(Class) # TODO: Classのとき動かなそうだな
     self.kind_of? t
+  end
+
+  # 勘定種類のセレクションボックスでのソートに利用する
+  def self.selection_order(order = nil)
+    @selection_order ||= 0
+    return @selection_order unless order
+    @selection_order = order
   end
 
 
@@ -151,7 +159,7 @@ class Account::Base < ActiveRecord::Base
       conditions << true
     end
 #    p entries.find(:all,
-#      :joins => "inner join deals on account_entries.deal_id = deals.id",
+#      :joins => "inner join deals on entries.deal_id = deals.id",
 #      :conditions => conditions).inspect
     entries.sum(:amount,
       :joins => "inner join deals on account_entries.deal_id = deals.id",

@@ -437,3 +437,13 @@ p.deprecated {
 #money_counting .field input {
   text-align: right;
 }
+#deal_forms .entry div {
+  float: left;
+}
+#deal_forms .errorExplanation {
+  border: 1px solid orange;
+  padding: 4px;
+}
+#deal_forms .errorExplanation h2 {
+  font-size: 100%;
+}

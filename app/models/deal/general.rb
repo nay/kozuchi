@@ -1,15 +1,8 @@
 # 異動明細クラス。
 class Deal::General < Deal::Base
-  before_validation :regulate_amount
-  before_update :clear_entries_before_update
-  after_save :create_relations
-  before_destroy :destroy_entries
 
-  has_many   :account_entries, :class_name => "Entry::General",
-             :foreign_key => 'deal_id',
-             :dependent => :destroy,
-             :order => "amount" do
-    def build(attributes = {})
+  module EntriesAssociationExtension
+    def build(*args)
       record = super
       record.user_id = proxy_owner.user_id
       record.date = proxy_owner.date
@@ -18,6 +11,34 @@ class Deal::General < Deal::Base
     end
   end
 
+  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
+    e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account
+    e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account
+    e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
+  end
+
+  accepts_nested_attributes_for :debtor_entries, :creditor_entries
+
+  before_validation :set_required_data_in_entries
+  before_validation :fill_amount_to_one_side
+  validate :validate_entries
+#  before_validation :regulate_amount
+  before_update :clear_entries_before_update
+  after_save :create_relations
+  before_destroy :destroy_entries
+
+
+  def build_simple_entries
+    if creditor_entries.empty? && debtor_entries.empty?
+      debtor_entries.build
+      creditor_entries.build
+    else
+      raise "Deal is not empty"
+    end
+    self
+  end
+
+
   def to_xml(options = {})
     options[:indent] ||= 4
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -25,30 +46,31 @@ class Deal::General < Deal::Base
     xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
       xml.description XMLUtil.escape(self.summary)
       xml.entries do
-        account_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
+        # include で検索している前提
+        readonly_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
       end
     end
   end
 
   def to_csv_lines
     csv_lines = [["deal", id, date_as_str, daily_seq, "\"#{summary}\"", confirmed].join(',')]
-    account_entries.each{|e| csv_lines << e.to_csv}
+    readonly_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
-    # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount >= 0}.account.name
+    debtor_entries # 一度全部とる
+    debtor_entries.size == 1 ? debtor_entries.first.account.name : "諸口"
   end
+
   def debtor_amount
-    # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount >= 0}.amount
+    debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
   end
   # 借り方勘定名を返す
   def creditor_account_name
     # TODO: 実装はあとで変えたい
-    account_entries.detect{|e| e.amount < 0}.account.name
+    entries.detect{|e| e.amount < 0}.account.name
   end
 
   def plus_account_id
@@ -77,13 +99,13 @@ class Deal::General < Deal::Base
   end
 
   def settlement_attached?
-    !account_entries.detect{|e| e.settlement_attached?}.nil?
+    !entries.detect{|e| e.settlement_attached?}.nil?
   end
 
   # 相手勘定名を返す
   def mate_account_name_for(account_id)
     # TODO: 諸口対応、不正データ対応
-    account_entries.detect{|e| e.account_id != account_id}.account.name
+    entries.detect{|e| e.account_id != account_id}.account.name
   end
 
   def validate
@@ -114,7 +136,7 @@ class Deal::General < Deal::Base
 
   # 自分の取引のなかに指定された口座IDが含まれるか
   def has_account(account_id)
-    for entry in account_entries
+    for entry in entries
       return true if entry.account.id == account_id
     end
     return false
@@ -122,25 +144,35 @@ class Deal::General < Deal::Base
   
   def entry(account_id)
     raise "no account_id in Deal::General.entry()" unless account_id
-    r = account_entries.detect{|e| e.account_id.to_s == account_id.to_s}
+    r = entries.detect{|e| e.account_id.to_s == account_id.to_s}
 #    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
     r
   end
 
   private
 
+  def validate_entries
+    # amount 合計が 0 でなければならない
+    sum = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.inject(0) {|r, e| r += e.amount.to_i}
+    errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
+
+    # 両サイドが１つだけで、かつ同じ口座ではいけない
+    errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.size == 1 && debtor_entries.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
+  end
+
+
   # before_destroy
   def destroy_entries
-    account_entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
+    entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end
 
-  def regulate_amount
-    # もし金額にカンマが入っていたら正規化する
-    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
-  end
+#  def regulate_amount
+#    # もし金額にカンマが入っていたら正規化する
+#    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
+#  end
 
   def clear_entries_before_update
-    for entry in account_entries
+    for entry in entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
 #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
@@ -150,7 +182,7 @@ class Deal::General < Deal::Base
   end
 
   def clear_relations
-    account_entries.clear
+    entries.clear
   end
 
   def update_account_entry(is_minus, is_first)
@@ -168,7 +200,7 @@ class Deal::General < Deal::Base
     
     entry = entry(entry_account_id)
     if !entry
-      entry = account_entries.build(
+      entry = entries.build(
                 :amount => entry_amount,
                 :another_entry_account => another_entry_account)
       entry.account_id = entry_account_id
@@ -198,7 +230,7 @@ class Deal::General < Deal::Base
     entry = update_account_entry(false, !entry) # create plus
     update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
     
-    account_entries(true)
+    entries(true)
 
   end
   
@@ -212,10 +244,10 @@ class Deal::General < Deal::Base
   def refresh_account_info
     @refreshed = true
 # TODO:
-#    p "Invalid Deal Object #{self.id} with #{account_entries.size} entries." unless account_entries.size == 2
-    return unless account_entries.size == 2
+#    p "Invalid Deal Object #{self.id} with #{entries.size} entries." unless entries.size == 2
+    return unless entries.size == 2
     
-    for et in account_entries
+    for et in entries
       if et.amount >= 0
         @plus_account_id = et.account_id
         @amount = et.amount
@@ -225,5 +257,25 @@ class Deal::General < Deal::Base
     end
         
   end
-  
+
+  def fill_amount_to_one_side
+    if creditor_entries.size == 1 && creditor_entries.first.amount.nil? && !debtor_entries.any?{|e| e.amount.nil?}
+      creditor_entries.first.amount = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+    elsif debtor_entries.size == 1 && debtor_entries.first.amount.nil? && !creditor_entries.any?{|e| e.amount.nil?}
+      debtor_entries.first.amount = creditor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+    end
+  end
+
+  def set_required_data_in_entries
+    self.creditor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+    self.debtor_entries.each do |e|
+      e.user_id = self.user_id
+      e.date = self.date
+      e.daily_seq = self.daily_seq
+    end
+  end
 end

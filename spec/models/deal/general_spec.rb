@@ -9,7 +9,57 @@ describe Deal::General do
     @bank = accounts(:deal_test_bank)
   end
 
+  describe "new" do
+    it "複数行のDealオブジェクトの作成に成功すること" do
+
+      # 食費 1300   現金 1000
+      #            銀行  300
+      deal = Deal::General.new(:summary => "複数行", :date => Date.new,
+        :debtor_entries_attributes => [{
+          :account_id => Fixtures.identify(:taro_food),
+          :amount => 1300
+        }],
+        :creditor_entries_attributes => [{
+          :account_id => Fixtures.identify(:taro_cache),
+          :amount => -1000
+        },
+        {
+          :account_id => Fixtures.identify(:taro_bank),
+          :amount => -300
+        }
+        ]
+      )
+      deal.debtor_entries.size.should == 1
+      deal.creditor_entries.size.should == 2
+    end
+  end
+
+  describe "valid?" do
+    it "数字の合った複合Dealが検証をとおること" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
+      deal.valid?.should be_true
+    end
+    it "数字の合わない複合Dealが検証を通らないこと" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -200})
+      deal.valid?.should be_false
+    end
+    it "amountが0のEntryを含む複合Dealが検証を通らないこと" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1300, :taro_bank => 0})
+      deal.valid?.should be_false
+    end
+  end
+
   describe "create" do
+
+    it "数字の合った複合Dealが作成できること" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
+      deal.save.should be_true
+    end
+    it "カンマ入り数字による複合Dealが作成できること" do
+      deal = new_complex_deal(3, 1, {:taro_food => '1,300'},{:taro_cache => '-1,000', :taro_bank => '-300'})
+      deal.save.should be_true
+      deal.debtor_entries.any?{|e| e.amount.to_i == 1300}.should be_true
+    end
 
     describe "連携なし" do
       before do
@@ -22,21 +72,21 @@ describe Deal::General do
 
       it "user_id, date, daily_seqがentriesに引き継がれる" do
         @deal.save!
-        @deal.account_entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
+        @deal.entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
       end
 
       it "account_entryを手動で足してもcreateできる" do
         user = users(:deal_test_user)
         deal = Deal::General.new(:summary => "test", :date => Date.today)
         deal.user_id = user.id
-        deal.account_entries.build(
+        deal.entries.build(
           :account_id => @cache.id,
           :amount => -10000)
-        deal.account_entries.build(
+        deal.entries.build(
           :account_id => @bank.id,
           :amount => 10000)
         deal.save.should be_true
-        deal.account_entries.detect{|e| e.new_record?}.should be_nil
+        deal.entries.detect{|e| e.new_record?}.should be_nil
       end
     end
 
@@ -82,10 +132,10 @@ describe Deal::General do
          # taro_cache から taro_hanako へ 300円貸した
          @deal = Deal::General.new(:summary => "test", :date => Date.today)
          @deal.user_id = @taro.id
-         @deal.account_entries.build(:account_id => @taro_cache.id, :amount => -300)
-         @deal.account_entries.build(:account_id => @taro_hanako.id, :amount => 300)
+         @deal.entries.build(:account_id => @taro_cache.id, :amount => -300)
+         @deal.entries.build(:account_id => @taro_hanako.id, :amount => 300)
          @deal.save!
-         @linked_entry = @deal.account_entries.detect{|e| e.account_id == @taro_hanako.id}
+         @linked_entry = @deal.entries.detect{|e| e.account_id == @taro_hanako.id}
          raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
        end
        it "片方のEntryにリンクが作られること" do
@@ -101,29 +151,29 @@ describe Deal::General do
          @hanako_deal.confirm
          @deal.destroy
          @hanako_deal.reload
-         @hanako_unlinked_entry = @hanako_deal.account_entries.detect{|e| e.account_id == @hanako_taro.id}
+         @hanako_unlinked_entry = @hanako_deal.entries.detect{|e| e.account_id == @hanako_taro.id}
          @hanako_unlinked_entry.reload
          @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
        end
        it "連携があり確認済のときに金額を変更したら相手とのリンクが切られて新しく記入される" do
          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
          @hanako_deal.confirm
-#         @deal.account_entries.each{|e| e.amount *= 2}
+#         @deal.entries.each{|e| e.amount *= 2}
 #        効かない；；
          @deal.plus_account_id = @deal.plus_account_id
          @deal.minus_account_id = @deal.minus_account_id
          @deal.amount = @deal.amount * 2
 
-#         p @deal.account_entries.map{|e| e.amount}
+#         p @deal.entries.map{|e| e.amount}
          @deal.save!
          @deal.reload
-         p @deal.account_entries.map{|e| e.amount}
-         new_entry = @deal.account_entries(true).detect{|e| e.account_id == @taro_hanako.id}
+         p @deal.entries.map{|e| e.amount}
+         new_entry = @deal.entries(true).detect{|e| e.account_id == @taro_hanako.id}
          new_entry.linked_ex_entry_id.should_not be_nil
          @linked_entry.reload
          @linked_entry.linked_ex_deal_id.should_not == @hanako_deal.id
          @hanako_deal.reload
-         p @hanako_deal.account_entries(true).map{|e| e.linked_ex_entry_id}
+         p @hanako_deal.entries(true).map{|e| e.linked_ex_entry_id}
        end
      end
 
@@ -144,7 +194,7 @@ describe Deal::General do
     it "dateを変更したらentriesのdateも変更される" do
       @deal.date = @deal.date - 7
       @deal.save!
-      @deal.account_entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
+      @deal.entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
     end
   end
 
@@ -152,6 +202,24 @@ describe Deal::General do
     d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
+  end
+
+  # debtors {account_id => amout, account_id => amount} のように記述
+  def new_complex_deal(month, day, debtors, creditors, options = {})
+    summary = options[:summary] || "#{month}/#{day}の記入"
+    date = Date.new(options[:year] || 2010, month, day)
+
+    deal = Deal::General.new(:summary => summary, :date => date,
+      :debtor_entries_attributes => debtors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value} },
+      :creditor_entries_attributes => creditors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}
+    )
+    
+    key = debtors.keys.first
+    account_id = key.kind_of?(Symbol) ? Fixtures.identify(key) : key
+    account = Account::Base.find_by_id(account_id)
+    raise "no account" unless account
+    deal.user_id = account.user_id
+    deal
   end
 
 end

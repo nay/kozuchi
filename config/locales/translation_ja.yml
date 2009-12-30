@@ -1,0 +1,235 @@
+ja: 
+  activerecord: 
+    models: 
+      account/asset: "アカウント/資産"  #g
+      account/base: "アカウント/ベース"  #g
+      account/expense: "アカウント/費用"  #g
+      account/income: "アカウント/所得"  #g
+      account_link: "アカウントのリンク"  #g
+      account_link_request: "アカウントのリンク設定のリクエスト"  #g
+      deal/base: "記入"
+      entry/balance: "エントリを/バランス"  #g
+      entry/base: "エントリを/ベース"  #g
+      entry/general: "入力/一般"  #g
+      friend/acceptance: "フレンド/受諾"  #g
+      friend/permission: "フレンド/許可"  #g
+      friend/rejection: "フレンド承認/拒否"  #g
+      friend/request: "フレンド/リクエスト"  #g
+      login_engine_user: "ログインエンジンのユーザー"  #g
+      preferences: "設定"  #g
+      settlement: "決済"  #g
+      single_login: "1つのログイン"  #g
+      submitted_settlement: "提出和解"  #g
+      user: "ユーザー"  #g
+
+    attributes: 
+      account/asset: 
+        name: "名前"  #g
+        sort_key: "ソートキー"  #g
+        asset_kind: "資産の種類"  #g
+        partner_account: "パートナーアカウント"  #g
+        balances: "残高"  #g
+        any_entry: "任意のエントリ"  #g
+        link: "リンク"  #g
+        deals: "スペシャル"  #g
+        entries: "エントリー"  #g
+        link_requests: "リンク要求"  #g
+        user: "ユーザー"  #g
+
+      account/base: 
+        name: "名前"  #g
+        sort_key: "ソートキー"  #g
+        asset_kind: "資産の種類"  #g
+        balances: "残高"  #g
+        partner_account: "パートナーアカウント"  #g
+        link: "リンク"  #g
+        any_entry: "任意のエントリ"  #g
+        deals: "スペシャル"  #g
+        entries: "エントリー"  #g
+        link_requests: "リンク要求"  #g
+        user: "ユーザー"  #g
+
+      account/expense: 
+        name: "名前"  #g
+        sort_key: "ソートキー"  #g
+        asset_kind: "資産の種類"  #g
+        partner_account: "パートナーアカウント"  #g
+        balances: "残高"  #g
+        any_entry: "任意のエントリ"  #g
+        link: "リンク"  #g
+        deals: "スペシャル"  #g
+        entries: "エントリー"  #g
+        link_requests: "リンク要求"  #g
+        user: "ユーザー"  #g
+
+      account/income: 
+        name: "名前"  #g
+        sort_key: "ソートキー"  #g
+        asset_kind: "資産の種類"  #g
+        partner_account: "パートナーアカウント"  #g
+        balances: "残高"  #g
+        any_entry: "任意のエントリ"  #g
+        link: "リンク"  #g
+        deals: "スペシャル"  #g
+        entries: "エントリー"  #g
+        link_requests: "リンク要求"  #g
+        user: "ユーザー"  #g
+
+      account_link: 
+        target_user: "ターゲットユーザー"  #g
+        account: "口座"  #g
+
+      account_link_request: 
+        sender: "送信者"  #g
+        account: "口座"  #g
+
+      deal/balance: 
+        date: "日付"  #g
+        daily_seq: "毎日の配列"  #g
+        summary: "要約"  #g
+        confirmed: "確認"  #g
+        readonly_entries: "読み取り専用のエントリ"  #g
+        entries: "エントリー"  #g
+        user: "ユーザー"  #g
+
+      deal/base: 
+        date: "日付"
+        daily_seq: "No"
+        summary: "摘要"
+        confirmed: "確認済"
+        readonly_entries: "読み取り専用のエントリ"  #g
+        user: "ユーザー"  #g
+
+      deal/general: 
+        date: "日付"  #g
+        daily_seq: "毎日の配列"  #g
+        summary: "要約"  #g
+        confirmed: "確認"  #g
+        readonly_entries: "読み取り専用のエントリ"  #g
+        entries: "エントリー"  #g
+        debtor_entries: "借方"
+        creditor_entries: "貸方"
+        user: "ユーザー"  #g
+
+      entry/balance: 
+
+      entry/base: 
+        amount: "金額"
+        balance: "残高"
+        initial_balance: "期首残高"
+        date: "日付"
+        daily_seq: "番号"
+        account: "口座"
+        account_id: "口座"
+        deal: "記入"
+
+      entry/general: 
+        settlement: "決済"  #g
+
+      friend/acceptance: 
+        target: "目標物"  #g
+        user: "ユーザー"  #g
+
+      friend/permission: 
+        target: "目標物"  #g
+        user: "ユーザー"  #g
+
+      friend/rejection: 
+        target: "目標物"  #g
+        user: "ユーザー"  #g
+
+      friend/request: 
+        sender: "送信者"  #g
+        user: "ユーザー"  #g
+
+      login_engine_user: 
+        login: "ログイン"  #g
+        email: "Eメール"  #g
+        salt: "塩"  #g
+        role: "役割"  #g
+        activation_code: "アクティベーションコード"  #g
+        logged_in_at: "で記録さ"  #g
+        crypted_password: "暗号化されたパスワード"  #g
+        remember_token: "覚えてトークン"  #g
+        remember_token_expires_at: "トークンの記憶で期限が切れる"  #g
+        activated_at: "で活性化"  #g
+        password_token: "パスワードのトークン"  #g
+        password_token_expires_at: "パスワードのトークンの有効期限が切れる"  #g
+        mobile_identity: "モバイルアイデンティティ"  #g
+        incomes: "所得"  #g
+        accounts: "アカウント"  #g
+        expenses: "費"  #g
+        friend_requests: "友達リクエスト"  #g
+        deals: "スペシャル"  #g
+        assets: "資産"  #g
+        single_logins: "単一のログイン"  #g
+        friend_acceptances: "友達に受諾"  #g
+        entries: "エントリー"  #g
+        flow_accounts: "資金循環勘定"  #g
+        friend_rejections: "友達に拒絶"  #g
+        settlements: "入植地"  #g
+        general_deals: "一般的なお得な情報"  #g
+        balance_deals: "バランスのお得な情報"  #g
+        preferences: "設定"  #g
+
+      preferences: 
+        deals_scroll_height: "スペシャルの高さをスクロール"  #g
+        color: "カラー"  #g
+        business_use: "ビジネスユース"  #g
+        use_daily_booking: "使用して、毎日予約"  #g
+        user: "ユーザー"  #g
+
+      settlement: 
+        name: "名前"  #g
+        description: "商品概要"  #g
+        target_entries: "ターゲットエントリ"  #g
+        result_entry: "結果エントリ"  #g
+        submitted_settlement: "提出和解"  #g
+        account: "口座"  #g
+        user: "ユーザー"  #g
+
+      single_login: 
+        login: "ログイン"  #g
+        crypted_password: "暗号化されたパスワード"  #g
+        user: "ユーザー"  #g
+
+      submitted_settlement: 
+        name: "名前"  #g
+        description: "商品概要"  #g
+        target_entries: "ターゲットエントリ"  #g
+        result_entry: "結果エントリ"  #g
+        resource: "リソース"  #g
+        submitted_settlement: "提出和解"  #g
+        account: "口座"  #g
+        user: "ユーザー"  #g
+
+      user: 
+        login: "ログイン"  #g
+        email: "Eメール"  #g
+        salt: "塩"  #g
+        role: "役割"  #g
+        activation_code: "アクティベーションコード"  #g
+        logged_in_at: "で記録さ"  #g
+        crypted_password: "暗号化されたパスワード"  #g
+        remember_token: "覚えてトークン"  #g
+        remember_token_expires_at: "トークンの記憶で期限が切れる"  #g
+        activated_at: "で活性化"  #g
+        password_token: "パスワードのトークン"  #g
+        password_token_expires_at: "パスワードのトークンの有効期限が切れる"  #g
+        mobile_identity: "モバイルアイデンティティ"  #g
+        incomes: "所得"  #g
+        accounts: "アカウント"  #g
+        expenses: "費"  #g
+        friend_requests: "友達リクエスト"  #g
+        assets: "資産"  #g
+        deals: "スペシャル"  #g
+        entries: "エントリー"  #g
+        friend_acceptances: "友達に受諾"  #g
+        single_logins: "単一のログイン"  #g
+        flow_accounts: "資金循環勘定"  #g
+        general_deals: "一般的なお得な情報"  #g
+        settlements: "入植地"  #g
+        friend_rejections: "友達に拒絶"  #g
+        preferences: "設定"  #g
+        balance_deals: "バランスのお得な情報"  #g
+
