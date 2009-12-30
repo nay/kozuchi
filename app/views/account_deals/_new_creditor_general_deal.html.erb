@@ -1,0 +1,30 @@
+<% deal_form '出金', :url => account_creditor_general_deals_path do |f| %>
+  <div>
+    <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
+  </div>
+  <div class="entry">
+    <% f.fields_for :debtor_entries do |d| %>
+      <div>
+        <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
+      </div>
+
+      <div>円</div>
+
+
+      <div><input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
+
+      <div>→</div>
+
+      <div>
+        <%= d.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), ''), :tabindex => 13 %>
+      </div>
+    <% end %>
+    <% f.fields_for :creditor_entries do |c| %>
+      <%= c.hidden_field :account_id, :value => @account.id %>
+    <% end %>
+    <%= f.submit '記入', :tablindex => "14", :class => 'button' %>
+    <div style="clear:left;"></div>
+  </div>
+
+<% end %>
+<%= error_messages_for :deal %>

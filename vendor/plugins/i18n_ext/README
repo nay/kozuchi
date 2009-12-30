@@ -1,0 +1,13 @@
+I18nExt
+=======
+
+This plugin changes 2 features to use i18n in better manner.
+
+(1) It changes f.label to use i18n for it's default text.
+
+(2) It changes error_messages_for to use i18n with the better key.
+The first point; it uses object's class information as a i18n key instead of the first parameter.
+The second point; it uses 'some_model' key pattern instead of 'some model' pattern, same as the human_name method.
+
+
+Copyright (c) 2009 [name of plugin creator], released under the MIT license
