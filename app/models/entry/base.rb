@@ -16,7 +16,7 @@ class Entry::Base < ActiveRecord::Base
   validates_presence_of :amount, :account_id
   validate :validate_account_id_is_users
 
-  before_update :store_old_amount
+#  before_update :store_old_amount
   before_save :copy_deal_attributes
   after_save :update_balance, :request_linking
 
@@ -147,9 +147,9 @@ class Entry::Base < ActiveRecord::Base
   end
 
 
-  def store_old_amount
-    @old_amount = self.class.find(self.id).amount
-  end
+#  def store_old_amount
+#    @old_amount = self.class.find(self.id).amount
+#  end
 
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
