@@ -132,7 +132,6 @@ class Entry::Base < ActiveRecord::Base
     Entry::Base.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
   end
 
-
   private
 
   def validate_account_id_is_users
@@ -178,8 +177,10 @@ class Entry::Base < ActiveRecord::Base
     stored.amount.to_i != self.amount.to_i || stored.balance.to_i != self.balance.to_i
   end
 
+
+
   def assert_no_settlement
-    raise "精算データに紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
+    raise "#{self.inspect} は精算データ #{(self.settlement || self.result_settlement).inspect} に紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
   end
 
   # 直後の残高記入のamountを再計算する
