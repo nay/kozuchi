@@ -1,15 +1,10 @@
 <%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month}) %>
 
-<div id="datebox">
-  <form id="datebox_form">
-    <%= text_field :date, :year, :size => 4, :max_length => 4, :tabindex => 1, :value => @year %>
-    <%= text_field :date, :month, :size => 2, :max_length => 2, :tabindex => 2, :value => @month %>
-    <%= text_field :date, :day, :size => 2, :max_length => 2, :tabindex => 3, :value => flash[:day] %>
-  </form>
-</div>
-  <div id="deal_forms">
-  <%= render :partial => flash[:deal_type] ? "new_#{flash[:deal_type]}" : 'new_creditor_general_deal' %>
-  </div>
+<% deal_type = flash[:"#{controller_name}_deal_type"] %>
+
+<% deal_editor 1, @year, @month, flash[:day] do %>
+  <%= render :partial => deal_type ? "new_#{deal_type}" : 'new_creditor_general_deal' %>
+<% end %>
 
 <div id="monthly_contents">
 
@@ -26,27 +21,27 @@
       <th class="account">　</th>
       <th class="amount">
         <% if @account.kind_of?(Account::Asset) -%>
-                              入金
+          入金
         <% elsif @account.kind_of?(Account::Income) -%>
-                              戻し
+          戻し
         <% else -%>
-                              支出
+          支出
         <% end -%>
       </th>
       <th class="amount">
         <% if @account.kind_of?(Account::Asset) -%>
-                              出金
+          出金
         <% elsif @account.kind_of?(Account::Income) -%>
-                              収入
+          収入
         <% else -%>
-                              戻し
+          戻し
         <% end -%>
       </th>
       <th class="amount">
         <% if @account.kind_of?(Account::Asset) -%>
-                              残高
+          残高
         <% else %>
-                              合計
+          合計
         <% end -%>
       </th>
     </tr>

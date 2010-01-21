@@ -9,57 +9,65 @@ class AccountDealsController < ApplicationController
   use_calendar :account_deals_path
 
 
-  ['creditor_general_deal', 'debtor_general_deal'].each do |deal_type|
+  deal_actions_for :creditor_general_deal, :debtor_general_deal, :balance_deal,
+    :render_options_proc => lambda {|deal_type|
+      {:partial => "new_#{deal_type}"}
+    },
+    :redirect_options_proc => lambda {|deal|
+      {:action => :monthly, :year => deal.date.year, :month => deal.date.month}
+    }
 
-    # new_xxx
-    define_method "new_#{deal_type}" do
-      @deal = @user.general_deals.build
-      @deal.build_simple_entries
-      flash[:deal_type] = deal_type # reloadに強い
-      render :partial => "new_#{deal_type}"
-    end
+  #  ['creditor_general_deal', 'debtor_general_deal'].each do |deal_type|
+  #
+  #    # new_xxx
+  #    define_method "new_#{deal_type}" do
+  #      @deal = @user.general_deals.build
+  #      @deal.build_simple_entries
+  #      flash[:deal_type] = deal_type # reloadに強い
+  #      render :partial => "new_#{deal_type}"
+  #    end
+  #
+  #    # create_xxx
+  #    define_method "create_#{deal_type}" do
+  #      @deal = @user.general_deals.new(params[:deal])
+  #
+  #      if @deal.save
+  #        flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+  #        flash[:deal_type] = deal_type
+  #        flash[:day] = @deal.date.day
+  #        render :update do |page|
+  #          page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
+  #        end
+  #      else
+  #        render :update do |page|
+  #          page[:deal_forms].replace_html :partial => "new_#{deal_type}"
+  #        end
+  #      end
+  #    end
+  #  end
 
-    # create_xxx
-    define_method "create_#{deal_type}" do
-      @deal = @user.general_deals.new(params[:deal])
-
-      if @deal.save
-        flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
-        flash[:deal_type] = deal_type
-        flash[:day] = @deal.date.day
-        render :update do |page|
-          page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
-        end
-      else
-        render :update do |page|
-          page[:deal_forms].replace_html :partial => "new_#{deal_type}"
-        end
-      end
-    end
-  end
-
-  def new_balance_deal
-    @deal = @user.balance_deals.build
-    flash[:deal_type] = 'balance_deal'
-    render :partial => 'new_balance_deal'
-  end
-
-  def create_balance_deal
-    @deal = @user.balance_deals.build(params[:deal])
-
-    if @deal.save
-      flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
-      flash[:deal_type] = 'balance_deal'
-      flash[:day] = @deal.date.day
-      render :update do |page|
-        page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
-      end
-    else
-      render :update do |page|
-        page[:deal_forms].replace_html :partial => "new_balance_deal"
-      end
-    end
-  end
+#  def new_balance_deal
+#    @deal = @user.balance_deals.build
+#    flash[:deal_type] = 'balance_deal'
+#    render :partial => 'new_balance_deal'
+#  end
+#
+#  def create_balance_deal
+#    @deal = @user.balance_deals.build(params[:deal])
+#
+#    if @deal.save
+#      flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+#      flash[:deal_type] = 'balance_deal'
+#      flash[:day] = @deal.date.day
+#      render :update do |page|
+#        page.redirect_to :action => :monthly, :year => @deal.date.year, :month => @deal.date.month
+#      end
+#    else
+#      render :update do |page|
+#        page[:deal_forms].replace_html :partial => "new_balance_deal"
+#      end
+#    end
+#  end
 
 
   def index

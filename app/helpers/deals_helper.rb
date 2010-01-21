@@ -1,8 +1,27 @@
 module DealsHelper
 
+  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil)
+    tab_index = start_tab_index
+    text = content_tag(:div, :id => 'datebox') do
+      content_tag :form, :id => 'datebox_form' do
+        text = ''
+        text << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
+        tab_index += 1
+        text << text_field(:date, :month, :size => 2, :max_length => 2, :tab_index => tab_index, :value => month)
+        tab_index += 1
+        text << text_field(:date, :day, :size => 2, :max_length => 2, :tab_index => tab_index, :value => day)
+        text
+      end
+    end
+    text << content_tag(:div, :id => "deal_forms") do
+      yield
+    end
+    concat(text)
+  end
+
   def deal_tab(caption, url, current_caption, html_options = {})
-    content_tag :div, :class => current_caption == caption ? "selectedtab" : "tab" do
-      if current_caption == caption
+    content_tag :div, :class => (current_caption == true || current_caption == caption) ? "selectedtab" : "tab" do
+      if current_caption == true || current_caption == caption
         caption
       else
         link_to_remote caption, {:update => "deal_forms", :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}"}, html_options

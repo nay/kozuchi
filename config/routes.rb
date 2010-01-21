@@ -11,7 +11,17 @@ ActionController::Routing::Routes.draw do |map|
     settings.resources :single_logins
   end
 
-  map.resources :general_deals
+  map.with_options :controller => 'deals' do |deals|
+    deals.resources :deals, :only => [:edit, :update, :destroy]
+    deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
+    deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
+    deals.new_general_deal 'general_deals/new', :action => 'new_general_deal', :conditions => {:method => :get}
+    deals.new_balance_deal 'balance_deals/new', :action => 'new_balance_deal', :conditions => {:method => :get}
+    # TODO: 変更
+  end
+
+
+#  map.resources :general_deals
 
 
   map.resource :mobile_device, :member => {"confirm_destroy" => :get}, :controller => "mobiles"
@@ -94,6 +104,7 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
 
+
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',
     :requirements => {:controller => /deals|profit_and_loss|assets|balance_sheet/,
@@ -103,7 +114,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # daily summary
   map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
-  map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
+#  map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
 
 
   map.with_options(:controller => "export") do |export|

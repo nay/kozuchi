@@ -1,0 +1,4 @@
+  <%= f.select :account_id, options_from_collection_for_select(current_user.assets, :id, :name, @deal.account_id), :tabindex => 13 %>
+  <%= render :partial => '/shared/money_counting' %>
+  <label>残高:</label><%= f.text_field :balance, :size => "8", :tabindex => "11"%>円
+  <button type="submit" tabindex="12"><%= @deal.new_record? ? '記入' : '変更' %></button>

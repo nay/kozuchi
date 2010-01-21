@@ -1,0 +1,4 @@
+<% deal_form '明細', :url => general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}" do |f| %>
+  <%= render :partial => 'general_deal_form_contents', :locals => {:f => f} %>
+<% end %>
+<%= error_messages_for :deal %>

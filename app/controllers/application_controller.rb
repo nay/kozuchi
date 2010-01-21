@@ -12,6 +12,58 @@ class ApplicationController < ActionController::Base
   helper_method :original_user
   attr_writer :menu_group, :menu
 
+  # Deal 編集系アクション群を宣言するメタメソッド
+
+  # options - :render_options_proc, :redirect_options_proc
+  def self.deal_actions_for(*args)
+    options = args.extract_options!
+    # 必須オプションチェック
+    render_options_proc = options[:render_options_proc]
+    redirect_options_proc = options[:redirect_options_proc]
+    raise "render_options_proc and redirect_options_proc are required" unless render_options_proc && redirect_options_proc
+
+    args.each do |deal_type|
+      render_options = render_options_proc.call(deal_type)
+      # new_xxx
+      case deal_type.to_s
+      when /general/
+        define_method "new_#{deal_type}" do
+          @deal = @user.general_deals.build
+          @deal.build_simple_entries
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options
+        end
+      when /balance/
+        define_method "new_#{deal_type}" do
+          @deal = @user.balance_deals.build
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options
+        end
+      end
+
+      # create_xxx
+      define_method "create_#{deal_type}" do
+        @deal = @user.send(deal_type.to_s =~ /general/ ? 'general_deals' : 'balance_deals').new(params[:deal])
+
+        if @deal.save
+          flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+          flash[:"#{controller_name}_deal_type"] = deal_type
+          flash[:day] = @deal.date.day
+          render :update do |page|
+            page.redirect_to redirect_options_proc.call(@deal)
+          end
+        else
+          render :update do |page|
+            page[:deal_forms].replace_html render_options
+          end
+        end
+      end
+    end
+  end
+
+
+
+
   # メニューグループを指定する
   def self.menu_group(menu_group, options = {})
     before_filter(options) {|controller| controller.menu_group = menu_group}

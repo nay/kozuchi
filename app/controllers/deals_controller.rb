@@ -8,7 +8,7 @@ class DealsController < ApplicationController
   before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date
   before_filter :find_date, :only => [:expenses, :daily]
-  before_filter :find_deal, :only => :destroy
+  before_filter :find_deal, :only => [:edit, :update, :destroy]
   include ApplicationHelper
 
   # ----- 入力画面表示系 -----------------------------------------------
@@ -23,13 +23,13 @@ class DealsController < ApplicationController
     @deal = Deal::General.new
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, true
-     )
+    )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, false
-     )
-#     text = render_to_string :template => "deals/test.html.erb"
-#     p text
-#     render :text => "aaa"
+    )
+    #     text = render_to_string :template => "deals/test.html.erb"
+    #     p text
+    #     render :text => "aaa"
   end
 
   # TODO: モバイル専用
@@ -42,22 +42,65 @@ class DealsController < ApplicationController
       flash[:saved] = true
       redirect_to :action => "new_deal"
     else
-    @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, true
-     )
-    @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, false
-     )
+      @accounts_minus = ApplicationHelper::AccountGroup.groups(
+        @user.accounts, true
+      )
+      @accounts_plus = ApplicationHelper::AccountGroup.groups(
+        @user.accounts, false
+      )
       flash[:notice] = "登録に失敗しました。"
       render :action => "new_deal"
     end
   end
 
+  RENDER_OPTIONS_PROC = lambda {|deal_type|
+    {:partial => "#{deal_type}_form"}
+  }
+
+  REDIRECT_OPTIONS_PROC = lambda{|deal|
+    {:action => :index, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
+  }
+  deal_actions_for :general_deal, :balance_deal,
+    :render_options_proc => RENDER_OPTIONS_PROC,
+    :redirect_options_proc => REDIRECT_OPTIONS_PROC
+
+  # 変更フォームを表示するAjaxアクション
+  def edit
+    render :partial => 'edit' # TODO: partialやめる
+  end
+
+  def update
+    deal_attributes = params[:deal].dup
+    # TODO: もう少しマシにしたいがとりあえず動かすために入れる
+    # creditor側の数字しか入ってこない場合はもう片側を補完する
+    deal_attributes[:creditor_entries_attributes]['0'][:amount] = deal_attributes[:debtor_entries_attributes]['0'][:amount].to_i * -1 unless deal_attributes[:creditor_entries_attributes]['0'][:amount]
+
+    p deal_attributes.inspect
+
+    @deal.attributes = deal_attributes
+    @deal.confirmed = true
+
+    deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
+    if @deal.save
+      flash[:notice] = "#{@deal.human_name} を更新しました。" # TODO: 他コントーラとDRYに
+      flash[:"#{controller_name}_deal_type"] = deal_type
+      flash[:day] = @deal.date.day
+      render :update do |page|
+        page.redirect_to REDIRECT_OPTIONS_PROC.call(@deal)
+      end
+    else
+      render :update do |page|
+        page[:deal_editor].replace_html :partial => 'edit'
+      end
+    end
+  end
+
+
   # 指定された行にジャンプするアクション
   def jump
     redirect_to_index(:updated_deal_id => params[:id])
     # todo tab_name は月更新すると不明状態となるので受け渡しても意味がない。hiddenなどで管理可能だが、今後の課題でいいだろう。
-#    redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
+    #    redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
   end
 
   # 仕分け帳画面を初期表示するための処理
@@ -87,7 +130,12 @@ class DealsController < ApplicationController
     # deal / balance それぞれのフォーム初期化処理
     @tab_name = params[:tab_name] || 'deal'
     @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
-#    render :layout => false
+    #    render :layout => false
+
+    # 登録用
+    @deal = Deal::General.new
+    @deal.build_simple_entries
+
   end
 
   # １日の記入履歴の表示（携帯向けだが制限はしない、本当はindexで兼ねたい）
@@ -194,10 +242,10 @@ class DealsController < ApplicationController
   def prepare_select_deal_tab
     @accounts_minus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, true
-     )
+    )
     @accounts_plus = ApplicationHelper::AccountGroup.groups(
       @user.accounts, false
-     )
+    )
     unless @deal
       @deal = Deal::General.new(params[:deal])
       @deal.date = target_date # セッションから判断した日付を入れる
