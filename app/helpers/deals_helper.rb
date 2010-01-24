@@ -7,9 +7,9 @@ module DealsHelper
         text = ''
         text << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
         tab_index += 1
-        text << text_field(:date, :month, :size => 2, :max_length => 2, :tab_index => tab_index, :value => month)
+        text << text_field(:date, :month, :size => 2, :max_length => 2, :tabindex => tab_index, :value => month)
         tab_index += 1
-        text << text_field(:date, :day, :size => 2, :max_length => 2, :tab_index => tab_index, :value => day)
+        text << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
         text
       end
     end
