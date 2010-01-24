@@ -6,6 +6,28 @@
   <%= render :partial => deal_type ? "new_#{deal_type}" : 'new_creditor_general_deal' %>
 <% end %>
 
+  <%= javascript_tag <<-END
+  function setEditDeal(summary, amount, minus_account_id, plus_account_id) {
+  $('deal_debtor_entries_attributes_0_amount').value = amount;
+  selectList('deal_creditor_entries_attributes_0_account_id', minus_account_id);
+  selectList('deal_debtor_entries_attributes_0_account_id', plus_account_id);
+  $('deal_summary').value = summary;
+  }
+
+  function selectList(name, value) {
+    if (!$(name) || !$(name).options) {
+      return;
+    }
+    for (i = 0; i < $(name).options.length; i++) {
+      if ($(name).options[i].value == value) {
+        $(name).options.selectedIndex = i;
+        return;
+      }
+     }
+  }
+  END
+  %>
+
 <div id="monthly_contents">
 
   <!-- 通信欄-->

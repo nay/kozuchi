@@ -55,9 +55,15 @@ class DealController < ApplicationController
   end
 
   # 新規編集でサマリが編集されたときにくるAjaxメソッド
+  # TODO: それぞれのコントローラに移動する
   def update_patterns
+    account = if params[:account_id]
+      current_user.accounts.find_by_id(params[:account_id])
+    else
+      nil
+    end
     summary_key = params[:keyword]
-    @patterns = Deal::General.search_by_summary(@user.id, summary_key, 5)
+    @patterns = Deal::General.search_by_summary(@user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
     render(:partial => 'patterns')
   end
 

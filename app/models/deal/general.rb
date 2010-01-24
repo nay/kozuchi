@@ -30,6 +30,7 @@ class Deal::General < Deal::Base
   after_save :create_relations
   before_destroy :destroy_entries
 
+
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
       unless new_record?
@@ -147,21 +148,35 @@ class Deal::General < Deal::Base
     entries.detect{|e| e.account_id != account_id}.account.name
   end
 
+
   # summary の前方一致で検索する
-  def self.search_by_summary(user_id, summary_key, limit)
+  def self.search_by_summary(user_id, summary_key, limit, account_id = nil, debtor = true)
     begin
-    return [] if summary_key.empty?
-    # まず summary と 日付(TODO: created_at におきかえたい)のセットを返す
-    results = find_by_sql("select summary as summary, max(date) as date from deals where user_id = #{user_id} and type='General' and summary like '#{summary_key}%' group by summary limit #{limit}")
-    return [] if results.size == 0
-    conditions = ""
-    for r in results
-      conditions += " or " unless conditions.empty?
-      conditions += "(summary = '#{r.summary}' and date = '#{r.date}')"
-    end
-    return Deal::General.find(:all, :conditions => "user_id = #{user_id} and (#{conditions})")
-    rescue
-     return []
+      return [] if summary_key.empty?
+      # まず summary と created_atのセットを返す
+      results = if account_id
+        find_by_sql("select summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0 and deals.user_id = #{user_id} and deals.type='General' and deals.summary like '#{summary_key}%' group by deals.summary limit #{limit}")
+      else
+        find_by_sql("select summary as summary, max(created_at) as created_at from deals where user_id = #{user_id} and type='General' and summary like '#{summary_key}%' group by summary limit #{limit}")
+      end
+      return [] if results.size == 0
+      conditions = ""
+      for r in results
+        conditions += " or " unless conditions.empty?
+        conditions += "(deals.summary = '#{r.summary}' and deals.created_at = '#{r.created_at.to_s(:db)}')"
+      end
+      conditions = "deals.user_id = #{user_id} and (#{conditions})"
+
+      options = if account_id
+        conditions << " and account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
+        {:conditions => conditions, :joins => "inner join account_entries on deals.id = account_entries.deal_id"}
+      else
+        {:conditions => conditions}
+      end
+      options[:order] = "deals.created_at desc"
+      return Deal::General.find(:all, options)
+    rescue => e
+      return []
     end
   end
 
@@ -176,7 +191,7 @@ class Deal::General < Deal::Base
   def entry(account_id)
     raise "no account_id in Deal::General.entry()" unless account_id
     r = entries.detect{|e| e.account_id.to_s == account_id.to_s}
-#    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
+    #    raise "no account_entry in deal #{self.id} with account_id #{account_id}" unless r
     r
   end
 
@@ -206,7 +221,7 @@ class Deal::General < Deal::Base
     for entry in entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
-#        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
+        #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
         p "going to destroy #{entry.to_s}"
         entry.destroy
       end
@@ -234,18 +249,18 @@ class Deal::General < Deal::Base
     entry = entry(entry_account_id)
     if !entry
       entry = entries.build(
-                :amount => entry_amount,
-                :another_entry_account => another_entry_account)
+        :amount => entry_amount,
+        :another_entry_account => another_entry_account)
       entry.account_id = entry_account_id
       entry.save # TODO: save!でなくていいの？
     else
       # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
       # entry.save がされるということは、リンクが消されて新しくDeal が作られるということを意味する。
       if entry_amount != entry.amount || self.old_date != self.date
-#        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
-#        if entry.linked_account_entry
-#          entry.account_to_be_connected = entry.linked_account_entry.account
-#        end
+        #        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
+        #        if entry.linked_account_entry
+        #          entry.account_to_be_connected = entry.linked_account_entry.account
+        #        end
         entry.amount = entry_amount
         entry.another_entry_account = another_entry_account
         p "#{to_s} going to save an entry"
@@ -277,8 +292,8 @@ class Deal::General < Deal::Base
   # 高速化のため、after_find でやっていたのを lazy にしてここへ
   def refresh_account_info
     @refreshed = true
-# TODO:
-#    p "Invalid Deal Object #{self.id} with #{entries.size} entries." unless entries.size == 2
+    # TODO:
+    #    p "Invalid Deal Object #{self.id} with #{entries.size} entries." unless entries.size == 2
     return unless entries.size == 2
     
     for et in entries

@@ -1,6 +1,7 @@
 <% deal_form '出金', :url => account_creditor_general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}" do |f| %>
   <div>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
+    <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
   <div class="entry">
     <% f.fields_for :debtor_entries do |d| %>
@@ -28,3 +29,6 @@
 
 <% end %>
 <%= error_messages_for :deal %>
+  <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :url => {:controller => 'deal', :action => 'update_patterns', :account_id => @account.id, :debtor => 'false'})%>
+
+ 
