@@ -9,25 +9,61 @@ class Deal::General < Deal::Base
       record.daily_seq = proxy_owner.daily_seq
       record
     end
+
+    def not_marked
+      find_all{|e| !e.marked_for_destruction?}
+    end
+
   end
 
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
-    e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account
-    e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account
+    e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account, :autosave => true
+    e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account, :autosave => true
     e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
 
-  accepts_nested_attributes_for :debtor_entries, :creditor_entries
+  accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
 
-  before_validation :set_required_data_in_entries
-  before_validation :fill_amount_to_one_side
+  before_validation :set_required_data_in_entries, :fill_amount_to_one_side
   validate :validate_entries
-#  before_validation :regulate_amount
   before_update :clear_entries_before_update
   after_save :create_relations
   before_destroy :destroy_entries
 
+  [:debtor, :creditor].each do |side|
+    define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
+      unless new_record?
+        not_matched_old_entries = send(:"#{side}_entries").dup
+        not_matched_new_entries = attributes.values
 
+        # attirbutes の中と引き当てていく
+        not_matched_old_entries.each do |old|
+          if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s}
+            not_matched_new_entries.delete(matched_hash)
+            not_matched_old_entries.delete(old)
+          end
+        end
+
+        # 引き当てられなかったhashからは :id をなくす
+        # これにより、account_id の変更を防ぐ
+        not_matched_new_entries.each do |hash|
+          hash[:id] = nil # shallow copyにより attributes 内のhashが直接更新される
+        end
+
+        # 引き当てられなかったold entriesを削除予定にする
+        not_matched_old_entries.each do |old|
+          p "!!!!old.mark_for_destruction #{old.to_s}"
+          old.mark_for_destruction
+        end
+      end
+      send(:"#{side}_entries_attributes_without_account_care=", attributes)
+    end
+
+    alias_method_chain :"#{side}_entries_attributes=", :account_care
+  end
+
+
+  # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
     if creditor_entries.empty? && debtor_entries.empty?
       debtor_entries.build
@@ -38,6 +74,9 @@ class Deal::General < Deal::Base
     self
   end
 
+  def to_s
+    "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})"
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -108,14 +147,6 @@ class Deal::General < Deal::Base
     entries.detect{|e| e.account_id != account_id}.account.name
   end
 
-  def validate
-    errors.add_to_base("同じ口座から口座への異動は記録できません。 account_id = #{self.minus_account_id}") if self.minus_account_id && self.plus_account_id && self.minus_account_id.to_i == self.plus_account_id.to_i
-    errors.add_to_base("金額が0となっています。") if self.amount && self.amount.to_i == 0 # TODO
-    # もし精算データにひもづいているのに口座が対応していなくなったらエラー（TODO: 将来はかしこくするが現時点では精算ルール側でなおさないとだめにする）
-    # errors.add_to_base("#{self.settlement.account.name} の精算データに含まれているため、変更できません。") if self.settlement && self.minus_account_id != self.settlement.account_id && self.plus_account_id != self.settlement.account_id
-    # TODO: 金額不一致の検証
-  end
-
   # summary の前方一致で検索する
   def self.search_by_summary(user_id, summary_key, limit)
     begin
@@ -153,11 +184,15 @@ class Deal::General < Deal::Base
 
   def validate_entries
     # amount 合計が 0 でなければならない
-    sum = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.inject(0) {|r, e| r += e.amount.to_i}
+    sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
     errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
+    unless sum == 0
+      p debtor_entries.map(&:to_s).inspect
+      p creditor_entries.map(&:to_s).inspect
+    end
 
     # 両サイドが１つだけで、かつ同じ口座ではいけない
-    errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.size == 1 && debtor_entries.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
+    errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
   end
 
 
@@ -166,19 +201,17 @@ class Deal::General < Deal::Base
     entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end
 
-#  def regulate_amount
-#    # もし金額にカンマが入っていたら正規化する
-#    self.amount = self.amount.gsub(/,/,'') if self.amount.class == String
-#  end
-
   def clear_entries_before_update
+    p "#{to_s} --- start clear_entries_before_update ---"
     for entry in entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
 #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
+        p "going to destroy #{entry.to_s}"
         entry.destroy
       end
     end
+    p "#{to_s} --- end clear_entries_before_update ---"
   end
 
   def clear_relations
@@ -215,6 +248,7 @@ class Deal::General < Deal::Base
 #        end
         entry.amount = entry_amount
         entry.another_entry_account = another_entry_account
+        p "#{to_s} going to save an entry"
         entry.save!
       end
     end
@@ -222,6 +256,7 @@ class Deal::General < Deal::Base
   end
   
   def create_relations
+    p "#{self.to_s} --- start create_relations ---"
     # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
     return unless self.amount # TODO: 間接でないのをとりあえずこれで判断
@@ -229,9 +264,8 @@ class Deal::General < Deal::Base
     entry = update_account_entry(true, true) if self.amount.to_i >= 0     # create minus
     entry = update_account_entry(false, !entry) # create plus
     update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
-    
     entries(true)
-
+    p "#{self.to_s} --- end create_relations ---"
   end
   
   def refreshed?

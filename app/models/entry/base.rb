@@ -12,11 +12,14 @@ class Entry::Base < ActiveRecord::Base
              :class_name => 'Deal::Base',
              :foreign_key => 'deal_id'
 
+  belongs_to :user # to_s で使う
+
 
   validates_presence_of :amount, :account_id
+  
+  before_validation :error_if_account_is_is_chanegd # 最初にやる
   validate :validate_account_id_is_users
 
-#  before_update :store_old_amount
   before_save :copy_deal_attributes
   after_save :update_balance, :request_linking
 
@@ -36,30 +39,29 @@ class Entry::Base < ActiveRecord::Base
   named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
 
-  def amount=(a)
-    self[:amount] = a.kind_of?(String) ? a.gsub(/,/, '') : a
-  end
-  def balance=(a)
-    self[:balance] = a.kind_of?(String) ? a.gsub(/,/, '') : a
+  # TODO: デバッグ用
+  def destroy
+    p "#{to_s} --- start destroy ---"
+    super
+    p "#{to_s} --- end destroy ---"
   end
 
-#  # コンマ混じりの文字列でamountを代入できる
-#  def formatted_amount=(formatted_amount)
-#    self.amount = formatted_amount.class == String ? formatted_amount.gsub(/,/,'') : formatted_amount
-#  end
-#  # フィールドで利用できるよう用意するがこちらは,をつけない
-#  def formatted_amount
-#    self.amount
-#  end
-#
-#  # コンマ混じりの文字列でbalanceを代入できる
-#  def formatted_balance=(formatted_balance)
-#    self.balance = formatted_balance.class == String ? formatted_balance.gsub(/,/,'') : formatted_balance
-#  end
-#  # フィールドで利用できるよう用意するがこちらは,をつけない
-#  def formatted_balance
-#    self.balance
-#  end
+  # StringならString のまま , はとる
+  def self.parse_amount(value)
+    value.kind_of?(String) ? value.gsub(/,/, '') : value
+  end
+
+  def amount=(a)
+    self[:amount] = self.class.parse_amount(a)
+  end
+  def balance=(a)
+    self[:balance] = self.class.parse_amount(a)
+  end
+
+
+  def to_s
+    "Entry:#{self.id}:#{object_id}(#{user ? user.login : user_id} : #{deal_id} : #{account ? account.name : account_id} : #{amount} : #{!!marked_for_destruction?})"
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -117,14 +119,17 @@ class Entry::Base < ActiveRecord::Base
   def request_linking
     return if !changed? # 内容が変更されていななら何もしない
     return if skip_linking
-#    p "request_linking of #{self.id}"
     return if !account || !account.linked_account || !self.deal
-
+    p "#{to_s} --- start request_linking ---"
+    p "changed? = #{changed?}"
+    p "changed = #{changed.inspect}"
+    p "account_id = #{account_id}"
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
     self.linked_ex_entry_id, self.linked_ex_deal_id = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date)
     self.linked_user_id = account.linked_account.user_id
 
     update_links_without_callback
+    p "#{to_s} --- end request_linking ---"
   end
 
   def update_links_without_callback
@@ -133,6 +138,10 @@ class Entry::Base < ActiveRecord::Base
   end
 
   private
+
+  def error_if_account_is_is_chanegd
+    raise "account_id must not be changed!" if !new_record? && changed.include?('account_id')
+  end
 
   def validate_account_id_is_users
     return true if !account_id
@@ -165,6 +174,7 @@ class Entry::Base < ActiveRecord::Base
   # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
 
   def request_unlinking
+    p "#{self.to_s}  request_unlinking"
     return if @skip_unlinking
         # TODO: linked_account_idもほしい　関連づけかえられてたら困る
     account.linked_account.unlink_to(self.id, self.user_id) if account && account.linked_account

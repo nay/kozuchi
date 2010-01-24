@@ -34,7 +34,7 @@ module Account::Linking
 
   # 要請されて、この口座のあるシステムの指定されたEntryと紐づくEntryおよびDealを作成/更新する
   def update_link_to(linked_ex_entry_id, linked_ex_deal_id, linked_user_id, linked_entry_amount, linked_entry_summary, linked_entry_date)
-#    p "update_link_to of #{self.id}. linked_ex_deal_id = #{linked_ex_deal_id}"
+    p "#{to_s} --- start update_link_to ---"
     # すでに紐づいたAccountEntryが存在する場合
     my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
     # 存在し、確認済で金額が同じ（正負逆の同額）なら変更不要
@@ -91,6 +91,7 @@ module Account::Linking
     end
 
     # 相手に新しいこちらのAccountEntry情報を送り返す
+    p "#{to_s} --- end update_link_to ---"
     return [my_entry.id, my_entry.deal_id]
   end
 

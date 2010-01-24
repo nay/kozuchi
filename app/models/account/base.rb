@@ -146,6 +146,10 @@ class Account::Base < ActiveRecord::Base
     return Account::Base.find(:first, :conditions => ["user_id = ? and name = ?", user_id, name])
   end
 
+  def to_s
+    "#{self.class.name}:#{id}:#{object_id}(#{user ? user.login : user_id} : #{name})"
+  end
+
   # 口座別計算メソッド
   
   # 指定された日付より前の時点での残高を計算して balance に格納する
