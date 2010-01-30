@@ -39,13 +39,6 @@ class Entry::Base < ActiveRecord::Base
   named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
 
-  # TODO: デバッグ用
-  def destroy
-    p "#{to_s} --- start destroy ---"
-    super
-    p "#{to_s} --- end destroy ---"
-  end
-
   # StringならString のまま , はとる
   def self.parse_amount(value)
     value.kind_of?(String) ? value.gsub(/,/, '') : value
@@ -96,7 +89,6 @@ class Entry::Base < ActiveRecord::Base
 
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
   def unlink
-#    p "unlink"
     raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
     if !deal.confirmed
       # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
@@ -120,16 +112,11 @@ class Entry::Base < ActiveRecord::Base
     return if !changed? # 内容が変更されていななら何もしない
     return if skip_linking
     return if !account || !account.linked_account || !self.deal
-    p "#{to_s} --- start request_linking ---"
-    p "changed? = #{changed?}"
-    p "changed = #{changed.inspect}"
-    p "account_id = #{account_id}"
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
     self.linked_ex_entry_id, self.linked_ex_deal_id = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date)
     self.linked_user_id = account.linked_account.user_id
 
     update_links_without_callback
-    p "#{to_s} --- end request_linking ---"
   end
 
   def update_links_without_callback
@@ -149,15 +136,9 @@ class Entry::Base < ActiveRecord::Base
       errors.add(:account_id, "が見つかりません。")
       return true
     end
-#    p "account.user_id = #{account.user_id} : self.user_id = #{user_id}"
     # user_id がnilのときは別のエラーになるのでここで比較しない
     errors.add(:account_id, "が不正です。") if !user_id.nil? && account.user_id.to_i != user_id.to_i
   end
-
-
-#  def store_old_amount
-#    @old_amount = self.class.find(self.id).amount
-#  end
 
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
@@ -174,7 +155,6 @@ class Entry::Base < ActiveRecord::Base
   # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
 
   def request_unlinking
-    p "#{self.to_s}  request_unlinking"
     return if @skip_unlinking
         # TODO: linked_account_idもほしい　関連づけかえられてたら困る
     account.linked_account.unlink_to(self.id, self.user_id) if account && account.linked_account

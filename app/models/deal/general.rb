@@ -53,7 +53,6 @@ class Deal::General < Deal::Base
 
         # 引き当てられなかったold entriesを削除予定にする
         not_matched_old_entries.each do |old|
-          p "!!!!old.mark_for_destruction #{old.to_s}"
           old.mark_for_destruction
         end
       end
@@ -201,10 +200,6 @@ class Deal::General < Deal::Base
     # amount 合計が 0 でなければならない
     sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
     errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
-    unless sum == 0
-      p debtor_entries.map(&:to_s).inspect
-      p creditor_entries.map(&:to_s).inspect
-    end
 
     # 両サイドが１つだけで、かつ同じ口座ではいけない
     errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
@@ -217,16 +212,13 @@ class Deal::General < Deal::Base
   end
 
   def clear_entries_before_update
-    p "#{to_s} --- start clear_entries_before_update ---"
     for entry in entries
       # この取引の勘定でなくなっていたら、entryを消す
       if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
         #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
-        p "going to destroy #{entry.to_s}"
         entry.destroy
       end
     end
-    p "#{to_s} --- end clear_entries_before_update ---"
   end
 
   def clear_relations
@@ -263,7 +255,6 @@ class Deal::General < Deal::Base
         #        end
         entry.amount = entry_amount
         entry.another_entry_account = another_entry_account
-        p "#{to_s} going to save an entry"
         entry.save!
       end
     end
@@ -271,7 +262,6 @@ class Deal::General < Deal::Base
   end
   
   def create_relations
-    p "#{self.to_s} --- start create_relations ---"
     # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
     # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
     return unless self.amount # TODO: 間接でないのをとりあえずこれで判断
@@ -280,7 +270,6 @@ class Deal::General < Deal::Base
     entry = update_account_entry(false, !entry) # create plus
     update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
     entries(true)
-    p "#{self.to_s} --- end create_relations ---"
   end
   
   def refreshed?

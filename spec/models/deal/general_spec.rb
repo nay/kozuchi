@@ -266,8 +266,6 @@ describe Deal::General do
         raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.linked_account == @home_income_from_two
         raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.linked_account == @home_income_from_two
         raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.linked_account.nil?
-
-        p "--- end before ---"
       end
 
       describe "Dealに２つEntryがあり、片方のみが連携しているとき" do
@@ -282,25 +280,17 @@ describe Deal::General do
           raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
           @debtor_entry = @deal.debtor_entries.first
           @creditor_entry = @deal.creditor_entries.first
-          p "--- end before ---"
         end
 
         it "連携のあるentryのaccount_idを変更したら、確認していない相手のdealが消される" do
-          p "@deal = #{@deal.to_s}"
-          p "@deal.debtor_entries = #{@deal.debtor_entries.first.to_s}"
-          p "@deal.creditor_entries = #{@deal.creditor_entries.first.to_s}"
           @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
           # taro_hanakoを taro_foodにする変更
           @deal.attributes = {
             :debtor_entries_attributes => {'0' => {:id => @debtor_entry.id, :account_id => Fixtures.identify(:taro_food), :amount => 300}},
             :creditor_entries_attributes => {'0' => {:id => @creditor_entry.id, :account_id => @taro_cache.id, :amount => -300}}
           }
-          p "-- before save! --"
           @deal.save!
           @deal.reload
-          p "--after reload --"
-          p "@deal.debtor_entries = #{@deal.debtor_entries.first.to_s}"
-          p "@deal.creditor_entries = #{@deal.creditor_entries.first.to_s}"
 
           @deal.debtor_entries.first.account_id.should == Fixtures.identify(:taro_food)
 

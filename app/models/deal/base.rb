@@ -18,12 +18,6 @@ class Deal::Base < ActiveRecord::Base
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
 
-  def destroy
-    p "#{to_s} --- start destroy ---"
-    super
-    p "#{to_s} --- end destroy ---"
-  end
-
   def human_name
     "記入 #{date}-#{daily_seq}"
   end
