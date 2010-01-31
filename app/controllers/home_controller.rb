@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
   menu_group "ホーム"
-
+  helper :html5jp_graphs
+  
   def index
     prepare_assets_summary
     prepare_expenses_summary

@@ -1,3 +1,3 @@
     <p>今月の支出：<%= number_with_delimiter @expenses_summary.items[0].last %><%= @expenses_summary.unit %></p>
-    <%= html5jp_line_graph(@expenses_summary.items, :width => 400, :height => 200, :canvas_id => 'expense_summary_graph', :x => @months_for_expenses, :gbackgroundColor => "'#ffe5f2'", :y => @expenses_summary.y, :yMin => @expenses_summary.y_min, :yMax => @expenses_summary.y_max) %>
+    <%= line_chart @expenses_summary.items , :width => 400, :height => 200, :canvas_id => 'expense_summary_graph', :x => @months_for_expenses, :gbackgroundColor => "'#ffe5f2'", :y => @expenses_summary.y, :yMin => @expenses_summary.y_min, :yMax => @expenses_summary.y_max %>
     <div style="text-align:right"><%= link_to '詳しくみる', :controller => 'profit_and_loss', :action => 'index' %></div>

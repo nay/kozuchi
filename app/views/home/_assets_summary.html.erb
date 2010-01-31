@@ -1,3 +1,3 @@
     <p>今月末時点の資産合計：<%= number_with_delimiter @assets_summary.items[0].last %><%= @assets_summary.unit %>  純資産：<%= number_with_delimiter @assets_summary.items[1].last %><%= @assets_summary.unit %> </p>
-    <%=  html5jp_line_graph @assets_summary.items, :width => 400, :height => 200, :canvas_id => "asset_summary_graph", :gbackgroundColor => "'#e5fff2'", :yMin => @assets_summary.y_min, :yMax => @assets_summary.y_max, :x => @months_for_assets, :y => @assets_summary.y %>
+    <%=  line_chart @assets_summary.items, :width => 400, :height => 200, :canvas_id => "asset_summary_graph", :gbackgroundColor => "'#e5fff2'", :yMin => @assets_summary.y_min, :yMax => @assets_summary.y_max, :x => @months_for_assets, :y => @assets_summary.y %>
     <div style="text-align:right"><%= link_to '詳しくみる', :controller => 'assets', :action => 'index' %></div>
