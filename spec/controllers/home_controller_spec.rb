@@ -4,6 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../mobile_spec_helper')
 describe HomeController do
   fixtures :users
   describe "index" do
+
     describe "Docomo mova 機種情報なしでのアクセス" do
       before do
         login_as(:docomo1_user)

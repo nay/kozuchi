@@ -6,6 +6,9 @@
     <% f.fields_for :debtor_entries do |d| %>
       <div>
         <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
+        <% if f.object.settlement_attached? %>
+          <%= d.hidden_field :amount %>
+        <% end %>
       </div>
 
       <div>円</div>
