@@ -111,7 +111,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal 2000, b.amount
     assert_equal 2000, balance_before(5, 12)
     # 5/10の取引を確認する
-    d.confirm
+    d.confirm!
     b.reload
     assert_equal 3800, b.amount
     assert_equal 2000, balance_before(5, 12)

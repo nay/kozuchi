@@ -163,7 +163,7 @@ describe Deal::General do
           Deal::General.find_by_id(@hanako_deal.id).should be_nil
         end
         it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
-          @hanako_deal.confirm
+          @hanako_deal.confirm!
           @deal.destroy
           @hanako_deal.reload
           @hanako_unlinked_entry = @hanako_deal.entries.detect{|e| e.account_id == @hanako_taro.id}
@@ -171,7 +171,7 @@ describe Deal::General do
           @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
         end
         it "連携があり確認済のときに金額を変更したら相手とのリンクが切られて新しく記入される" do
-          @hanako_deal.confirm
+          @hanako_deal.confirm!
           #         @deal.entries.each{|e| e.amount *= 2}
           #        効かない；；
           @deal.plus_account_id = @deal.plus_account_id

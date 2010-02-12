@@ -90,7 +90,7 @@ class Entry::Base < ActiveRecord::Base
   # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
   def unlink
     raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
-    if !deal.confirmed
+    if !deal.confirmed?
       # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
       # オブジェクトとしては別物なので困ってしまう
       deal.entries.detect{|e| e.id == self.id}.skip_unlinking = true

@@ -132,22 +132,9 @@ class Deal::Base < ActiveRecord::Base
     ).nil?
   end
 
-#  def self.confirm_without_callback(id)
-#    update_all(sanitize_sql_for_assignment(["confirmed = ?", true]), ["id = ?", id])
-#  end
-  
-
-  def confirm
+  def confirm!
     self.confirmed = true
     save!
-
-#    Deal::Base.transaction do
-#      Deal::Base.confirm_without_callback(self.id)
-#      # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
-#      # TODO: コールバックは見直し必要か
-#      reload
-#      entries.each{|e| e.after_confirmed}
-#    end
   end
 
   private

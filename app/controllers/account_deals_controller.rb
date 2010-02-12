@@ -51,7 +51,7 @@ class AccountDealsController < ApplicationController
           # 通常明細
         else
           # 確定のときだけ残高に反映
-          if deal.confirmed
+          if deal.confirmed?
             balance_estimated -= account_entry.amount
             flow_sum -= account_entry.amount
           end

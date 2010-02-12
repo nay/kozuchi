@@ -173,7 +173,7 @@ class DealsController < ApplicationController
     deal = Deal::Base.get(params[:id], @user.id)
     raise "Could not get deal #{params[:id]}" unless deal
     
-    deal.confirm
+    deal.confirm!
     
     @target_month = DateBox.new('year' => deal.date.year, 'month' => deal.date.month)
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
