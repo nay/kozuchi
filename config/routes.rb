@@ -12,7 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options :controller => 'deals' do |deals|
-    deals.resources :deals, :only => [:edit, :update, :destroy]
+    deals.resources :deals, :only => [:edit, :update, :destroy], :member => {:confirm => :put}
     deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
     deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
     deals.new_general_deal 'general_deals/new', :action => 'new_general_deal', :conditions => {:method => :get}

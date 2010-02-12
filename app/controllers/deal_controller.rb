@@ -129,7 +129,7 @@ class DealController < ApplicationController
   def flash_save_deal(deal, is_new = true)
     @updated_deal = deal
     action_name = is_new ? "追加" : "更新"
-    flash[:notice] = "#{format_deal(deal)} を#{action_name}しました。"
+    flash[:notice] = "#{deal.human_name} を#{action_name}しました。"
   end
 
 

@@ -32,9 +32,9 @@
                 <%= deal.daily_seq if first %>
               </td>
               <% if first %>
-                <td class="summary" rowspan="<%=deal.entries.size%>">
+                <td class="summary" rowspan="<%=deal.readonly_entries.size%>">
                   <% if !deal.confirmed? %>
-                    <%= link_to_remote('確認' , {:update => 'book', :url => { :action => 'confirm', :id => deal }}, :class => 'small_button', :alt => '確認状態にします。' ) %>
+                    <%= link_to_remote('確認' , {:update => 'book', :url => confirm_deal_path(:id => deal), :method => :put}, :class => 'small_button', :alt => '確認状態にします。' ) %>
                   <% end %>
                   <%= deal.balance ? "残高確認" : h(deal.summary) %>
                 </td>
@@ -63,10 +63,10 @@
               <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
               <% if first %>
-                <td rowspan="<%=deal.entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'deal_editor', :url => {:action => 'edit', :id => deal.id}, :method => :get, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" ) %></td>
-                <td rowspan="<%=deal.entries.size%>" class="action">
+                <td rowspan="<%=deal.readonly_entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'deal_editor', :url => {:action => 'edit', :id => deal.id}, :method => :get, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" ) %></td>
+                <td rowspan="<%=deal.readonly_entries.size%>" class="action">
                   <% unless deal.settlement_attached? %>
-                    <%= link_to '削除' ,{:action => 'delete_deal', :id => deal}, :confirm => "#{format_deal(deal)}を削除します。よろしいですか？" %>
+                    <%= link_to '削除', deal_path(:id => deal), :method => :delete, :confirm => "#{deal.human_name} を削除します。よろしいですか？" %>
                   <% end %>
                 </td>
               <% end %>

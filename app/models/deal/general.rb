@@ -138,7 +138,7 @@ class Deal::General < Deal::Base
   end
 
   def settlement_attached?
-    !entries.detect{|e| e.settlement_attached?}.nil?
+    !readonly_entries.detect{|e| e.settlement_attached?}.nil?
   end
 
   # 相手勘定名を返す

@@ -1,10 +1,9 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
-  cache_sweeper :export_sweeper, :only => [:create_deal, :destroy, :delete_deal, :confirm] # TODO: アクションでしぼる
+  cache_sweeper :export_sweeper, :only => [:create_deal, :destroy, :confirm] 
   menu_group "家計簿"
   menu "仕訳帳"
-  before_filter :require_mobile, :only => :destroy
   before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date
   before_filter :find_date, :only => [:expenses, :daily]
@@ -142,11 +141,15 @@ class DealsController < ApplicationController
     @deals = current_user.deals.created_on(@date)
   end
 
-  # 記入の削除（携帯向け。一般をここに統合するまで制限する）
+  # 記入の削除
   def destroy
     @deal.destroy
-    flash[:notice] = "削除しました。"
-    redirect_to daily_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
+    flash[:notice] = "#{@deal.human_name} を削除しました。"
+    if request.mobile?
+      redirect_to daily_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
+    else
+      redirect_to(:action => 'index')
+    end
   end
 
   # キーワードで検索したときに一覧を出す
@@ -160,13 +163,12 @@ class DealsController < ApplicationController
   # ----- 編集実行系 --------------------------------------------------
 
   # 取引の削除を受け付ける
-  def delete_deal
-    deal = Deal::Base.find(params[:id])
-    deal_info = format_deal(deal)
-    deal.destroy
-    flash[:notice] = "#{deal_info} を削除しました。"
-    redirect_to(:action => 'index')
-  end
+#  def delete_deal
+#    deal = Deal::Base.find(params[:id])
+#    deal.destroy
+#    flash[:notice] = "#{deal.human_name} を削除しました。"
+#    redirect_to(:action => 'index')
+#  end
   
   # 確認処理
   def confirm

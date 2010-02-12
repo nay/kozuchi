@@ -182,9 +182,9 @@ EOS
     return 'style="'+h(style_content)+'"'
   end
   
-  def format_deal(deal)
-    return "記入 #{deal.date}-#{deal.daily_seq}"
-  end
+#  def format_deal(deal)
+#    return "記入 #{deal.date}-#{deal.daily_seq}"
+#  end
   
   # 帳簿系表示ヘルパー
   # 一行を表示する　(table.book の下で呼ばれることを前提とする)
