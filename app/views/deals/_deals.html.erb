@@ -21,7 +21,7 @@
         <% for deal in @deals %>
           <% first = true %>
 
-          <% for account_entry in deal.entries %>
+          <% for account_entry in deal.readonly_entries %>
             <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed %>>
               <td class="date">
                 <% if first %>

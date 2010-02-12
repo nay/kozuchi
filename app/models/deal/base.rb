@@ -98,6 +98,7 @@ class Deal::Base < ActiveRecord::Base
                     user_id,
                     datebox.start_inclusive,
                     datebox.end_exclusive],
+                  :include => :readonly_entries,
                   :order => "date, daily_seq")
   end
 
