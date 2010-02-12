@@ -100,6 +100,7 @@ class Entry::Base < ActiveRecord::Base
       self.linked_ex_entry_id = nil
       self.linked_ex_deal_id = nil
       self.linked_user_id = nil
+      self.linked_ex_entry_confirmed = false
     end
   end
 
@@ -113,7 +114,7 @@ class Entry::Base < ActiveRecord::Base
     return if skip_linking
     return if !account || !account.linked_account || !self.deal
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
-    self.linked_ex_entry_id, self.linked_ex_deal_id = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date)
+    self.linked_ex_entry_id, self.linked_ex_deal_id, self.linked_ex_entry_confirmed = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date, self.deal.confirmed?)
     self.linked_user_id = account.linked_account.user_id
 
     update_links_without_callback

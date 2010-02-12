@@ -146,17 +146,23 @@ describe Deal::General do
           @deal.save!
           @linked_entry = @deal.entries.detect{|e| e.account_id == @taro_hanako.id}
           raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
+          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
         end
         it "片方のEntryにリンクが作られること" do
           @linked_entry.linked_ex_entry_id.should_not be_nil
         end
+        it "作られたほうのconfimed と、自分の linked_ex_entry_confirmed がfalseになること。自分のconfirmedと相手のlinked_ex_entry_confirmedがtrueになること。" do
+          @hanako_deal.confirmed?.should be_false
+          @linked_entry.linked_ex_entry_confirmed?.should be_false
+          @deal.confirmed?.should be_true
+          hanako_linked_entry = @hanako_deal.entries.detect{|e| e.account_id == @hanako_taro.id}
+          hanako_linked_entry.linked_ex_entry_confirmed.should be_true
+        end
         it "連携したDealの片方を消したら確認してない相手のdealも消される" do
-          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
           @deal.destroy
           Deal::General.find_by_id(@hanako_deal.id).should be_nil
         end
         it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
-          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
           @hanako_deal.confirm
           @deal.destroy
           @hanako_deal.reload
@@ -165,7 +171,6 @@ describe Deal::General do
           @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
         end
         it "連携があり確認済のときに金額を変更したら相手とのリンクが切られて新しく記入される" do
-          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
           @hanako_deal.confirm
           #         @deal.entries.each{|e| e.amount *= 2}
           #        効かない；；
@@ -280,10 +285,18 @@ describe Deal::General do
           raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
           @debtor_entry = @deal.debtor_entries.first
           @creditor_entry = @deal.creditor_entries.first
+          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
+        end
+
+        it "相手が確認したら、linked_ex_entry_confirmedが更新される" do
+          raise "前提エラー：連携先ははじめは未確認のはず" if @hanako_deal.confirmed? || @linked_entry.linked_ex_entry_confirmed?
+          @hanako_deal.confirmed = true
+          @hanako_deal.save!
+          @linked_entry.reload
+          @linked_entry.linked_ex_entry_confirmed?.should be_true
         end
 
         it "連携のあるentryのaccount_idを変更したら、確認していない相手のdealが消される" do
-          @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
           # taro_hanakoを taro_foodにする変更
           @deal.attributes = {
             :debtor_entries_attributes => {'0' => {:id => @debtor_entry.id, :account_id => Fixtures.identify(:taro_food), :amount => 300}},

@@ -9,23 +9,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100124233242) do
+ActiveRecord::Schema.define(:version => 20100212084008) do
 
   create_table "account_entries", :force => true do |t|
-    t.integer "user_id",              :default => 0
-    t.integer "account_id",           :default => 0
-    t.integer "deal_id",              :default => 0
+    t.integer "user_id",                   :default => 0
+    t.integer "account_id",                :default => 0
+    t.integer "deal_id",                   :default => 0
     t.integer "amount"
     t.integer "balance"
     t.integer "settlement_id"
     t.integer "result_settlement_id"
-    t.boolean "initial_balance",      :default => false, :null => false
-    t.date    "date",                                    :null => false
-    t.integer "daily_seq",                               :null => false
+    t.boolean "initial_balance",           :default => false, :null => false
+    t.date    "date",                                         :null => false
+    t.integer "daily_seq",                                    :null => false
     t.integer "linked_ex_entry_id"
     t.integer "linked_ex_deal_id"
     t.integer "linked_user_id"
     t.string  "type"
+    t.boolean "linked_ex_entry_confirmed", :default => false, :null => false
   end
 
   add_index "account_entries", ["account_id"], :name => "account_entries_account_id_index"

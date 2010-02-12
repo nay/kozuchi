@@ -44,8 +44,8 @@
                   <%= h account_entry.account.name %>
                 </td>
                 <td class="jump">
-                  <% if account_entry.linked_account_entry %>
-                    <span <%="class='unconfirmed'" unless account_entry.linked_account_entry.deal.confirmed %>><%= h account_entry.linked_account_entry.deal.user.login_id %></span>
+                  <% if account_entry.linked_ex_entry_id %>
+                    <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed %>><%= h account_entry.account.linked_account.user.login_id %></span>
                   <% end %>
                   <% if account_entry.settlement %>
                     <%= link_to '精算', settlement_path(:id => account_entry.settlement_id) %>

@@ -70,19 +70,12 @@ class DealsController < ApplicationController
   end
 
   def update
-    p "update params = #{params.inspect}"
     deal_attributes = params[:deal].dup
     # TODO: もう少しマシにしたいがとりあえず動かすために入れる
     # creditor側の数字しか入ってこない場合はもう片側を補完する
     deal_attributes[:creditor_entries_attributes]['0'][:amount] = deal_attributes[:debtor_entries_attributes]['0'][:amount].to_i * -1 unless deal_attributes[:creditor_entries_attributes]['0'][:amount]
 
-    p deal_attributes.inspect
-
     @deal.attributes = deal_attributes
-
-    p "@deal = #{@deal.inspect}"
-    p "@deal.debtor_entries = #{@deal.debtor_entries.inspect}"
-    p "@deal.creditor_entries = #{@deal.creditor_entries.inspect}"
 
     @deal.confirmed = true
 

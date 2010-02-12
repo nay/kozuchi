@@ -14,6 +14,7 @@ class Deal::Base < ActiveRecord::Base
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
+  after_update :update_link_when_confirmed
   
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
@@ -131,22 +132,39 @@ class Deal::Base < ActiveRecord::Base
     ).nil?
   end
 
-  def self.confirm_without_callback(id)
-    update_all(sanitize_sql_for_assignment(["confirmed = ?", true]), ["id = ?", id])
-  end
+#  def self.confirm_without_callback(id)
+#    update_all(sanitize_sql_for_assignment(["confirmed = ?", true]), ["id = ?", id])
+#  end
   
 
   def confirm
-    Deal::Base.transaction do
-      Deal::Base.confirm_without_callback(self.id)
-      # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
-      # TODO: コールバックは見直し必要か
-      reload
-      entries.each{|e| e.after_confirmed}
-    end
+    self.confirmed = true
+    save!
+
+#    Deal::Base.transaction do
+#      Deal::Base.confirm_without_callback(self.id)
+#      # save にするとリンクまで影響がある。確定は単純に確定フラグだけを変えるべきなのでこのようにした。
+#      # TODO: コールバックは見直し必要か
+#      reload
+#      entries.each{|e| e.after_confirmed}
+#    end
   end
 
   private
+
+  # TODO: entry にも confirmed を持たせたい
+  # general に移動すべきか？
+  def update_link_when_confirmed
+    if changed.include?("confirmed")
+      entries.each do |e|
+        e.after_confirmed
+        # link先に通知する
+        if e.linked_ex_entry_id
+          e.account.linked_account.receive_confirmation_from(e.id, e.user_id)
+        end
+      end
+    end
+  end
   
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。
