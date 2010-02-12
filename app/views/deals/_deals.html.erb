@@ -39,7 +39,7 @@
                   <%= deal.balance ? "残高確認" : h(deal.summary) %>
                 </td>
               <% end %>
-              <% if account_entry.linked_account_entry || account_entry.kind_of?(Deal::General) && (account_entry.settlement || account_entry.result_settlement) %>
+              <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Deal::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
                 <td class="account">
                   <%= h account_entry.account.name %>
                 </td>
@@ -47,10 +47,10 @@
                   <% if account_entry.linked_ex_entry_id %>
                     <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>><%= h account_entry.account.linked_account.user.login_id %></span>
                   <% end %>
-                  <% if account_entry.settlement %>
+                  <% if account_entry.settlement_id %>
                     <%= link_to '精算', settlement_path(:id => account_entry.settlement_id) %>
                   <% end %>
-                  <% if account_entry.result_settlement %>
+                  <% if account_entry.result_settlement_id %>
                     <%= link_to '精算', settlement_path(:id => account_entry.result_settlement_id) %>
                   <% end %>
                 </td>
