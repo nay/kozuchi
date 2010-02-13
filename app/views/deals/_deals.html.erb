@@ -45,7 +45,7 @@
                 </td>
                 <td class="jump">
                   <% if account_entry.linked_ex_entry_id %>
-                    <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>><%= h account_entry.account.linked_account.user.login_id %></span>
+                    <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>>連携</span>
                   <% end %>
                   <% if account_entry.settlement_id %>
                     <br />
