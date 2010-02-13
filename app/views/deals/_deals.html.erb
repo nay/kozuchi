@@ -41,7 +41,7 @@
               <% end %>
               <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Deal::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
                 <td class="account">
-                  <%= h account_entry.account.name %>
+                  <%= display_account_name(account_entry.account) %>
                 </td>
                 <td class="jump">
                   <% if account_entry.linked_ex_entry_id %>

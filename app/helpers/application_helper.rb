@@ -3,6 +3,18 @@ module ApplicationHelper
   include LoginEngine
   include TermHelper
 
+  # deals などで副項目を扱う
+  def display_account_name(account)
+    names = h(account.name).split
+    name = names.shift
+
+    after_sub = ''
+    while sub = names.pop
+      after_sub = "<div class='sub_account_name'>#{sub}#{after_sub}</div>"
+    end
+    name << "<div class='sub_account_names'>#{after_sub}</div>"
+  end
+
   # 上部メニューで使う
   def link_to_menu_group(menu_group, path)
     if menu_group != @menu_group
