@@ -48,9 +48,11 @@
                     <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>><%= h account_entry.account.linked_account.user.login_id %></span>
                   <% end %>
                   <% if account_entry.settlement_id %>
+                    <br />
                     <%= link_to '精算', settlement_path(:id => account_entry.settlement_id) %>
                   <% end %>
                   <% if account_entry.result_settlement_id %>
+                    <br />
                     <%= link_to '精算', settlement_path(:id => account_entry.result_settlement_id) %>
                   <% end %>
                 </td>
