@@ -225,6 +225,7 @@ ul {
   font-size: 80%;
   width:2em;
   text-align: right;
+  white-space: nowrap;
 }
 
 input.readonly {
