@@ -7,15 +7,15 @@
   <div class="left">
     <!-- 支出一覧 -->
     <table class="book">
-      <tr><th colspan="2">支出</th></tr>
-		<%= render :partial => 'flow', :collection => @expense_flows %>
+      <tr><th colspan="3">支出</th><th class="amount" style="text-align:center;">前月</th></tr>
+		<%= render :partial => 'flow', :collection => @expense_flows, :locals => {:previous => true} %>
     </table>
   </div>
   <div class="right">
     <!-- 収入一覧 -->
       <table class="book">
-        <tr><th colspan="2">収入</th></tr>
-		<%= render :partial => 'flow', :collection => @income_flows %>
+        <tr><th colspan="3">収入</th><th class="amount" style="text-align:center;">前月</th></tr>
+		<%= render :partial => 'flow', :collection => @income_flows, :locals => {:previous => true} %>
      </table>
   </div>
 </div>
@@ -27,6 +27,7 @@
       <tr>
         <td>支出合計</td>
         <td class="amount"><%= number_with_delimiter(@expense_flows.sum)%></td>
+        <td class="previous_month amount"><%= number_with_delimiter(@expense_flows.previous_sum)%></td>
       </tr>
     </table>
   </div>
@@ -37,6 +38,7 @@
         <tr>
           <td>収入合計</td>
           <td class="amount"><%= number_with_delimiter(@income_flows.sum)%></td>
+          <td class="previous_month amount"><%= number_with_delimiter(@income_flows.previous_sum)%></td>
         </tr>
       </table>
   </div>

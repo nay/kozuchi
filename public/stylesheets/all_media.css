@@ -37,6 +37,10 @@ td.amount, th.amount {
   width: 70px;
 }
 
+td.previous_month {
+  color: #999999;
+}
+
 td.date, th.date {
   width: 90px;
 }

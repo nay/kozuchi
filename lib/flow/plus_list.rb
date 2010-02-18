@@ -1,5 +1,5 @@
 class Flow::PlusList < Flow::BaseList
-  def new_flow(account)
-    Flow::Plus.new(account, self)
+  def self.element_class
+    Flow::Plus
   end
 end

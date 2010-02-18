@@ -1,5 +1,5 @@
 class Flow::Plus < Flow::Base
   def flow
-    unknown? ? account.unknown : account.flow
+    @flow
   end
 end

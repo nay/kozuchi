@@ -1,8 +1,11 @@
 class Flow::Base
-  attr_reader :account, :list
-  def initialize(account, list)
+  attr_reader :list
+  def initialize(account_name, flow, unknown, list, previous_flow)
     @list = list
-    @account = account
+    @account_name = account_name
+    @flow = flow
+    @previous_flow = previous_flow
+    @unknown = unknown
   end
   def percentage
     return nil if flow < 0
@@ -10,12 +13,17 @@ class Flow::Base
     return 0 if plus_sum == 0
     (flow * 100.0 / list.plus_sum).round
   end
+
   def unknown?
-    account.respond_to? :unknown
+    !!@unknown
   end
 
   def name
-    unknown? ? "不明金(#{account.name})" : account.name
+    unknown? ? "不明金(#{@account_name})" : @account_name
+  end
+
+  def previous_flow
+    @previous_flow ? @previous_flow.flow : 0
   end
 
 end
