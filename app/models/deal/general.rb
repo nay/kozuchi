@@ -26,20 +26,25 @@ class Deal::General < Deal::Base
 
   before_validation :set_required_data_in_entries, :fill_amount_to_one_side
   validate :validate_entries
-  before_update :clear_entries_before_update
+#  before_update :clear_entries_before_update
   after_save :create_relations
   before_destroy :destroy_entries
 
 
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
+      # 金額も口座IDも入っていないentry情報は無視する
+      attributes = attributes.dup
+
+      attributes.reject!{|key, value| value[:amount].blank? && value[:account_id].blank?}
+
       unless new_record?
         not_matched_old_entries = send(:"#{side}_entries").dup
         not_matched_new_entries = attributes.values
 
         # attirbutes の中と引き当てていく
         not_matched_old_entries.each do |old|
-          if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s}
+          if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
             not_matched_new_entries.delete(matched_hash)
             not_matched_old_entries.delete(old)
           end
@@ -65,11 +70,29 @@ class Deal::General < Deal::Base
 
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
-    if creditor_entries.empty? && debtor_entries.empty?
+    error_if_not_empty
+    debtor_entries.build
+    creditor_entries.build
+    self
+  end
+
+  # 複数記入用のオブジェクト（未保存）を作成する
+  def build_complex_entries(size = 5)
+    error_if_not_empty
+    size.times do
       debtor_entries.build
       creditor_entries.build
-    else
-      raise "Deal is not empty"
+    end
+    self
+  end
+
+  # sizeに満たない場合にフィールドを補完する
+  def fill_complex_entries(size = 5)
+    while debtor_entries.find_all{|e| !e.marked_for_destruction?}.size < size
+      debtor_entries.build
+    end
+    while creditor_entries.find_all{|e| !e.marked_for_destruction?}.size < size
+      creditor_entries.build
     end
     self
   end
@@ -196,6 +219,10 @@ class Deal::General < Deal::Base
 
   private
 
+  def error_if_not_empty
+    raise "Deal is not empty" unless creditor_entries.empty? && debtor_entries.empty?
+  end
+
   def validate_entries
     # amount 合計が 0 でなければならない
     sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
@@ -203,6 +230,9 @@ class Deal::General < Deal::Base
 
     # 両サイドが１つだけで、かつ同じ口座ではいけない
     errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
+
+    errors.add_to_base("借方の記入が必要です。") if debtor_entries.empty?
+    errors.add_to_base("貸方の記入が必要です。") if creditor_entries.empty?
   end
 
 
@@ -211,15 +241,15 @@ class Deal::General < Deal::Base
     entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end
 
-  def clear_entries_before_update
-    for entry in entries
-      # この取引の勘定でなくなっていたら、entryを消す
-      if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
-        #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
-        entry.destroy
-      end
-    end
-  end
+#  def clear_entries_before_update
+#    for entry in entries
+#      # この取引の勘定でなくなっていたら、entryを消す
+#      if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
+#        #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
+#        entry.destroy
+#      end
+#    end
+#  end
 
   def clear_relations
     entries.clear

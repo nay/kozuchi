@@ -42,7 +42,9 @@
       <th>摘要</th>
       <th class="account">　</th>
       <th class="amount">
-        <% if @account.kind_of?(Account::Asset) -%>
+        <% if bookkeeping_style? %>
+          借方
+        <% elsif @account.kind_of?(Account::Asset) -%>
           入金
         <% elsif @account.kind_of?(Account::Income) -%>
           戻し
@@ -51,7 +53,9 @@
         <% end -%>
       </th>
       <th class="amount">
-        <% if @account.kind_of?(Account::Asset) -%>
+        <% if bookkeeping_style? %>
+          貸方
+        <% elsif @account.kind_of?(Account::Asset) -%>
           出金
         <% elsif @account.kind_of?(Account::Income) -%>
           収入
@@ -60,7 +64,7 @@
         <% end -%>
       </th>
       <th class="amount">
-        <% if @account.kind_of?(Account::Asset) -%>
+        <% if bookkeeping_style? || @account.kind_of?(Account::Asset) -%>
           残高
         <% else %>
           合計

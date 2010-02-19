@@ -4,23 +4,43 @@
     <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
   <div class="entry">
-    <% f.fields_for :debtor_entries do |d| %>
-      <%= d.hidden_field :account_id, :value => @account.id %>
-      <div>
-        <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
-      </div>
+    <% if bookkeeping_style? %>
+      <% f.fields_for :debtor_entries do |d| %>
+        <%= d.hidden_field :account_id, :value => @account.id %>
+        <div>
+          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
+        </div>
 
-      <div>円</div>
+        <div>円</div>
 
-    <% end %>
-    <% f.fields_for :creditor_entries do |c| %>
-      <div>
-        <%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
-      </div>
+      <% end %>
+      <% f.fields_for :creditor_entries do |c| %>
+        <div style="padding-left: 16px;">(借)<input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
 
-      <div>→</div>
+        <div style="padding-left: 16px;">
+          (貸)<%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
+        </div>
+      <% end %>
 
-      <div><input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
+    <% else %>
+      <% f.fields_for :debtor_entries do |d| %>
+        <%= d.hidden_field :account_id, :value => @account.id %>
+        <div>
+          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
+        </div>
+
+        <div>円</div>
+
+      <% end %>
+      <% f.fields_for :creditor_entries do |c| %>
+        <div>
+          <%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
+        </div>
+
+        <div>→</div>
+
+        <div><input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
+      <% end %>
     <% end %>
     <%= f.submit '記入', :tablindex => "14", :class => 'button' %>
     <div style="clear:left;"></div>

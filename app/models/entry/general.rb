@@ -11,6 +11,14 @@ class Entry::General < Entry::Base
 
   validate :validate_amount_is_not_zero
 
+  def reversed_amount=(ra)
+    self.amount = ra.blank? ? ra : ra.to_i * -1
+  end
+
+  def reversed_amount
+    self.amount.blank? ? self.amount : self.amount.to_i * -1
+  end
+
   private
   def validate_amount_is_not_zero
     errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0

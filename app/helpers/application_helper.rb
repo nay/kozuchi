@@ -3,6 +3,11 @@ module ApplicationHelper
   include LoginEngine
   include TermHelper
 
+  def bookkeeping_style?
+    return false unless current_user
+    current_user.preferences.bookkeeping_style?
+  end
+
   # deals などで副項目を扱う
   def display_account_name(account)
     names = h(account.name).split

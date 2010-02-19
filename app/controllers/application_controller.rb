@@ -33,6 +33,13 @@ class ApplicationController < ActionController::Base
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
           render render_options
         end
+      when /complex/
+        define_method "new_#{deal_type}" do
+          @deal = @user.general_deals.build
+          @deal.build_complex_entries
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options
+        end
       when /balance/
         define_method "new_#{deal_type}" do
           @deal = @user.balance_deals.build
@@ -43,7 +50,7 @@ class ApplicationController < ActionController::Base
 
       # create_xxx
       define_method "create_#{deal_type}" do
-        @deal = @user.send(deal_type.to_s =~ /general/ ? 'general_deals' : 'balance_deals').new(params[:deal])
+        @deal = @user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(params[:deal])
 
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
@@ -53,6 +60,9 @@ class ApplicationController < ActionController::Base
             page.redirect_to redirect_options_proc.call(@deal)
           end
         else
+          if deal_type.to_s =~ /complex/
+            @deal.fill_complex_entries
+          end
           render :update do |page|
             page[:deal_forms].replace_html render_options
           end

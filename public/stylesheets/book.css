@@ -48,6 +48,11 @@
   padding-bottom: 1em;
 }
 
+table.horizontal th, table.horizontal td {
+  border-bottom: 2px solid #FFFFF9;
+  padding-bottom: 4px;
+}
+
 /* number fields */
 input.number, #datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;

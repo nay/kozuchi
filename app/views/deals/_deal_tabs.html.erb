@@ -1,5 +1,6 @@
 <div class="tabbuttons">
   <%= deal_tab '残高', {:action => 'new_balance_deal'}, current_caption, :tabindex => '20' %>
+  <%= deal_tab '明細(複数)', {:action => 'new_complex_deal'}, current_caption, :tabindex => '20' %>
   <%= deal_tab '明細', {:action => 'new_general_deal'}, current_caption, :tabindex => '20' %>
   <%= deal_tab "変更(#{@deal.date}-#{@deal.daily_seq})", deal_path(:id => @deal.id), true, :tab_index => '20' unless @deal.new_record? %>
 </div>

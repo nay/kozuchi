@@ -59,12 +59,15 @@ class DealsController < ApplicationController
   REDIRECT_OPTIONS_PROC = lambda{|deal|
     {:action => :index, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
   }
-  deal_actions_for :general_deal, :balance_deal,
+  deal_actions_for :general_deal, :complex_deal, :balance_deal,
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
   # 変更フォームを表示するAjaxアクション
   def edit
+    if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple?)
+      @deal.fill_complex_entries
+    end
     render :partial => 'edit' # TODO: partialやめる
   end
 
@@ -87,6 +90,9 @@ class DealsController < ApplicationController
         page.redirect_to REDIRECT_OPTIONS_PROC.call(@deal)
       end
     else
+      unless @deal.simple?
+        @deal.fill_complex_entries
+      end
       render :update do |page|
         page[:deal_editor].replace_html :partial => 'edit'
       end

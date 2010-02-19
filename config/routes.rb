@@ -15,8 +15,10 @@ ActionController::Routing::Routes.draw do |map|
     deals.resources :deals, :only => [:edit, :update, :destroy], :member => {:confirm => :put}
     deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
     deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
+    deals.complex_deals 'complex_deals', :action => 'create_complex_deal', :conditions => {:method => :post}
     deals.new_general_deal 'general_deals/new', :action => 'new_general_deal', :conditions => {:method => :get}
     deals.new_balance_deal 'balance_deals/new', :action => 'new_balance_deal', :conditions => {:method => :get}
+    deals.new_compex_deal 'complex_deals/new', :action => 'new_compex_deal', :conditions => {:method => :get}
     # TODO: 変更
   end
 

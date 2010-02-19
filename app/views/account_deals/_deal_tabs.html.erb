@@ -1,5 +1,5 @@
 <div class="tabbuttons">
   <%= deal_tab '残高', {:action => 'new_balance_deal'}, current_caption, :tabindex => '20' %>
-  <%= deal_tab '出金', {:action => 'new_creditor_general_deal'}, current_caption, :tabindex => '20' %>
-  <%= deal_tab '入金', {:action => 'new_debtor_general_deal'}, current_caption, :tabindex => '20' %>
+  <%= deal_tab bookkeeping_style? ? '貸方' : '出金', {:action => 'new_creditor_general_deal'}, current_caption == '出金', :tabindex => '20' %>
+  <%= deal_tab bookkeeping_style? ? '借方' : '入金', {:action => 'new_debtor_general_deal'}, current_caption == '入金', :tabindex => '20' %>
 </div>
