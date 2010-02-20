@@ -137,9 +137,6 @@ class Deal::Base < ActiveRecord::Base
     save!
   end
 
-  def simple?
-    debtor_entries.size == 1 && creditor_entries.size == 1
-  end
 
   private
 

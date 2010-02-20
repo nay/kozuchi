@@ -9,27 +9,35 @@
     %>
 
     <% f.fields_for entry_types.first do |d| %>
-      <div>
-        <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
-        <% if f.object.settlement_attached? %>
-          <%= d.hidden_field :amount %>
-        <% end %>
-      </div>
+      <% if d.object.marked_for_destruction? %>
+        <%= d.hidden_field :_delete, :value => '1' %>
+      <% else %>
+        <div>
+          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
+          <% if f.object.settlement_attached? %>
+            <%= d.hidden_field :amount %>
+          <% end %>
+        </div>
 
-      <div>円</div>
-      <% f.fields_for entry_types.last do |c| %>
+        <div>円</div>
+        <% f.fields_for entry_types.last do |c| %>
+          <% if c.object.marked_for_destruction? %>
+            <%= c.hidden_field :_delete, :value => '1' %>
+          <% else %>
+            <div style="padding-left: 16px;">
+              <%= '(借)' if bookkeeping_style? %><%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :debtor_entries), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <% unless current_user.preferences.bookkeeping_style? %>
+        <div style="padding-left: 16px;">→</div>
+        <% end %>
+
         <div style="padding-left: 16px;">
-          <%= '(借)' if bookkeeping_style? %><%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :debtor_entries), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
+          <%= '(貸)' if bookkeeping_style? %><%= d.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :debtor_entries), f.object.debtor_entries.first.try(:account_id)), :tabindex => 13 %>
         </div>
       <% end %>
-
-      <% unless current_user.preferences.bookkeeping_style? %>
-      <div style="padding-left: 16px;">→</div>
-      <% end %>
-
-      <div style="padding-left: 16px;">
-        <%= '(貸)' if bookkeeping_style? %><%= d.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :debtor_entries), f.object.debtor_entries.first.try(:account_id)), :tabindex => 13 %>
-      </div>
     <% end %>
     <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
     <% unless @deal.new_record? %>

@@ -106,6 +106,10 @@ class Deal::General < Deal::Base
     self
   end
 
+  def simple?
+    debtor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1 && creditor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1
+  end
+
   def to_s
     "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})"
   end
