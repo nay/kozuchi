@@ -146,8 +146,18 @@ class DealTest < ActiveSupport::TestCase
   
   # 現金→食費の取引記入をする
   def create_deal(amount, month, day, attributes = {})
-    attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => @cache.id, :plus_account_id => @food.id, :user_id => @user.id, :date => Date.new(@year, month, day)}.merge(attributes)
-    Deal::General.create!(attributes)
+    attributes = {:summary => "#{month}/#{day}の買い物",
+#      :amount => amount,
+#      :minus_account_id => @cache.id,
+#      :plus_account_id => @food.id,
+      :debtor_entries_attributes => [{:account_id => @food.id, :amount => amount}],
+      :creditor_entries_attributes => [{:account_id => @cache.id, :amount => amount.to_i * -1}],
+      :user_id => @user.id, :date => Date.new(@year, month, day)}.merge(attributes)
+    user_id = attributes.delete(:user_id)
+    deal = Deal::General.new(attributes)
+    deal.user_id = user_id
+    deal.save!
+    deal
   end
   
   # 残高を取得する

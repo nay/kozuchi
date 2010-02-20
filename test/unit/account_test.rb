@@ -92,7 +92,13 @@ class Account::BaseTest < ActiveSupport::TestCase
   
   # 使われていたら消せない
   def test_deletable_used
-    d = Deal::General.new(:user_id => users(:old).id, :minus_account_id => accounts(:first_cache).id, :plus_account_id => accounts(:deletable_one).id, :amount => 2000, :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
+    d = Deal::General.new(:user_id => users(:old).id,
+#      :minus_account_id => accounts(:first_cache).id,
+#      :plus_account_id => accounts(:deletable_one).id,
+#      :amount => 2000,
+      :debtor_entries_attributes => [{:account_id => accounts(:deletable_one).id, :amount => 2000}],
+      :creditor_entries_attributes => [{:account_id => accounts(:first_cache).id, :amount => -2000}],
+      :date => Date.new(2007, 1, 1), :summary => "", :confirmed => true)
     d.save!
     a = accounts(:deletable_one)
     assert_equal false, a.deletable?

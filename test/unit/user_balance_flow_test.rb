@@ -151,7 +151,7 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
   def test_balance_in_multil_user
     create_deal 3, 1, @bank, @food, 1000
     create_balance 3, 3, @bank, 4000
-    create_deal 3, 1, @second_cache, @food, 1000
+    create_deal 3, 1, @second_cache, @second_food, 1000
     create_balance 3, 3, @second_cache, 2000
     
     assert_equal 4000, balance(@first_user, 3, 4, @bank)
@@ -209,9 +209,19 @@ class UserBalanceFlowTest < ActiveSupport::TestCase
   end
 
   private
+  # TODO
   def create_deal(month, day, from, to, amount)
     attributes = {:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :user_id => to.user_id, :date => Date.new(@year, month, day)}
-    Deal::General.create!(attributes)
+    user_id = attributes.delete(:user_id)
+    amount = attributes.delete(:amount)
+    plus_account_id = attributes.delete(:plus_account_id)
+    minus_account_id = attributes.delete(:minus_account_id)
+    deal = Deal::General.new(attributes)
+    deal.user_id = user_id
+    deal.debtor_entries_attributes = [{:account_id => plus_account_id, :amount => amount}]
+    deal.creditor_entries_attributes = [{:account_id => minus_account_id, :amount => amount.to_i * -1}]
+    deal.save!
+    deal
   end
   
   def create_balance(month, day, account, balance)
