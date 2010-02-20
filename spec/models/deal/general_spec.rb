@@ -88,14 +88,15 @@ describe Deal::General do
         user = users(:deal_test_user)
         deal = Deal::General.new(:summary => "test", :date => Date.today)
         deal.user_id = user.id
-        deal.entries.build(
+        deal.creditor_entries.build(
           :account_id => @cache.id,
           :amount => -10000)
-        deal.entries.build(
+        deal.debtor_entries.build(
           :account_id => @bank.id,
           :amount => 10000)
         deal.save.should be_true
-        deal.entries.detect{|e| e.new_record?}.should be_nil
+        deal.creditor_entries.detect{|e| e.new_record?}.should be_nil
+        deal.debtor_entries.detect{|e| e.new_record?}.should be_nil
       end
     end
 
@@ -141,8 +142,8 @@ describe Deal::General do
           # taro_cache から taro_hanako へ 300円貸した
           @deal = Deal::General.new(:summary => "test", :date => Date.today)
           @deal.user_id = @taro.id
-          @deal.entries.build(:account_id => @taro_cache.id, :amount => -300)
-          @deal.entries.build(:account_id => @taro_hanako.id, :amount => 300)
+          @deal.creditor_entries.build(:account_id => @taro_cache.id, :amount => -300)
+          @deal.debtor_entries.build(:account_id => @taro_hanako.id, :amount => 300)
           @deal.save!
           @linked_entry = @deal.entries.detect{|e| e.account_id == @taro_hanako.id}
           raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?

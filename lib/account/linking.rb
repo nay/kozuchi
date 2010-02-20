@@ -77,14 +77,14 @@ module Account::Linking
         :date => linked_entry_date,
         :confirmed => false)
       deal.user_id = self.user_id
-      my_entry = deal.entries.build(
+      my_entry = deal.creditor_entries.build(
         :account_id => self.id,
         :amount => linked_entry_amount * -1, :skip_linking => true)
       my_entry.linked_ex_entry_id = linked_ex_entry_id
       my_entry.linked_ex_deal_id = linked_ex_deal_id
       my_entry.linked_user_id = linked_user_id
       my_entry.linked_ex_entry_confirmed = linked_ex_entry_confirmed
-      deal.entries.build(
+      deal.debtor_entries.build(
         :account_id => mate_account.id,
         :amount => linked_entry_amount, :skip_linking => true)
       deal.save!

@@ -175,7 +175,13 @@ describe Entry::Base do
   
   # TODO: dealの作り方をなおすまでとりあえず
   def new_deal(month, day, from, to, amount, year = 2008)
-    d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
+    d = Deal::General.new(:summary => "#{month}/#{day}の買い物",
+      :debtor_entries_attributes => [{:account_id => to.id, :amount => amount}],
+      :creditor_entries_attributes => [{:account_id => from.id, :amount => amount.to_i*-1}],
+#      :amount => amount,
+#      :minus_account_id => from.id,
+#      :plus_account_id => to.id,
+      :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
   end

@@ -25,7 +25,12 @@ module DealsSpecHelper
         plus_account_id = account.id
       end
     end
-    d = Deal::General.new(:summary => "#{month}/#{day}の買い物", :amount => amount, :minus_account_id => minus_account_id, :plus_account_id => plus_account_id, :date => Date.new(year, month, day))
+    d = Deal::General.new(:summary => "#{month}/#{day}の買い物",
+      :debtor_entries_attributes => [{:account_id => plus_account_id, :amount => amount}],
+      :creditor_entries_attributes => [{:account_id => minus_account_id, :amount => amount.to_i*-1}],
+#      :amount => amount, :minus_account_id => minus_account_id,
+#      :plus_account_id => plus_account_id,
+      :date => Date.new(year, month, day))
     d.user_id = user_id
     d
   end

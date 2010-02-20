@@ -54,7 +54,13 @@ describe User do
   end
 
   def new_deal(month, day, from, to, amount, year = 2008)
-    d = Deal::General.new(:summary => "#{month}/#{day}のデータ", :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id, :date => Date.new(year, month, day))
+    d = Deal::General.new(:summary => "#{month}/#{day}のデータ",
+#      :amount => amount,
+      :debtor_entries_attributes => [{:account_id => to.id, :amount => amount}],
+      :creditor_entries_attributes => [{:account_id => from.id, :amount => amount.to_i * -1}],
+#      :minus_account_id => from.id,
+#      :plus_account_id => to.id,
+      :date => Date.new(year, month, day))
     d.user_id = to.user_id
     d
   end

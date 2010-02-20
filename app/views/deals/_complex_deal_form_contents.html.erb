@@ -13,17 +13,20 @@
         <div>借方</div>
       <% end %>
       <% f.fields_for entry_types.first do |e| %>
-        <% next if e.object.marked_for_destruction? %>
-      <div>
-        <div style="float:left;">
-        <%= e.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tab_index += 1 %>
-        </div>
-        <div style="float:left;">円</div>
-        <div style="float:left;">
-        <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
-        </div>
-        <div style="clear:left;"></div>
-      </div>
+        <% if e.object.marked_for_destruction? %>
+          <%= e.hidden_field :_delete, :value => '1' %>
+        <% else %>
+          <div>
+            <div style="float:left;">
+            <%= e.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tab_index += 1 %>
+            </div>
+            <div style="float:left;">円</div>
+            <div style="float:left;">
+            <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            </div>
+            <div style="clear:left;"></div>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <% unless current_user.preferences.bookkeeping_style? %>
@@ -34,17 +37,20 @@
         <div>貸方</div>
       <% end %>
       <% f.fields_for entry_types.last do |e| %>
-        <% next if e.object.marked_for_destruction? %>
-      <div>
-        <div style="float:left;">
-        <%= e.text_field :reversed_amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => (tab_index += 1) %>
-        </div>
-        <div style="float:left;">円</div>
-        <div style="float:left;">
-        <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
-        </div>
-        <div style="clear:left;"></div>
-      </div>
+        <% if e.object.marked_for_destruction? %>
+          <%= e.hidden_field :_delete, :value => '1' %>
+        <% else %>
+          <div>
+            <div style="float:left;">
+            <%= e.text_field :reversed_amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => (tab_index += 1) %>
+            </div>
+            <div style="float:left;">円</div>
+            <div style="float:left;">
+            <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            </div>
+            <div style="clear:left;"></div>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <div style="clear: left;"></div>

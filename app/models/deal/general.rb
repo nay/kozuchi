@@ -35,20 +35,25 @@ class Deal::General < Deal::Base
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
       # 金額も口座IDも入っていないentry情報は無視する
       attributes = attributes.dup
+      attributes = attributes.values if attributes.kind_of?(Hash)
 
-      attributes.reject!{|key, value| value[:amount].blank? && value[:account_id].blank?}
+      # attributes が array のときは　key が相当する
+      attributes.reject!{|value| value[:amount].blank? && value[:account_id].blank?}
 
+      # 更新時は ID ではなく、内容で既存のデータと紐づける
       unless new_record?
-        not_matched_old_entries = send(:"#{side}_entries").dup
-        not_matched_new_entries = attributes.values
+        not_matched_old_entries = send(:"#{side}_entries", true).dup
+        not_matched_new_entries = attributes
 
         # attirbutes の中と引き当てていく
+        matched_old_entries = []
         not_matched_old_entries.each do |old|
           if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
             not_matched_new_entries.delete(matched_hash)
-            not_matched_old_entries.delete(old)
+            matched_old_entries << old
           end
         end
+        not_matched_old_entries -= matched_old_entries
 
         # 引き当てられなかったhashからは :id をなくす
         # これにより、account_id の変更を防ぐ
@@ -57,10 +62,14 @@ class Deal::General < Deal::Base
         end
 
         # 引き当てられなかったold entriesを削除予定にする
+        # 現在の関連のなかの該当オブジェクトにマークする
         not_matched_old_entries.each do |old|
-          old.mark_for_destruction
+          e = send(:"#{side}_entries").detect{|e| e.id == old.id}
+          raise "Could not find entry for 'old'" unless e
+          e.mark_for_destruction
         end
       end
+
       send(:"#{side}_entries_attributes_without_account_care=", attributes)
     end
 
