@@ -2,33 +2,8 @@
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
     <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
-  <%
-    amount_field_proc = nil
-    debtor_account_field_proc = nil
-    creditor_account_field_proc = nil
-  %>
   <div class="entry">
-    <% f.fields_for :debtor_entries do |e| %>
-      <% if e.object.marked_for_destruction? %>
-        <%= e.hidden_field :_delete, :value => '1' %>
-      <% else %>
-        <%
-          amount_field_proc = lambda{|tabindex | e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)}
-          amount_field_proc += e.hidden_field(:amount) if f.object.settlement_attached?
-          debtor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex}
-        %>
-      <% end %>
-    <% end %>
-
-    <% f.fields_for :creditor_entries do |e| %>
-      <% if e.object.marked_for_destruction? %>
-        <%= e.hidden_field :_delete, :value => '1' %>
-      <% else %>
-        <%
-          creditor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex}
-        %>
-      <% end %>
-    <% end %>
+    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs %>
 
     <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
       :locals => {

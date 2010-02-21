@@ -1,5 +1,31 @@
 module DealsHelper
 
+  def write_hiddens_and_get_simple_deal_procs(f)
+    amount_field_proc = nil
+    debtor_account_field_proc = nil
+    creditor_account_field_proc = nil
+    f.fields_for :debtor_entries do |e|
+      if e.object.marked_for_destruction?
+        concat(e.hidden_field :_delete, :value => '1')
+      else
+          amount_field_proc = lambda{|tabindex | e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)}
+          amount_field_proc += e.hidden_field(:amount) if f.object.settlement_attached?
+          debtor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex}
+      end
+    end
+
+    f.fields_for :creditor_entries do |e|
+      if e.object.marked_for_destruction?
+        concat(e.hidden_field :_delete, :value => '1')
+      else
+        creditor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex}
+      end
+    end
+
+    return amount_field_proc, debtor_account_field_proc, creditor_account_field_proc
+  end
+
+
   def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil)
     tab_index = start_tab_index
     text = content_tag(:div, :id => 'datebox') do
