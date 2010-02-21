@@ -2,43 +2,43 @@
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
     <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
+  <%
+    amount_field_proc = nil
+    debtor_account_field_proc = nil
+    creditor_account_field_proc = nil
+  %>
   <div class="entry">
-    <%
-      entry_types = [:debtor_entries, :creditor_entries]
-      entry_types.reverse! unless current_user.preferences.bookkeeping_style?
-    %>
-
-    <% f.fields_for entry_types.first do |d| %>
-      <% if d.object.marked_for_destruction? %>
-        <%= d.hidden_field :_delete, :value => '1' %>
+    <% f.fields_for :debtor_entries do |e| %>
+      <% if e.object.marked_for_destruction? %>
+        <%= e.hidden_field :_delete, :value => '1' %>
       <% else %>
-        <div>
-          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
-          <% if f.object.settlement_attached? %>
-            <%= d.hidden_field :amount %>
-          <% end %>
-        </div>
-
-        <div>円</div>
-        <% f.fields_for entry_types.last do |c| %>
-          <% if c.object.marked_for_destruction? %>
-            <%= c.hidden_field :_delete, :value => '1' %>
-          <% else %>
-            <div style="padding-left: 16px;">
-              <%= '(借)' if bookkeeping_style? %><%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :debtor_entries), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
-            </div>
-          <% end %>
-        <% end %>
-
-        <% unless current_user.preferences.bookkeeping_style? %>
-        <div style="padding-left: 16px;">→</div>
-        <% end %>
-
-        <div style="padding-left: 16px;">
-          <%= '(貸)' if bookkeeping_style? %><%= d.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :debtor_entries), f.object.debtor_entries.first.try(:account_id)), :tabindex => 13 %>
-        </div>
+        <%
+          amount_field_proc = lambda{|tabindex | e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)}
+          amount_field_proc += e.hidden_field(:amount) if f.object.settlement_attached?
+          debtor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex}
+        %>
       <% end %>
     <% end %>
+
+    <% f.fields_for :creditor_entries do |e| %>
+      <% if e.object.marked_for_destruction? %>
+        <%= e.hidden_field :_delete, :value => '1' %>
+      <% else %>
+        <%
+          creditor_account_field_proc = lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex}
+        %>
+      <% end %>
+    <% end %>
+
+    <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
+      :locals => {
+        :amount_field_proc => amount_field_proc,
+        :debtor_account_field_proc => debtor_account_field_proc,
+        :creditor_account_field_proc => creditor_account_field_proc,
+        :tab_index => 10 # この次からはじまる
+      }
+    %>
+
     <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
     <% unless @deal.new_record? %>
       <%= link_to_remote('複数記入にする' , :update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';" ) %>
