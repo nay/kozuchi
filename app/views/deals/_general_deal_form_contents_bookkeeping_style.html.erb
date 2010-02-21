@@ -1,0 +1,12 @@
+        <div>
+          <%= amount_field_proc.call(tab_index+=1) %>
+        </div>
+        <div>円</div>
+
+        <div style="padding-left: 16px;">
+          (借)<%= debtor_account_field_proc.call(tab_index+=1) %>
+        </div>
+
+        <div style="padding-left: 16px;">
+          (貸)<%= creditor_account_field_proc.call(tab_index+=1) %>
+        </div>
