@@ -3,7 +3,7 @@
     <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
   <div class="entry">
-    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs %>
+    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
 
     <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
       :locals => {

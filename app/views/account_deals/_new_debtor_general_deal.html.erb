@@ -4,44 +4,16 @@
     <div id="patterns"><%= render :partial => "deal/patterns" %></div>
   </div>
   <div class="entry">
-    <% if bookkeeping_style? %>
-      <% f.fields_for :debtor_entries do |d| %>
-        <%= d.hidden_field :account_id, :value => @account.id %>
-        <div>
-          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
-        </div>
+    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f, :debtor_account_fixed => @account) %>
 
-        <div>円</div>
-
-      <% end %>
-      <% f.fields_for :creditor_entries do |c| %>
-        <div style="padding-left: 16px;">(借)<input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
-
-        <div style="padding-left: 16px;">
-          (貸)<%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
-        </div>
-      <% end %>
-
-    <% else %>
-      <% f.fields_for :debtor_entries do |d| %>
-        <%= d.hidden_field :account_id, :value => @account.id %>
-        <div>
-          <%= d.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => '11' %>
-        </div>
-
-        <div>円</div>
-
-      <% end %>
-      <% f.fields_for :creditor_entries do |c| %>
-        <div>
-          <%= c.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), f.object.creditor_entries.first.try(:account_id)), :tabindex => 13 %>
-        </div>
-
-        <div>→</div>
-
-        <div><input type="text" disabled="true" class="readonly" value="<%= @account.name %>" tabindex="12" /></div>
-      <% end %>
-    <% end %>
+    <%= render :partial => "/deals/general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
+      :locals => {
+        :amount_field_proc => amount_field_proc,
+        :debtor_account_field_proc => debtor_account_field_proc,
+        :creditor_account_field_proc => creditor_account_field_proc,
+        :tab_index => 10 # この次からはじまる
+      }
+    %>
     <%= f.submit '記入', :tablindex => "14", :class => 'button' %>
     <div style="clear:left;"></div>
   </div>
