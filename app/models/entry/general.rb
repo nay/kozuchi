@@ -11,6 +11,12 @@ class Entry::General < Entry::Base
 
   validate :validate_amount_is_not_zero
 
+  attr_writer :partner_account_name # 相手勘定名
+
+  def partner_account_name
+    @parter_account_name ||= deal.partner_account_name_of(self)
+  end
+
   def reversed_amount=(ra)
     self.amount = ra.blank? ? ra : ra.to_i * -1
   end

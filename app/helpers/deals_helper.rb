@@ -1,5 +1,10 @@
 module DealsHelper
 
+  # 仕訳帳中の指定された deal を示すURLを生成する
+  def icon_to_deal_in_monthly(year, month, deal_id)
+    link_to '→', monthly_deals_path(:year => year, :month => month, :updated_deal_id => deal_id, :anchor => deal_id.to_s)
+  end
+
   def write_hiddens_and_get_simple_deal_procs(f, options = {})
     amount_field_proc = nil
     debtor_account_field_proc = nil

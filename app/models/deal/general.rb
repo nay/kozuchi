@@ -1,6 +1,8 @@
 # 異動明細クラス。
 class Deal::General < Deal::Base
 
+  SHOKOU = '(諸口)'
+
   module EntriesAssociationExtension
     def build(*args)
       record = super
@@ -136,7 +138,7 @@ class Deal::General < Deal::Base
   # 貸し方勘定名を返す
   def debtor_account_name
     debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.name : "諸口"
+    debtor_entries.size == 1 ? debtor_entries.first.account.name : SHOKOU
   end
 
   def debtor_amount
@@ -144,8 +146,13 @@ class Deal::General < Deal::Base
   end
   # 借り方勘定名を返す
   def creditor_account_name
-    # TODO: 実装はあとで変えたい
-    entries.detect{|e| e.amount < 0}.account.name
+    creditor_entries
+    creditor_entries.size == 1 ? creditor_entries.first.account.name : SHOKOU
+  end
+
+  def partner_account_name_of(e)
+    raise "invalid entry" if e.deal_id != self.id
+    e.amount.to_i >= 0 ? creditor_account_name : debtor_account_name
   end
 
   def plus_account_id

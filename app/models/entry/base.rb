@@ -39,6 +39,10 @@ class Entry::Base < ActiveRecord::Base
   named_scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   named_scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
 
+  def balance?
+    !!balance
+  end
+
   # StringならString のまま , はとる
   def self.parse_amount(value)
     value.kind_of?(String) ? value.gsub(/,/, '') : value

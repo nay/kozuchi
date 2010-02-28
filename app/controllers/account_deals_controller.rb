@@ -43,21 +43,39 @@ class AccountDealsController < ApplicationController
     flow_sum = 0
     for deal in deals do
       for account_entry in deal.entries do
-        next unless (account_entry.account.id != @account.id.to_i) || account_entry.balance
-        if account_entry.balance
+        next if account_entry.account.id != @account.id.to_i
+
+        if account_entry.balance?
           account_entry.unknown_amount = account_entry.balance - balance_estimated
           balance_estimated = account_entry.balance
           flow_sum -= account_entry.amount unless account_entry.initial_balance?
-          # 通常明細
         else
           # 確定のときだけ残高に反映
           if deal.confirmed?
-            balance_estimated -= account_entry.amount
-            flow_sum -= account_entry.amount
+            balance_estimated += account_entry.amount
+            flow_sum += account_entry.amount
           end
           account_entry.balance_estimated = balance_estimated
           account_entry.flow_sum = flow_sum
+          account_entry.partner_account_name = deal.partner_account_name_of(account_entry) # 効率上自分で入れておく
         end
+
+
+#        next unless (account_entry.account.id != @account.id.to_i) || account_entry.balance
+#        if account_entry.balance
+#          account_entry.unknown_amount = account_entry.balance - balance_estimated
+#          balance_estimated = account_entry.balance
+#          flow_sum -= account_entry.amount unless account_entry.initial_balance?
+#          # 通常明細
+#        else
+#          # 確定のときだけ残高に反映
+#          if deal.confirmed?
+#            balance_estimated -= account_entry.amount
+#            flow_sum -= account_entry.amount
+#          end
+#          account_entry.balance_estimated = balance_estimated
+#          account_entry.flow_sum = flow_sum
+#        end
         @entries << account_entry
       end
     end

@@ -13,12 +13,17 @@ ActionController::Routing::Routes.draw do |map|
 
   map.with_options :controller => 'deals' do |deals|
     deals.resources :deals, :only => [:edit, :update, :destroy], :member => {:confirm => :put}
+    deals.monthly_deals 'deals/:year/:month', :action => 'index',
+      :requirements => {:year => /[0-9]*/, :month => /[0-9]*/}
+
     deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
     deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
     deals.complex_deals 'complex_deals', :action => 'create_complex_deal', :conditions => {:method => :post}
     deals.new_general_deal 'general_deals/new', :action => 'new_general_deal', :conditions => {:method => :get}
     deals.new_balance_deal 'balance_deals/new', :action => 'new_balance_deal', :conditions => {:method => :get}
     deals.new_compex_deal 'complex_deals/new', :action => 'new_compex_deal', :conditions => {:method => :get}
+
+
     # TODO: 変更
   end
 
