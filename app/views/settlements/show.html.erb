@@ -42,12 +42,12 @@
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
-      <th style="width: 4em;"></th>
+      <th class="icon_to_deal"></th>
     </tr>
     <% for target_entry in @settlement.target_entries %>
       <tr>
         <%= display_account_entry(target_entry)%>
-        <td><%= link_to('→',{:controller => 'deals', :action => 'jump', :id => target_entry.deal.id}) %></td>
+        <td class="icon_to_deal"><%= icon_to_deal_in_monthly(target_entry.year, target_entry.month, target_entry.deal_id) %></td>
       </tr>
     <% end %>
     <% #target_entries の合計がプラスであるときに出す %>
@@ -77,11 +77,11 @@
   <table class="book">
     <tr>
       <%= display_account_entry_header %>
-      <th style="width: 4em;"></th>
+      <th class="icon_to_deal"></th>
     </tr>
     <tr>
       <%= display_account_entry(@settlement.result_entry)%>
-      <td><%= link_to('→',{:controller => 'deals', :action => 'jump', :id => @settlement.result_entry.deal.id}) %></td>
+      <td class="icon_to_deal"><%= icon_to_deal_in_monthly(@settlement.result_entry.year, @settlement.result_entry.month, @settlement.result_entry.deal_id) %></td>
     </tr>
   </table>
   <% end %>

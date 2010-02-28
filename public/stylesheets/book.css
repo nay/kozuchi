@@ -233,6 +233,16 @@ ul {
   white-space: nowrap;
 }
 
+.icon_to_deal {
+  width: 16px;
+  text-align :center;
+  white-space: nowrap;
+}
+.icon_to_deal a {
+  text-decoration: none;
+  display: block;
+}
+
 input.readonly {
   background-color: floralwhite;
 }

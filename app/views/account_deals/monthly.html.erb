@@ -70,7 +70,7 @@
           合計
         <% end -%>
       </th>
-      <th class="jump">
+      <th class="icon_to_deal">
       </th>
     </tr>
   </table>
@@ -81,7 +81,7 @@
         <td class="number"> </td>
         <td>期首残高</td>
         <td class="amount"><%= number_with_delimiter(@balance_start) %></td>
-        <td class="jump"></td>
+        <td class="icon_to_deal"></td>
       </tr>
     </table>
   <% end -%>
@@ -96,7 +96,7 @@
           <td class="amount"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
           <td class="amount"><%= number_with_delimiter(entry.unknown_amount.abs) if entry.unknown_amount < 0%></td>
           <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum))%></td>
-          <td class="jump"></td>
+          <td class="icon_to_deal"></td>
         </tr>
       <% else %>
         <tr <%= 'class="unconfirmed"' if !entry.deal.confirmed? %>>
@@ -107,7 +107,7 @@
           <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 %></td>
           <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 %></td>
           <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(@account.kind_of?(Account::Asset) ? entry.balance_estimated : (@account.kind_of?(Account::Income) ? entry.flow_sum * -1 : entry.flow_sum)) : '*' %></td>
-          <td class="jump"><%= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id %></td>
+          <td class="icon_to_deal"><%= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id %></td>
         </tr>
       <% end %>
     <% end %>
@@ -119,7 +119,7 @@
         <td class="number"> </td>
         <td >期末残高</td>
         <td class="amount"><%= number_with_delimiter(@balance_end) %></td>
-        <td class="jump"></td>
+        <td class="icon_to_deal"></td>
       </tr>
     </table>
   <% else -%>
@@ -129,7 +129,7 @@
         <td class="number"> </td>
         <td >期末合計</td>
         <td class="amount"><%= number_with_delimiter(@account.kind_of?(Account::Income) ? @flow_end * -1 : @flow_end) %></td>
-        <td class="jump"></td>
+        <td class="icon_to_deal"></td>
     </tr>
     </table>
   <% end -%>

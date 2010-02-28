@@ -42,7 +42,7 @@ td.previous_month {
 }
 
 td.date, th.date {
-  width: 90px;
+  width: 100px;
 }
 
 td.number, th.number {
@@ -81,6 +81,9 @@ table.listing .timestamp {
   color: #301000;
   font-weight: bold;
   font-size: 110%;
+}
+th.amount {
+  text-align: center;
 }
 .amount {
   text-align: right;

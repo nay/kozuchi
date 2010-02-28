@@ -1,7 +1,20 @@
 module DealsHelper
 
   # 仕訳帳中の指定された deal を示すURLを生成する
-  def icon_to_deal_in_monthly(year, month, deal_id)
+  # 以下のいずれかの引数をとる
+  # * dealオブジェクトのみ
+  # * entryオブジェクトのみ
+  # * year, month, deal_id の３つ
+  def icon_to_deal_in_monthly(*args)
+    year, month, deal_id = case args.first
+    when Deal::Base
+      [args.first.year, args.first.month, args.first.id]
+    when Entry::Base
+      [args.first.year, args.first.month, args.first.deal_id]
+    else
+      raise "3 parameters required" unless args.size == 3
+      args
+    end
     link_to '→', monthly_deals_path(:year => year, :month => month, :updated_deal_id => deal_id, :anchor => deal_id.to_s)
   end
 
