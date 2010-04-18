@@ -47,6 +47,13 @@ describe Deal::General do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1300, :taro_bank => 0})
       deal.valid?.should be_false
     end
+    # この制約は不具合を出にくくするために入れている
+    # 暫定措置
+    it "複合Dealの各Entryの口座に重複がないこと" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
+      deal.valid?.should be_false
+    end
+
     it "同じ口座間での移動が検証を通らないこと" do
       deal = new_deal(3, 1, :taro_food, :taro_food, 300)
       deal.valid?.should be_false

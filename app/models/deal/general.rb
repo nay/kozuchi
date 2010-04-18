@@ -256,6 +256,12 @@ class Deal::General < Deal::Base
 
     errors.add_to_base("借方の記入が必要です。") if debtor_entries.empty?
     errors.add_to_base("貸方の記入が必要です。") if creditor_entries.empty?
+
+    # TODO: ひとまず、Deal内のEntryの口座は一意でなければならないこととする
+    # いずれ変更したい
+    # 口座の吸収合併などを実装する場合は注意
+    # 重複があってはいけない
+    errors.add_to_base("同じ口座を複数に記入することはできません。") if (debtor_entries.not_marked.map(&:account_id) + creditor_entries.not_marked.map(&:account_id)).uniq!
   end
 
 
