@@ -107,14 +107,17 @@ class Settlement < ActiveRecord::Base
         minus_account_id = self.result_partner_account_id
       end
       result_deal = Deal::General.new(
-        :minus_account_id => minus_account_id,
-        :plus_account_id => plus_account_id,
-        :amount => amount.abs,
-        :user_id => self.user_id,
+        :debtor_entries_attributes => [{:account_id => plus_account_id, :amount => amount.abs}],
+        :creditor_entries_attributes => [{:account_id => minus_account_id, :amount => amount.abs*-1}],
+#        :minus_account_id => minus_account_id,
+#        :plus_account_id => plus_account_id,
+ #       :amount => amount.abs,
+#        :user_id => self.user_id,
         :date => self.result_date,
         :summary => self.name,
         :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする      
       )
+      result_deal.user_id = user_id # TODO: こうでないとだめなことを確認
       result_deal.save!
       self.result_entry = result_deal.entries.detect{|e| e.account_id.to_s == self.account_id.to_s}
     end
