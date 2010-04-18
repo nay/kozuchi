@@ -148,6 +148,7 @@ class Deal::Base < ActiveRecord::Base
         e.after_confirmed
         # link先に通知する
         if e.linked_ex_entry_id
+          raise "Account #{e.account_id} does not have a linked_account though entry #{e.id} has linked_ex_entry_id #{e.linked_ex_entry_id} !" unless e.account.linked_account
           e.account.linked_account.receive_confirmation_from(e.id, e.user_id)
         end
       end
