@@ -1,0 +1,90 @@
+SubResources
+============
+sub_resources plugin adds several features to ActionController::Resources so that you can implement some common patterns in the RESTful way.
+
+To install this plugin, please use script/plugin install.
+
+ > script/plugin install git://github.com/nay/sub_resources.git
+
+Firstly, the regular map.resources and map.resource support good url-mapping patterns, but there are still some common RESTful patterns unsupported. Most of them are grouped in two types.
+
+1. The case that several kinds of resources are implemented in one controller. In such a controller, there are one main resource type and other subordinate resource types, which I call 'sub resources'. For example, it's the case that 'GET /reports/3/tags' is expected to be mapped with ReportsController#tags instead of ReportTagsController#index.
+
+2. The case that you want to describe edit/update/destroy to multiple records. For example, 'PUT /reports/'  will be expected to be mapped with ReportsController#update_all.
+
+sub_resources plugin provides solutions for these requests.
+
+The solution for the first problem is to use :sub_resources / :sub_resource option to map.resources / map.resource.
+
+  map.resources :reports, :sub_resources => :tags
+
+If you use :sub_resource option, that is handled as a single resource.
+
+ map.resources :reports, :sub_resource => :image
+
+You can use an array as the value.
+
+  map.resources :reports, :sub_resources => [:tags, :attached_files]
+
+Also, you can use a hash and specify common options to the sub resources.
+
+  map.resources :reports, :sub_resources => {:tag => {:only => [:index]}}
+
+
+So, if you write the configuration like this,
+
+  map.resources :reports, :sub_resources => {
+    :tag => {:member => {:foo => :get}, :collection => {:bar => :post}}
+  }
+
+It generates mappings like this;
+
+GET /reports/:id/tags  (report_tags)
+     ReportsController#tags
+POST /reports/:id/tags
+     #create_tag
+GET /reports/:id/tags/:tag_id  (report_tag)
+     #tag
+PUT /reports/:id/tags/:tag_id
+     #update_tag
+DELETE /reports/:id/tags/:tag_id
+     #destroy_tag
+GET /reports/:id/tags/new (new_report_tag)
+     #new_tag
+GET /reports/:id/tags/:tag_id/edit (edit_report_tag)
+     #edit_tag
+GET /reports/:id/tags/:tag_id/foo (foo_report_tag)
+     #foo_tag
+POST /reports/:id/tags/bar (bar_report_tags)
+     #bar_tags
+
+To describe edit/update/destroy action for multiple records, use specific action names.
+sub_resources plugin handles 'edit_all', 'update_all', 'destroy_all' as special actions so only needed is to use those action names.
+
+  map.resources :reports, :collection => {:edit_all => :get, :update_all => :put, :destroy_all => :delete}
+
+Then it generates mappings like this;
+
+GET        /reports/edit (edit_all_reports)
+  ReportsController#edit_all
+PUT        /reports (reports)
+  #update_all
+DELETE /reports
+  #destroy_all
+
+This special action names are also available in sub resources.
+
+  map.resources :reports, :sub_resources => {:tags => {:collection => {:edit_all => :get, :update_all => :put, :destroy_all => :delete}}}
+
+It generates mappings like this;
+
+GET       /reports/:id/tags/edit (edit_report_tags)
+  #edit_tags
+PUT       /reports/:id/tags (report_tags)
+  #update_tags
+DELETE /reports/:id/tags
+  #destroy_tags
+
+This plugin was tested on Rails 2.3.3, Rails 2.3.4 and Rails 2.3.5.
+
+Copyright (c) 2009 Yasuko Ohba, released under the MIT license
