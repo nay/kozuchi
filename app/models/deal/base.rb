@@ -140,7 +140,6 @@ class Deal::Base < ActiveRecord::Base
 
   private
 
-  # TODO: entry にも confirmed を持たせたい
   # general に移動すべきか？
   def update_link_when_confirmed
     if changed.include?("confirmed")
@@ -148,8 +147,10 @@ class Deal::Base < ActiveRecord::Base
         e.after_confirmed
         # link先に通知する
         if e.linked_ex_entry_id
-          raise "Account #{e.account_id} does not have a linked_account though entry #{e.id} has linked_ex_entry_id #{e.linked_ex_entry_id} !" unless e.account.linked_account
-          e.account.linked_account.receive_confirmation_from(e.id, e.user_id)
+          raise "No linked_user in entry #{e.id} though it has linked_ex_entry_id #{e.linked_ex_entry_id}" unless e.linked_user
+          e.linked_user.account_with_entry_id(e.linked_ex_entry_id) do |account|
+            account.receive_confirmation_from(e.id, e.user_id)
+          end
         end
       end
     end

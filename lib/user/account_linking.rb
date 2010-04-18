@@ -23,6 +23,15 @@ module User::AccountLinking
 #      r.destroy
 #    end
 #  end
+  def account_with_entry_id(entry_id)
+    account = entries.find_by_id(entry_id).try(:account)
+    if account && block_given?
+      yield account
+    else
+      account
+    end
+  end
+
   def find_account_id_by_name(name)
     a = accounts.find_by_name(name)
     a ? a.id : nil

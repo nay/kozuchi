@@ -41,6 +41,8 @@ class Entry::Base < ActiveRecord::Base
 
   delegate :year, :month, :day, :to => :date
 
+  belongs_to :linked_user, :class_name => 'User', :foreign_key => 'linked_user_id'
+
   def balance?
     !!balance
   end
@@ -118,10 +120,10 @@ class Entry::Base < ActiveRecord::Base
   def request_linking
     return if !changed? # 内容が変更されていななら何もしない
     return if skip_linking
-    return if !account || !account.linked_account || !self.deal
+    return if !account || !account.destination_account || !self.deal
     # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
-    self.linked_ex_entry_id, self.linked_ex_deal_id, self.linked_ex_entry_confirmed = account.linked_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date, self.deal.confirmed?)
-    self.linked_user_id = account.linked_account.user_id
+    self.linked_ex_entry_id, self.linked_ex_deal_id, self.linked_ex_entry_confirmed = account.destination_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date, self.deal.confirmed?)
+    self.linked_user_id = account.destination_account.user_id
 
     update_links_without_callback
   end
@@ -164,7 +166,7 @@ class Entry::Base < ActiveRecord::Base
   def request_unlinking
     return if @skip_unlinking
         # TODO: linked_account_idもほしい　関連づけかえられてたら困る
-    account.linked_account.unlink_to(self.id, self.user_id) if account && account.linked_account
+    account.destination_account.unlink_to(self.id, self.user_id) if account && account.destination_account
   end
 
   def contents_updated?

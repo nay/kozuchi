@@ -130,18 +130,18 @@ describe Deal::General do
         @home_hanako = accounts(:home_hanako)
         @home_income_from_two = accounts(:home_income_from_two)
 
-        raise "前提：@taro_hanakoは@hanako_taroと連携する" unless @taro_hanako.linked_account == @hanako_taro
-        raise "前提：@hanako_taroは@taro_hanakoと連携する" unless @hanako_taro.linked_account == @taro_hanako
+        raise "前提：@taro_hanakoは@hanako_taroと連携する" unless @taro_hanako.destination_account == @hanako_taro
+        raise "前提：@hanako_taroは@taro_hanakoと連携する" unless @hanako_taro.destination_account == @taro_hanako
 
-        raise "前提：@taro_homeは@home_taroと連携する" unless @taro_home.linked_account == @home_taro
-        raise "前提：@home_taroは@taro_homeと連携する" unless @home_taro.linked_account == @taro_home
+        raise "前提：@taro_homeは@home_taroと連携する" unless @taro_home.destination_account == @home_taro
+        raise "前提：@home_taroは@taro_homeと連携する" unless @home_taro.destination_account == @taro_home
 
-        raise "前提：@home_hanakoは@hanako_homeと連携する" unless @home_hanako.linked_account == @hanako_home
-        raise "前提：@hanako_homeは@home_hanakoと連携する" unless @hanako_home.linked_account == @home_hanako
+        raise "前提：@home_hanakoは@hanako_homeと連携する" unless @home_hanako.destination_account == @hanako_home
+        raise "前提：@hanako_homeは@home_hanakoと連携する" unless @hanako_home.destination_account == @home_hanako
 
-        raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.linked_account == @home_income_from_two
-        raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.linked_account == @home_income_from_two
-        raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.linked_account.nil?
+        raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.destination_account == @home_income_from_two
+        raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.destination_account == @home_income_from_two
+        raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.destination_account.nil?
       end
 
       describe "Dealに２つEntryがあり、片方のみが連携しているとき" do
@@ -267,18 +267,18 @@ describe Deal::General do
         @home_hanako = accounts(:home_hanako)
         @home_income_from_two = accounts(:home_income_from_two)
 
-        raise "前提：@taro_hanakoは@hanako_taroと連携する" unless @taro_hanako.linked_account == @hanako_taro
-        raise "前提：@hanako_taroは@taro_hanakoと連携する" unless @hanako_taro.linked_account == @taro_hanako
+        raise "前提：@taro_hanakoは@hanako_taroと連携する" unless @taro_hanako.destination_account == @hanako_taro
+        raise "前提：@hanako_taroは@taro_hanakoと連携する" unless @hanako_taro.destination_account == @taro_hanako
 
-        raise "前提：@taro_homeは@home_taroと連携する" unless @taro_home.linked_account == @home_taro
-        raise "前提：@home_taroは@taro_homeと連携する" unless @home_taro.linked_account == @taro_home
+        raise "前提：@taro_homeは@home_taroと連携する" unless @taro_home.destination_account == @home_taro
+        raise "前提：@home_taroは@taro_homeと連携する" unless @home_taro.destination_account == @taro_home
 
-        raise "前提：@home_hanakoは@hanako_homeと連携する" unless @home_hanako.linked_account == @hanako_home
-        raise "前提：@hanako_homeは@home_hanakoと連携する" unless @hanako_home.linked_account == @home_hanako
+        raise "前提：@home_hanakoは@hanako_homeと連携する" unless @home_hanako.destination_account == @hanako_home
+        raise "前提：@hanako_homeは@home_hanakoと連携する" unless @hanako_home.destination_account == @home_hanako
 
-        raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.linked_account == @home_income_from_two
-        raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.linked_account == @home_income_from_two
-        raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.linked_account.nil?
+        raise "前提：@taro_home_costは@home_income_from_twoと連携する" unless @taro_home_cost.destination_account == @home_income_from_two
+        raise "前提：@hanako_home_costは@home_income_from_twoと連携する" unless @hanako_home_cost.destination_account == @home_income_from_two
+        raise "前提：@home_income_from_twoは連携記入先を持たない" unless @home_income_from_two.destination_account.nil?
       end
 
       describe "Dealに２つEntryがあり、片方のみが連携しているとき" do
@@ -304,6 +304,17 @@ describe Deal::General do
           @linked_entry.linked_ex_entry_confirmed?.should be_true
         end
 
+        # 一方向リンクのとき、destination_accountがないのに使っている不具合(#187)があったのでその確認スペック
+        it "taroからhanakoへのみ一方向に連携しているとき、連動して記入されたhanako側を確認したら、taro側に通知されること" do
+          @hanako_taro.link = nil
+          @hanako_taro.reload
+
+          @hanako_deal.confirmed = true
+          lambda{@hanako_deal.save!}.should_not raise_error
+          @linked_entry.reload
+          @linked_entry.linked_ex_entry_confirmed?.should be_true
+        end
+
         it "連携のあるentryのaccount_idを変更したら、確認していない相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
           @deal.attributes = {
@@ -317,6 +328,7 @@ describe Deal::General do
 
           Deal::General.find_by_id(@hanako_deal.id).should be_nil
         end
+
       end
     end
   end

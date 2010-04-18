@@ -16,7 +16,7 @@ describe Entry::Base do
     @cache_in_hanako = accounts(:account_entry_test_cache_in_hanako)
 
     raise "前提エラー：@user_hanakoと@user_taroが友達ではありません" unless @user_hanako.friend?(@user_taro)
-    raise "前提エラー：@hanako_in_taroに記入したものが@taro_in_hanakoに記入される設定になっていません" unless @hanako_in_taro.linked_account == @taro_in_hanako
+    raise "前提エラー：@hanako_in_taroに記入したものが@taro_in_hanakoに記入される設定になっていません" unless @hanako_in_taro.destination_account == @taro_in_hanako
   end
 
   describe "amount=" do

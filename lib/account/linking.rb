@@ -11,9 +11,12 @@ module Account::Linking
     self.link != nil || !self.link_requests.empty?
   end
 
-  def linked_account(force = false)
-    @linked_account = nil if force
-    @linked_account ||= (link ? link.target_account : nil)
+  # 送信先となっている口座（／口座プロキシ）を返す
+  # TODO: 名前を変更したい
+#  def linked_account(force = false)
+  def destination_account(force = false)
+    @destination_account = nil if force
+    @destination_account ||= (link ? link.target_account : nil)
   end
 
   # 送受信に関わらず、連携先の口座情報をハッシュの配列で返す。送信があるものを一番上にする。
