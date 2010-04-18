@@ -98,7 +98,10 @@ class Deal::General < Deal::Base
   end
 
   # sizeに満たない場合にフィールドを補完する
-  def fill_complex_entries(size = 5)
+  def fill_complex_entries(size = nil)
+    size ||= 5
+    # 大きいほうにあわせる
+    size = [debtor_entries.find_all{|e| !e.marked_for_destruction?}.size, creditor_entries.find_all{|e| !e.marked_for_destruction?}.size, size].max
     while debtor_entries.find_all{|e| !e.marked_for_destruction?}.size < size
       debtor_entries.build
     end

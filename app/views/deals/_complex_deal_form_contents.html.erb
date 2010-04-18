@@ -55,6 +55,7 @@
     </div>
     <div style="clear: left;"></div>
   </div>
+  <div style="text-align: right; padding-right: 100px;"><%= link_to_remote '記入欄を増やす', :update => @deal.new_record? ? 'deal_forms' : 'deal_editor', :url => deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), :submit => 'deal_form' %></div>
   <div>
       <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
   </div>

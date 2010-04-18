@@ -50,6 +50,7 @@ class ApplicationController < ActionController::Base
 
       # create_xxx
       define_method "create_#{deal_type}" do
+        size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
         @deal = @user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(params[:deal])
 
         if @deal.save
@@ -61,7 +62,7 @@ class ApplicationController < ActionController::Base
           end
         else
           if deal_type.to_s =~ /complex/
-            @deal.fill_complex_entries
+            @deal.fill_complex_entries(size)
           end
           render :update do |page|
             page[:deal_forms].replace_html render_options

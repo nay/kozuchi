@@ -8,6 +8,7 @@ class DealsController < ApplicationController
   before_filter :check_account, :load_target_date
   before_filter :find_date, :only => [:expenses, :daily]
   before_filter :find_deal, :only => [:edit, :update, :destroy]
+  before_filter :find_new_or_existing_deal, :only => [:create_entry]
   include ApplicationHelper
 
   # ----- 入力画面表示系 -----------------------------------------------
@@ -68,17 +69,25 @@ class DealsController < ApplicationController
     if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple?)
       @deal.fill_complex_entries
     end
-    render :partial => 'edit' # TODO: partialやめる
+    render :partial => 'edit'
+  end
+
+  # 記入欄を増やすアクション
+  # @deal を作り直して書き直す
+  def create_entry
+    deal_attributes, entries_size = deal_attributes_and_size
+    @deal.attributes = deal_attributes
+    @deal.fill_complex_entries(entries_size+1)
+    if @deal.new_record?
+      render RENDER_OPTIONS_PROC.call(:complex_deal)
+    else
+      render :partial => 'edit'
+    end
   end
 
   def update
-    deal_attributes = params[:deal].dup
-    # TODO: もう少しマシにしたいがとりあえず動かすために入れる
-    # creditor側の数字しか入ってこない場合はもう片側を補完する
-    deal_attributes[:creditor_entries_attributes]['0'][:amount] = deal_attributes[:debtor_entries_attributes]['0'][:amount].to_i * -1 unless deal_attributes[:creditor_entries_attributes]['0'][:amount]
-
+    deal_attributes, entries_size = deal_attributes_and_size
     @deal.attributes = deal_attributes
-
     @deal.confirmed = true
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
@@ -91,7 +100,7 @@ class DealsController < ApplicationController
       end
     else
       unless @deal.simple?
-        @deal.fill_complex_entries
+        @deal.fill_complex_entries(entries_size)
       end
       render :update do |page|
         page[:deal_editor].replace_html :partial => 'edit'
@@ -191,8 +200,24 @@ class DealsController < ApplicationController
 
   private
 
+  def deal_attributes_and_size
+    deal_attributes = params[:deal].dup
+    # TODO: もう少しマシにしたいがとりあえず動かすために入れる
+    # creditor側の数字しか入ってこない場合はもう片側を補完する
+    deal_attributes[:creditor_entries_attributes]['0'][:amount] = deal_attributes[:debtor_entries_attributes]['0'][:amount].to_i * -1 unless deal_attributes[:creditor_entries_attributes]['0'][:amount]
+    [deal_attributes, deal_attributes[:debtor_entries_attributes].size]
+  end
+
   def find_deal
     @deal = current_user.deals.find(params[:id])
+  end
+
+  def find_new_or_existing_deal
+    if params[:id] == 'new'
+      @deal = Deal::General.new
+    else
+      find_deal
+    end
   end
 
   def find_date
