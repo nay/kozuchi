@@ -32,6 +32,10 @@ class Deal::General < Deal::Base
   after_save :create_relations
   before_destroy :destroy_entries
 
+  after_save :request_linkings
+  after_destroy :request_unlinkings
+  attr_accessor :for_linking # リンクのための save かどうかを見分ける
+
 
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
@@ -241,6 +245,42 @@ class Deal::General < Deal::Base
   end
 
   private
+
+  # after_save
+  # 取引連携を相手に要求
+  def request_linkings
+    each_receiver do |receiver, deal|
+      linked_entries = receiver.link_deal_for(deal)
+      # 返ってきた情報をもとに自分リンク情報を更新
+      for entry_id, ex_info in linked_entries
+        Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
+      end
+      debtor_entries(true)
+      creditor_entries(true)
+      readonly_entries(true)
+      entries(true)
+    end
+  end
+
+  # after destroy
+  # 連携状態の削除を要求
+  def request_unlinkings
+    each_receiver do |receiver, deal|
+      receiver.unlink_deal_for(deal)
+    end
+  end
+
+  def each_receiver
+    return true if for_linking || !confirmed # 未確定のものや、リンク用のものは連携しない
+    receiver_ids = readonly_entries.map{|e| e.account.destination_account}.compact.map(&:user_id)
+    receiver_ids.uniq!
+    for receiver_id in receiver_ids
+      receiver = User.find(receiver_id)
+      yield receiver, self
+    end
+    true
+  end
+
 
   def error_if_not_empty
     raise "Deal is not empty" unless creditor_entries.empty? && debtor_entries.empty?

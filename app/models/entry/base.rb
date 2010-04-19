@@ -21,9 +21,9 @@ class Entry::Base < ActiveRecord::Base
   validate :validate_account_id_is_users
 
   before_save :copy_deal_attributes
-  after_save :update_balance, :request_linking
+  after_save :update_balance #, #:request_linking
 
-  after_destroy :update_balance, :request_unlinking
+  after_destroy :update_balance #, :request_unlinking
 
   attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
   attr_accessor :skip_linking # 要請されて作る場合、リンクしにいくのは不要なので
@@ -95,38 +95,38 @@ class Entry::Base < ActiveRecord::Base
     linked_ex_entry_id ? Entry::Base.find_by_id(linked_ex_entry_id) : nil
   end
 
-  # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
-  def unlink
-    raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
-    if !deal.confirmed?
-      # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
-      # オブジェクトとしては別物なので困ってしまう
-      deal.entries.detect{|e| e.id == self.id}.skip_unlinking = true
-      deal.destroy
-    else
-      Entry::Base.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
-      self.linked_ex_entry_id = nil
-      self.linked_ex_deal_id = nil
-      self.linked_user_id = nil
-      self.linked_ex_entry_confirmed = false
-    end
-  end
+#  # 所属するDealが確認済ならリンクをクリアし、未確認なら削除する
+#  def unlink
+#    raise AssociatedObjectMissingError, "my_entry.deal is not found" unless deal
+#    if !deal.confirmed?
+#      # TODO: このentryについては削除したときに相手をunlink仕返さないことを指定
+#      # オブジェクトとしては別物なので困ってしまう
+#      deal.entries.detect{|e| e.id == self.id}.skip_unlinking = true
+#      deal.destroy
+#    else
+#      Entry::Base.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null", "id = #{self.id}")
+#      self.linked_ex_entry_id = nil
+#      self.linked_ex_deal_id = nil
+#      self.linked_user_id = nil
+#      self.linked_ex_entry_confirmed = false
+#    end
+#  end
 
   def after_confirmed
     update_balance
   end
 
   # コールバックのほか、精算提出などで単独でも呼ばれる
-  def request_linking
-    return if !changed? # 内容が変更されていななら何もしない
-    return if skip_linking
-    return if !account || !account.destination_account || !self.deal
-    # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
-    self.linked_ex_entry_id, self.linked_ex_deal_id, self.linked_ex_entry_confirmed = account.destination_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date, self.deal.confirmed?)
-    self.linked_user_id = account.destination_account.user_id
-
-    update_links_without_callback
-  end
+#  def request_linking
+#    return if !changed? # 内容が変更されていななら何もしない
+#    return if skip_linking
+#    return if !account || !account.destination_account || !self.deal
+#    # TODO: 残高は連携せず、移動だけを連携する。いずれ残高記入も連携したいがそれにはAccountEntryのクラスわけが必要か。
+#    self.linked_ex_entry_id, self.linked_ex_deal_id, self.linked_ex_entry_confirmed = account.destination_account.update_link_to(self.id, self.deal_id, self.user_id, self.amount, self.deal.summary, self.date, self.deal.confirmed?)
+#    self.linked_user_id = account.destination_account.user_id
+#
+#    update_links_without_callback
+#  end
 
   def update_links_without_callback
     raise "new_record!" if new_record?
@@ -163,11 +163,11 @@ class Entry::Base < ActiveRecord::Base
 
   # リンクしている口座があれば、連携記入の作成/更新を相手口座に依頼する
 
-  def request_unlinking
-    return if @skip_unlinking
-        # TODO: linked_account_idもほしい　関連づけかえられてたら困る
-    account.destination_account.unlink_to(self.id, self.user_id) if account && account.destination_account
-  end
+#  def request_unlinking
+#    return if @skip_unlinking
+#        # TODO: linked_account_idもほしい　関連づけかえられてたら困る
+#    account.destination_account.unlink_to(self.id, self.user_id) if account && account.destination_account
+#  end
 
   def contents_updated?
     stored = Entry::Base.find(self.id)

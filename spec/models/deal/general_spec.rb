@@ -298,6 +298,7 @@ describe Deal::General do
           @deal.save!
           @linked_entry = @deal.entries.detect{|e| e.account_id == @taro_hanako.id}
           raise "前提：@linked_entryがセーブされている" if @linked_entry.new_record?
+          raise "前提：@linked_entryに linked_ex_deal_id がある" unless @linked_entry.linked_ex_deal_id
           @debtor_entry = @deal.debtor_entries.first
           @creditor_entry = @deal.creditor_entries.first
           @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)

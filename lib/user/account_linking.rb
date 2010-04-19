@@ -23,6 +23,93 @@ module User::AccountLinking
 #      r.destroy
 #    end
 #  end
+
+  # このユーザー側に連携取引を作成する。すでにあれば更新する
+  # proxy なら deal の中を分解して接続する
+  def link_deal_for(sender_deal)
+    # TODO: 抽出
+    sender_entries = sender_deal.readonly_entries.find_all{|e| e.account.destination_account && e.account.destination_account.user_id == id}
+    raise "sender deal #{sender_deal.id} は不正です" if sender_entries.empty?
+
+    # すでにこの取引に紐づいたものがあるなら取得
+    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => "account_entries.linked_ex_deal_id = #{sender_deal.id}")
+    # なければ作成
+    linked_deal ||= general_deals.build(:summary => sender_deal.summary, :confirmed => false, :date => sender_deal.date)
+
+    linked_deal.for_linking = true
+
+    # 鏡となる entry を組上げる
+    # 対応する entry をまず記入し、残りを生成する
+    debtor_entries_attributes = []
+    debtor_amount = 0
+    creditor_entries_attributes = []
+    creditor_amount = 0
+    sender_entries.each do |e|
+      attrs = {:account_id => e.account.destination_account.id, :amount => e.amount * -1}
+      if e.amount >= 0
+        creditor_entries_attributes << attrs
+        creditor_amount += attrs[:amount]
+      else
+        debtor_entries_attributes << attrs
+        debtor_amount += attrs[:amount]
+      end
+    end
+    diff = (creditor_amount * -1) - debtor_amount
+    if diff < 0
+      creditor_entries_attributes << {:account_id => default_asset.id, :amount => diff}
+    elsif diff > 0
+      debtor_entries_attributes << {:account_id => default_asset.id, :amount => diff}
+    end
+    # 0 ならなにもしない
+    
+    linked_deal.attributes = {:debtor_entries_attributes => debtor_entries_attributes, :creditor_entries_attributes => creditor_entries_attributes}
+
+    # 用意されたentryにリンク情報を記述する
+    sender_entries.each do |e|
+      account_id = e.account.destination_account.id
+      amount = e.amount * -1
+      prepared = if e.amount >= 0
+        linked_deal.creditor_entries.detect{|le| !le.marked_for_destruction? && le.account_id == account_id && le.amount == amount}
+      else
+        linked_deal.debtor_entries.detect{|le| !le.marked_for_destruction? && le.account_id == account_id && le.amount == amount}
+      end
+      raise "could not find a prepared entry" unless prepared
+      prepared.linked_ex_entry_id = e.id
+      prepared.linked_ex_deal_id = sender_deal.id
+      prepared.linked_user_id = sender_deal.user_id
+      prepared.linked_ex_entry_confirmed = sender_deal.confirmed?
+    end
+
+    linked_deal.save! # TODO: 連携時のエラー処理の整理
+    linked_entries = {}
+    linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_deal.user_id}.each do |e|
+      linked_entries[e.linked_ex_entry_id] = {:entry_id => e.id, :deal_id => linked_deal.id}
+    end
+    linked_entries
+  end
+
+  def unlink_deal_for(sender_deal)
+    # すでにこの取引に紐づいたものがあるなら取得
+    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => "account_entries.linked_ex_deal_id = #{sender_deal.id}")
+    return true unless linked_deal # すでになければ無視
+
+    linked_deal.for_linking = true
+
+    if linked_deal.confirmed?
+      sender_entries = sender_deal.readonly_entries.find_all{|e| e.account.destination_account && e.account.destination_account.user_id == id}
+      sender_entries.each do |e|
+        e.linked_ex_entry_id = nil
+        e.linked_ex_deal_id = nil
+        e.linked_user_id = nil
+        e.linked_ex_entry_confirmed = false
+        linked_deal.save!
+      end
+    else
+      linked_deal.destroy
+    end
+  end
+
+
   def account_with_entry_id(entry_id)
     account = entries.find_by_id(entry_id).try(:account)
     if account && block_given?
