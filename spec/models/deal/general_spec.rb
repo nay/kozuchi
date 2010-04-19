@@ -200,12 +200,19 @@ describe Deal::General do
       end
 
 
+      describe "Dealに２つEntryがあり、両方が同じユーザーに連携しているとき" do
+        it "取引が作成できる" do
+          # taro_home と taro_home_cost
+          @deal = Deal::General.new(:summary => "test", :date => Date.today,
+          :debtor_entries_attributes => [{:account_id => @taro_home_cost.id, :amount => 300}],
+          :creditor_entries_attributes => [{:account_id => @taro_home.id, :amount => -300}])
+          @deal.user_id = @taro.id
+          lambda{@deal.save!}.should_not raise_error
+        end
+      end
     end
 
-    #
-    #    describe "両側連携" do
-    #      # TODO:
-    #    end
+
   end
 
   describe "update" do
