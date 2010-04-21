@@ -29,6 +29,9 @@ class Deal::General < Deal::Base
   before_validation :set_required_data_in_entries, :fill_amount_to_one_side
   validate :validate_entries
 #  before_update :clear_entries_before_update
+
+  before_update :cache_previous_receivers
+
   after_save :create_relations
   before_destroy :destroy_entries
 
@@ -246,27 +249,74 @@ class Deal::General < Deal::Base
 
   private
 
+  # 完成された entry 情報をもとに、紐づいている（と認識している）ユーザーの配列を返す
+  def linked_receiver_ids(reload = false)
+    receiver_ids = readonly_entries(reload).map{|e| e.linked_user_id}.compact
+    receiver_ids.uniq!
+    receiver_ids
+  end
+
+  # 各 entry の口座情報をもとに、紐づくべきユーザーの配列を返す
+  def updated_receiver_ids(reload = false)
+    receiver_ids = readonly_entries(reload).map{|e| e.account.destination_account}.compact.map(&:user_id)
+    receiver_ids.uniq!
+    receiver_ids
+  end
+
+  # 変更前にこのDealから連携していたユーザーを記憶しておく
+  # （変更後に連携しなくなるユーザーへ連絡するため）
+  def cache_previous_receivers
+    @previous_receiver_ids = linked_receiver_ids
+    p "cache_previous_receivers @previous_receiver_ids = #{@previous_receiver_ids.inspect}"
+  end
+
   # after_save
   # 取引連携を相手に要求
   def request_linkings
-    each_receiver do |receiver, deal|
-      linked_entries = receiver.link_deal_for(deal)
-      # 返ってきた情報をもとに自分リンク情報を更新
+    p "request_linkings"
+    p "for_linking = #{for_linking}"
+    p "confirmed? = #{confirmed?}"
+    return true if for_linking || !confirmed # 未確定のものや、連携で作られたものは連携しない
+
+    @previous_receiver_ids ||= [] # 新規作成のときはないので用意
+
+    updated = updated_receiver_ids(true)
+    deleted = @previous_receiver_ids - updated
+
+    p "updated = #{updated.inspect}"
+    p "deleted = #{deleted.inspect}"
+
+    # なくなった相手に削除依頼
+    deleted.each do |receiver_id|
+      receiver = User.find(receiver_id)
+      receiver.unlink_deal_for(user_id, id)
+    end
+
+    # 作成/更新依頼
+    changed_self = false
+    updated.each do |receiver_id|
+      receiver = User.find(receiver_id)
+      linked_entries = receiver.link_deal_for(self)
       for entry_id, ex_info in linked_entries
         Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
+        changed_self = true
       end
+    end
+
+    if changed_self
       debtor_entries(true)
       creditor_entries(true)
       readonly_entries(true)
       entries(true)
     end
+    true
   end
 
   # after destroy
   # 連携状態の削除を要求
   def request_unlinkings
-    each_receiver do |receiver, deal|
-      receiver.unlink_deal_for(deal)
+    each_receiver do |receiver|
+      receiver.unlink_deal_for(user_id, id)
     end
   end
 
@@ -276,7 +326,7 @@ class Deal::General < Deal::Base
     receiver_ids.uniq!
     for receiver_id in receiver_ids
       receiver = User.find(receiver_id)
-      yield receiver, self
+      yield receiver
     end
     true
   end

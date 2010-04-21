@@ -88,23 +88,22 @@ module User::AccountLinking
     linked_entries
   end
 
-  def unlink_deal_for(sender_deal)
+  # ここでの sender は、プロキシ経由ならシステム内のuser_idに変換されることを想定
+  def unlink_deal_for(sender_id, sender_ex_deal_id)
+    p "unlink_deal_for sender #{sender_id}, deal #{sender_ex_deal_id}"
     # すでにこの取引に紐づいたものがあるなら取得
-    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => "account_entries.linked_ex_deal_id = #{sender_deal.id}")
+    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => ["account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", sender_id, sender_ex_deal_id])
+    p "linkd_deal = #{linked_deal.inspect}"
     return true unless linked_deal # すでになければ無視
 
-    linked_deal.for_linking = true
-
     if linked_deal.confirmed?
-      sender_entries = sender_deal.readonly_entries.find_all{|e| e.account.destination_account && e.account.destination_account.user_id == id}
-      sender_entries.each do |e|
-        e.linked_ex_entry_id = nil
-        e.linked_ex_deal_id = nil
-        e.linked_user_id = nil
-        e.linked_ex_entry_confirmed = false
-        linked_deal.save!
-      end
+      p "linked_deal.confirmed? = #{linked_deal.confirmed?}"
+      linked_deal.for_linking = true
+      unlinked_entry_ids = linked_deal.readonly_entries.find_all_by_linked_user_id_and_linked_ex_deal_id(sender_id, sender_ex_deal_id)
+      raise "no unlinked entries" if unlinked_entry_ids.empty?
+      Entry::General.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = 0", ["id in (?)", unlinked_entry_ids])
     else
+      p "linked_deal would be destroyed"
       linked_deal.destroy
     end
   end

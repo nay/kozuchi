@@ -304,6 +304,21 @@ describe Deal::General do
           @hanako_deal = Deal::General.find(@linked_entry.linked_ex_deal_id)
         end
 
+        describe "linked_receiver_ids" do
+          it "正しく取得できる" do
+            linked_receiver_ids = @deal.send('linked_receiver_ids')
+            linked_receiver_ids.should == [@hanako.id]
+          end
+        end
+
+#        describe "cache_previous_linkings" do
+#          @deal.send('cache_previous_linkings')
+#          previous_linkings = @deal.instance_variable_get('@before_save_entries_by_linked_user')
+#          previous_linkings.should_not be_nil
+#          previous_linkings.size.should == 1 # hanako
+#          previous_linkings.should == {@hanako.id => []}
+#        end
+
         it "相手が確認したら、linked_ex_entry_confirmedが更新される" do
           raise "前提エラー：連携先ははじめは未確認のはず" if @hanako_deal.confirmed? || @linked_entry.linked_ex_entry_confirmed?
           @hanako_deal.confirmed = true
@@ -326,8 +341,8 @@ describe Deal::General do
         it "連携のあるentryのaccount_idを変更したら、確認していない相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
           @deal.attributes = {
-            :debtor_entries_attributes => {'0' => {:id => @debtor_entry.id, :account_id => Fixtures.identify(:taro_food), :amount => 300}},
-            :creditor_entries_attributes => {'0' => {:id => @creditor_entry.id, :account_id => @taro_cache.id, :amount => -300}}
+            :debtor_entries_attributes => [{:account_id => Fixtures.identify(:taro_food), :amount => 300}],
+            :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -300}]
           }
           @deal.save!
           @deal.reload
