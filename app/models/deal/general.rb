@@ -122,7 +122,7 @@ class Deal::General < Deal::Base
   end
 
   def to_s
-    "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})"
+    "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})" + ((debtor_entries + creditor_entries).map{|e| "(#{e.account_id})#{e.amount}"}.join(','))
   end
 
   def to_xml(options = {})

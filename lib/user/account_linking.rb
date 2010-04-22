@@ -55,8 +55,10 @@ module User::AccountLinking
     debtor_amount = 0
     creditor_entries_attributes = []
     creditor_amount = 0
+    used_accounts = []
     ex_entries_hash.each do |e|
       account = accounts.find(e[:ex_account_id])
+      used_accounts << account
       amount = e[:amount] * -1
       attrs = {:account_id => account.id, :amount => amount, :linked_ex_entry_id => e[:id], :linked_ex_deal_id => sender_ex_deal_id, :linked_user_id => sender_id, :linked_ex_entry_confirmed => true}
       if amount < 0
@@ -68,10 +70,13 @@ module User::AccountLinking
       end
     end
     diff = (creditor_amount * -1) - debtor_amount
+    partner_account = default_asset_other_than(*used_accounts)
+    raise "could not find safe partner account. " unless partner_account
+
     if diff < 0
-      creditor_entries_attributes << {:account_id => default_asset.id, :amount => diff}
+      creditor_entries_attributes << {:account_id => partner_account.id, :amount => diff}
     elsif diff > 0
-      debtor_entries_attributes << {:account_id => default_asset.id, :amount => diff}
+      debtor_entries_attributes << {:account_id => partner_account.id, :amount => diff}
     end
     # 0 ならなにもしない
     

@@ -144,8 +144,9 @@ class User < ActiveRecord::Base
     assets.first
   end
 
-  def default_asset_other_than(exclude)
-    assets.detect{|a| a.id.to_i != exclude.id.to_i}
+  # TODO: 賢くしたい
+  def default_asset_other_than(*excludes)
+    assets.detect{|a| !excludes.include?(a)}
   end
 
   # all logic has been moved into login_engine/lib/login_engine/authenticated_user.rb
