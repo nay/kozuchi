@@ -26,15 +26,26 @@ module User::AccountLinking
 
   # このユーザー側に連携取引を作成する。すでにあれば更新する
   # proxy なら deal の中を分解して接続する
-  def link_deal_for(sender_deal)
-    # TODO: 抽出
-    sender_entries = sender_deal.readonly_entries.find_all{|e| e.account.destination_account && e.account.destination_account.user_id == id}
-    raise "sender deal #{sender_deal.id} は不正です" if sender_entries.empty?
-
+  def link_deal_for(sender_id, sender_ex_deal_id, ex_entries_hash, summary, date)
     # すでにこの取引に紐づいたものがあるなら取得
-    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => "account_entries.linked_ex_deal_id = #{sender_deal.id}")
+    linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
+    if linked_deal
+      # 対応する entry を取り出す
+      linked_entries = linked_deal.linked_entries(sender_id, sender_ex_deal_id)
+      # 金額や口座構成の変更があったかを検出する。
+      supposed_hash = linked_entries.map{|e| {:id => e.linked_ex_entry_id, :ex_account_id => e.account_id, :amount => e.amount * -1 }}
+      if supposed_hash == ex_entries_hash
+        # 変更がなければ確定だけしておわる
+        linked_deal.confirm_linked_entries(sender_id, sender_ex_deal_id)
+        return false # 変更なし
+      elsif linked_deal.confirmed?
+        # 変更があったら、連携を切って新しく作る
+        linked_deal.unlink_entries(sender_id, sender_ex_deal_id)
+        linked_deal = nil
+      end
+    end
     # なければ作成
-    linked_deal ||= general_deals.build(:summary => sender_deal.summary, :confirmed => false, :date => sender_deal.date)
+    linked_deal ||= general_deals.build(:summary => summary, :confirmed => false, :date => date)
 
     linked_deal.for_linking = true
 
@@ -44,14 +55,16 @@ module User::AccountLinking
     debtor_amount = 0
     creditor_entries_attributes = []
     creditor_amount = 0
-    sender_entries.each do |e|
-      attrs = {:account_id => e.account.destination_account.id, :amount => e.amount * -1}
-      if e.amount >= 0
+    ex_entries_hash.each do |e|
+      account = accounts.find(e[:ex_account_id])
+      amount = e[:amount] * -1
+      attrs = {:account_id => account.id, :amount => amount, :linked_ex_entry_id => e[:id], :linked_ex_deal_id => sender_ex_deal_id, :linked_user_id => sender_id, :linked_ex_entry_confirmed => true}
+      if amount < 0
         creditor_entries_attributes << attrs
-        creditor_amount += attrs[:amount]
+        creditor_amount += amount
       else
         debtor_entries_attributes << attrs
-        debtor_amount += attrs[:amount]
+        debtor_amount += amount
       end
     end
     diff = (creditor_amount * -1) - debtor_amount
@@ -64,48 +77,38 @@ module User::AccountLinking
     
     linked_deal.attributes = {:debtor_entries_attributes => debtor_entries_attributes, :creditor_entries_attributes => creditor_entries_attributes}
 
-    # 用意されたentryにリンク情報を記述する
-    sender_entries.each do |e|
-      account_id = e.account.destination_account.id
-      amount = e.amount * -1
-      prepared = if e.amount >= 0
-        linked_deal.creditor_entries.detect{|le| !le.marked_for_destruction? && le.account_id == account_id && le.amount == amount}
-      else
-        linked_deal.debtor_entries.detect{|le| !le.marked_for_destruction? && le.account_id == account_id && le.amount == amount}
-      end
-      raise "could not find a prepared entry" unless prepared
-      prepared.linked_ex_entry_id = e.id
-      prepared.linked_ex_deal_id = sender_deal.id
-      prepared.linked_user_id = sender_deal.user_id
-      prepared.linked_ex_entry_confirmed = sender_deal.confirmed?
-    end
-
     linked_deal.save! # TODO: 連携時のエラー処理の整理
     linked_entries = {}
-    linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_deal.user_id}.each do |e|
+    linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_id}.each do |e|
       linked_entries[e.linked_ex_entry_id] = {:entry_id => e.id, :deal_id => linked_deal.id}
     end
     linked_entries
   end
 
+  # 連携削除依頼を受ける
   # ここでの sender は、プロキシ経由ならシステム内のuser_idに変換されることを想定
   def unlink_deal_for(sender_id, sender_ex_deal_id)
-    p "unlink_deal_for sender #{sender_id}, deal #{sender_ex_deal_id}"
     # すでにこの取引に紐づいたものがあるなら取得
-    linked_deal = general_deals.first(:include => :readonly_entries, :conditions => ["account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", sender_id, sender_ex_deal_id])
-    p "linkd_deal = #{linked_deal.inspect}"
-    return true unless linked_deal # すでになければ無視
+    linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
+    return unless linked_deal # すでになければ無視
 
     if linked_deal.confirmed?
-      p "linked_deal.confirmed? = #{linked_deal.confirmed?}"
-      linked_deal.for_linking = true
-      unlinked_entry_ids = linked_deal.readonly_entries.find_all_by_linked_user_id_and_linked_ex_deal_id(sender_id, sender_ex_deal_id)
-      raise "no unlinked entries" if unlinked_entry_ids.empty?
-      Entry::General.update_all("linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = 0", ["id in (?)", unlinked_entry_ids])
+      linked_deal.unlink_entries(sender_id, sender_ex_deal_id)
     else
-      p "linked_deal would be destroyed"
       linked_deal.destroy
     end
+  end
+
+  def linked_deal_for(remote_user_id, remote_ex_deal_id)
+    general_deals.first(:include => :readonly_entries, :conditions => ["account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id])
+  end
+
+  # こちらから一方的に連携している相手からの確認を受け取る
+  def receive_confirmation_from(remote_user_id, remote_ex_deal_id)
+    linked_deal = linked_deal_for(remote_user_id, remote_ex_deal_id)
+    return false unless linked_deal
+    linked_deal.confirm_linked_entries(remote_user_id, remote_ex_deal_id)
+    true
   end
 
 

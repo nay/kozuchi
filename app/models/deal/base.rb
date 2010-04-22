@@ -14,7 +14,6 @@ class Deal::Base < ActiveRecord::Base
   before_validation :update_date
   before_save :set_daily_seq
   validates_presence_of :date
-  after_update :update_link_when_confirmed
   
   named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
@@ -140,21 +139,6 @@ class Deal::Base < ActiveRecord::Base
 
   private
 
-  # general に移動すべきか？
-  def update_link_when_confirmed
-    if changed.include?("confirmed")
-      entries.each do |e|
-        e.after_confirmed
-        # link先に通知する
-        if e.linked_ex_entry_id
-          raise "No linked_user in entry #{e.id} though it has linked_ex_entry_id #{e.linked_ex_entry_id}" unless e.linked_user
-          e.linked_user.account_with_entry_id(e.linked_ex_entry_id) do |account|
-            account.receive_confirmation_from(e.id, e.user_id)
-          end
-        end
-      end
-    end
-  end
   
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。

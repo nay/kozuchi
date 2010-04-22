@@ -158,6 +158,7 @@ describe Deal::General do
         end
         it "片方のEntryにリンクが作られること" do
           @linked_entry.linked_ex_entry_id.should_not be_nil
+          @linked_entry.linked_user_id.should == @hanako.id
         end
         it "作られたほうのconfimed と、自分の linked_ex_entry_confirmed がfalseになること。自分のconfirmedと相手のlinked_ex_entry_confirmedがtrueになること。" do
           @hanako_deal.confirmed?.should be_false
@@ -333,7 +334,8 @@ describe Deal::General do
           @hanako_taro.reload
 
           @hanako_deal.confirmed = true
-          lambda{@hanako_deal.save!}.should_not raise_error
+          @hanako_deal.save!
+#          lambda{@hanako_deal.save!}.should_not raise_error
           @linked_entry.reload
           @linked_entry.linked_ex_entry_confirmed?.should be_true
         end

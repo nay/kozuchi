@@ -102,13 +102,6 @@ module Account::Linking
     my_entry.unlink if my_entry
   end
 
-  def receive_confirmation_from(linked_ex_entry_id, linked_user_id)
-    my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
-    # TODO: 失敗時の処理
-    raise "could not found linked entry" unless my_entry
-    my_entry.linked_ex_entry_confirmed = true
-    my_entry.save!
-  end
 
 
 end

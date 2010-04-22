@@ -30,12 +30,11 @@ class Deal::General < Deal::Base
   validate :validate_entries
 #  before_update :clear_entries_before_update
 
-  before_update :cache_previous_receivers
-
-  after_save :create_relations
   before_destroy :destroy_entries
-
+  before_update :cache_previous_receivers
+  after_save :create_relations
   after_save :request_linkings
+  after_update :respond_to_sender_when_confirmed
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
 
@@ -247,7 +246,29 @@ class Deal::General < Deal::Base
     r
   end
 
+  # 指定したユーザーの指定した取引に紐づいたentryの配列を返す
+  def linked_entries(remote_user_id, remote_ex_deal_id, reload = false)
+    readonly_entries(reload).find_all{|e| e.linked_user_id == remote_user_id && e.linked_ex_deal_id == remote_ex_deal_id}
+  end
+
+  # 指定した連携を切る
+  def unlink_entries(remote_user_id, remote_ex_deal_id)
+    Entry::General.update_all(
+      ["linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = ?", false],
+      remote_condition(remote_user_id, remote_ex_deal_id))
+  end
+
+  def confirm_linked_entries(remote_user_id, remote_ex_deal_id)
+    Entry::General.update_all(
+      ["linked_ex_entry_confirmed = ?", true],
+      remote_condition(remote_user_id, remote_ex_deal_id))
+  end
+
   private
+
+  def remote_condition(remote_user_id, remote_ex_deal_id)
+    {:deal_id => id, :linked_user_id => remote_user_id, :linked_ex_deal_id => remote_ex_deal_id}
+  end
 
   # 完成された entry 情報をもとに、紐づいている（と認識している）ユーザーの配列を返す
   def linked_receiver_ids(reload = false)
@@ -256,35 +277,35 @@ class Deal::General < Deal::Base
     receiver_ids
   end
 
-  # 各 entry の口座情報をもとに、紐づくべきユーザーの配列を返す
+  # 各 entry の口座情報をもとに、こちらから連携依頼を送るべきユーザーの配列を返す
   def updated_receiver_ids(reload = false)
     receiver_ids = readonly_entries(reload).map{|e| e.account.destination_account}.compact.map(&:user_id)
     receiver_ids.uniq!
     receiver_ids
   end
 
+  # 各 entry の口座情報をもとに、相手から連携依頼が来ると認識しているユーザーの配列を返す
+  def updated_sender_ids(reload = false)
+    sender_ids = readonly_entries(reload).map{|e| e.account.link_requests.map(&:sender_id)}.flatten
+    sender_ids.uniq!
+    sender_ids
+  end
+
   # 変更前にこのDealから連携していたユーザーを記憶しておく
   # （変更後に連携しなくなるユーザーへ連絡するため）
   def cache_previous_receivers
     @previous_receiver_ids = linked_receiver_ids
-    p "cache_previous_receivers @previous_receiver_ids = #{@previous_receiver_ids.inspect}"
   end
 
   # after_save
   # 取引連携を相手に要求
   def request_linkings
-    p "request_linkings"
-    p "for_linking = #{for_linking}"
-    p "confirmed? = #{confirmed?}"
     return true if for_linking || !confirmed # 未確定のものや、連携で作られたものは連携しない
 
     @previous_receiver_ids ||= [] # 新規作成のときはないので用意
 
-    updated = updated_receiver_ids(true)
+    updated = (updated_receiver_ids(true) + updated_sender_ids).uniq
     deleted = @previous_receiver_ids - updated
-
-    p "updated = #{updated.inspect}"
-    p "deleted = #{deleted.inspect}"
 
     # なくなった相手に削除依頼
     deleted.each do |receiver_id|
@@ -296,7 +317,9 @@ class Deal::General < Deal::Base
     changed_self = false
     updated.each do |receiver_id|
       receiver = User.find(receiver_id)
-      linked_entries = receiver.link_deal_for(self)
+      # このユーザーに関連する entry 情報（id, 口座, 金額のハッシュ）を送る
+      linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary, date)
+      next unless linked_entries # false なら、こちらの変更は不要
       for entry_id, ex_info in linked_entries
         Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
         changed_self = true
@@ -311,6 +334,35 @@ class Deal::General < Deal::Base
     end
     true
   end
+
+  # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
+  # 口座情報は、こちらで想定している相手口座情報を入れる
+  def entries_hash_for(remote_user_id)
+    related_entries(remote_user_id).map do |e|
+      ex_account_id = e.account.link.try(:target_ex_account_id) || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}.sender_ex_account_id
+      {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount}
+    end
+  end
+
+  def related_entries(remote_user_id)
+    readonly_entries.find_all{|e| e.account.link.try(:target_user_id) == remote_user_id || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}}
+  end
+
+  # 確認されていな状態から確認状態に変わったとき
+  # destination_account に指定されている先へは request_linkings の処理で confirmed は反映されるので
+  # 指定されていない先へ連絡する
+  def respond_to_sender_when_confirmed
+    return true unless confirmed_changed?
+    sender_ids = linked_receiver_ids - updated_receiver_ids
+    sender_ids.each do |sender_id|
+      sender = User.find(sender_id)
+      unless sender.receive_confirmation_from(user_id, id)
+        # TODO: 相手がなかったときはリンクを消して終りたい
+      end
+    end
+    true
+  end
+
 
   # after destroy
   # 連携状態の削除を要求
