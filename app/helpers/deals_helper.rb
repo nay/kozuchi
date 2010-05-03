@@ -26,8 +26,7 @@ module DealsHelper
       if e.object.marked_for_destruction?
         concat(e.hidden_field :_delete, :value => '1')
       else
-        amount_field_proc = lambda{|tabindex | e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)}
-        amount_field_proc += e.hidden_field(:amount) if f.object.settlement_attached?
+        amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)) + f.object.settlement_attached? ? e.hidden_field(:amount) : ''}
 
         debtor_account_field_proc = if options[:debtor_account_fixed]
           lambda{|tabindex|
