@@ -2,19 +2,23 @@ ActionController::Routing::Routes.draw do |map|
 
   # settings
   map.namespace :settings do |settings|
-    settings.resources :incomes
-    settings.connect "incomes", :controller => "incomes", :action => "update_all", :conditions => {:method => :put}
-    settings.resources :expenses
-    settings.connect "expenses", :controller => "expenses", :action => "update_all", :conditions => {:method => :put}
-    settings.resources :assets
-    settings.connect "assets", :controller => "assets", :action => "update_all", :conditions => {:method => :put}
+    # 勘定
+    settings.resources :incomes, :collection => {:update_all => :put}
+    settings.resources :expenses, :collection => {:update_all => :put}
+    settings.resources :assets, :collection => {:update_all => :put}
+
     settings.resources :single_logins
+
+    # 連携
     settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
     settings.with_options :controller => 'account_links' do |account_links|
       # destroy に :id がいらない、create時はaccount_idをクエリーで渡したいなど変則的
       account_links.resource :account_link, :as => :links, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
       account_links.resources :account_links, :as => :links, :path_prefix => 'settings/accounts', :only => [:index, :create]
     end
+
+    # フレンド
+    settings.resource :friend_rejection, :as => :rejection, :path_prefix => "settings/friends/:target_login", :only => [:create, :destroy]
 
   end
 
@@ -69,7 +73,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # フレンド設定
   map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
-  map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
+#  map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
 
 
   map.root :controller => "welcome"

@@ -20,7 +20,7 @@
           <td class="timestamp"><%= r.created_at.to_formatted_s(:db) %></td>
           <td>
             <%= link_to('承諾', friends_path(:target_login => r.sender.login), :method => :post) %>
-            <%= link_to('拒否', friend_rejections_path(:target_login => r.sender.login), :method => :post) %>
+            <%= link_to('拒否', settings_friend_rejection_path(:target_login => r.sender.login), :method => :post) %>
           </td>
         </tr>
       <% end %>
@@ -55,7 +55,7 @@
       <% for r in @rejections %>
         <tr>
           <td><span class="userName"><%= h r.target.login %></span>さん</td>
-          <td><%= link_to "撤回", friend_rejection_path(r), :method => :delete, :confirm => "#{h r.target.login}さんへのフレンド関係拒否を撤回します。相手をフレンドに登録したり、相手からのフレンド申請を見ることができるようになります。撤回してよろしいですか？" %></td>
+          <td><%= link_to "撤回", settings_friend_rejection_path(:target_login => r.target.login), :method => :delete, :confirm => "#{h r.target.login}さんへのフレンド関係拒否を撤回します。相手をフレンドに登録したり、相手からのフレンド申請を見ることができるようになります。撤回してよろしいですか？" %></td>
         </tr>
       <% end %>
     </table>
