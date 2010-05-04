@@ -96,7 +96,6 @@ class Account::Base < ActiveRecord::Base
   
   # ---------- 機能
 
-  include TermHelper
   belongs_to :user
 
   belongs_to              :partner_account,
