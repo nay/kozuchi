@@ -112,12 +112,3 @@ class Account::RuleAssociatedAccountException < Exception
     "「#{account_name}」は精算口座として使われているため削除できません。"
   end
 end
-
-class Account::IllegalClassChangeException < Exception
-  def self.new_message(account_name, illegal_asset_type_name)
-    "「#{account_name}」を#{illegal_asset_type_name}に変更することはできません。"
-  end
-  def initialize(account_name, illegal_asset_type_name)
-    super self.class.new_message(account_name, illegal_asset_type_name)
-  end
-end

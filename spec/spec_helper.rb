@@ -50,6 +50,13 @@ def to_sjis(str)
   NKF.nkf('-m0 -x -Ws', str)
 end
 
+# Fixtures.identify と打つのがかったるいので
+class Symbol
+  def to_id
+    Fixtures.identify(self)
+  end
+end
+
 include AuthenticatedTestHelper
 
 class ActionController::TestRequest
