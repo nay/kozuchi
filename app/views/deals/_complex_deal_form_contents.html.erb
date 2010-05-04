@@ -13,16 +13,24 @@
         <div>借方</div>
       <% end %>
       <% f.fields_for entry_types.first do |e| %>
+        <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
         <% else %>
           <div>
             <div style="float:left;">
-            <%= e.text_field :amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tab_index += 1 %>
+            <% amount_field_name = entry_types.first == :debtor_entries ? :amount : :reversed_amount %>
+            <%= e.text_field amount_field_name, :size => "8", :disabled => fixed, :class => 'amount', :tabindex => tab_index += 1 %>
+            <%= e.hidden_field amount_field_name if fixed %>
             </div>
             <div style="float:left;">円</div>
             <div style="float:left;">
-            <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            <% if fixed %>
+              <input type='text' disabled='true' class='readonly' value='<%= e.object.account.name %>' tabindex='#{tabindex}' />
+              <%= e.hidden_field(:account_id, :value => e.object.account.id) %>
+            <% else %>
+              <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            <% end %>
             </div>
             <div style="clear:left;"></div>
           </div>
@@ -37,16 +45,24 @@
         <div>貸方</div>
       <% end %>
       <% f.fields_for entry_types.last do |e| %>
+        <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
         <% else %>
           <div>
             <div style="float:left;">
-            <%= e.text_field :reversed_amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => (tab_index += 1) %>
+              <% amount_field_name = entry_types.last == :creditor_entries ? :reversed_amount : :amount %>
+              <%= e.text_field amount_field_name, :size => "8", :disabled => fixed, :class => 'amount', :tabindex => (tab_index += 1) %>
+              <%= e.hidden_field amount_field_name if fixed  %>
             </div>
             <div style="float:left;">円</div>
             <div style="float:left;">
-            <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            <% if fixed %>
+              <input type='text' disabled='true' class='readonly' value='<%= e.object.account.name %>' tabindex='#{tabindex}' />
+              <%= e.hidden_field(:account_id, :value => e.object.account.id) %>
+            <% else %>
+              <%= e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1) %>
+            <% end %>
             </div>
             <div style="clear:left;"></div>
           </div>

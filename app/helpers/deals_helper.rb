@@ -23,15 +23,17 @@ module DealsHelper
     debtor_account_field_proc = nil
     creditor_account_field_proc = nil
     f.fields_for :debtor_entries do |e|
+      fixed_account = options[:debtor_account_fixed]
+      fixed_account ||=  e.object.account if e.object.settlement_attached?
+      
       if e.object.marked_for_destruction?
         concat(e.hidden_field :_delete, :value => '1')
       else
-        amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => f.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)) + (f.object.settlement_attached? ? e.hidden_field(:amount) : '')}
-
-        debtor_account_field_proc = if options[:debtor_account_fixed]
+        amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => !!fixed_account, :class => 'amount', :tabindex => tabindex)) + (fixed_account ? e.hidden_field(:amount) : '')}
+        debtor_account_field_proc = if fixed_account
           lambda{|tabindex|
-            "<input type='text' disabled='true' class='readonly' value='#{options[:debtor_account_fixed].name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => options[:debtor_account_fixed].id)
+            "<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
+            e.hidden_field(:account_id, :value => fixed_account.id)
           }
         else
           lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex}
@@ -40,13 +42,16 @@ module DealsHelper
     end
 
     f.fields_for :creditor_entries do |e|
+      fixed_account = options[:creditor_account_fixed]
+      fixed_account ||=  e.object.account if e.object.settlement_attached?
+
       if e.object.marked_for_destruction?
         concat(e.hidden_field :_delete, :value => '1')
       else
-        creditor_account_field_proc = if options[:creditor_account_fixed]
+        creditor_account_field_proc = if fixed_account
           lambda{|tabindex|
-            "<input type='text' disabled='true' class='readonly' value='#{options[:creditor_account_fixed].name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => options[:creditor_account_fixed].id)
+            "<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
+            e.hidden_field(:account_id, :value => fixed_account.id)
           }
         else
           lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex}
