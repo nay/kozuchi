@@ -1,4 +1,6 @@
-class Settings::AssetsController < Settings::AccountsController
+class Settings::AssetsController < ApplicationController
+  layout 'main'
+  cache_sweeper :export_sweeper
   menu_group "設定"
   menu "口座"
 
