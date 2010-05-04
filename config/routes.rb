@@ -100,14 +100,17 @@ ActionController::Routing::Routes.draw do |map|
 
   # AccountDealsController
   # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
-  map.with_options :controller => 'account_deals', :path_prefix => 'accounts/:account_id' do |account_deals|
-    account_deals.account_deals 'deals/:year/:month', :action => 'monthly', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
-    account_deals.account_balance 'balance', :action => "balance"
-    account_deals.account_general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
-    ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |deal_type|
-      account_deals.send("account_#{deal_type.pluralize}", "#{deal_type.pluralize}", :action => "create_#{deal_type}", :conditions => {:method => :post})
-      account_deals.send("new_account_#{deal_type}", "new_#{deal_type}", :action => "new_#{deal_type}", :conditions => {:method => :get})
-      account_deals.send("edit_account_#{deal_type}", "#{deal_type.pluralize}/:id", :action => "edit_#{deal_type}", :conditions => {:method => :get})
+  map.with_options :controller => 'account_deals' do |account_deals|
+    account_deals.resources :account_deals, :as => :deals, :path_prefix => 'accounts', :only => [:index]
+    account_deals.with_options :path_prefix => 'accounts/:account_id' do |under_account|
+      under_account.monthly_account_deals 'deals/:year/:month', :action => 'monthly', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
+      under_account.account_balance 'balance', :action => "balance"
+      under_account.account_general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
+      ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |deal_type|
+        under_account.send("account_#{deal_type.pluralize}", "#{deal_type.pluralize}", :action => "create_#{deal_type}", :conditions => {:method => :post})
+        under_account.send("new_account_#{deal_type}", "new_#{deal_type}", :action => "new_#{deal_type}", :conditions => {:method => :get})
+        under_account.send("edit_account_#{deal_type}", "#{deal_type.pluralize}/:id", :action => "edit_#{deal_type}", :conditions => {:method => :get})
+      end
     end
   end
 

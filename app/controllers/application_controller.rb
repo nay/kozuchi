@@ -1,8 +1,6 @@
 # Filters added to this controller will be run for all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
-#  include LoginEngine
-#  include LoginEngine::AuthenticatedSystem
   mobile_filter
   trans_sid
   include AuthenticatedSystem
@@ -186,6 +184,7 @@ class ApplicationController < ActionController::Base
   
   # 編集対象日をセッションに保存する
   def target_date=(date)
+    p "---- target_date = #{date.inspect}"
     if date.kind_of?(Date)
       session[:target_date] = {:year => date.year, :month => date.month, :day => date.day}
     else
@@ -196,18 +195,27 @@ class ApplicationController < ActionController::Base
 
   # セッションに入っているyear, month, dayを配列で返す
   def read_target_date
-    year = session[:target_date] ? session[:target_date][:year] : nil
-    month = year ? session[:target_date][:month] : nil
-    day = month ? session[:target_date][:day] : nil
-    [year, month, day]
+    write_target_date unless session[:target_date]
+    [session[:target_date][:year], session[:target_date][:month], session[:target_date][:day]]
   end
   
   # セッションに入っているyear, month, dayを更新する
-  def write_target_date(year, month = nil, day = nil)
-    session[:target_date] ||= {}
-    session[:target_date][:year] = year
-    session[:target_date][:month] = year ? month : nil
-    session[:target_date][:day] = month ? day : nil
+  # 引数なし - 今日
+  # date - 指定日
+  # year, month, day - 指定どおり。month, day はなくてもいい
+  def write_target_date(*args)
+    session[:target_date] = {}
+    if args.empty?
+      write_target_date Date.today
+    elsif args.first.kind_of?(Date)
+      session[:target_date][:year] = args.first.year
+      session[:target_date][:month] = args.first.month
+      session[:target_date][:day] = args.first.day
+    else
+      session[:target_date][:year] = args.first
+      session[:target_date][:month] = args[1]
+      session[:target_date][:day] = args[2]
+    end
   end
 
   # 編集対象日のハッシュを得る

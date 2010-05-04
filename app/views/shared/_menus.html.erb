@@ -2,7 +2,7 @@
    when 'ホーム' %>
 <% when '家計簿' %>
   <%= link_to_menu '仕訳帳', :controller => '/deals', :action => 'index' %>
-  <%= link_to_menu '口座別出納', :controller => 'account_deals' %>
+  <%= link_to_menu '口座別出納', account_deals_path %>
   <%= link_to_menu '収支表', :controller => '/profit_and_loss', :action => 'index' %>
   <%= link_to_menu '資産表', :controller => '/assets', :action => 'index' %>
   <%= link_to_menu '貸借対照表', :controller => '/balance_sheet', :action => 'index' %>

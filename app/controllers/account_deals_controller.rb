@@ -6,7 +6,7 @@ class AccountDealsController < ApplicationController
   before_filter :find_account, :except => [:index]
   before_filter :require_mobile, :only => [:balance]
   
-  use_calendar :account_deals_path
+  use_calendar :monthly_account_deals_path
 
 
   deal_actions_for :creditor_general_deal, :debtor_general_deal, :balance_deal,
@@ -19,7 +19,7 @@ class AccountDealsController < ApplicationController
 
   def index
     year, month = read_target_date
-    redirect_to account_deals_path(:year => year, :month => month, :account_id => current_user.accounts.first.id)
+    redirect_to monthly_account_deals_path(:year => year, :month => month, :account_id => current_user.accounts.first.id)
   end
   
   def monthly
@@ -60,22 +60,6 @@ class AccountDealsController < ApplicationController
           account_entry.partner_account_name = deal.partner_account_name_of(account_entry) # 効率上自分で入れておく
         end
 
-
-#        next unless (account_entry.account.id != @account.id.to_i) || account_entry.balance
-#        if account_entry.balance
-#          account_entry.unknown_amount = account_entry.balance - balance_estimated
-#          balance_estimated = account_entry.balance
-#          flow_sum -= account_entry.amount unless account_entry.initial_balance?
-#          # 通常明細
-#        else
-#          # 確定のときだけ残高に反映
-#          if deal.confirmed?
-#            balance_estimated -= account_entry.amount
-#            flow_sum -= account_entry.amount
-#          end
-#          account_entry.balance_estimated = balance_estimated
-#          account_entry.flow_sum = flow_sum
-#        end
         @entries << account_entry
       end
     end
@@ -92,11 +76,5 @@ class AccountDealsController < ApplicationController
     
   end
 
-
-
-  private
-  def find_account
-    @account = current_user.accounts.find(params[:account_id])
-  end
 
 end
