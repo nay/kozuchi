@@ -44,7 +44,7 @@ describe Settings::AssetsController do
     end
     context "重複した名前" do
       before do
-        post :create, :account => {:name => '現金', :sort_key => 77, :asset_kind => 'cache', :user_id => Fixtures.identify(:hanako)}
+        post :create, :account => {:name => '現金', :sort_key => 77, :asset_kind => 'cache'}
       end
       it "エラーメッセージ" do
         response.should be_success

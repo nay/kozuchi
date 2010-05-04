@@ -34,6 +34,10 @@ taro_home_cost:
   name: 家計支出
   user: taro
   type: Expense
+taro_salary:
+  name: 給料
+  user: taro
+  type: Income
 # hanako's accounts
 hanako_cache:
   name: 現金
@@ -59,6 +63,10 @@ hanako_home_cost:
   name: 家計支出
   user: hanako
   type: Expense
+hanako_salary:
+  name: 給料
+  user: hanako
+  type: Income
 # home's accounts
 home_cache:
   name: 現金
