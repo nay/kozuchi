@@ -33,7 +33,7 @@
     </div>
     <div id="sidebar">
       <div id="user_and_today" class="top_box" <%= user_color_style %>>
-        <%= h @user.login_id %>さん<br />
+        <%= h current_user.login_id %>さん<br />
         <%= format_date(Time.now) %>
       </div>
       <!-- menu -->

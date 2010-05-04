@@ -28,21 +28,21 @@ class ApplicationController < ActionController::Base
       case deal_type.to_s
       when /general/
         define_method "new_#{deal_type}" do
-          @deal = @user.general_deals.build
+          @deal = current_user.general_deals.build
           @deal.build_simple_entries
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
           render render_options
         end
       when /complex/
         define_method "new_#{deal_type}" do
-          @deal = @user.general_deals.build
+          @deal = current_user.general_deals.build
           @deal.build_complex_entries
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
           render render_options
         end
       when /balance/
         define_method "new_#{deal_type}" do
-          @deal = @user.balance_deals.build
+          @deal = current_user.balance_deals.build
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
           render render_options
         end
@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
       # create_xxx
       define_method "create_#{deal_type}" do
         size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
-        @deal = @user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(params[:deal])
+        @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(params[:deal])
 
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
@@ -93,6 +93,8 @@ class ApplicationController < ActionController::Base
   def self.calendar_url_method
     read_inheritable_attribute(:calendar_url_method)
   end
+
+  protected
 
   def original_user
     @original_user ||= User.find_by_id(session[:original_user_id]) if session[:original_user_id]
@@ -231,10 +233,9 @@ class ApplicationController < ActionController::Base
   end
   
   # @target_month をもとにして資産の残高を計算する
-  # TODO: 先に @user が用意されている前提
   def load_assets
     date = Date.new(target_date[:year].to_i, target_date[:month].to_i, 1) >> 1
-    asset_accounts = @user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする
+    asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする
     @assets = AccountsBalanceReport.new(asset_accounts, date)
   end
     
@@ -244,31 +245,9 @@ class ApplicationController < ActionController::Base
     Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
   end
 
-  # 指定されたURLがない旨のページを表示する。
-  # もとのURLのまま表示されるよう、redirectはしない。
-  # filter内で使って便利なよう、false を返す。
-  def error_not_found
-    raise ActiveRecord::RecordNotFound # TODO
-#    render :template => '/open/not_found', :layout => 'login'
-#    false
-  end
-
-#  # 例外ハンドリング
-#  def rescue_action_in_public(exception)
-#    return error_not_found if exception.class.to_s == "ActionController::UnknownAction" # 例外クラスが見えないので文字列で比較
-#    logger.error(exception)
-#    render :text => "error(#{exception.class}). #{exception} #{exception.backtrace}"
-#  end
-
   # ユーザーオブジェクトを@userに取得する。なければnilが入る。
   def load_user
     @user = self.current_user
-  end
-
-  # post でない場合は error_not_found にする
-  def require_post
-    return error_not_found unless request.post?
-    true
   end
 
   # 資産口座が1つ以上あり、全部で２つ以上の口座がないとダメ

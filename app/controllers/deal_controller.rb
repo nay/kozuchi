@@ -63,7 +63,7 @@ class DealController < ApplicationController
       nil
     end
     summary_key = params[:keyword]
-    @patterns = Deal::General.search_by_summary(@user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
+    @patterns = Deal::General.search_by_summary(current_user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
     render(:partial => 'patterns')
   end
 
@@ -96,7 +96,7 @@ class DealController < ApplicationController
   def save_deal
     # 更新のとき
     if params[:deal][:id]
-      deal = Deal::Base.get(params[:deal][:id].to_i, @user.id)
+      deal = Deal::Base.get(params[:deal][:id].to_i, current_user.id)
       raise "no deal #{params[:deal][:id]}" unless deal
       deal.attributes = params[:deal]
       # 未確認のものは確認にする
@@ -104,7 +104,7 @@ class DealController < ApplicationController
       deal.confirmed = true if !deal.confirmed
     else
       deal = Deal::General.new(params[:deal])
-      deal.user_id = @user.id
+      deal.user_id = current_user.id
     end
     deal.save!
     deal
@@ -114,13 +114,13 @@ class DealController < ApplicationController
   def save_balance
     # 更新のとき
     if params[:deal][:id]
-      balance = Deal::Balance.get(params[:deal][:id].to_i, @user.id)
+      balance = Deal::Balance.get(params[:deal][:id].to_i, current_user.id)
       raise "no balance #{params[:deal][:id]}" unless balance
 
       balance.attributes = params[:deal]
     else
       balance = Deal::Balance.new(params[:deal])
-      balance.user_id = @user.id
+      balance.user_id = current_user.id
     end
     balance.save!
     balance

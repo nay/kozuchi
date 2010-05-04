@@ -2,11 +2,11 @@
   <div class="form_box">
     <% if @friends.size > 0%>
       <% form_tag settings_account_links_path do %>
-        <%= h @user.login_id %>
+        <%= h current_user.login %>
         <span>さんの</span>
         <%= select_tag :account_id, options_from_collection_for_select(@accounts, :id, :name_with_asset_type) %>
         <span>へ記入をしたら<br />
-        <%= select_tag :linked_user_login, options_from_collection_for_select(@friends, :login_id, :login_id) %>
+        <%= select_tag :linked_user_login, options_from_collection_for_select(@friends, :login, :login) %>
         <span>さんの</span>
         <%= text_field_tag(:linked_account_name, "", :size => 16, :class => "text") %>
         <span>へも連携記入するようにする</span><br/>

@@ -7,7 +7,7 @@
   
   <% body_tag do -%>
     <div>
-      <h1 class="mobile_title"><%= h @user.login %>さんの家計簿<br />HOME</h1>
+      <h1 class="mobile_title"><%= h current_user.login %>さんの家計簿<br />HOME</h1>
       <%= yield %>
     </div>
     

@@ -7,7 +7,7 @@ class Settings::PartnerAccountsController < ApplicationController
 
   # 受け皿初期画面
   def index
-    @accounts = @user.accounts(true)
+    @accounts = current_user.accounts(true)
     assets = []
     for account in @accounts
       assets << account if account.type_in? :asset
