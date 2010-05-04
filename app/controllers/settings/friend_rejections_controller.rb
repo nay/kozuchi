@@ -5,7 +5,7 @@ class Settings::FriendRejectionsController < ApplicationController
   def create
     rejection = current_user.friend_rejections.create(:target_id => @target_user.id)
     flash[:notice] = "#{ERB::Util.h(@target_user.login)}さんとのフレンド関係を拒否しました。" unless rejection.new_record?
-    redirect_to friends_path
+    redirect_to settings_friends_path
   end
 
   # 拒否の撤回
@@ -13,7 +13,7 @@ class Settings::FriendRejectionsController < ApplicationController
     rejection = current_user.friend_rejections.find_by_target_id(@target_user.id)
     rejection.destroy if rejection
     flash[:notice] = "#{ERB::Util.h(@target_user.login)}さんへのフレンド関係拒否を撤回しました。"
-    redirect_to friends_path
+    redirect_to settings_friends_path
   end
 
   private

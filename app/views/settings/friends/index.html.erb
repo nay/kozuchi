@@ -1,6 +1,6 @@
 <div class="top_box">
   <div class="form_box">
-    <% form_tag friends_path do %>
+    <% form_tag settings_friend_acceptance_path do %>
       <label for="target_login">ユーザーID</label><%= text_field_tag :target_login, flash[:target_login] %>
       <button type="submit">フレンドを登録する</button>
     <% end %>
@@ -19,7 +19,7 @@
           <td><span class="userName"><%= h r.sender.login %></span>さんからのフレンド申請</td>
           <td class="timestamp"><%= r.created_at.to_formatted_s(:db) %></td>
           <td>
-            <%= link_to('承諾', friends_path(:target_login => r.sender.login), :method => :post) %>
+            <%= link_to('承諾', settings_friend_acceptance_path(:target_login => r.sender.login), :method => :post) %>
             <%= link_to('拒否', settings_friend_rejection_path(:target_login => r.sender.login), :method => :post) %>
           </td>
         </tr>
@@ -43,7 +43,7 @@
             相手からフレンド登録されるまで連携書き込みはできません
           <% end %>
         </td>
-        <td><%= link_to "削除", friend_path(a), :method => :delete, :confirm => "#{h a.target.login}さんをフレンドから削除します。よろしいですか？" %></td>
+        <td><%= link_to "削除", settings_friend_acceptance_path(:target_login => a.target.login), :method => :delete, :confirm => "#{h a.target.login}さんをフレンドから削除します。よろしいですか？" %></td>
       </tr>
       <% end %>
     </table>

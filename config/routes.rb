@@ -19,7 +19,8 @@ ActionController::Routing::Routes.draw do |map|
 
     # フレンド
     settings.resource :friend_rejection, :as => :rejection, :path_prefix => "settings/friends/:target_login", :only => [:create, :destroy]
-
+    settings.resource :friend_acceptance, :as => :acceptance, :path_prefix => "settings/friends", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
+    settings.resources :friends, :only => [:index]
   end
 
   map.with_options :controller => 'deals' do |deals|
@@ -72,7 +73,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :user
 
   # フレンド設定
-  map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
+#  map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
 #  map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
 
 
