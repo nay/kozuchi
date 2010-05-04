@@ -29,20 +29,6 @@ module WithCalendar
     options
   end
   
-#  def redirect_to_index(options = {})
-#    if options[:updated_deal_id]
-#      updated_deal = Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
-#      raise ActiveRecord::RecordNotFound unless updated_deal
-#      year = updated_deal.year
-#      month = updated_deal.month
-#    else
-#      year = target_date[:year]
-#      month = target_date[:month]
-#    end
-#    options.merge!({:action => 'index', :year => year, :month => month})
-#    redirect_to options
-#  end
-  
   # TODO: 廃止予定
   def redirect_unless_month
     if !params[:year] || !params[:month]

@@ -23,15 +23,13 @@ class AccountDealsController < ApplicationController
   end
   
   def monthly
-    raise InvalidParameterError unless params[:account_id] && params[:year] && params[:month]
+    raise InvalidParameterError unless params[:year] && params[:month]
     @menu_name = "口座別出納"
     
     @year = params[:year].to_i
     @month = params[:month].to_i
     write_target_date(@year, @month)
 
-    @account = current_user.accounts.find(params[:account_id])
-    
     start_date = Date.new(@year, @month, 1)
     end_date = (start_date >> 1) -1
     
