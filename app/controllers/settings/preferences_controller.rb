@@ -1,25 +1,29 @@
 # カスタマイズ （個人的好みによる設定） 
 class Settings::PreferencesController < ApplicationController
-  before_filter :require_post, :only => [:update]
   layout 'main'
   menu_group "設定"
   menu "カスタマイズ"
 
-  def index
-    @preferences = @user.preferences
+  before_filter :find_preferences
+
+  def show
   end
   
   def update
-    preferences = Preferences.get(@user.id)
-    preferences.attributes = params[:preferences]
-    begin
-      preferences.save!
-      @user.preferences(true)
+    @preferences.attributes = params[:preferences]
+    if @preferences.save
       flash_notice("更新しました。")
-    rescue
-      flash_validation_errors(preferences)
+      redirect_to :action => 'show'
+    else
+      current_user.reload
+      render :action => :show
     end
-    redirect_to(:action => 'index')
+  end
+
+  private
+  def find_preferences
+    @preferences = current_user.preferences
+    raise IllegalStateError, "No preference for user #{current_user.id}" unless @preferences
   end
 
 end

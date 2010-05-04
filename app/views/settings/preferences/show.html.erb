@@ -1,39 +1,39 @@
 <%= render :partial => 'shared/information' %>
 <div class="top_box">
-  <% form_tag :action => 'update' do %>
+  <% form_for :preferences, :object => @preferences, :url => settings_preferences_path, :html => {:method => :put} do |f| %>
     <div class="form_box">
       <table class="form_fields horizontal">
         <tr>
           <th>ユーザーカラー（#ff0000, red など）</th>
           <td>
-            <%= text_field('preferences', 'color', :size => 20)%>
+            <%= f.text_field :color, :size => 20 %>
             <p class="guide">左上のユーザー表示色を変更できます。</p>
           </td>
         </tr>
         <tr>
           <th>仕訳帳のスクロールバーの高さ</th>
           <td>
-            <%= text_field('preferences', 'deals_scroll_height', :size => 10) %> 例：200px
+            <%= f.text_field :deals_scroll_height, :size => 10 %> 例：200px
           </td>
         </tr>
         <tr>
           <th>事業利用</th>
           <td>
-            <%= check_box('preferences', 'business_use') %>事業利用
+            <%= f.check_box :business_use %>事業利用
             <p class="guide">「事業利用」にチェックすると、資本金の概念が導入されます。チェックを外すと、資本金口座は債権口座に自動変更されます。</p>
           </td>
         </tr>
         <tr>
           <th>項目の左右配置のスタイル</th>
           <td>
-            <label><%= radio_button :preferences, :bookkeeping_style, 1, :checked => current_user.preferences.bookkeeping_style? %>簿記方式（左に借方、右に貸方を表示）</label>
-            <label><%= radio_button :preferences, :bookkeeping_style, 0, :checked => !current_user.preferences.bookkeeping_style? %>小槌方式（出金が左、入金が右）</label>
+            <label><%= f.radio_button :bookkeeping_style, 1, :checked => current_user.preferences.bookkeeping_style? %>簿記方式（左に借方、右に貸方を表示）</label>
+            <label><%= f.radio_button :bookkeeping_style, 0, :checked => !current_user.preferences.bookkeeping_style? %>小槌方式（出金が左、入金が右）</label>
             <p class="guide">簿記同様の左右配置に統一するには、簿記方式を選択してください。</p>
           </td>
         </tr>
       </table>
       
-      <div class="buttons_line"><button type="submit">カスタマイズ設定を更新</button></div>
+      <div class="buttons_line"><%= f.submit 'カスタマイズ設定を更新', :class => 'button' %></div>
     </div>
   <% end  %>
 </div>

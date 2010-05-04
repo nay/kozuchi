@@ -7,8 +7,6 @@ ActionController::Routing::Routes.draw do |map|
     settings.resources :expenses, :collection => {:update_all => :put}
     settings.resources :assets, :collection => {:update_all => :put}
 
-    settings.resources :single_logins
-
     # 連携
     settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
     # account_links
@@ -17,15 +15,21 @@ ActionController::Routing::Routes.draw do |map|
       account_links.resource :account_link, :as => :links, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
       account_links.resources :account_links, :as => :links, :path_prefix => 'settings/accounts', :only => [:index, :create]
     end
-    # partner_accounts
+        # partner_accounts
     settings.with_options :controller => 'partner_accounts' do |partner_accounts|
       partner_accounts.resources :partner_accounts, :as => :partners, :path_prefix => 'settings/accounts', :only => [:index]
       partner_accounts.resource :partner_account, :as => :partner, :path_prefix => 'settings/accounts/:account_id', :only => [:update]
     end
+
     # フレンド
     settings.resource :friend_rejection, :as => :rejection, :path_prefix => "settings/friends/:target_login", :only => [:create, :destroy]
     settings.resource :friend_acceptance, :as => :acceptance, :path_prefix => "settings/friends", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
     settings.resources :friends, :only => [:index]
+
+    # カスタマイズ
+    settings.resource :preferences, :only => [:show, :update]
+
+    settings.resources :single_logins
   end
 
   map.with_options :controller => 'deals' do |deals|
