@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
     settings.resources :assets
     settings.connect "assets", :controller => "assets", :action => "update_all", :conditions => {:method => :put}
     settings.resources :single_logins
+    settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
   end
 
   map.with_options :controller => 'deals' do |deals|
@@ -70,7 +71,6 @@ ActionController::Routing::Routes.draw do |map|
   #上記のようにしたいけどUI上面倒なので
   map.connect "settings/accounts/links", :controller => "settings/account_links", :action => "create_or_update", :conditions => {:method => :post}
   map.account_link "settings/account/:account_id/link", :controller => "settings/account_links", :action => "destroy", :conditions => {:method => :delete}
-  map.account_link_request "settings/account/:account_id/link_requests/:id", :controller => "settings/account_link_requests", :action => "destroy", :conditions => {:method => :delete}
   #  map.resource :session
 
   # The priority is based upon order of creation: first created -> highest priority.
