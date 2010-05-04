@@ -3,7 +3,7 @@ class Settings::AccountLinksController < ApplicationController
   menu_group "連携"
   menu "取引連動"
 
-  before_filter :find_account, :only => [:destroy, :create_or_update]
+  before_filter :find_account, :only => [:destroy, :create]
 
   # 取引連動初期表示画面
   def index
@@ -15,13 +15,14 @@ class Settings::AccountLinksController < ApplicationController
   def destroy
     @account.clear_link
     flash[:notice] = "#{ERB::Util.h(@account.name_with_asset_type)}からの連携書き込みを行わないようにしました。"
-    redirect_to account_links_path
+    redirect_to settings_account_links_path
   end
 
-  def create_or_update
+  # すでにある場合は更新する
+  def create
     if params[:linked_account_name].blank?
       flash_error("フレンドの口座名を指定してください")
-      redirect_to account_links_path
+      redirect_to settings_account_links_path
       return
     end
     begin
@@ -30,11 +31,7 @@ class Settings::AccountLinksController < ApplicationController
     rescue PossibleError => e
       flash_error(ERB::Util.h(e.message))
     end
-    redirect_to account_links_path
+    redirect_to settings_account_links_path
   end
 
-  private
-  def find_account
-    @account = current_user.accounts.find(params[:account_id])
-  end
 end

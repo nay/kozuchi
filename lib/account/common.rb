@@ -26,10 +26,8 @@ module Account::Common
     raise PossibleError, "指定されたユーザーが見つからないか、相互にフレンド登録された状態ではありません" unless target_user && user.friend?(target_user)
 
     # target_ex_account_idがリンクを張れる相手かチェックする
-    target_account = nil
-    begin
-      target_account = target_user.account_by_name(target_ex_account_name)
-    rescue ActiveRecord::RecordNotFound
+    target_account = target_user.account_by_name(target_ex_account_name)
+    unless target_account
       raise PossibleError, "フレンド #{target_user.login} さんには #{target_ex_account_name} がありません。"
     end
     target_summary = target_account.to_summary

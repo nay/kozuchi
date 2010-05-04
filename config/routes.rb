@@ -10,6 +10,12 @@ ActionController::Routing::Routes.draw do |map|
     settings.connect "assets", :controller => "assets", :action => "update_all", :conditions => {:method => :put}
     settings.resources :single_logins
     settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
+    settings.with_options :controller => 'account_links' do |account_links|
+      # destroy に :id がいらない、create時はaccount_idをクエリーで渡したいなど変則的
+      account_links.resource :account_link, :as => :links, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
+      account_links.resources :account_links, :as => :links, :path_prefix => 'settings/accounts', :only => [:index, :create]
+    end
+
   end
 
   map.with_options :controller => 'deals' do |deals|
@@ -65,23 +71,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
   map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
 
-  # 口座連携設定
-  map.account_links "settings/accounts/links", :controller => "settings/account_links", :action => "index", :conditions => {:method => :get}
-  #map.connect "settings/account/:account_id/link", :controller => "settings/account_links", :action => "create_or_update", :conditions => {:method => :put}
-  #上記のようにしたいけどUI上面倒なので
-  map.connect "settings/accounts/links", :controller => "settings/account_links", :action => "create_or_update", :conditions => {:method => :post}
-  map.account_link "settings/account/:account_id/link", :controller => "settings/account_links", :action => "destroy", :conditions => {:method => :delete}
-  #  map.resource :session
-
-  # The priority is based upon order of creation: first created -> highest priority.
-  
-  # Sample of regular route:
-  # map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  # map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
 
   map.root :controller => "welcome"
   

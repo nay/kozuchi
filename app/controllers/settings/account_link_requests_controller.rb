@@ -9,11 +9,7 @@ class Settings::AccountLinkRequestsController < ApplicationController
     # こちらのrequestを削除する
     @account.link_requests.delete(link_request)
     flash[:notice] = "#{ERB::Util.h(sender_account_name)}からの連携書き込みをしないようにしました。"
-    redirect_to account_links_path
+    redirect_to settings_account_links_path
   end
 
-  private
-  def find_account
-    @account = current_user.accounts.find(params[:account_id])
-  end
 end
