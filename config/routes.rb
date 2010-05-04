@@ -29,7 +29,8 @@ ActionController::Routing::Routes.draw do |map|
     # カスタマイズ
     settings.resource :preferences, :only => [:show, :update]
 
-    settings.resources :single_logins
+    # シングルログイン
+    settings.resources :single_logins, :only => [:index, :create, :destroy]
   end
 
   map.with_options :controller => 'deals' do |deals|

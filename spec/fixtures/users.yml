@@ -3,8 +3,12 @@ common_general:
   login: common_general
 taro:
   login: taro
+  salt: test
+  crypted_password: <%= User.encrypt('taro', 'test') %>
 hanako:
   login: hanako
+  salt: test
+  crypted_password: <%= User.encrypt('hanako', 'test') %>
 home:
   login: home
 account_entry_test_user:
