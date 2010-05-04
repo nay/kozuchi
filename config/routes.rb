@@ -11,12 +11,17 @@ ActionController::Routing::Routes.draw do |map|
 
     # 連携
     settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
+    # account_links
     settings.with_options :controller => 'account_links' do |account_links|
       # destroy に :id がいらない、create時はaccount_idをクエリーで渡したいなど変則的
       account_links.resource :account_link, :as => :links, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
       account_links.resources :account_links, :as => :links, :path_prefix => 'settings/accounts', :only => [:index, :create]
     end
-
+    # partner_accounts
+    settings.with_options :controller => 'partner_accounts' do |partner_accounts|
+      partner_accounts.resources :partner_accounts, :as => :partners, :path_prefix => 'settings/accounts', :only => [:index]
+      partner_accounts.resource :partner_account, :as => :partner, :path_prefix => 'settings/accounts/:account_id', :only => [:update]
+    end
     # フレンド
     settings.resource :friend_rejection, :as => :rejection, :path_prefix => "settings/friends/:target_login", :only => [:create, :destroy]
     settings.resource :friend_acceptance, :as => :acceptance, :path_prefix => "settings/friends", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
@@ -71,11 +76,6 @@ ActionController::Routing::Routes.draw do |map|
   map.password '/password/:password_token', :controller => 'users', :action => 'update_password', :conditions => {:method => :post}
 
   map.resource :user
-
-  # フレンド設定
-#  map.resources :friends, :controller => "settings/friends", :path_prefix => "settings", :name_prefix => nil
-#  map.resources :friend_rejections, :controller => "settings/friend_rejections", :path_prefix => "settings", :name_prefix => nil
-
 
   map.root :controller => "welcome"
   

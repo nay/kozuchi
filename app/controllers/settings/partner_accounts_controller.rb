@@ -1,7 +1,9 @@
-class Settings::PartnerAccountController < ApplicationController
+class Settings::PartnerAccountsController < ApplicationController
   layout 'main'
   menu_group "連携"
   menu "受け皿"
+
+  before_filter :find_account, :only => 'update'
 
   # 受け皿初期画面
   def index
@@ -27,19 +29,12 @@ class Settings::PartnerAccountController < ApplicationController
   
   #更新
   def update
-    account_id = params[:account][:id]
-    account = Account::Base.get(@user.id, account_id.to_i)
-    partner_account_id = params[:account][:partner_account_id]
-    raise "error" if partner_account_id == nil
-    if partner_account_id && partner_account_id.empty?
-      account.partner_account_id = nil
-    else
-      account.partner_account_id = partner_account_id.to_i
-    end
-    account.save!
+    @account.attributes = params[:account].slice(:partner_account_id)
+    @account.save!
     
-    flash_notice("#{account.name_with_asset_type}の受け皿口座を更新しました。")
-    redirect_to(:action => 'index')
+    flash_notice("#{@account.name_with_asset_type}の受け皿口座を更新しました。")
+    redirect_to settings_partner_accounts_path
   end
+
   
 end

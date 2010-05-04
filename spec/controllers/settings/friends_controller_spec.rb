@@ -15,10 +15,4 @@ describe Settings::FriendsController do
     end
   end
 
-  describe "create" do
-  end
-
-  describe "destroy" do
-  end
-
 end
