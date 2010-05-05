@@ -1,4 +1,4 @@
-<h2>今日の支出</h2>
+<h2><%= @date == Date.today ? '今日' : @date.to_s(:db) %>の支出</h2>
 <% if @expenses.empty? %>
   <p>記入なし</p>
 <% else %>

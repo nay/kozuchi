@@ -16,13 +16,16 @@ class ApplicationController < ActionController::Base
   # options - :render_options_proc, :redirect_options_proc
   def self.deal_actions_for(*args)
     options = args.extract_options!
-    # 必須オプションチェック
     render_options_proc = options[:render_options_proc]
     redirect_options_proc = options[:redirect_options_proc]
-    raise "render_options_proc and redirect_options_proc are required" unless render_options_proc && redirect_options_proc
+    ajax = options[:ajax]
+    raise "render_options_proc is required to do ajax" if ajax && (!render_options_proc || !redirect_options_proc)
+    raise "redirect_options_proc is required" unless redirect_options_proc
+
+    cache_sweeper :export_sweeper, :only => args.map{|deal_type| "create_#{deal_type}"}
 
     args.each do |deal_type|
-      render_options = render_options_proc.call(deal_type)
+      render_options = render_options_proc ? render_options_proc.call(deal_type) : {}
       # new_xxx
       case deal_type.to_s
       when /general/
@@ -30,20 +33,20 @@ class ApplicationController < ActionController::Base
           @deal = current_user.general_deals.build
           @deal.build_simple_entries
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
-          render render_options
+          render render_options unless render_options.blank?
         end
       when /complex/
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
           @deal.build_complex_entries
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
-          render render_options
+          render render_options unless render_options.blank?
         end
       when /balance/
         define_method "new_#{deal_type}" do
           @deal = current_user.balance_deals.build
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
-          render render_options
+          render render_options unless render_options.blank?
         end
       end
 
@@ -56,15 +59,27 @@ class ApplicationController < ActionController::Base
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
           flash[:"#{controller_name}_deal_type"] = deal_type
           flash[:day] = @deal.date.day
-          render :update do |page|
-            page.redirect_to redirect_options_proc.call(@deal)
+          if ajax
+            render :update do |page|
+              page.redirect_to redirect_options_proc.call(@deal)
+            end
+          else
+            redirect_to redirect_options_proc.call(@deal)
           end
         else
           if deal_type.to_s =~ /complex/
             @deal.fill_complex_entries(size)
           end
-          render :update do |page|
-            page[:deal_forms].replace_html render_options
+          if ajax
+            render :update do |page|
+              page[:deal_forms].replace_html render_options
+            end
+          else
+            if render_options.blank?
+              render :action => "new_#{deal_type}"
+            else
+              render render_options
+            end
           end
         end
       end
@@ -107,6 +122,10 @@ class ApplicationController < ActionController::Base
 
   
   private
+
+  def find_date
+    @date = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
+  end
 
   def find_account
     @account = current_user.accounts.find(params[:account_id])

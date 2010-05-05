@@ -11,6 +11,7 @@ class AccountDealsController < ApplicationController
   
 
   deal_actions_for :creditor_general_deal, :debtor_general_deal, :balance_deal,
+    :ajax => true,
     :render_options_proc => lambda {|deal_type|
       {:partial => "new_#{deal_type}"}
     },

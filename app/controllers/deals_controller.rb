@@ -1,57 +1,18 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
-  cache_sweeper :export_sweeper, :only => [:create_deal, :destroy, :confirm] 
+  cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm]
+  
   menu_group "家計簿"
   menu "仕訳帳"
   before_filter :specify_month, :only => :index
   before_filter :check_account, :load_target_date
-  before_filter :find_date, :only => [:expenses, :daily]
   before_filter :find_deal, :only => [:edit, :update, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
   include ApplicationHelper
 
   # ----- 入力画面表示系 -----------------------------------------------
 
-  def expenses
-    @expenses = current_user.accounts.flows(@date, @date + 1, ["accounts.type = ?", "Expense"]) # TODO: Account整理
-  end
-
-  # TODO: 携帯対応でとりあえず入れた。後で調整
-  # dealとbalanceを区別したいのでこの命名
-  def new_deal
-    @deal = Deal::General.new
-    @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, true
-    )
-    @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, false
-    )
-    #     text = render_to_string :template => "deals/test.html.erb"
-    #     p text
-    #     render :text => "aaa"
-  end
-
-  # TODO: モバイル専用
-  def create_deal
-    @deal = Deal::General.new(params[:deal])
-    @deal.user_id = current_user.id
-    @deal.date = Date.today
-    if @deal.save
-      flash[:notice] = "登録しました。"
-      flash[:saved] = true
-      redirect_to :action => "new_deal"
-    else
-      @accounts_minus = ApplicationHelper::AccountGroup.groups(
-        @user.accounts, true
-      )
-      @accounts_plus = ApplicationHelper::AccountGroup.groups(
-        @user.accounts, false
-      )
-      flash[:notice] = "登録に失敗しました。"
-      render :action => "new_deal"
-    end
-  end
 
   RENDER_OPTIONS_PROC = lambda {|deal_type|
     {:partial => "#{deal_type}_form"}
@@ -61,6 +22,7 @@ class DealsController < ApplicationController
     {:action => :index, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
   }
   deal_actions_for :general_deal, :complex_deal, :balance_deal,
+    :ajax => true,
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
@@ -109,13 +71,6 @@ class DealsController < ApplicationController
   end
 
 
-  # 指定された行にジャンプするアクション
-#  def jump
-#    redirect_to_index(:updated_deal_id => params[:id])
-#    # todo tab_name は月更新すると不明状態となるので受け渡しても意味がない。hiddenなどで管理可能だが、今後の課題でいいだろう。
-#    #    redirect_to(:action => 'index', :updated_deal_id =>params[:id] )
-#  end
-
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
@@ -138,11 +93,11 @@ class DealsController < ApplicationController
     prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
 
     # 旧 deal#new でやっていたrender_component内の準備を以下にとりあえず移動
-    @back_to = {:controller => 'deals', :action => 'index'}
+#    @back_to = {:controller => 'deals', :action => 'index'}
 
     # deal / balance それぞれのフォーム初期化処理
-    @tab_name = params[:tab_name] || 'deal'
-    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
+#    @tab_name = params[:tab_name] || 'deal'
+#    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
     #    render :layout => false
 
     # 登録用
@@ -161,7 +116,7 @@ class DealsController < ApplicationController
     @deal.destroy
     flash[:notice] = "#{@deal.human_name} を削除しました。"
     if request.mobile?
-      redirect_to daily_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
+      redirect_to daily_created_mobile_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
     else
       redirect_to(:action => 'index')
     end
@@ -175,15 +130,6 @@ class DealsController < ApplicationController
     @as_action = :index
   end
 
-  # ----- 編集実行系 --------------------------------------------------
-
-  # 取引の削除を受け付ける
-#  def delete_deal
-#    deal = Deal::Base.find(params[:id])
-#    deal.destroy
-#    flash[:notice] = "#{deal.human_name} を削除しました。"
-#    redirect_to(:action => 'index')
-#  end
   
   # 確認処理
   def confirm
@@ -220,20 +166,6 @@ class DealsController < ApplicationController
     end
   end
 
-  def find_date
-    raise InvalidParameterError unless @date = extract_date(params)
-  end
-
-  def extract_date(params)
-    return nil unless params[:year] && params[:month] && params[:day]
-    begin
-      return Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
-    rescue => e
-      return nil
-    end
-  end
-
-  
   def redirect_to_index(options = {})
     if options[:updated_deal_id]
       updated_deal = Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
@@ -270,25 +202,25 @@ class DealsController < ApplicationController
     redirect_to_index and return false if !params[:year] || !params[:month]
   end
 
-  # 記入エリアの準備
-  def prepare_select_deal_tab
-    @accounts_minus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, true
-    )
-    @accounts_plus = ApplicationHelper::AccountGroup.groups(
-      @user.accounts, false
-    )
-    unless @deal
-      @deal = Deal::General.new(params[:deal])
-      @deal.date = target_date # セッションから判断した日付を入れる
-    end
-
-    @patterns = [] # 入力支援
-  end
-
-  def prepare_select_balance_tab
-    @accounts_for_balance = current_user.assets
-    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
-  end
+#  # 記入エリアの準備
+#  def prepare_select_deal_tab
+#    @accounts_minus = ApplicationHelper::AccountGroup.groups(
+#      @user.accounts, true
+#    )
+#    @accounts_plus = ApplicationHelper::AccountGroup.groups(
+#      @user.accounts, false
+#    )
+#    unless @deal
+#      @deal = Deal::General.new(params[:deal])
+#      @deal.date = target_date # セッションから判断した日付を入れる
+#    end
+#
+#    @patterns = [] # 入力支援
+#  end
+#
+#  def prepare_select_balance_tab
+#    @accounts_for_balance = current_user.assets
+#    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
+#  end
 
 end

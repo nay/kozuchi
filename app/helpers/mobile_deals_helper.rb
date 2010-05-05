@@ -1,0 +1,2 @@
+module MobileDealsHelper
+end

@@ -121,7 +121,13 @@ ActionController::Routing::Routes.draw do |map|
     balance_sheet.monthly_balance_sheet 'balance_sheet/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
-
+  # MobileDealsController
+  map.with_options :controller => 'mobile_deals', :path_prefix => 'mobile' do |mobile_deals|
+    mobile_deals.mobile_daily_expenses 'expenses/:year/:month/:day', :action => 'daily_expenses', :conditions => {:method => :get}
+    mobile_deals.new_mobile_general_deal 'deals/general/new', :action => 'new_general_deal', :conditions => {:method => :get}
+    mobile_deals.mobile_general_deals 'deals/general', :action => 'create_general_deal', :conditions => {:method => :post}
+    mobile_deals.daily_created_mobile_deals 'deals/created/:year/:month/:day', :action => 'daily_created', :conditions => {:method => :get}
+  end
 
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',

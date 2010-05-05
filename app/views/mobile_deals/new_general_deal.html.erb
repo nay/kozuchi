@@ -1,0 +1,21 @@
+<%= flash[:notice] if flash[:notice] %>
+<div style="text-align:right;"><%= today = Date.today; link_to "記入履歴へ", daily_created_mobile_deals_path(:year => today.year, :month => today.month, :day => today.day) %></div>
+<%= error_messages_for :deal %>
+<% form_for :deal, @deal, :url => mobile_general_deals_path do |f| %>
+  <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
+  <% @date = Date.today %>
+  <%= @date.to_s(:db) %>
+  <%= f.hidden_field 'date][year', :value => @date.year.to_s  %>
+  <%= f.hidden_field 'date][month', :value => @date.month.to_s  %>
+  <%= f.hidden_field 'date][day', :value => @date.day.to_s  %>
+  <%= f.text_field :summary, :size => 10 %><br />
+  <% tab_index = 3 # TODO: あとで調整.. %>
+  <%= creditor_account_field_proc.call(tab_index+=1) %><br />
+
+  <div style="padding-left: 4em; margin: 4px 0;">↓</div>
+
+  <%= debtor_account_field_proc.call(tab_index+=1) %><br />
+
+  <%= amount_field_proc.call(tab_index+=1) %>円<br />
+  <%= f.submit "記入" %>
+<% end %>
