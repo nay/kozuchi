@@ -14,8 +14,8 @@ class AssetsController < ApplicationController
   end
 
   def monthly
-    @year = params[:year]
-    @month = params[:month]
+    write_target_date(params[:year], params[:month])
+    @year, @month = read_target_date
 
     date = Date.new(@year.to_i, @month.to_i, 1) >> 1
     asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする

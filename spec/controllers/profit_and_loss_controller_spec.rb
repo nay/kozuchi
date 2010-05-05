@@ -1,17 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe AssetsController do
+describe ProfitAndLossController do
   fixtures :users, :accounts
   set_fixture_class :accounts => 'Account::Base'
   before do
     login_as :taro
   end
-  describe "index" do
+  describe "show" do
     context "口座が十分あるとき" do
       it "monthlyにリダイレクトされる" do
-        get :index
-        response.should redirect_to(monthly_assets_path(:year => Date.today.year, :month => Date.today.month))
+        get :show
+        response.should redirect_to(monthly_profit_and_loss_path(:year => Date.today.year, :month => Date.today.month))
       end
     end
     context "口座がないとき" do
@@ -19,7 +19,7 @@ describe AssetsController do
         @current_user.accounts.destroy_all
       end
       it "エラーページが表示される" do
-        get :index
+        get :show
         response.should be_success
       end
     end

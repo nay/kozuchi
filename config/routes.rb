@@ -120,6 +120,12 @@ ActionController::Routing::Routes.draw do |map|
     balance_sheet.monthly_balance_sheet 'balance_sheet/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
+  # ProfitAndLossController
+  map.with_options :controller => 'profit_and_loss' do |profit_and_loss|
+    profit_and_loss.resource :profit_and_loss, :only => [:show]
+    profit_and_loss.monthly_profit_and_loss 'profit_and_loss/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+  end
+
   # MobileDealsController
   map.with_options :controller => 'mobile_deals', :path_prefix => 'mobile' do |mobile_deals|
     mobile_deals.mobile_daily_expenses 'expenses/:year/:month/:day', :action => 'daily_expenses', :conditions => {:method => :get}
@@ -128,30 +134,14 @@ ActionController::Routing::Routes.draw do |map|
     mobile_deals.daily_created_mobile_deals 'deals/created/:year/:month/:day', :action => 'daily_created', :conditions => {:method => :get}
   end
 
-
-  # deals, profit_and_loss
-  map.connect ':controller/:year/:month', :action => 'index',
-    :requirements => {:controller => /profit_and_loss/,
-                      :year => /[0-9]*/, :month => /[0-9]*/}
-
-#  map.daily_deals 'deals/:year/:month/:day', :action => 'daily', :controller => "deals"
-
-  # daily summary
-#  map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
-#  map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
-
-
+  # ExportController
   map.with_options(:controller => "export") do |export|
     export.export 'export', :action => "index"
     export.export_file 'export/:filename.:format', :action => "whole"
   end
 
-  map.connect ':controller', :action => 'index', :conditions => {:method => :get}
-
-
-  # Allow downloading Web Service WSDL as a file with an extension
-  # instead of a file named 'wsdl'
-  map.connect ':controller/service.wsdl', :action => 'wsdl'
+  # HelpController
+  map.connect 'help/:action', :controller => 'help'
 
 
   # Install the default route as the lowest priority.

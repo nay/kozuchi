@@ -1,30 +1,24 @@
 class ProfitAndLossController < ApplicationController 
-  include WithCalendar
   layout 'main'
   helper :graph
   menu_group "家計簿"
   menu "収支表"
-  before_filter :check_account, :load_target_date, :prepare_update_profit_and_loss
 
-  def index
-    if !params[:year] || !params[:month]
-      redirect_to_index
-      return
-    end
-    @menu_name = "収支表"
+  include WithCalendar
+
+  before_filter :check_account
+
+  def show
+    year, month = read_target_date
+    redirect_to monthly_profit_and_loss_path(:year => year, :month => month)
   end
 
-  def update
-    render(:partial => "profit_and_loss", :layout => false)
-  end
-  
-  private
-  
-
-  def prepare_update_profit_and_loss
+  def monthly
+    write_target_date(params[:year], params[:month])
+    @year, @month = read_target_date
 
     # 費目ごとの合計を得る
-    start_inclusive = Date.new(@target_date[:year].to_i, @target_date[:month].to_i, 1)
+    start_inclusive = Date.new(@year.to_i, @month.to_i, 1)
     end_exclusive = start_inclusive >> 1
 
     # 全口座のフローを得る
@@ -86,12 +80,6 @@ class ProfitAndLossController < ApplicationController
     end
 
     @profit = @income_flows.sum - @expense_flows.sum
-
-    session[:target_month] = @target_month
   end
   
-  private
-  def redirect_to_index
-    redirect_to :action => 'index', :year => target_date[:year], :month => target_date[:month]
-  end
 end
