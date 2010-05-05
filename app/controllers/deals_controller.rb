@@ -97,10 +97,11 @@ class DealsController < ApplicationController
   def destroy
     @deal.destroy
     flash[:notice] = "#{@deal.human_name} を削除しました。"
+    write_target_date(@deal.date)
     if request.mobile?
       redirect_to daily_created_mobile_deals_path(:year => @deal.date.year, :month => @deal.date.month, :day => @deal.date.day)
     else
-      redirect_to(:action => 'index')
+      redirect_to monthly_deals_path(:year => @deal.date.year, :month => @deal.date.month)
     end
   end
 
