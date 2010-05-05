@@ -221,7 +221,7 @@ class ApplicationController < ActionController::Base
 
   # 編集対象日のハッシュを得る
   # セッションも更新する
-  # dprecated.
+  # deprecated.
   def target_date
     if session[:target_date] && session[:target_date][:year] && session[:target_date][:month]
       # day がないときは補完できるならする
@@ -235,7 +235,8 @@ class ApplicationController < ActionController::Base
     end
     return session[:target_date]
   end
-  
+
+  # deprecated.
   def load_target_date
     @target_date = target_date
     raise "no target_date" unless @target_date
