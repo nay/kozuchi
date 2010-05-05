@@ -4,8 +4,6 @@ class ProfitAndLossController < ApplicationController
   menu_group "家計簿"
   menu "収支表"
 
-  include WithCalendar
-
   before_filter :check_account
 
   def show

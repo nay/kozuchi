@@ -1,11 +1,10 @@
 class DealsController < ApplicationController
-  include WithCalendar
   layout 'main'
   cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
   
   menu_group "家計簿"
   menu "仕訳帳"
-  before_filter :check_account # :load_target_date
+  before_filter :check_account
   before_filter :find_deal, :only => [:edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
 

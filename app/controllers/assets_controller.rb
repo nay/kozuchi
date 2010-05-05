@@ -4,8 +4,6 @@ class AssetsController < ApplicationController
   menu_group "家計簿"
   menu "資産表"
 
-  include WithCalendar
-
   before_filter :check_account
 
   def index

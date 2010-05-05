@@ -98,16 +98,6 @@ class ApplicationController < ActionController::Base
   def self.menu(menu, options = {})
     before_filter(options) {|controller| controller.send(:'menu=', menu) }
   end
-  
-
-  def self.use_calendar(url_method = nil)
-    include WithCalendar
-    write_inheritable_attribute(:calendar_url_method, url_method)
-  end
-  
-  def self.calendar_url_method
-    read_inheritable_attribute(:calendar_url_method)
-  end
 
   protected
 

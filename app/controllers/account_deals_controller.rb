@@ -3,8 +3,6 @@ class AccountDealsController < ApplicationController
   menu_group "家計簿"
   menu "口座別出納"
 
-  include WithCalendar
-
   cache_sweeper :export_sweeper, :only => [:create_creditor_general_deal, :create_debtor_general_deal, :create_balance_deal]
 
   before_filter :check_account
