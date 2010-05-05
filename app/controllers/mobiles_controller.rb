@@ -1,6 +1,5 @@
 class MobilesController < ApplicationController
   before_filter :require_mobile
-  before_filter :print_params
 
   def update
     # アクセス中の端末で簡単ログイン用のハッシュをユーザーモデルに登録する
@@ -20,11 +19,6 @@ class MobilesController < ApplicationController
     current_user.clear_mobile_identity!
     flash[:notice] = "設定を削除しました。"
     redirect_to home_path
-  end
-
-  private
-  def print_params
-    p params.inspect
   end
 
 end
