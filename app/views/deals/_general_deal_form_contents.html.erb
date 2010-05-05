@@ -1,6 +1,6 @@
   <div>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
-    <div id="patterns"><%= render :partial => "deal/patterns" %></div>
+    <div id="patterns"></div>
   </div>
   <div class="entry">
     <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
@@ -20,7 +20,7 @@
     <% end %>
     <div style="clear:left;"></div>
   </div>
-  <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :url => {:controller => 'deal', :action => 'update_patterns'})%>
+  <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :method => :get, :url => deal_suggestions_path )%>
 
   <%= javascript_tag <<-END
   function setEditDeal(summary, amount, minus_account_id, plus_account_id) {

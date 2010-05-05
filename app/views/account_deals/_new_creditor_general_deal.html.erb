@@ -1,25 +1,24 @@
 <% deal_form '出金', :url => account_creditor_general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}" do |f| %>
   <div>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
-    <div id="patterns"><%= render :partial => "deal/patterns" %></div>
+    <div id="patterns"></div>
   </div>
   <div class="entry">
     <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f, :creditor_account_fixed => @account) %>
 
     <%= render :partial => "/deals/general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
       :locals => {
-        :amount_field_proc => amount_field_proc,
-        :debtor_account_field_proc => debtor_account_field_proc,
-        :creditor_account_field_proc => creditor_account_field_proc,
-        :tab_index => 10 # この次からはじまる
-      }
-    %>
+      :amount_field_proc => amount_field_proc,
+      :debtor_account_field_proc => debtor_account_field_proc,
+      :creditor_account_field_proc => creditor_account_field_proc,
+      :tab_index => 10 # この次からはじまる
+    }
+  %>
     <%= f.submit '記入', :tablindex => "14", :class => 'button' %>
     <div style="clear:left;"></div>
   </div>
 
 <% end %>
 <%= error_messages_for :deal %>
-  <%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :url => {:controller => 'deal', :action => 'update_patterns', :account_id => @account.id, :debtor => 'false'})%>
+<%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :method => :get, :url => deal_suggestions_path(:account_id => @account.id, :debtor => 'false'))%>
 
- 

@@ -51,8 +51,9 @@ ActionController::Routing::Routes.draw do |map|
     # TODO: 変更
   end
 
+  # DealSuggestionsController
+  map.resources :deal_suggestions, :as => :suggestions, :path_prefix => 'deals', :only => [:index]
 
-#  map.resources :general_deals
 
 
   map.resource :mobile_device, :member => {"confirm_destroy" => :get}, :controller => "mobiles"
@@ -119,6 +120,7 @@ ActionController::Routing::Routes.draw do |map|
     balance_sheet.resource :balance_sheet, :only => [:show]
     balance_sheet.monthly_balance_sheet 'balance_sheet/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
+
 
 
   # deals, profit_and_loss
