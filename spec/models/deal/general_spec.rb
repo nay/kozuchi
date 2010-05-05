@@ -115,6 +115,48 @@ describe Deal::General do
       @deal.save!
       @deal.reload
     end
+    # 複数記入への変更
+    it "貸し方の項目を足して複数記入に変更できる" do
+      @deal.attributes = {
+        :creditor_entries_attributes => {
+          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries(true).first.id},
+          '1' => {:account_id => :deal_test_food.to_id, :amount => -300}
+        },
+        :debtor_entries_attributes => {
+          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries(true).first.id}
+        }
+      }
+      @deal.creditor_entries.size.should == 3 # 一時的に３つになる
+      @deal.creditor_entries.first.marked_for_destruction?.should be_true
+      @deal.creditor_entries[1].amount.should == -3200
+      @deal.creditor_entries[2].amount.should == -300
+      @deal.valid?.should be_true
+      @deal.save.should be_true
+      @deal.reload
+      @deal.creditor_entries.size.should == 2
+      @deal.debtor_entries.size.should == 1
+    end
+    it "借り方の項目を足して複数記入に変更できる" do
+      @deal.attributes = {
+        :creditor_entries_attributes => {
+          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries(true).first.id}
+        },
+        :debtor_entries_attributes => {
+          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries(true).first.id},
+          '1' => {:account_id => :deal_test_food.to_id, :amount => 300}
+        }
+      }
+      @deal.debtor_entries.size.should == 3 # 一時的に３つになる
+      @deal.debtor_entries.first.marked_for_destruction?.should be_true
+      @deal.debtor_entries[1].amount.should == 3200
+      @deal.debtor_entries[2].amount.should == 300
+      @deal.valid?.should be_true
+      @deal.save.should be_true
+      @deal.reload
+      @deal.creditor_entries.size.should == 1
+      @deal.debtor_entries.size.should == 2
+      
+    end
     it "dateを変更したらentriesのdateも変更される" do
       @deal.date = @deal.date - 7
       @deal.save!
