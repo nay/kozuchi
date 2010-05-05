@@ -92,13 +92,6 @@ ActionController::Routing::Routes.draw do |map|
 #  map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'
  # map.connect 'settlement/:id/:action', :controller => 'settlements'
 
-  map.connect ':controller', :action => 'index', :conditions => {:method => :get}
-
-
-  # Allow downloading Web Service WSDL as a file with an extension
-  # instead of a file named 'wsdl'
-  map.connect ':controller/service.wsdl', :action => 'wsdl'
-
   # AccountDealsController
   # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
   map.with_options :controller => 'account_deals' do |account_deals|
@@ -121,10 +114,16 @@ ActionController::Routing::Routes.draw do |map|
     assets.monthly_assets 'assets/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
+  # BalanceSheetController
+  map.with_options :controller => 'balance_sheet' do |balance_sheet|
+    balance_sheet.resource :balance_sheet, :only => [:show]
+    balance_sheet.monthly_balance_sheet 'balance_sheet/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+  end
+
 
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',
-    :requirements => {:controller => /deals|profit_and_loss|assets|balance_sheet/,
+    :requirements => {:controller => /deals|profit_and_loss/,
                       :year => /[0-9]*/, :month => /[0-9]*/}
 
   map.daily_deals 'deals/:year/:month/:day', :action => 'daily', :controller => "deals"
@@ -138,6 +137,14 @@ ActionController::Routing::Routes.draw do |map|
     export.export 'export', :action => "index"
     export.export_file 'export/:filename.:format', :action => "whole"
   end
+
+  map.connect ':controller', :action => 'index', :conditions => {:method => :get}
+
+
+  # Allow downloading Web Service WSDL as a file with an extension
+  # instead of a file named 'wsdl'
+  map.connect ':controller/service.wsdl', :action => 'wsdl'
+
 
   # Install the default route as the lowest priority.
   # TODO: except sessions, 
