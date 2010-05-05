@@ -86,7 +86,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => "welcome"
   
 
-  # Settlements
+  # SettlementsController
   map.resources :settlements, :collection => {:change_condition => :get}, :member => {:print_form => :get, :submit => :put}
 #  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
 #  map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'

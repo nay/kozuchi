@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../deals_spec_helper')
 include DealsSpecHelper
 
-describe "/deals/daily" do
+describe "/mobile_deals/daily_created" do
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
 
@@ -16,7 +16,7 @@ describe "/deals/daily" do
   describe "@dealsが空のとき" do
     before do
       assigns[:deals] = []
-      render 'deals/daily'
+      render '/mobile_deals/daily_created'
     end
     it "成功すること" do
       response.should be_success
@@ -28,7 +28,7 @@ describe "/deals/daily" do
       deal = new_deal(@date.year, @date.month, @date.day, :taro_cache => -100, :taro_food => 100)
       deal.save!
       assigns[:deals] = [deal]
-      render 'deals/daily'
+      render '/mobile_deals/daily_created'
     end
     it "成功すること" do
       response.should be_success
