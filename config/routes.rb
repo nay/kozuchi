@@ -34,11 +34,9 @@ ActionController::Routing::Routes.draw do |map|
     settings.resources :single_logins, :only => [:index, :create, :destroy]
   end
 
+  # DealsController
   map.with_options :controller => 'deals' do |deals|
     deals.resources :deals, :only => [:edit, :update, :destroy], :member => {:confirm => :put}, :sub_resources => {:entries => {:only => [:create]}}
-
-    deals.monthly_deals 'deals/:year/:month', :action => 'index',
-      :requirements => {:year => /[0-9]*/, :month => /[0-9]*/}
 
     deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
     deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
@@ -47,7 +45,8 @@ ActionController::Routing::Routes.draw do |map|
     deals.new_balance_deal 'balance_deals/new', :action => 'new_balance_deal', :conditions => {:method => :get}
     deals.new_complex_deal 'complex_deals/new', :action => 'new_complex_deal', :conditions => {:method => :get}
 
-
+#    deals.resources :deals
+    deals.monthly_deals 'deals/:year/:month', :action => 'monthly', :conditions => {:method => :get}, :requirements => YEAR_MONTH_REQUIREMENTS
     # TODO: 変更
   end
 
@@ -129,15 +128,16 @@ ActionController::Routing::Routes.draw do |map|
     mobile_deals.daily_created_mobile_deals 'deals/created/:year/:month/:day', :action => 'daily_created', :conditions => {:method => :get}
   end
 
+
   # deals, profit_and_loss
   map.connect ':controller/:year/:month', :action => 'index',
-    :requirements => {:controller => /deals|profit_and_loss/,
+    :requirements => {:controller => /profit_and_loss/,
                       :year => /[0-9]*/, :month => /[0-9]*/}
 
-  map.daily_deals 'deals/:year/:month/:day', :action => 'daily', :controller => "deals"
+#  map.daily_deals 'deals/:year/:month/:day', :action => 'daily', :controller => "deals"
 
   # daily summary
-  map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
+#  map.daily_expenses ':year/:month/:day/expenses', :controller => "deals", :action => "expenses"
 #  map.deal 'deals/:id', :controller => "deals", :action => "destroy", :conditions => {:method => :delete}
 
 

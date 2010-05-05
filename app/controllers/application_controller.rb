@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
     raise "render_options_proc is required to do ajax" if ajax && (!render_options_proc || !redirect_options_proc)
     raise "redirect_options_proc is required" unless redirect_options_proc
 
-    cache_sweeper :export_sweeper, :only => args.map{|deal_type| "create_#{deal_type}"}
+#    cache_sweeper :export_sweeper, :only => args.map{|deal_type| "create_#{deal_type}"}
 
     args.each do |deal_type|
       render_options = render_options_proc ? render_options_proc.call(deal_type) : {}
@@ -58,7 +58,8 @@ class ApplicationController < ActionController::Base
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
           flash[:"#{controller_name}_deal_type"] = deal_type
-          flash[:day] = @deal.date.day
+          write_target_date(@deal.date)
+#          flash[:day] = @deal.date.day
           if ajax
             render :update do |page|
               page.redirect_to redirect_options_proc.call(@deal)
@@ -224,7 +225,7 @@ class ApplicationController < ActionController::Base
   # date - 指定日
   # year, month, day - 指定どおり。month, day はなくてもいい
   def write_target_date(*args)
-    session[:target_date] = {}
+    session[:target_date] ||= {}
     if args.empty?
       write_target_date Date.today
     elsif args.first.kind_of?(Date)
@@ -232,9 +233,17 @@ class ApplicationController < ActionController::Base
       session[:target_date][:month] = args.first.month
       session[:target_date][:day] = args.first.day
     else
+      old_year = session[:target_date][:year]
+      old_month = session[:target_date][:month]
       session[:target_date][:year] = args.first
       session[:target_date][:month] = args[1]
-      session[:target_date][:day] = args[2]
+      # 同じ月で、日付が指定されていなければ、日付を変更しない
+      session[:target_date][:day] = args[2] if args[2] || old_year.to_i != session[:target_date][:year].to_i || old_month.to_i != session[:target_date][:month].to_i
+    end
+    # day がないときは補完できるならする
+    unless session[:target_date][:day]
+      today = Date.today
+      session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
     end
   end
 

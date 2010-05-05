@@ -26,7 +26,6 @@ class AccountDealsController < ApplicationController
   
   def monthly
     raise InvalidParameterError unless params[:year] && params[:month]
-    @menu_name = "口座別出納"
     
     @year = params[:year].to_i
     @month = params[:month].to_i

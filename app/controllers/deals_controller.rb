@@ -1,17 +1,13 @@
 class DealsController < ApplicationController
   include WithCalendar
   layout 'main'
-  cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm]
+  cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
   
   menu_group "家計簿"
   menu "仕訳帳"
-  before_filter :specify_month, :only => :index
-  before_filter :check_account, :load_target_date
-  before_filter :find_deal, :only => [:edit, :update, :destroy]
+  before_filter :check_account # :load_target_date
+  before_filter :find_deal, :only => [:edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
-  include ApplicationHelper
-
-  # ----- 入力画面表示系 -----------------------------------------------
 
 
   RENDER_OPTIONS_PROC = lambda {|deal_type|
@@ -19,7 +15,7 @@ class DealsController < ApplicationController
   }
 
   REDIRECT_OPTIONS_PROC = lambda{|deal|
-    {:action => :index, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
+    {:action => :monthly, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
   }
   deal_actions_for :general_deal, :complex_deal, :balance_deal,
     :ajax => true,
@@ -74,36 +70,27 @@ class DealsController < ApplicationController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
-    @menu_name = "仕訳帳"
-    unless target_date[:year].to_i == params[:year].to_i && target_date[:month].to_i == params[:month].to_i
-      self.target_date = {:year => params[:year], :month => params[:month]}
-    end
-    @target_date = target_date()
-    
-    # TODO: 整理して共通化
-    @updated_deal = params[:updated_deal_id] ? Deal::Base.find(params[:updated_deal_id]) : nil
-    if @updated_deal
-      @target_month = DateBox.new('year' => @updated_deal.date.year, 'month' => @updated_deal.date.month, 'day' => @updated_deal.date.day) # day for default date
-    else
-      @target_month = DateBox.new('year' => @target_date[:year], 'month' => @target_date[:month], 'day' => @target_date[:day])
-      @date = @target_month
-    end
-    today = DateBox.today
-    @target_month.day = today.day if !@target_month.day && @target_month.year == today.year && @target_month.month == today.month
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
+    year, month = read_target_date
+    redirect_to monthly_deals_path(:year => year, :month => month)
+  end
 
-    # 旧 deal#new でやっていたrender_component内の準備を以下にとりあえず移動
-#    @back_to = {:controller => 'deals', :action => 'index'}
+  # 月表示
+  def monthly
+    write_target_date(params[:year], params[:month])
+    @year, @month, @day = read_target_date
 
-    # deal / balance それぞれのフォーム初期化処理
-#    @tab_name = params[:tab_name] || 'deal'
-#    @tab_name == 'deal' ? prepare_select_deal_tab : prepare_select_balance_tab
-    #    render :layout => false
+    @updated_deal = params[:updated_deal_id] ? @user.deals.find(params[:updated_deal_id]) : nil
+
+    @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
+
+    start_date = Date.new(@year.to_i, @month.to_i, 1)
+    end_date = (start_date >> 1) - 1
+    @deals = current_user.deals.in_a_time_between(start_date, end_date).all(:include => :readonly_entries,
+                  :order => "date, daily_seq")
 
     # 登録用
     @deal = Deal::General.new
     @deal.build_simple_entries
-
   end
 
   # １日の記入履歴の表示（携帯向けだが制限はしない、本当はindexで兼ねたい）
@@ -133,15 +120,9 @@ class DealsController < ApplicationController
   
   # 確認処理
   def confirm
-    deal = Deal::Base.get(params[:id], @user.id)
-    raise "Could not get deal #{params[:id]}" unless deal
-    
-    deal.confirm!
-    
-    @target_month = DateBox.new('year' => deal.date.year, 'month' => deal.date.month)
-    prepare_update_deals  # 帳簿を更新　成功したら月をセッション格納
-    @updated_deal = deal
-    render(:partial => "deals", :layout => false)
+    @deal.confirm!
+    write_target_date(@deal.date)
+    redirect_to REDIRECT_OPTIONS_PROC.call(@deal)
   end
 
   private
@@ -179,48 +160,5 @@ class DealsController < ApplicationController
     options.merge!({:action => 'index', :year => year, :month => month})
     redirect_to options
   end
-  
-  # 仕分け帳　表示準備
-  def prepare_update_deals
-    # todo preference のロード整備
-    @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
-    begin
-      @deals = Deal::Base.get_for_month(@user.id, @target_month)
-      # TODO: 外にだしたい
-      session[:target_month] = @target_month
-    rescue Exception => e
-      p e.to_s
-      e.backtrace.each do |t|
-        p t
-      end
-      flash.now[:notice] = "不正な日付です。 " + @target_month.to_s
-      @deals = Array.new
-    end
-  end
-  
-  def specify_month
-    redirect_to_index and return false if !params[:year] || !params[:month]
-  end
-
-#  # 記入エリアの準備
-#  def prepare_select_deal_tab
-#    @accounts_minus = ApplicationHelper::AccountGroup.groups(
-#      @user.accounts, true
-#    )
-#    @accounts_plus = ApplicationHelper::AccountGroup.groups(
-#      @user.accounts, false
-#    )
-#    unless @deal
-#      @deal = Deal::General.new(params[:deal])
-#      @deal.date = target_date # セッションから判断した日付を入れる
-#    end
-#
-#    @patterns = [] # 入力支援
-#  end
-#
-#  def prepare_select_balance_tab
-#    @accounts_for_balance = current_user.assets
-#    @deal ||=  Deal::Balance.new(:account_id => @accounts_for_balance.id)
-#  end
 
 end
