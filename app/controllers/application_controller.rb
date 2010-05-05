@@ -22,8 +22,6 @@ class ApplicationController < ActionController::Base
     raise "render_options_proc is required to do ajax" if ajax && (!render_options_proc || !redirect_options_proc)
     raise "redirect_options_proc is required" unless redirect_options_proc
 
-#    cache_sweeper :export_sweeper, :only => args.map{|deal_type| "create_#{deal_type}"}
-
     args.each do |deal_type|
       render_options = render_options_proc ? render_options_proc.call(deal_type) : {}
       # new_xxx
@@ -130,24 +128,6 @@ class ApplicationController < ActionController::Base
     request.user_agent =~ /MSIE 6.0/ && !(request.user_agent =~ /Opera/)
   end
   
-  # session に user_id を入れるためオーバーライト
-  def user?
-    # First, is the user already authenticated?
-    return true if not session[:user_id].nil?
-
-    # If not, is the user being authenticated by a token?
-    id = params[:user_id]
-    key = params[:key]
-    if id and key
-      u = User.authenticate_by_token(id, key)
-      session[:user_id] = u.id if u
-      return true if not session[:user_id].nil?
-    end
-
-    # Everything failed
-    return false
-  end
-  
   # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
 #  def local_request?
 #    false
@@ -185,25 +165,6 @@ class ApplicationController < ActionController::Base
     f[:notice] = message
   end
 
-  
-  # @target_month と @date をセットする
-  # TODO: 新方式に切り替えたので呼び出し元を変更したい
-  def prepare_date
-    @target_month = DateBox.new(target_date)
-    @date = @target_month
-  end
-  
-  # 編集対象日をセッションに保存する
-  def target_date=(date)
-    p "---- target_date = #{date.inspect}"
-    if date.kind_of?(Date)
-      session[:target_date] = {:year => date.year, :month => date.month, :day => date.day}
-    else
-      session[:target_date] = date
-    end
-    
-  end
-
   # セッションに入っているyear, month, dayを配列で返す
   def read_target_date
     write_target_date unless session[:target_date]
@@ -236,36 +197,7 @@ class ApplicationController < ActionController::Base
       session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
     end
   end
-
-  # 編集対象日のハッシュを得る
-  # セッションも更新する
-  # deprecated.
-  def target_date
-    if session[:target_date] && session[:target_date][:year] && session[:target_date][:month]
-      # day がないときは補完できるならする
-      if !session[:target_date][:day]
-        today = Date.today
-        session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
-      end
-    else
-      today = Date.today
-      session[:target_date] = {:year => today.year, :month => today.month, :day => today.day}
-    end
-    return session[:target_date]
-  end
-
-  # deprecated.
-  def load_target_date
-    @target_date = target_date
-    raise "no target_date" unless @target_date
-  end
   
-  # @target_month をもとにして資産の残高を計算する
-  def load_assets
-    date = Date.new(target_date[:year].to_i, target_date[:month].to_i, 1) >> 1
-    asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする
-    @assets = AccountsBalanceReport.new(asset_accounts, date)
-  end
     
   #TODO: どこかにありそうなきがするが・・・
   def to_date(hash)
