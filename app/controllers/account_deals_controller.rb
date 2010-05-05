@@ -2,12 +2,13 @@ class AccountDealsController < ApplicationController
   layout 'main'
   menu_group "家計簿"
   menu "口座別出納"
+
+  include WithCalendar
+
   before_filter :check_account
   before_filter :find_account, :except => [:index]
   before_filter :require_mobile, :only => [:balance]
   
-  use_calendar :monthly_account_deals_path
-
 
   deal_actions_for :creditor_general_deal, :debtor_general_deal, :balance_deal,
     :render_options_proc => lambda {|deal_type|

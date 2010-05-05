@@ -52,6 +52,85 @@ Month.prototype = {
     return this.months == _month.months;
   }
 }
+
+
+/**
+  Class : Calendar
+        : カレンダークラス
+**/
+var Calendar = Class.create();
+Calendar.prototype = {
+  initialize: function(callback) {
+    this.selectedMonth = null;
+    this.startMonth = null;
+    this.callback = callback;
+  },
+  selectMonth: function(year, month, call) {
+    this.selectedMonth = new Month(year, month);
+
+    if (null == this.startMonth) {
+      this.startMonth = new Month(year, month);
+      this.startMonth.add(-3);
+    }
+
+    if (this.selectedMonth.minus(this.startMonth)<=0) {
+      // 選択された月が開始月以前であるとき
+      this.startMonth.set(this.selectedMonth);
+      this.startMonth.add(-1);
+    }
+    // 指定された月が右端以降のとき
+    else if (this.selectedMonth.minus(this.startMonth)>=5) {
+      this.startMonth.set(this.selectedMonth);
+      this.startMonth.add(-4);
+    }
+
+
+    var month = new Month(this.startMonth.year, this.startMonth.month);
+
+    // year の変わり目を検査する
+    // 1～7月開始なら変わらない 8月以降なら変わる
+    var colspan = 6;
+    if (month.month >= 8) {
+      colspan = 6 - (month.month-7);
+    }
+
+    var str = "<table>";
+    str += "<tr>";
+    str += "<td colspan='" + colspan + "'>" + month.year + "</td>";
+    if (colspan < 6) {
+      var nextYear = month.year + 1;
+      var secondColspan = 6 - colspan;
+      str += "<td colspan='" + secondColspan +"'>" + nextYear + "</td>";
+    }
+    str += "</tr>"
+    str += "<tr>"
+//    var cur_year = month.year;
+    for (var i = 0; i < 6; i++) {
+      if (this.selectedMonth.equals(month)) {
+        str += "<td class='selected_month' >";
+      }
+      else {
+        str += "<td class='selectable_month' onClick='calendar.selectMonth("+month.year+","+month.month+", true); '>";
+      }
+      str += month.month + "月</td>";
+      month.next();
+    }
+    str += "</tr>"
+    str += "</table>"
+
+    $("calendar").innerHTML = str;
+
+    $("calendar_year").value = this.selectedMonth.year;
+    $("calendar_month").value = this.selectedMonth.month;
+
+    if (call && this.callback) {
+      this.callback.call();
+//      document.forms.month_form.submit();
+    }
+  }
+}
+
+
   var selectedMonth = null;
   var startMonth = null;
 

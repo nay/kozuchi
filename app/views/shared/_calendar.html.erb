@@ -1,20 +1,37 @@
 <%# locals として year, month を必要とする。objectが指定されていれば部分テンプレートとして挿入する。 %>
+<%# 新方式に移行中。url_method、url_params を渡した場合は change_month を経由しない。 %>
+<%
+  url_method ||= nil
+  url_params ||= {}
+%>
 <div id="calendar_form">
 
     <!-- カレンダー -->
     <div id="calendar" class="top_box">
     </div>
 
-    <% form_tag({:action => 'change_month'}, :method => 'get', :id => 'month_form') do %>
+    <% submit_url, callback_script = if url_method
+        url_template = send(url_method, url_params.merge({:year => '_YEAR_', :month => '_MONTH_'}))
+        [url_template, "var url = $('month_form').action; url = url.replace('_YEAR_', $('calendar_year').value); url = url.replace('_MONTH_', $('calendar_month').value); $('month_submit_form').action = url; $('month_submit_form').submit();"]
+     else
+        [{:action => 'change_month'}, 'document.forms.month_form.submit();']
+     end %>
+    <% form_tag submit_url, :method => 'get', :id => 'month_form' do %>
       <% if calendar %>
         <%= render :partial => calendar %>
       <% end %>
       <input type="hidden" id="calendar_year" name="year" value="<%= year %>" />
       <input type="hidden" id="calendar_month" name="month" value="<%= month %>" />
     <% end %>
+    <% form_tag submit_url, :method => 'get', :id => 'month_submit_form' do %>
+    <% end %>
 
 <%= javascript_tag <<-END
-      select_month(#{year},#{month}, false);
+      var calendar = new Calendar(function() {
+        #{callback_script}
+      });
+
+      calendar.selectMonth(#{year},#{month}, false);
 END
 %>
 </div>    

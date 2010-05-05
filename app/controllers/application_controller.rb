@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   helper :all
   helper_method :original_user
   attr_writer :menu_group, :menu
+  protected :'menu_group=', :'menu='
 
   # Deal 編集系アクション群を宣言するメタメソッド
 
@@ -75,11 +76,11 @@ class ApplicationController < ActionController::Base
 
   # メニューグループを指定する
   def self.menu_group(menu_group, options = {})
-    before_filter(options) {|controller| controller.menu_group = menu_group}
+    before_filter(options) {|controller| controller.send(:'menu_group=', menu_group) }
   end
   # メニューを指定する
   def self.menu(menu, options = {})
-    before_filter(options) {|controller| controller.menu = menu}
+    before_filter(options) {|controller| controller.send(:'menu=', menu) }
   end
   
 

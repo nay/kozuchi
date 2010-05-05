@@ -103,7 +103,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'account_deals' do |account_deals|
     account_deals.resources :account_deals, :as => :deals, :path_prefix => 'accounts', :only => [:index]
     account_deals.with_options :path_prefix => 'accounts/:account_id' do |under_account|
-      under_account.monthly_account_deals 'deals/:year/:month', :action => 'monthly', :requirements => {:year => /[0-9]*/, :month => /[1-9]|10|11|12/}
+      under_account.monthly_account_deals 'deals/:year/:month', :action => 'monthly', :requirements => {:year => /[0-9]*|_YEAR_/, :month => /[1-9]|10|11|12|_MONTH_/}
       under_account.account_balance 'balance', :action => "balance"
       under_account.account_general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
       ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |deal_type|

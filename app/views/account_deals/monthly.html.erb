@@ -1,4 +1,4 @@
-<%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month}) %>
+<%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month, :url_method => :monthly_account_deals_path, :url_params => {:account_id => @account.id}}) %>
 
 <% deal_type = flash[:"#{controller_name}_deal_type"] %>
 
