@@ -93,11 +93,6 @@ class DealsController < ApplicationController
     @deal.build_simple_entries
   end
 
-  # １日の記入履歴の表示（携帯向けだが制限はしない、本当はindexで兼ねたい）
-  def daily
-    @deals = current_user.deals.created_on(@date)
-  end
-
   # 記入の削除
   def destroy
     @deal.destroy
@@ -145,20 +140,6 @@ class DealsController < ApplicationController
     else
       find_deal
     end
-  end
-
-  def redirect_to_index(options = {})
-    if options[:updated_deal_id]
-      updated_deal = Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", options[:updated_deal_id], @user.id])
-      raise ActiveRecord::RecordNotFound unless updated_deal
-      year = updated_deal.year
-      month = updated_deal.month
-    else
-      year = target_date[:year]
-      month = target_date[:month]
-    end
-    options.merge!({:action => 'index', :year => year, :month => month})
-    redirect_to options
   end
 
 end

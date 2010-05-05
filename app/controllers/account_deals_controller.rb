@@ -5,6 +5,8 @@ class AccountDealsController < ApplicationController
 
   include WithCalendar
 
+  cache_sweeper :export_sweeper, :only => [:create_creditor_general_deal, :create_debtor_general_deal, :create_balance_deal]
+
   before_filter :check_account
   before_filter :find_account, :except => [:index]
   before_filter :require_mobile, :only => [:balance]

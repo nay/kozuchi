@@ -1,4 +1,5 @@
 class MobileDealsController < ApplicationController
+  cache_sweeper :export_sweeper, :only => [:create_general_deal]
 
   before_filter :find_date, :only => [:daily_expenses, :daily_created]
 
