@@ -87,10 +87,9 @@ ActionController::Routing::Routes.draw do |map|
   
 
   # SettlementsController
-  map.resources :settlements, :collection => {:change_condition => :get}, :member => {:print_form => :get, :submit => :put}
-#  map.connect 'settlement/:id/settlement.csv', :controller => 'settlements', :format => 'csv', :action => 'print_form'
-#  map.connect 'settlement/:id', :controller => 'settlements', :action => 'view'
- # map.connect 'settlement/:id/:action', :controller => 'settlements'
+  map.resources :settlements, :only => [:index, :show, :new, :create, :destroy],
+    :collection => {:change_condition => :get},
+    :member => {:print_form => :get, :submit => :put}
 
   # AccountDealsController
   # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
@@ -142,7 +141,6 @@ ActionController::Routing::Routes.draw do |map|
 
   # HelpController
   map.connect 'help/:action', :controller => 'help'
-
 
   # Install the default route as the lowest priority.
   # TODO: except sessions, 
