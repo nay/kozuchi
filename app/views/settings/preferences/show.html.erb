@@ -31,6 +31,13 @@
             <p class="guide">簿記同様の左右配置に統一するには、簿記方式を選択してください。</p>
           </td>
         </tr>
+        <tr>
+          <th>複数明細の利用</th>
+          <td>
+            <%= f.check_box :uses_complex_deal %>複数明細を利用する
+            <p class="guide">チェックされている場合は「現金と銀行からのお金をあわせて何かを購入した」というように、３つ以上の口座が関係する明細を記入するためのメニューを表示します。</p>
+          </td>
+        </tr>
       </table>
       
       <div class="buttons_line"><%= f.submit 'カスタマイズ設定を更新', :class => 'button' %></div>

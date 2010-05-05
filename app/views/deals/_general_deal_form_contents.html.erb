@@ -15,7 +15,7 @@
     %>
 
     <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
-    <% unless @deal.new_record? %>
+    <% if !@deal.new_record? && current_user.uses_complex_deal? %>
       <%= link_to_remote('複数記入にする' , :update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';" ) %>
     <% end %>
     <div style="clear:left;"></div>

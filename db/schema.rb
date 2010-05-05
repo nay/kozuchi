@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100219053047) do
+ActiveRecord::Schema.define(:version => 20100505211320) do
 
   create_table "account_entries", :force => true do |t|
     t.integer "user_id",                   :default => 0
@@ -108,6 +108,7 @@ ActiveRecord::Schema.define(:version => 20100219053047) do
     t.boolean "business_use",                      :default => false, :null => false
     t.boolean "use_daily_booking",                 :default => true,  :null => false
     t.boolean "bookkeeping_style",                 :default => false, :null => false
+    t.boolean "uses_complex_deal",                 :default => false, :null => false
   end
 
   create_table "sessions", :force => true do |t|

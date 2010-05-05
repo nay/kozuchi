@@ -1,10 +1,10 @@
 # ユーザーに紐づくロジックは多いので、機能別にモジュールを記述してincludeする
-
-
 require 'digest/sha1'
 class User < ActiveRecord::Base
   include User::Friend
   include User::Mobile
+
+  delegate :uses_complex_deal?, :to => :preferences
 
   has_many  :single_logins, :dependent => :destroy
   has_many  :settlements, :dependent => :destroy
