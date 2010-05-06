@@ -23,7 +23,7 @@ describe AccountDealsController do
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
-          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -1000}],
+          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 1000}]
         }
       response.should be_success
@@ -48,7 +48,7 @@ describe AccountDealsController do
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
           :debtor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => 1000}],
-          :creditor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => -1000}]
+          :creditor_entries_attributes => [{:account_id => :taro_bank.to_id}]
         }
       response.should be_success
       deal = @current_user.general_deals.find_by_date_and_summary(Date.new(2010, 7, 7), 'test')

@@ -27,11 +27,12 @@ describe DealsController do
   end
   describe "create_general_deal" do
     it "成功する" do
+      # 貸し方の金額ははいらない
       post :create_general_deal,
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
-          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -1000}],
+          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
       response.should be_success

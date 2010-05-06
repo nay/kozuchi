@@ -84,6 +84,33 @@ class Deal::General < Deal::Base
     alias_method_chain :"#{side}_entries_attributes=", :account_care
   end
 
+  # 単一記入では creditor に金額が指定されないことへの調整。
+  # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
+  # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。
+  def attributes=(deal_attributes = {})
+
+    return super unless deal_attributes && deal_attributes[:debtor_entries_attributes] && deal_attributes[:creditor_entries_attributes]
+
+    debtor_attributes = deal_attributes[:debtor_entries_attributes]
+    creditor_attributes = deal_attributes[:creditor_entries_attributes]
+    debtor_attributes = debtor_attributes.values if debtor_attributes.kind_of?(Hash)
+    creditor_attributes = creditor_attributes.values if creditor_attributes.kind_of?(Hash)
+
+    # 借方と借り方に有効なデータが１つだけあるとき
+    if debtor_attributes.find_all{|v| v[:account_id]}.size == 1 && creditor_attributes.find_all{|v| v[:account_id]}.size == 1
+      # 貸方に金額データがなければ補完する
+      creditor = creditor_attributes.detect{|v| v[:account_id]}
+      if !creditor[:amount] && !creditor[:reversed_amount]
+        debtor = debtor_attributes.detect{|v| v[:account_id]}
+        debtor_amount = debtor[:reversed_amount] ? (Entry::Base.parse_amount(debtor[:reversed_amount]).to_i * -1) : Entry::Base.parse_amount(debtor[:amount]).to_i
+        creditor[:amount] = (debtor_amount * -1).to_s
+        # この creditor は deal_attributes にあるものを直接書き換える
+      end
+    end
+    
+    super
+  end
+
 
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
@@ -497,12 +524,13 @@ class Deal::General < Deal::Base
         
   end
 
+  # TODO: 不要になる（変更時はどのみち代入時までに対処しないといけないのでこれに頼れない）
   def fill_amount_to_one_side
-    if creditor_entries.size == 1 && creditor_entries.first.amount.nil? && !debtor_entries.any?{|e| e.amount.nil?}
-      creditor_entries.first.amount = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
-    elsif debtor_entries.size == 1 && debtor_entries.first.amount.nil? && !creditor_entries.any?{|e| e.amount.nil?}
-      debtor_entries.first.amount = creditor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
-    end
+#    if creditor_entries.size == 1 && creditor_entries.first.amount.nil? && !debtor_entries.any?{|e| e.amount.nil?}
+#      creditor_entries.first.amount = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+#    elsif debtor_entries.size == 1 && debtor_entries.first.amount.nil? && !creditor_entries.any?{|e| e.amount.nil?}
+#      debtor_entries.first.amount = creditor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
+#    end
   end
 
   def set_required_data_in_entries
