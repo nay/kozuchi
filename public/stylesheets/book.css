@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+
 /* ============== 共通情報　=============== */
 
 /* 上下の margin に関する汎用部品 */
@@ -463,4 +464,8 @@ p.deprecated {
 }
 #deal_forms .errorExplanation h2 {
   font-size: 100%;
+}
+/* 精算 */
+.book tbody tr.disabled td {
+  background-color: #dddddd;
 }

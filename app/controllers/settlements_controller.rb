@@ -7,10 +7,9 @@ class SettlementsController < ApplicationController
   menu "一覧", :only => [:index]
   menu "詳細", :only => [:show]
 
-#  before_filter {|controller| controller.menu_group = "精算"}
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_filter :new_settlement, :only => [:new, :change_condition, :change_selected_deals]
+  before_filter :new_settlement, :only => [:new, :target_deals, :change_selected_deals]
 
   # 新しい精算口座を作る
   def new
@@ -28,8 +27,8 @@ class SettlementsController < ApplicationController
     session[:settlement_credit_account_id] = @settlement.account.id
   end
   
-  # Ajaxメソッド。口座や日付や選択状態が変更されたときに呼ばれる
-  def change_condition
+  # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
+  def target_deals
     @start_date = to_date(params[:start_date])
     @end_date = to_date(params[:end_date])
     @settlement.account = @user.accounts.find(params[:settlement][:account_id])
@@ -38,7 +37,7 @@ class SettlementsController < ApplicationController
     load_deals
     @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
 
-    render :partial => 'settlement_details'
+    render :partial => 'target_deals'
   end
 
   def create

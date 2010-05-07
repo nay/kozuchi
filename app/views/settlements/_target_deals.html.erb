@@ -1,4 +1,6 @@
-<% change_condition = remote_function(:update => 'settlement_details', :url => {:action => 'change_condition'}, :with => 'Form.serialize(\'settlement_conditions\')', :method => :get) %>
+<% debtor_sum = 0 %>
+<% creditor_sum = 0 %>
+
 <div><%= format_date(@start_date)%>から <%= format_date(@end_date)%>の <%= @settlement.account.name %> の未精算取引 は 全<%= @deals.size %>件あります。</div>
 <% unless @entries.empty? %>
 <div>
@@ -11,14 +13,12 @@
       <th class="account"></th>
       <th>出金</th><th>入金</th>
     </tr>
-    <% debtor_sum = 0 %>
-    <% creditor_sum = 0 %>
     <% for entry in @entries %>
       <% selected = @selected_deals.include?(entry.deal) %>
       <% style = selected ? "" : "style=\"background-color: #dddddd;\""%>
       <tr>
         <td <%= style%>>
-          <%= check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => change_condition)%>
+          <%= check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})")%>
         </td>
         <%= display_account_entry entry, style%>
       </tr>
@@ -29,8 +29,8 @@
     <% end %>
     <tr>
       <td colspan="5"></td>
-      <td class="amount"><%= number_with_delimiter(debtor_sum) if debtor_sum > 0 %></td>
-      <td class="amount"><%= number_with_delimiter(creditor_sum) if creditor_sum > 0%></td>
+      <td class="amount"><div id='debtor_sum'><%= number_with_delimiter(debtor_sum*-1) if debtor_sum < 0 %></div></td>
+      <td class="amount"><div id='creditor_sum'><%= number_with_delimiter(creditor_sum) if creditor_sum > 0%></div></td>
     </tr>
     <tr>
       <td colspan="3">精算内容</td>
@@ -51,14 +51,16 @@
           <tr>
             <th>精算内容</th>
             <td>
+              <div id="settlementSummary">
               <%= @settlement.account.name %>
-              <%= debtor_sum + creditor_sum < 0 ? 'に' : 'から' %>
+              <span id="target_description"><%= debtor_sum + creditor_sum < 0 ? 'に' : 'から' %></span>
               <%= select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, true)%>
               <% if debtor_sum + creditor_sum < 0 %>
-                <span> から <%= number_with_delimiter((debtor_sum + creditor_sum) * (-1)) %>円　を入金する。</span>
+                <span id="result"> から <%= number_with_delimiter((debtor_sum + creditor_sum) * (-1)) %>円　を入金する。</span>
               <% else %>
-                <span> に <%= number_with_delimiter(creditor_sum + debtor_sum)%>円 が入金される。</span>
+                <span id="result"> に <%= number_with_delimiter(creditor_sum + debtor_sum)%>円 が入金される。</span>
               <% end %>
+              </div>
             </td>
           </tr>
         </table>
@@ -69,6 +71,10 @@
     </tr>
   </table>
 </div>
+<% javascript_tag do %>
+  settlement.debtorSum = <%= debtor_sum * -1 %>;
+  settlement.creditorSum = <%= creditor_sum %>;
+<% end %>
 
 
 <% end %>

@@ -7,15 +7,18 @@ describe SettlementsController do
 
   before do
     login_as :taro
-    @current_user = users(:taro)
+  end
+
+  response_should_be_redirected_without_login {get :index}
+
+  describe "new" do
+    it "成功する" do
+      get :new
+      response.should be_success
+    end
   end
 
   describe "index" do
-    it "ログインしていないとリダイレクトされる" do
-      login_as nil
-      get 'index'
-      response.should redirect_to root_path
-    end
     it "精算データがない時、成功する" do
       raise "there are settlements!" unless @current_user.settlements.empty?
       get 'index'
@@ -24,13 +27,6 @@ describe SettlementsController do
     it "精算データがある時、成功する" do
       create_taro_settlement
       get 'index'
-      response.should be_success
-    end
-  end
-
-  describe "new" do
-    it "成功する" do
-      get :new
       response.should be_success
     end
   end

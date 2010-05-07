@@ -1,5 +1,42 @@
-<% change_condition = remote_function(:update => 'settlement_details', :url => {:action => 'change_condition', :clear_selection => true}, :with => 'Form.serialize(\'settlement_conditions\')', :method => :get) %>
-<% form_tag settlements_path, :id => 'settlement_conditions' do %>
+<% javascript_tag do %>
+  var Settlement = Class.create();
+  Settlement.prototype = {
+    initialize: function() {
+      this.creditorSum = 0;
+      this.debtorSum = 0;
+    },
+    toggle: function(checkbox, amount) {
+      if (checkbox.checked) {
+        if (amount < 0) {
+          this.debtorSum -= amount;
+        } else {
+          this.creditorSum += amount;
+        }
+        Element.removeClassName(checkbox.parentNode.parentNode, 'disabled')
+      } else {
+        if (amount < 0) {
+          this.debtorSum += amount;
+        } else {
+          this.creditorSum -= amount;
+        }
+        Element.addClassName(checkbox.parentNode.parentNode, 'disabled')
+      }
+      $('debtor_sum').innerHTML = this.debtorSum;
+      $('creditor_sum').innerHTML = this.creditorSum;
+
+      if (this.debtorSum > this.creditorSum) {
+        $('target_description').innerHTML = 'に';
+        $('result').innerHTML = ' から ' + (this.debtorSum - this.creditorSum) + '円 を入金する。';
+      } else {
+        $('target_description').innerHTML = 'から';
+        $('result').innerHTML = ' に ' + (this.creditorSum - this.debtorSum) + '円 が入金される。';
+      }
+    }
+  }
+  var settlement = new Settlement;
+<% end %>
+<% change_condition = remote_function(:update => 'target_deals', :url => {:action => 'target_deals', :clear_selection => true}, :with => 'Form.serialize(\'target_deals_form\')', :method => :get) %>
+<% form_tag settlements_path, :id => 'target_deals_form' do %>
 <div id="select_credit_account">
   <table>
     <tr>
@@ -18,7 +55,7 @@
 <% unless @settlement.errors.empty? %>
 <div><%= error_messages_for 'settlement'%></div>
 <% end %>
-<div id="settlement_details">
-  <%= render :partial => 'settlement_details' %>
+<div id="target_deals">
+  <%= render :partial => 'target_deals' %>
 </div>
 <% end  %>
