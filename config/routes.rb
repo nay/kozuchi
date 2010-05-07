@@ -90,7 +90,6 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'settlements' do |settlements|
     settlements.new_settlement_target_deals 'settlements/new/target_deals', :action => :target_deals, :conditions => {:method => :get}
     settlements.resources :settlements, :only => [:index, :show, :new, :create, :destroy],
-      :collection => {:change_condition => :get},
       :member => {:print_form => :get, :submit => :put}
   end
   # AccountDealsController
