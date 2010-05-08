@@ -1,4 +1,4 @@
-  <div id="account_options">
-  	<%= grouped_account_select "account_id", current_user.accounts, @account.id, "onChange" => "$('month_form').submit();", :tabindex => 1 %>
-    <%# collection_select("account", "id", @accounts, :id, :name, {}, "onChange" => "$('month_form').submit();") %>
-  </div>
+<div id="account_options">
+  <%= grouped_account_select "account_id", current_user.accounts, @account.id,
+    :onChange => "var url = $('month_submit_form').action; url = url.replace('accounts/#{@account.id}', 'accounts/' + this.value); url = url.replace('_YEAR_', $('calendar_year').value); url = url.replace('_MONTH_', $('calendar_month').value); $('month_submit_form').action = url; $('month_submit_form').submit();", :tabindex => 1 %>
+</div>
