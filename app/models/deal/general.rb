@@ -357,7 +357,7 @@ class Deal::General < Deal::Base
       receiver = User.find(receiver_id)
       # このユーザーに関連する entry 情報（id, 口座, 金額のハッシュ）を送る
       linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary, date)
-      next unless linked_entries # false なら、こちらの変更は不要
+#      next unless linked_entries # false なら、こちらの変更は不要
       for entry_id, ex_info in linked_entries
         Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
         changed_self = true

@@ -37,7 +37,13 @@ module User::AccountLinking
       if supposed_hash == ex_entries_hash
         # 変更がなければ確定だけしておわる
         linked_deal.confirm_linked_entries(sender_id, sender_ex_deal_id)
-        return false # 変更なし
+
+        linked_entries = {}
+        linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_id}.each do |e|
+          linked_entries[e.linked_ex_entry_id] = {:entry_id => e.id, :deal_id => linked_deal.id}
+        end
+        return linked_entries  # データ不正で呼び出し側にないときがあるので同じように返す
+#        return false # 変更なし
       elsif linked_deal.confirmed?
         # 変更があったら、連携を切って新しく作る
         linked_deal.unlink_entries(sender_id, sender_ex_deal_id)

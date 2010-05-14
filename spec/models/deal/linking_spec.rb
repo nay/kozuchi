@@ -212,6 +212,13 @@ describe "Deal Linking" do
           @taro_deal.reload
           @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
         end
+        it "自分の連携情報がなにかの理由でなくなった場合に、変更したら復活する" do
+          @taro_deal.unlink_entries(@hanako.id, @hanako_deal.id)
+          @taro_deal.reload
+          @taro_deal.save!
+          @taro_deal.reload
+          @taro.linked_deal_for(@hanako.id, @hanako_deal.id).should_not be_nil
+        end
 
         it "連携がなくなる変更をしたら、相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
