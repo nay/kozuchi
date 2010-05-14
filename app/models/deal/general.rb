@@ -18,6 +18,8 @@ class Deal::General < Deal::Base
 
   end
 
+  before_destroy :cache_previous_receivers  # dependent destroy より先に
+
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
     e.has_many :debtor_entries, :conditions => "amount >= 0", :include => :account, :autosave => true
     e.has_many :creditor_entries, :conditions => "amount < 0", :include => :account, :autosave => true
@@ -394,21 +396,11 @@ class Deal::General < Deal::Base
   # after destroy
   # 連携状態の削除を要求
   def request_unlinkings
-    each_receiver do |receiver|
+    @previous_receiver_ids.each do |receiver_id|
+      receiver = User.find(receiver_id)
       receiver.unlink_deal_for(user_id, id)
     end
   end
-
-  def each_receiver
-    receiver_ids = readonly_entries.map{|e| e.account.destination_account}.compact.map(&:user_id)
-    receiver_ids.uniq!
-    for receiver_id in receiver_ids
-      receiver = User.find(receiver_id)
-      yield receiver
-    end
-    true
-  end
-
 
   def error_if_not_empty
     raise "Deal is not empty" unless creditor_entries.empty? && debtor_entries.empty?
@@ -434,6 +426,7 @@ class Deal::General < Deal::Base
 
 
   # before_destroy
+  # TODO: 効いてる？
   def destroy_entries
     entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
   end

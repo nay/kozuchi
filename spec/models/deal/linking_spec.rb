@@ -200,6 +200,18 @@ describe "Deal Linking" do
           @taro_deal.reload
           @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
         end
+        it "entriesをロードしていないまま相手が消したら自分のリンク情報が更新される" do
+          @hanako_deal.reload # entries がキャッシュされていない状態にする
+          @hanako_deal.destroy
+          @taro_deal.reload
+          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+        end
+        it "相手から自分が連携しないとき、相手が消したら自分のリンク情報が更新される" do
+          @hanako_taro.link.destroy
+          @hanako_deal.destroy
+          @taro_deal.reload
+          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+        end
 
         it "連携がなくなる変更をしたら、相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
