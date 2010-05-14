@@ -400,7 +400,6 @@ class Deal::General < Deal::Base
   end
 
   def each_receiver
-    return true if for_linking || !confirmed # 未確定のものや、リンク用のものは連携しない
     receiver_ids = readonly_entries.map{|e| e.account.destination_account}.compact.map(&:user_id)
     receiver_ids.uniq!
     for receiver_id in receiver_ids
