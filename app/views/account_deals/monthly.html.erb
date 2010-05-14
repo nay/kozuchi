@@ -2,7 +2,7 @@
 
 <% deal_type = flash[:"#{controller_name}_deal_type"] %>
 
-<% deal_editor 2, @year, @month, flash[:day] do %>
+<% deal_editor 2, @year, @month, @day do %>
   <%= render :partial => deal_type ? "new_#{deal_type}" : 'new_creditor_general_deal' %>
 <% end %>
 

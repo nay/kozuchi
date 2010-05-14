@@ -56,6 +56,7 @@ class ApplicationController < ActionController::Base
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
           flash[:"#{controller_name}_deal_type"] = deal_type
+          p "going to call write_target_date. @deal.dete = #{@deal.date.inspect}"
           write_target_date(@deal.date)
 #          flash[:day] = @deal.date.day
           if ajax
@@ -189,7 +190,7 @@ class ApplicationController < ActionController::Base
       session[:target_date][:year] = args.first
       session[:target_date][:month] = args[1]
       # 同じ月で、日付が指定されていなければ、日付を変更しない
-      session[:target_date][:day] = args[2] if args[2] || old_year.to_i != session[:target_date][:year].to_i || old_month.to_i != session[:target_date][:month].to_i
+      session[:target_date][:day] = args[2] if (args[2] || old_year.to_i != session[:target_date][:year].to_i || old_month.to_i != session[:target_date][:month].to_i)
     end
     # day がないときは補完できるならする
     unless session[:target_date][:day]

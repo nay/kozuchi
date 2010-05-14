@@ -30,6 +30,7 @@ class AccountDealsController < ApplicationController
     @year = params[:year].to_i
     @month = params[:month].to_i
     write_target_date(@year, @month)
+    @day = read_target_date[2]
 
     start_date = Date.new(@year, @month, 1)
     end_date = (start_date >> 1) -1
