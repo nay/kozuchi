@@ -39,7 +39,7 @@
                   <%= deal.balance ? "残高確認" : h(deal.summary) %>
                 </td>
               <% end %>
-              <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Deal::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
+              <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
                 <td class="account">
                   <%= display_account_name(account_entry.account) %>
                 </td>
