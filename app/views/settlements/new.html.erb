@@ -21,19 +21,34 @@
         }
         Element.addClassName(checkbox.parentNode.parentNode, 'disabled')
       }
-      $('debtor_sum').innerHTML = this.debtorSum;
-      $('creditor_sum').innerHTML = this.creditorSum;
+      $('debtor_sum').innerHTML = numToFormattedString(this.debtorSum);
+      $('creditor_sum').innerHTML = numToFormattedString(this.creditorSum);
 
       if (this.debtorSum > this.creditorSum) {
         $('target_description').innerHTML = 'に';
-        $('result').innerHTML = ' から ' + (this.debtorSum - this.creditorSum) + '円 を入金する。';
+        $('result').innerHTML = ' から ' + numToFormattedString(this.debtorSum - this.creditorSum) + '円 を入金する。';
       } else {
         $('target_description').innerHTML = 'から';
-        $('result').innerHTML = ' に ' + (this.creditorSum - this.debtorSum) + '円 が入金される。';
+        $('result').innerHTML = ' に ' + numToFormattedString(this.creditorSum - this.debtorSum) + '円 が入金される。';
       }
     }
   }
   var settlement = new Settlement;
+
+  function numToFormattedString(num) {
+    var str = num.toString();
+    var result = '';
+    var count = 0;
+    for(var i = str.length-1; i>=0; i--) {
+      result = str.charAt(i) + result;
+      if(str.charAt(i) == '-' || i == 0) {break;}
+      count += 1;
+      if ((count % 3) == 0) {
+       result = ',' + result;
+      }
+    }
+    return result;
+  }
 <% end %>
 <% change_condition = remote_function(:update => 'target_deals', :url => {:action => 'target_deals', :clear_selection => true}, :with => 'Form.serialize(\'target_deals_form\')', :method => :get) %>
 <% form_tag settlements_path, :id => 'target_deals_form' do %>
