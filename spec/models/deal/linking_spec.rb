@@ -195,6 +195,12 @@ describe "Deal Linking" do
       end
 
       describe "相手が確認済みでないとき" do
+        it "相手が消したら自分のリンク情報が更新される" do
+          @hanako_deal.destroy
+          @taro_deal.reload
+          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+        end
+
         it "連携がなくなる変更をしたら、相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
           @taro_deal.attributes = {
@@ -213,7 +219,7 @@ describe "Deal Linking" do
         before do
           @hanako_deal.confirm!
         end
-        
+
         it "金額を変更したら相手とのリンクが切られて新しく記入される" do
           @taro_deal.attributes = {
             :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -500}],

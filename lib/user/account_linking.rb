@@ -83,6 +83,7 @@ module User::AccountLinking
     linked_deal.attributes = {:debtor_entries_attributes => debtor_entries_attributes, :creditor_entries_attributes => creditor_entries_attributes}
 
     linked_deal.save! # TODO: 連携時のエラー処理の整理
+
     linked_entries = {}
     linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_id}.each do |e|
       linked_entries[e.linked_ex_entry_id] = {:entry_id => e.id, :deal_id => linked_deal.id}

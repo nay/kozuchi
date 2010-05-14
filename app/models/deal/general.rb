@@ -291,6 +291,15 @@ class Deal::General < Deal::Base
       remote_condition(remote_user_id, remote_ex_deal_id))
   end
 
+  # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
+  # 口座情報は、こちらで想定している相手口座情報を入れる
+  def entries_hash_for(remote_user_id)
+    related_entries(remote_user_id).map do |e|
+      ex_account_id = e.account.link.try(:target_ex_account_id) || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}.sender_ex_account_id
+      {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount}
+    end
+  end
+
   private
 
   def remote_condition(remote_user_id, remote_ex_deal_id)
@@ -360,15 +369,6 @@ class Deal::General < Deal::Base
       entries(true)
     end
     true
-  end
-
-  # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
-  # 口座情報は、こちらで想定している相手口座情報を入れる
-  def entries_hash_for(remote_user_id)
-    related_entries(remote_user_id).map do |e|
-      ex_account_id = e.account.link.try(:target_ex_account_id) || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}.sender_ex_account_id
-      {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount}
-    end
   end
 
   def related_entries(remote_user_id)

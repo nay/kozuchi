@@ -61,18 +61,18 @@ class Settlement < ActiveRecord::Base
       # この精算にひもづいた entry に対応する entryを全部これにひもづける
       for e in target_entries
         # 本来あるはずのリンクがない（先方が故意に消したなど）場合は新しく作る
-        e.request_linking unless e.linked_account_entry
+        e.ensure_linking(target_account.user)
         submitted.target_entries << e.linked_account_entry
       end
       # この精算の result_entry のひもづけ
       raise "異常なデータです。精算取引がありません。" unless self.result_entry
-      result_entry.request_linking unless result_entry.linked_account_entry
+      result_entry.ensure_linking(target_account.user) unless result_entry.linked_account_entry
       submitted.result_entry = result_entry.linked_account_entry
       
       self.submitted_settlement_id = submitted.id
       self.save!
     end
-    
+
     submitted
   end
   
