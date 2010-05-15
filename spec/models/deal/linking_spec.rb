@@ -220,6 +220,16 @@ describe "Deal Linking" do
           @taro.linked_deal_for(@hanako.id, @hanako_deal.id).should_not be_nil
         end
 
+        it "金額を変更したら、相手のdealが削除された上で新しく作られる" do
+          @taro_deal.attributes =  {:summary => 'test', :date => Date.today,
+            :creditor_entries_attributes => {'1' => {:account_id => @taro_cache.id, :amount => -320}},
+            :debtor_entries_attributes => {'1' => {:account_id => @taro_hanako.id, :amount => 320}}
+          }
+          @taro_deal.save!
+          Deal::General.find_by_id(@hanako_deal.id).should be_nil
+          @hanako.linked_deal_for(@taro.id, @taro_deal.id).should_not be_nil
+        end
+
         it "連携がなくなる変更をしたら、相手のdealが消される" do
           # taro_hanakoを taro_foodにする変更
           @taro_deal.attributes = {

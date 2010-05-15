@@ -280,6 +280,15 @@ class Deal::General < Deal::Base
     readonly_entries(reload).find_all{|e| e.linked_user_id == remote_user_id && e.linked_ex_deal_id == remote_ex_deal_id}
   end
 
+
+  def unlink(sender_id, sender_ex_deal_id)
+    if confirmed?
+      unlink_entries(sender_id, sender_ex_deal_id)
+    else
+      destroy
+    end
+  end
+
   # 指定した連携を切る
   def unlink_entries(remote_user_id, remote_ex_deal_id)
     Entry::General.update_all(

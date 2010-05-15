@@ -43,10 +43,9 @@ module User::AccountLinking
           linked_entries[e.linked_ex_entry_id] = {:entry_id => e.id, :deal_id => linked_deal.id}
         end
         return linked_entries  # データ不正で呼び出し側にないときがあるので同じように返す
-#        return false # 変更なし
-      elsif linked_deal.confirmed?
-        # 変更があったら、連携を切って新しく作る
-        linked_deal.unlink_entries(sender_id, sender_ex_deal_id)
+      else
+        # 変更があったら、連携を切って（未確認なら削除して）新しく作る
+        linked_deal.unlink(sender_id, sender_ex_deal_id)
         linked_deal = nil
       end
     end
@@ -104,11 +103,7 @@ module User::AccountLinking
     linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
     return unless linked_deal # すでになければ無視
 
-    if linked_deal.confirmed?
-      linked_deal.unlink_entries(sender_id, sender_ex_deal_id)
-    else
-      linked_deal.destroy
-    end
+    linked_deal.unlink(sender_id, sender_ex_deal_id)
   end
 
   def linked_deal_for(remote_user_id, remote_ex_deal_id)
