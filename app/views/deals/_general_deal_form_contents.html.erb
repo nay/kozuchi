@@ -30,6 +30,11 @@
   $('deal_summary').value = summary;
   }
 
+  function fillForComplexDeal(dealId) {
+    if($('notice')){ $('notice').hide();}
+    #{remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get}
+  }
+
   function selectList(name, value) {
   for (i = 0; i < $(name).options.length; i++) {
   if ($(name).options[i].value == value) {

@@ -36,7 +36,13 @@ class ApplicationController < ActionController::Base
       when /complex/
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
-          @deal.build_complex_entries
+          load = params[:load] ? current_user.general_deals.find_by_id(params[:load]) : nil
+          if load
+            @deal.load(load)
+            @deal.fill_complex_entries
+          else
+            @deal.build_complex_entries
+          end
           flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
           render render_options unless render_options.blank?
         end

@@ -4,11 +4,29 @@
     <table>
     <% for pattern in @patterns %>
       <tr>
-        <td><div class="clickable_text" onClick="setEditDeal('<%= pattern.summary %>', '<%= pattern.amount%>', '<%= pattern.minus_account_id%>', '<%= pattern.plus_account_id%>');"><%= pattern.summary %></div></td>
-        <td><%= number_with_delimiter(pattern.entries[1].amount) %></td>
-        <td>[<%= pattern.entries[0].account.name %>]</td>
-        <td> → </td>
-        <td>[<%= pattern.entries[1].account.name %>]</td>
+        <% if pattern.debtor_entries.size == 1 && pattern.creditor_entries.size == 1 # シンプルな記入 %>
+          <td><div class="clickable_text" onClick="setEditDeal('<%= pattern.summary %>', '<%= pattern.debtor_entries.first.amount %>', '<%= pattern.creditor_entries.first.account_id %>', '<%= pattern.debtor_entries.first.account_id%>');"><%= pattern.summary %></div></td>
+          <td><%= number_with_delimiter(pattern.debtor_entries.first.amount) %></td>
+          <% if current_user.bookkeeping_style? %>
+            <td>(借) <%= h pattern.debtor_account_name %></td>
+            <td>(貸) <%= h pattern.creditor_account_name %></td>
+          <% else %>
+            <td>[<%= h pattern.creditor_account_name %>]</td>
+            <td> → </td>
+            <td>[<%= h pattern.debtor_account_name %>]</td>
+          <% end %>
+        <% else %>
+          <td><div class="clickable_text" onClick="fillForComplexDeal('<%= pattern.id %>');"><%= pattern.summary %></div></td>
+          <td><%= number_with_delimiter(pattern.debtor_amount) %></td>
+          <% if current_user.bookkeeping_style? %>
+            <td>(借) <%= h pattern.debtor_account_name %></td>
+            <td>(貸) <%= h pattern.creditor_account_name %></td>
+          <% else %>
+            <td>[<%= h pattern.creditor_account_name %>]</td>
+            <td> → </td>
+            <td>[<%= h pattern.debtor_account_name %>]</td>
+          <% end %>
+        <% end %>
       </tr>
     <% end -%>
     </table>
