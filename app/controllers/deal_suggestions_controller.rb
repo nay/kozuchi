@@ -8,7 +8,19 @@ class DealSuggestionsController < ApplicationController
       nil
     end
     summary_key = params[:keyword]
-    @patterns = Deal::General.search_by_summary(current_user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
+
+    @patterns = if summary_key.blank?
+      []
+    else
+      recent_summaries = current_user.general_deals.recent_summaries(summary_key)
+      if account
+        recent_summaries = recent_summaries.with_account(account.id, params[:debtor] == 'true')
+      end
+      Deal::General.find(recent_summaries.map(&:id), :order => "id desc")
+    end
+#    @patterns = summary_key.blank? ? [] : current_user.general_deals.with_summary_and_dates(
+#      current_user.general_deals.recent_summaries(summary_key)).ordered_by_date
+#    @patterns = Deal::General.search_by_summary(current_user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
     render(:partial => 'patterns')
   end
 

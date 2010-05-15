@@ -228,6 +228,22 @@ class Deal::General < Deal::Base
     entries.detect{|e| e.account_id != account_id}.account.name
   end
 
+  # 後の検索効率のため、idで妥協する
+  named_scope :recent_summaries, lambda{|keyword|
+    {:select => "deals.summary, max(deals.id) as id",
+    :group => "deals.summary",
+    :conditions => ["deals.summary like ?", "#{keyword}%"],
+    :order => "deals.id desc",
+    :limit => 5
+    }
+  }
+
+  named_scope :with_account, lambda{|account_id, debtor|
+   {
+     :joins => "inner join account_entries on deals.id = account_entries.deal_id",
+     :conditions => "account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
+   }
+  }
 
   # summary の前方一致で検索する
   def self.search_by_summary(user_id, summary_key, limit, account_id = nil, debtor = true)
