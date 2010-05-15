@@ -19,3 +19,31 @@
     <%= render :partial => "deals" %>
   </div>
 </div>
+
+<% javascript_tag do %>
+  function onGeneralDealSelectedFromGeneral(summary, amount, minus_account_id, plus_account_id) {
+    $('deal_debtor_entries_attributes_0_amount').value = amount;
+    selectList('deal_creditor_entries_attributes_0_account_id', minus_account_id);
+    selectList('deal_debtor_entries_attributes_0_account_id', plus_account_id);
+    $('deal_summary').value = summary;
+  }
+  function selectList(name, value) {
+    for (i = 0; i < $(name).options.length; i++) {
+      if ($(name).options[i].value == value) {
+        $(name).options.selectedIndex = i;
+        return;
+      }
+    }
+  }
+  function onGeneralDealSelectedFromComplex(summary, amount, minus_account_id, plus_account_id, dealId) {
+    if($('notice')){ $('notice').hide();}
+    <%= remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+  }
+  function fillForComplexDeal(dealId) {
+    if($('notice')){ $('notice').hide();}
+    <%= remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+  }
+  function displaySuggestionsForComplex() {
+    <%= remote_function :update => 'patterns', :with => "'keyword=' + $('deal_summary').value", :method => :get, :url => deal_suggestions_path(:from => 'complex_deal') %>;
+  }
+<% end %>
