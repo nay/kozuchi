@@ -372,11 +372,10 @@ class Deal::General < Deal::Base
   # 取引連携を相手に要求
   def request_linkings
     return true if for_linking || !confirmed # 未確定のものや、連携で作られたものは連携しない
-
     @previous_receiver_ids ||= [] # 新規作成のときはないので用意
 
-    updated = (updated_receiver_ids(true) + updated_sender_ids).uniq
-    deleted = @previous_receiver_ids - updated
+    updated = updated_receiver_ids(true).uniq
+    deleted = (@previous_receiver_ids - updated - updated_sender_ids).uniq
 
     # なくなった相手に削除依頼
     deleted.each do |receiver_id|
@@ -430,8 +429,8 @@ class Deal::General < Deal::Base
   # 連携状態の削除を要求
   def request_unlinkings
     @previous_receiver_ids.each do |receiver_id|
-      receiver = User.find(receiver_id)
-      receiver.unlink_deal_for(user_id, id)
+      receiver = User.find_by_id(receiver_id)
+      receiver.unlink_deal_for(user_id, id) if receiver # ユーザー削除の場合にはないケースもある
     end
   end
 
