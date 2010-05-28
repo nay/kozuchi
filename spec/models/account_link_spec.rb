@@ -24,10 +24,21 @@ describe AccountLink do
   end
   describe "validate" do
     before do
+      # 適当な数値
       @link = AccountLink.new
       @link.user_id = 3
       @link.target_user_id = 5
       @link.target_ex_account_id = 12
+    end
+    it "同じ口座で２つ以上作れない" do
+      already = AccountLink.new
+      already.user_id = 3
+      already.account_id = 7
+      already.target_user_id = 7
+      already.target_ex_account_id = 24
+      already.save!
+      @link.account_id = 7
+      @link.should_not be_valid
     end
     it "user_id, target_user_id, target_ex_account_idがあれば検証を通る" do
       @link.valid?.should be_true

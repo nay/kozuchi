@@ -13,6 +13,7 @@ class AccountLink < ActiveRecord::Base
   validates_presence_of :target_ex_account_id, :user_id, :target_user_id
   # TODO: target_ex_account_idを最後にもっていくと検証実行で変な不具合ぽい失敗が発生する(Rails2.1)
 
+  validates_uniqueness_of :account_id, :scope => [:user_id]
   validates_uniqueness_of :target_ex_account_id, :scope => [:target_user_id, :account_id]
 
   # AcocuntProxyまたはAccountオブジェクトを返す
