@@ -118,6 +118,24 @@ describe "Deal Linking" do
       home_income_from_two_entry.linked_ex_entry_confirmed.should be_true
     end
 
+    it "両面取引で作られた相手の取引を確認しても、リンク状態が壊れないこと" do
+      prepare_simpe_taro_deal_with_two_links
+      @taro_deal.save!
+
+      # 対応する取引が作成される
+      @home_deal = @home.linked_deal_for(@taro.id, @taro_deal.id)
+      raise "対応する取引が作成されていない" unless @home_deal
+
+      # 確認する
+      @home_deal.confirm!
+
+      # リンク状態が壊れていないこと
+      @taro_deal.reload
+      @taro.linked_deal_for(@home.id, @home_deal).should == @taro_deal
+      @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+    end
+
+
     describe "複数のユーザーに連携する複雑な取引" do
       before do
         # 太郎と花子から借りた

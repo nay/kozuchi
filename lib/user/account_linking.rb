@@ -31,9 +31,9 @@ module User::AccountLinking
     linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
     if linked_deal
       # 対応する entry を取り出す
-      linked_entries = linked_deal.linked_entries(sender_id, sender_ex_deal_id)
+      linked_entries = linked_deal.linked_entries(sender_id, sender_ex_deal_id).sort{|a, b| a[:id] <=> b[:id] }
       # 金額や口座構成の変更があったかを検出する。
-      supposed_hash = linked_entries.map{|e| {:id => e.linked_ex_entry_id, :ex_account_id => e.account_id, :amount => e.amount * -1 }}
+      supposed_hash = linked_entries.map{|e| {:id => e.linked_ex_entry_id, :ex_account_id => e.account_id, :amount => e.amount * -1 }}.sort{|a, b| a[:id] <=> b[:id] }
       if supposed_hash == ex_entries_hash
         # 変更がなければ確定だけしておわる
         linked_deal.confirm_linked_entries(sender_id, sender_ex_deal_id)
