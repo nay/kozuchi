@@ -35,8 +35,14 @@ module User::AccountLinking
       # 金額や口座構成の変更があったかを検出する。
       supposed_hash = linked_entries.map{|e| {:id => e.linked_ex_entry_id, :ex_account_id => e.account_id, :amount => e.amount * -1 }}.sort{|a, b| a[:id] <=> b[:id] }
       if supposed_hash == ex_entries_hash
-        # 変更がなければ確定だけしておわる
+        # 変更がなければ相手方を確定する
         linked_deal.confirm_linked_entries(sender_id, sender_ex_deal_id)
+        # 未確認の場合、summary, date を更新する
+        unless linked_deal.confirmed?
+          linked_deal.summary = summary # 使わないが念のためあわせておく
+          linked_deal.date = date
+          Deal::General.update_all(["summary = ?, date = ?", summary, date], "id = #{linked_deal.id}")
+        end
 
         linked_entries = {}
         linked_deal.readonly_entries.find_all{|le| le.linked_user_id == sender_id}.each do |e|

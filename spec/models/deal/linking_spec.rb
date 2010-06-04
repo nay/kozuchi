@@ -118,21 +118,41 @@ describe "Deal Linking" do
       home_income_from_two_entry.linked_ex_entry_confirmed.should be_true
     end
 
-    it "両面取引で作られた相手の取引を確認しても、リンク状態が壊れないこと" do
-      prepare_simpe_taro_deal_with_two_links
-      @taro_deal.save!
+    describe "両面取引" do
+      before do
+        prepare_simpe_taro_deal_with_two_links
+        @taro_deal.save!
 
-      # 対応する取引が作成される
-      @home_deal = @home.linked_deal_for(@taro.id, @taro_deal.id)
-      raise "対応する取引が作成されていない" unless @home_deal
+        # 対応する取引が作成される
+        @home_deal = @home.linked_deal_for(@taro.id, @taro_deal.id)
+        raise "対応する取引が作成されていない" unless @home_deal
+      end
+      it "相手の取引を確認しても、リンク状態が壊れないこと" do
+        # 確認する
+        @home_deal.confirm!
 
-      # 確認する
-      @home_deal.confirm!
+        # リンク状態が壊れていないこと
+        @taro_deal.reload
+        @taro.linked_deal_for(@home.id, @home_deal).should == @taro_deal
+        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+      end
 
-      # リンク状態が壊れていないこと
-      @taro_deal.reload
-      @taro.linked_deal_for(@home.id, @home_deal).should == @taro_deal
-      @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+      it "相手が確認する前に摘要を変えたら摘要が変わること" do
+        @taro_deal.summary = "やっぱ変えました"
+        @taro_deal.save!
+
+        @home_deal.reload
+        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+        @home_deal.summary.should == "やっぱ変えました"
+      end
+      it "相手が確認する前に日にちを変えたら日にちが変わること" do
+        @taro_deal.date = @taro_deal.date + 3
+        @taro_deal.save!
+
+        @home_deal.reload
+        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+        @home_deal.date.should == @taro_deal.date
+      end
     end
 
 
