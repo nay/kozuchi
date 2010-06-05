@@ -107,7 +107,7 @@ module Account::Linking
     raise PossibleError, "指定されたユーザーが見つからないか、相互にフレンド登録された状態ではありません" unless target_user && user.friend?(target_user)
 
     # target_ex_account_idがリンクを張れる相手かチェックする
-    raise PossibleError, "フレンド #{target_user.login} さんには #{target_ex_account_name} がありません。" unless target_account
+    raise PossibleError, "#{target_user.login}さんには指定された口座がありません。" unless target_account
     target_summary = target_account.to_summary
 
     # TODO: ex いらない
