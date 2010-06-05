@@ -22,6 +22,7 @@ class Settings::AccountLinksController < ApplicationController
   def create
     if params[:linked_account_name].blank?
       flash_error("フレンドの口座名を指定してください")
+      flash[:form] = params.slice(:account_id, :linked_account_name, :linked_user_login, :linked_account_name, :require_reverse)
       redirect_to settings_account_links_path
       return
     end
@@ -29,6 +30,7 @@ class Settings::AccountLinksController < ApplicationController
       summary = @account.set_link(params[:linked_user_login], params[:linked_account_name], params[:require_reverse] == "1")
       flash[:notice] = "#{ERB::Util.h(summary[:name_with_user])}への連携書き込みを設定しました。"
     rescue PossibleError => e
+      flash[:form] = params.slice(:account_id, :linked_account_name, :linked_user_login, :linked_account_name, :require_reverse)
       flash_error(ERB::Util.h(e.message))
     end
     redirect_to settings_account_links_path
