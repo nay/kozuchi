@@ -9,14 +9,6 @@ describe AccountLink do
     raise "前提条件エラー" unless User.find(:all, :conditions => "id in(3, 5)").empty?
   end
   describe "attributes=" do
-    it "target_user_idは一括で指定できない" do
-      link = AccountLink.new(:target_user_id => 15)
-      link.target_user_id.should be_nil
-    end
-    it "target_ex_account_idは一括で指定できない" do
-      link = AccountLink.new(:target_ex_account_id => 99)
-      link.target_ex_account_id.should be_nil
-    end
     it "user_idは一括指定できない" do
       link = AccountLink.new(:user_id => 3)
       link.user_id.should be_nil

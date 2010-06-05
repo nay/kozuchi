@@ -20,15 +20,15 @@ class Settings::AccountLinksController < ApplicationController
 
   # すでにある場合は更新する
   def create
-    if params[:linked_account_name].blank?
-      flash_error("フレンドの口座名を指定してください")
-      flash[:form] = params.slice(:account_id, :linked_account_name, :linked_user_login, :linked_account_name, :require_reverse)
-      redirect_to settings_account_links_path
-      return
-    end
     begin
-      summary = @account.set_link(params[:linked_user_login], params[:linked_account_name], params[:require_reverse] == "1")
-      flash[:notice] = "#{ERB::Util.h(summary[:name_with_user])}への連携書き込みを設定しました。"
+      target_user = User.find_by_login(params[:linked_user_login])
+      raise PossibleError, "フレンドの口座名を指定してください" if params[:linked_account_name].blank?
+      target_account = target_user ? target_user.accounts.find_by_name(params[:linked_account_name]) : nil
+      # とれてなければset_link内でエラーとなる
+      @account.set_link(target_user, target_account, params[:require_reverse] == "1")
+      flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しました。"
+    rescue User::AccountLinking::AccountHasDifferentLinkError => e
+      flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しましたが、相手の口座にはすでに別の連携先があるため、双方向の連携を設定できませんでした。"
     rescue PossibleError => e
       flash[:form] = params.slice(:account_id, :linked_account_name, :linked_user_login, :linked_account_name, :require_reverse)
       flash_error(ERB::Util.h(e.message))

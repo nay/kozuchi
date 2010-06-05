@@ -10,11 +10,11 @@ module Account::Common
     link_request = link_requests.find_by_sender_id_and_sender_ex_account_id(sender_id, sender_ex_account_id)
     link_requests.delete(link_request) if link_request
   end
-  def create_link_request(sender_id, sender_ex_account_id)
-    link_request = link_requests.find_or_create_by_account_id_and_sender_id_and_sender_ex_account_id(self.id, sender_id, sender_ex_account_id)
-    raise "could not save link_request" if link_request.new_record?
-    link_request
-  end
+#  def create_link_request(sender_id, sender_ex_account_id)
+#    link_request = link_requests.find_or_create_by_account_id_and_sender_id_and_sender_ex_account_id(self.id, sender_id, sender_ex_account_id)
+#    raise "could not save link_request" if link_request.new_record?
+#    link_request
+#  end
 
   def clear_link(skip_requesting = false)
     link.skip_requesting = skip_requesting

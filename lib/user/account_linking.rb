@@ -2,6 +2,34 @@
 # 同様のI/Fを将来、UserProxyに持たせる
 module User::AccountLinking
 
+  class AccountHasDifferentLinkError < PossibleError
+  end
+
+  # 依頼を受けて、target_account から client_account への連携を作成する
+  # すでに client_account 以外へリンクしている場合は何もせず、falseを返す
+  # Accountに実装してもいいが、相手システム側のコードをUserに寄せたほうがわかりやすいのでこちらに
+  def link_account(target_account_id, client_id, client_account_id)
+    target_account = accounts.find(target_account_id)
+    client = User.find(client_id)
+    client_account = client.accounts.find(client_account_id)
+    # ここまでで不一致があれば例外が発生
+
+    # すでに別の口座にリンクしているため、依頼では勝手に書き換えられない
+    raise AccountHasDifferentLinkError, "already linked to #{target_account.link.try(:account).try(:name)} in user #{login}, though the client account is #{client_account.name}" if target_account.link && target_account.link.target_ex_account_id != client_account.id
+
+    # TODO: accountにはexつけないのがただしそう
+    target_account.link = AccountLink.new(:target_user_id => client_id, :target_ex_account_id => client_account_id)
+    raise "the link could not be saved. #{target_account.link.errors.full_messages.join(' ')}" if target_account.link.new_record?
+    true
+  end
+
+  # 依頼を受けて、特定勘定から連携されているという受け取り側の状態を作成する
+  def create_link_request(target_account_id, sender_id, sender_ex_account_id)
+    target_account = accounts.find(target_account_id)
+    link_request = target_account.link_requests.find_or_create_by_account_id_and_sender_id_and_sender_ex_account_id(target_account_id, sender_id, sender_ex_account_id)
+    raise "could not save link_request. #{link_request.errors.full_messages.join(' ')}" if link_request.new_record?
+    true
+  end
 
 #  def clear_linked_account(account_id, skip_requester_process = false)
 #    a = accounts.find(account_id)
