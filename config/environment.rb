@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 # Be sure to restart your web server when you modify this file.
 
-# Uncomment below to force Rails into production mode when 
+# Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
 # ENV['RAILS_ENV'] ||= 'production'
 
@@ -15,13 +16,6 @@ Rails::Initializer.run do |config|
 
   config.action_controller.session_store = :active_record_store
   config.active_record.observers = :user_observer
-  config.action_mailer.smtp_settings = {
-    :address        => "ko.meadowy.net",
-    :port           => 25,
-    :domain         => 'ko.meadowy.net',
-    :user_name      => nil,
-    :password       => nil,
-    :authentication => nil
-  } 
- config.action_controller.cache_store = :file_store, File.join(RAILS_ROOT, "tmp/cache")
+
+  config.action_controller.cache_store = :file_store, File.join(RAILS_ROOT, "tmp/cache")
 end

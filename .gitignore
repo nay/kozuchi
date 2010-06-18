@@ -1,7 +1,12 @@
-log
-nbproject
 tmp
-.*~
-.DS_Store
+log
+.*~log
 doc/*
-
+config/database.yml
+config/mongrel_cluster.yml
+db/schema.rb
+db/development_structure.sql
+coverage/*
+.DS_Store
+nbproject
+*~
