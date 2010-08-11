@@ -43,9 +43,9 @@ class DealsController < ApplicationController
   end
 
   def update
-    entries_size = params[:deal][:debtor_entries_attributes].size
     @deal.attributes = params[:deal]
     @deal.confirmed = true
+    entries_size = params[:deal][:debtor_entries_attributes].try(:size)
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
@@ -88,8 +88,14 @@ class DealsController < ApplicationController
                   :order => "date, daily_seq")
 
     # 登録用
-    @deal = Deal::General.new
-    @deal.build_simple_entries
+    if @updated_deal && @updated_deal.kind_of?(Deal::Balance)
+      @deal = Deal::Balance.new
+      @deal.account_id = @updated_deal.account_id
+      flash.now[:"#{controller_name}_deal_type"] = 'balance_deal'
+    else
+      @deal = Deal::General.new
+      @deal.build_simple_entries
+    end
   end
 
   # 記入の削除
