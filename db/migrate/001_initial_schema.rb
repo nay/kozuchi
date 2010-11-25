@@ -45,7 +45,7 @@ class InitialSchema < ActiveRecord::Migration
       t.column "user_id", :integer, :null => false
       t.column "date", :date, :null => false
       t.column "daily_seq", :integer, :null => false
-      t.column "summary", :string, :limit => 64, :null => false
+      t.column "summary", :string, :limit => 64, :default => '', :null => false
       t.column "confirmed", :boolean, :default => true, :null => false
       t.column "parent_deal_id", :integer
       # foreign key (user_id) references users
