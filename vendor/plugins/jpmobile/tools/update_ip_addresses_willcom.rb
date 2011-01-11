@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby -Ku
 # willcomのwebページからIPリストを抽出する場当たり的なスクリプト。
 
-require 'kconv'
 require 'open-uri'
 require 'pp'
+require 'nkf'
 
-src = open("http://www.willcom-inc.com/ja/service/contents_service/create/center_info/index.html").read.toutf8
+src = NKF.nkf("-m0 -Sw", open("http://www.willcom-inc.com/ja/service/contents_service/create/center_info/index.html").read)
 
 src.sub!(%r{^.*<b>Webアクセス時のIPアドレス帯域</b>(.+?)</table>.*$}m, '\\1')
 ips = src.scan(/(\d+\.\d+\.\d+\.\d+\/\d+)/).flatten

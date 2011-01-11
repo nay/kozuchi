@@ -13,8 +13,11 @@ module I18nGenerator::Generator
         I18n.locale = locale_name
         models = model_filenames.map do |model_name|
           model = begin
-            m = model_name.camelize.constantize
-            next unless m.respond_to?(:content_columns)
+            m = begin
+              model_name.camelize.constantize
+            rescue LoadError
+            end
+            next if m.nil? || !m.table_exists? || !m.respond_to?(:content_columns)
             m.class_eval %Q[def self.english_name; "#{model_name}"; end]
             m
           rescue
@@ -49,8 +52,8 @@ module I18nGenerator::Generator
           translations = translate_all(translation_keys)
           logger.debug "took #{Time.now - now} secs to translate."
 
-          yaml = generate_yaml(locale_name, translations)
-          template 'i18n:translation.yml', "config/locales/translation_#{locale_name}.yml", :assigns => {:locale_name => locale_name, :translations => yaml.to_s(true)}
+          yaml = generate_yaml(locale_name, translations).to_s(true)
+          template 'i18n:translation.yml', "config/locales/translation_#{locale_name}.yml", :assigns => {:locale_name => locale_name, :translations => yaml}
         end
       end
 
@@ -66,7 +69,11 @@ module I18nGenerator::Generator
         yaml = YamlDocument.new("config/locales/translation_#{locale_name}.yml", locale_name)
         each_value [], translations do |parents, value|
           node = parents.inject(yaml[locale_name]) {|node, parent| node[parent]}
-          node.value = value
+          if value.is_a? String
+            node.value = value
+          else
+            value.each {|key, val| node[key].value = val}
+          end
         end
         yaml
       end
@@ -90,11 +97,11 @@ module I18nGenerator::Generator
               Thread.pass
               if key.to_s.include? '.'
                 key_prefix, key_suffix = key.to_s.split('.')[0...-1], key.to_s.split('.')[-1]
-                existing_translation = I18n.t(key, :default => key_suffix, :locale => locale_name)
-                key_prefix.inject(oh) {|h, k| h[k]}[key_suffix] = existing_translation != key_suffix ? existing_translation : translator.translate(key_suffix)
+                existing_translation = I18n.backend.send(:lookup, locale_name, key_suffix, key_prefix)
+                key_prefix.inject(oh) {|h, k| h[k]}[key_suffix] = existing_translation ? existing_translation : translator.translate(key_suffix)
               else
-                existing_translation = I18n.t(key, :default => key, :locale => locale_name)
-                oh[key] = existing_translation != key ? existing_translation : translator.translate(key)
+                existing_translation = I18n.backend.send(:lookup, locale_name, key)
+                oh[key] = existing_translation ? existing_translation : translator.translate(key)
               end
             end
           end

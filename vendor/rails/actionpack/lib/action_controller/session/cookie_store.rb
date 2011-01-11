@@ -36,6 +36,8 @@ module ActionController
     #
     # Note that changing digest or secret invalidates all existing sessions!
     class CookieStore
+      include AbstractStore::SessionUtils
+      
       # Cookies can typically store 4096 bytes.
       MAX = 4096
       SECRET_MIN_LENGTH = 30 # characters
@@ -59,12 +61,18 @@ module ActionController
         # Process legacy CGI options
         options = options.symbolize_keys
         if options.has_key?(:session_path)
+          ActiveSupport::Deprecation.warn "Giving :session_path to SessionStore is deprecated, " <<
+            "please use :path instead", caller
           options[:path] = options.delete(:session_path)
         end
         if options.has_key?(:session_key)
+          ActiveSupport::Deprecation.warn "Giving :session_key to SessionStore is deprecated, " <<
+            "please use :key instead", caller
           options[:key] = options.delete(:session_key)
         end
         if options.has_key?(:session_http_only)
+          ActiveSupport::Deprecation.warn "Giving :session_http_only to SessionStore is deprecated, " <<
+            "please use :httponly instead", caller
           options[:httponly] = options.delete(:session_http_only)
         end
 
@@ -87,20 +95,21 @@ module ActionController
       end
 
       def call(env)
-        env[ENV_SESSION_KEY] = AbstractStore::SessionHash.new(self, env)
-        env[ENV_SESSION_OPTIONS_KEY] = @default_options.dup
-
+        prepare!(env)
+        
         status, headers, body = @app.call(env)
 
         session_data = env[ENV_SESSION_KEY]
         options = env[ENV_SESSION_OPTIONS_KEY]
+        request = ActionController::Request.new(env)
+        
+        if !(options[:secure] && !request.ssl?) && (!session_data.is_a?(AbstractStore::SessionHash) || session_data.loaded? || options[:expire_after])
+          session_data.send(:load!) if session_data.is_a?(AbstractStore::SessionHash) && !session_data.loaded?
 
-        if !session_data.is_a?(AbstractStore::SessionHash) || session_data.send(:loaded?) || options[:expire_after]
-          session_data.send(:load!) if session_data.is_a?(AbstractStore::SessionHash) && !session_data.send(:loaded?)
+          persistent_session_id!(session_data)
           session_data = marshal(session_data.to_hash)
 
           raise CookieOverflow if session_data.size > MAX
-
           cookie = Hash.new
           cookie[:value] = session_data
           unless options[:expire_after].nil?
@@ -108,17 +117,20 @@ module ActionController
           end
 
           cookie = build_cookie(@key, cookie.merge(options))
-          unless headers[HTTP_SET_COOKIE].blank?
-            headers[HTTP_SET_COOKIE] << "\n#{cookie}"
-          else
-            headers[HTTP_SET_COOKIE] = cookie
-          end
+          headers[HTTP_SET_COOKIE] = [] if headers[HTTP_SET_COOKIE].blank?
+          headers[HTTP_SET_COOKIE] << cookie
         end
 
         [status, headers, body]
       end
 
       private
+      
+        def prepare!(env)
+          env[ENV_SESSION_KEY] = AbstractStore::SessionHash.new(self, env)
+          env[ENV_SESSION_OPTIONS_KEY] = AbstractStore::OptionsHash.new(self, env, @default_options)
+        end
+      
         # Should be in Rack::Utils soon
         def build_cookie(key, value)
           case value
@@ -140,20 +152,46 @@ module ActionController
         end
 
         def load_session(env)
-          request = Rack::Request.new(env)
-          session_data = request.cookies[@key]
-          data = unmarshal(session_data) || persistent_session_id!({})
+          data = unpacked_cookie_data(env)
+          data = persistent_session_id!(data)
           [data[:session_id], data]
+        end
+        
+        def extract_session_id(env)
+          if data = unpacked_cookie_data(env)
+            persistent_session_id!(data) unless data.empty?
+            data[:session_id]
+          else
+            nil
+          end
+        end
+
+        def current_session_id(env)
+          env[ENV_SESSION_OPTIONS_KEY][:id]
+        end
+
+        def exists?(env)
+          current_session_id(env).present?
+        end
+
+        def unpacked_cookie_data(env)
+          env["action_dispatch.request.unsigned_session_cookie"] ||= begin
+            stale_session_check! do
+              request = Rack::Request.new(env)
+              session_data = request.cookies[@key]
+              unmarshal(session_data) || {}
+            end
+          end
         end
 
         # Marshal a session hash into safe cookie data. Include an integrity hash.
         def marshal(session)
-          @verifier.generate(persistent_session_id!(session))
+          @verifier.generate(session)
         end
 
         # Unmarshal cookie data to a hash and verify its integrity.
         def unmarshal(cookie)
-          persistent_session_id!(@verifier.verify(cookie)) if cookie
+          @verifier.verify(cookie) if cookie
         rescue ActiveSupport::MessageVerifier::InvalidSignature
           nil
         end
@@ -199,6 +237,10 @@ module ActionController
 
         def generate_sid
           ActiveSupport::SecureRandom.hex(16)
+        end
+
+        def destroy(env)
+          # session data is stored on client; nothing to do here
         end
 
         def persistent_session_id!(data)

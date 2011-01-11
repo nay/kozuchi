@@ -29,7 +29,7 @@ namespace :test do
   task :rails, [:versions] do |t, args|
     rails_root     = "test/rails/rails_root"
     relative_root  = "../../../"
-    rails_versions = args.versions.split("/") rescue ["2.3.5"]
+    rails_versions = args.versions.split("/") rescue ["2.3.9"]
 
     puts "Running tests in Rails #{rails_versions.join(', ')}"
 
@@ -70,8 +70,8 @@ END
 
       # run tests in rails
       cd rails_root
-      sh "rake db:migrate"
-      sh "rake spec"
+      ruby "-S rake db:migrate"
+      ruby "-S rake spec"
 
       cd relative_root
     end

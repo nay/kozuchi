@@ -278,7 +278,7 @@ module ActionMailer #:nodoc:
     @@raise_delivery_errors = true
     cattr_accessor :raise_delivery_errors
 
-    superclass_delegating_accessor :delivery_method
+    class_attribute :delivery_method
     self.delivery_method = :smtp
 
     @@perform_deliveries = true
@@ -593,7 +593,7 @@ module ActionMailer #:nodoc:
       end
 
       def template_path
-        "#{template_root}/#{mailer_name}"
+        File.join(template_root, mailer_name)
       end
 
       def initialize_template_class(assigns)
@@ -675,7 +675,7 @@ module ActionMailer #:nodoc:
       def perform_delivery_smtp(mail)
         destinations = mail.destinations
         mail.ready_to_send
-        sender = (mail['return-path'] && mail['return-path'].spec) || mail['from']
+        sender = (mail['return-path'] && mail['return-path'].spec) || Array(mail.from).first
 
         smtp = Net::SMTP.new(smtp_settings[:address], smtp_settings[:port])
         smtp.enable_starttls_auto if smtp_settings[:enable_starttls_auto] && smtp.respond_to?(:enable_starttls_auto)

@@ -1,7 +1,6 @@
+# -*- coding: utf-8 -*-
 # = 文字コードフィルタ
 # thanks to masuidrive <masuidrive (at) masuidrive.jp>
-
-require 'scanf'
 
 class ActionController::Base #:nodoc:
   def self.mobile_filter(options={})
@@ -25,13 +24,8 @@ module Jpmobile
   module Filter
     # 文字コードフィルタのベースクラス。
     class Base
-      def initialize
-        @counter = 0 # render :component 時に多重で適用されるのを防ぐ
-      end
       # 外部コードから内部コードに変換
       def before(controller)
-        @counter += 1
-        return unless @counter == 1
         if respond_to?(:to_internal) && apply_incoming?(controller)
           Util.deep_apply(controller.params) do |value|
             value = to_internal(value, controller)
@@ -40,8 +34,6 @@ module Jpmobile
       end
       # 内部コードから外部コードに変換
       def after(controller)
-        @counter -= 1
-        return unless @counter.zero?
         if respond_to?(:to_external) && apply_outgoing?(controller) && controller.response.body.is_a?(String)
           controller.response.body = to_external(controller.response.body, controller)
           after_after(controller) if respond_to? :after_after
@@ -106,7 +98,7 @@ module Jpmobile
       end
       private
       def filter(str, from, to)
-        str = str.clone
+        str = str.dup
         from.each_with_index do |int, i|
           str.gsub!(int, to[i])
         end

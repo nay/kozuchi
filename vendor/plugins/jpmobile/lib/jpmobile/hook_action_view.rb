@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # = viewの自動切り替え
-#
-# Rails 2.1.0 対応 http://d.hatena.ne.jp/kusakari/20080620/1213931903
-# thanks to id:kusakari
 #
 #:stopdoc:
 # helperを追加
@@ -13,12 +11,12 @@ require 'action_view'
 
 # ActionView::Base を拡張して携帯からのアクセスの場合に携帯向けビューを優先表示する。
 # Vodafone携帯(request.mobile == Jpmobile::Mobile::Vodafone)の場合、
-#   index_mobile_vodafone.rhtml
-#   index_mobile_softbank.rhtml
-#   index_mobile.rhtml
-#   index.rhtml
+#   index_mobile_vodafone.html.erb
+#   index_mobile_softbank.html.erb
+#   index_mobile.html.erb
+#   index.html.erb
 # の順にテンプレートが検索される。
-# BUG: 現状、上記の例では index.rhtml が存在しない場合に振り分けが行われない
+# BUG: 現状、上記の例では index.html.erb が存在しない場合に振り分けが行われない
 # (ダミーファイルを置くことで回避可能)。
 
 module ActionView
@@ -37,7 +35,8 @@ module ActionView
 
     # hook ActionView::PathSet#find_template
     def find_template(original_template_path, format = nil, html_fallback = true) #:nodoc:
-      if controller and controller.kind_of?(ActionController::Base) and controller.request.mobile?
+      if controller and controller.kind_of?(ActionController::Base) and
+          (controller.request.mobile? or controller.request.smart_phone?)
         return original_template_path if original_template_path.respond_to?(:render)
         template_path = original_template_path.sub(/^\//, '')
 
@@ -59,12 +58,19 @@ module ActionView
     # collect cadidates of mobile_template
     def mobile_template_candidates(controller)
       candidates = []
+
+      prefix = case controller.request.mobile
+               when Jpmobile::Mobile::SmartPhone
+                 "smart_phone"
+               when Jpmobile::Mobile::AbstractMobile
+                 "mobile"
+               end
       c = controller.request.mobile.class
-      while c != Jpmobile::Mobile::AbstractMobile
-        candidates << "mobile_"+c.to_s.split(/::/).last.downcase
+      while c != Jpmobile::Mobile::AbstractMobile and c != Jpmobile::Mobile::SmartPhone
+        candidates << prefix+"_"+c.to_s.split(/::/).last.underscore
         c = c.superclass
       end
-      candidates << "mobile"
+      candidates << prefix
     end
   end
 
@@ -86,12 +92,19 @@ module ActionView
 
     def mobile_template_candidates
       candidates = []
+
+      prefix = case controller.request.mobile
+               when Jpmobile::Mobile::SmartPhone
+                 "smart_phone"
+               when Jpmobile::Mobile::AbstractMobile
+                 "mobile"
+               end
       c = controller.request.mobile.class
-      while c != Jpmobile::Mobile::AbstractMobile
-        candidates << "mobile_"+c.to_s.split(/::/).last.downcase
+      while c != Jpmobile::Mobile::AbstractMobile and c != Jpmobile::Mobile::SmartPhone
+        candidates << prefix+"_"+c.to_s.split(/::/).last.underscore
         c = c.superclass
       end
-      candidates << "mobile"
+      candidates << prefix
     end
 
     def mobile_template_partial mobile_path

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe "trans_sid が起動しないとき", :shared => true do
@@ -31,6 +32,11 @@ describe "trans_sid が起動するとき", :shared => true do
   it "で redirect の自動書き換えが行われる" do
     get :redirect
     response.should redirect_to('/?_session_id=mysessionid')
+  end
+  it "でセッションIDが空のときには有効にならない" do
+    request.session_options[:id] = ""
+    get :link
+    response.body.should =~ %r{^<a href="/.+?/link">linkto</a>$}
   end
 end
 
@@ -76,6 +82,18 @@ def describe_mobile_with_ua(user_agent, &block)
     end
     instance_eval(&block)
   end
+end
+
+describe TransSidAlwaysController, "という trans_sid :always が指定されているコントローラで reset_session したとき" do
+  controller_name :trans_sid_always
+  before :each do
+    # 擬似的 reset_session
+    request.session_options[:id] = nil
+  end
+  it "の trans_sid_mode は :always" do
+    controller.trans_sid_mode.should == :always
+  end
+  it_should_behave_like "trans_sid が起動しないとき"
 end
 
 describe_mobile_with_ua "DoCoMo/2.0 SH902i(c100;TB;W24H12)" do

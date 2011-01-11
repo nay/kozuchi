@@ -16,29 +16,35 @@
 
 == インストール
 Rails の Version に応じて選択してください。
-=== Rails 2.3.3, 2.3.4, 2.3.5
+=== Rails 2.3.3 〜 2.3.9
+==== pluginとしてインストールする場合
 開発版:
-  % git clone git://github.com/darashi/jpmobile.git vendor/plugins/jpmobile
-  % cd vendor/plugins/jpmobile
-  % rm -rf .git
+  % ./script/plugin install git://github.com/jpmobile/jpmobile.git
+
+==== gemでインストールする場合
+
+  # gem install jpmobile -v 0.0.8
+としてgemをインストールした後
+
+RAILS_ROOT/config/environment.rb の Rails::Initializer.run do |config| 〜 end 内に
+  config.gem "jpmobile"
+の行を追加する。
 
 === Rails 2.3.2
 ==== pluginとしてインストールする場合
 
 リリース版: (Version 0.0.6)
-  % git clone git://github.com/darashi/jpmobile.git vendor/plugins/jpmobile
+  % git clone git://github.com/jpmobile/jpmobile.git vendor/plugins/jpmobile
   % cd vendor/plugins/jpmobile
   % git checkout 0.0.6
   % rm -rf .git
 
 開発版:
-  % git clone git://github.com/darashi/jpmobile.git vendor/plugins/jpmobile
-  % cd vendor/plugins/jpmobile
-  % rm -rf .git
+  % ./script/plugin install git://github.com/jpmobile/jpmobile.git
 
 ==== gemでインストールする場合
 
-  # gem install jpmobile
+  # gem install jpmobile -v 0.0.8
 としてgemをインストールした後
 
 RAILS_ROOT/config/environment.rb の Rails::Initializer.run do |config| 〜 end 内に
@@ -47,7 +53,7 @@ RAILS_ROOT/config/environment.rb の Rails::Initializer.run do |config| 〜 end 
 
 === Rails 2.2.x 以前
 リリース版:
-  % git clone git://github.com/darashi/jpmobile.git vendor/plugins/jpmobile
+  % git clone git://github.com/jpmobile/jpmobile.git vendor/plugins/jpmobile
   % cd vendor/plugins/jpmobile
   % git checkout 0.0.5
   % rm -rf .git
@@ -172,6 +178,13 @@ trans_sid を使用する際には、例えば config/initializers/session_store
 このとき ApplicationController において protect_from_forgery の :secret を指定するか、
 あるいは protect_from_forgery を解除する必要があるでしょう。
 
+また、
+  link_to "hoge", "/controller/action/id"
+のようにリンク先を直接指定するとセッションIDは付加されません。
+  link_to "hoge", :controller => "controller", :action => "action", :id => "id"
+のように指定する必要があります。
+
+
 === 端末の画面サイズ
 request.mobile.display で Jpmobile::Display クラスのインスタンスが返る。
   画面幅 <%= request.mobile.display.width %>
@@ -216,25 +229,23 @@ mobile_filterを有効にすると以下の処理が自動で行われる。
 
 == テストに必要なgemパッケージ
 テストを実行するためには以下のgemパッケージが必要です。
-* rails
-* rack
+* rails (include rack)
+* sqlite3-ruby
+* test-unit (= 1.2.3)
 * hpricot
 * rspec
 * rspec-rails
-* spec-fixtures
+* rspec-fixture
+* mocha
 
 == リンク
-* Project Website: http://jpmobile-rails.org
-* RDoc Documentation: http://jpmobile.rubyforge.org/rdoc
-* GitHub: http://github.com/darashi/jpmobile/
-* RubyForge Project Page: http://rubyforge.org/projects/jpmobile
-* Mailing List: http://groups.google.com/group/jpmobile
-* IRC Channel #jpmobile@freenode.net
+
+* http://jpmobile-rails.org
 
 == 作者
 
-Copyright 2006 (c) Yohji Shidara, under MIT License.
+Copyright 2006-2010 (c) Yoji Shidara, under MIT License.
 
-Yohji Shidara <dara@shidara.net>
+Yoji Shidara <dara@shidara.net>
 
 http://d.hatena.ne.jp/darashi

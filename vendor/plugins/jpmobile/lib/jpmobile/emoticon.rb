@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+require 'scanf'
+require 'nkf'
+
 module Jpmobile
   # 絵文字関連処理
   module Emoticon
@@ -11,10 +16,10 @@ module Jpmobile
     %w( CONVERSION_TABLE_TO_DOCOMO CONVERSION_TABLE_TO_AU CONVERSION_TABLE_TO_SOFTBANK ).each do |const|
       autoload const, 'jpmobile/emoticon/conversion_table'
     end
-    %w( 
-      SJIS_TO_UNICODE UNICODE_TO_SJIS 
-      SJIS_REGEXP SOFTBANK_WEBCODE_REGEXP DOCOMO_SJIS_REGEXP AU_SJIS_REGEXP SOFTBANK_UNICODE_REGEXP 
-      EMOTICON_UNICODES UTF8_REGEXP 
+    %w(
+      SJIS_TO_UNICODE UNICODE_TO_SJIS
+      SJIS_REGEXP SOFTBANK_WEBCODE_REGEXP DOCOMO_SJIS_REGEXP AU_SJIS_REGEXP SOFTBANK_UNICODE_REGEXP
+      EMOTICON_UNICODES UTF8_REGEXP
     ).each do |const|
       autoload const, 'jpmobile/emoticon/z_combine'
     end
@@ -85,17 +90,34 @@ module Jpmobile
         when Integer
           # 変換先がUnicodeで指定されている。つまり対応する絵文字がある。
           if sjis = UNICODE_TO_SJIS[converted]
-            [sjis].pack('n')
+            if to_sjis
+              sjis_emotion = [sjis].pack('n')
+              if sjis_emotion.respond_to?(:force_encoding)
+                sjis_emotion.force_encoding("Shift_JIS")
+              end
+              sjis_emotion
+            else
+              [converted].pack("U")
+            end
           elsif webcode = SOFTBANK_UNICODE_TO_WEBCODE[converted-0x1000]
-            "\x1b\x24#{webcode}\x0f"
+            emotion = "\x1b\x24#{webcode}\x0f"
+            if emotion.respond_to?(:force_encoding)
+              emotion.force_encoding(str.encoding)
+            end
+            emotion
           else
             # キャリア変換テーブルに指定されていたUnicodeに対応する
             # 携帯側エンコーディングが見つからない(変換テーブルの不備の可能性あり)。
             match
           end
         when String
-          # 変換先がUnicodeで指定されている。
-          to_sjis ? Kconv::kconv(converted, Kconv::SJIS, Kconv::UTF8) : converted
+          # 変換先が数値参照だと、再変換する
+          if converted.match(/&#x([0-9a-f]{4});/i)
+            self.unicodecr_to_external(converted, conversion_table, to_sjis)
+          else
+            # 変換先が文字列で指定されている。
+            to_sjis ? NKF.nkf('-m0 -x -Ws', converted) : converted
+          end
         when nil
           # 変換先が定義されていない。
           match

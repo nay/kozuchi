@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class FilterControllerBase < ApplicationController
   def abracadabra_utf8
     render :text => "アブラカダブラ"
@@ -23,4 +24,14 @@ end
 
 class HankakuFilterController < FilterControllerBase
   mobile_filter :hankaku => true
+
+  around_filter :freeze_response_body
+
+  private
+  def freeze_response_body
+    yield
+    if response.body.respond_to?(:freeze)
+      response.body.freeze
+    end
+  end
 end

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'ipaddr'
 
 module Jpmobile::Mobile
@@ -48,6 +49,17 @@ module Jpmobile::Mobile
     # クッキーをサポートしているか。
     def supports_cookie?
       return false
+    end
+
+    # smartphone かどうか
+    def smart_phone?
+      false
+    end
+
+    # リクエストがこのクラスに属するか調べる
+    # メソッド名に関して非常に不安
+    def self.check_request(request)
+      self::USER_AGENT_REGEXP && request.user_agent =~ self::USER_AGENT_REGEXP
     end
 
     #XXX: lib/jpmobile.rbのautoloadで先に各キャリアの定数を定義しているから動くのです

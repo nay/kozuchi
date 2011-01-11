@@ -115,7 +115,7 @@ module I18nLocaleGeneratorModule
       @current_line = child.line
       while n = self.prev
         return n if n.indent_level == child.indent_level - 2
-      end 
+      end
       self
     end
 
@@ -149,7 +149,7 @@ module I18nLocaleGeneratorModule
       @lines.inject('') do |ret, n|
         ret << "\n" if add_blank_line && (n.indent_level < previous_indent_level) && !n.text.blank? && !ret.ends_with?("\n\n")
         previous_indent_level = n.indent_level
-        ret << n.text + "\n"
+        ret << (n.text ? n.text.rstrip : '') + "\n"
       end
     end
   end
@@ -185,4 +185,3 @@ module I18nLocaleGeneratorModule
     end
   end
 end
-

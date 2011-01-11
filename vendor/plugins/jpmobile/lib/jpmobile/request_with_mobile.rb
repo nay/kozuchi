@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # jpmobile の各機能を提供するモジュール
 # envメソッドと、parameter あるいは params メソッドが実装されている必要がある。
 # 今のところはRack::RequestとActionController::AbstractRequestに対応しているはず。
@@ -25,17 +27,23 @@ module Jpmobile
 
     # 携帯電話からであれば +true+を、そうでなければ +false+ を返す。
     def mobile?
-      mobile != nil
+      mobile and not mobile.smart_phone?
+    end
+
+    # viewの切り替えをするかどうか
+    def smart_phone?
+      mobile and mobile.smart_phone?
     end
 
     # 携帯電話の機種に応じて Mobile::xxx を返す。
     # 携帯電話でない場合はnilを返す。
     def mobile
+      @__mobile ||= nil
       return @__mobile if @__mobile
 
       Jpmobile::Mobile.carriers.each do |const|
         c = Jpmobile::Mobile.const_get(const)
-        return @__mobile = c.new(self) if c::USER_AGENT_REGEXP && user_agent =~ c::USER_AGENT_REGEXP
+        return @__mobile = c.new(self) if c.check_request(self)
       end
       nil
     end
