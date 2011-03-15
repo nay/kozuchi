@@ -1,149 +1,226 @@
 YEAR_MONTH_REQUIREMENTS = {:year => /[0-9]*|_YEAR_/, :month => /[1-9]|10|11|12|_MONTH_/}
-ActionController::Routing::Routes.draw do |map|
+
+Kozuchi::Application.routes.draw do
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
+
+  # Sample of regular route:
+  #   match 'products/:id' => 'catalog#view'
+  # Keep in mind you can assign values other than :controller and :action
+
+  # Sample of named route:
+  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
+  # This route can be invoked with purchase_url(:id => product.id)
+
+  # Sample resource route (maps HTTP verbs to controller actions automatically):
+  #   resources :products
+
+  # Sample resource route with options:
+  #   resources :products do
+  #     member do
+  #       get 'short'
+  #       post 'toggle'
+  #     end
+  #
+  #     collection do
+  #       get 'sold'
+  #     end
+  #   end
+
+  # Sample resource route with sub-resources:
+  #   resources :products do
+  #     resources :comments, :sales
+  #     resource :seller
+  #   end
+
+  # Sample resource route with more complex sub-resources
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #       get 'recent', :on => :collection
+  #     end
+  #   end
+
+  # Sample resource route within a namespace:
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
+  #   end
+
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
 
   # settings
-  map.namespace :settings do |settings|
-    # 勘定
-    settings.resources :incomes, :collection => {:update_all => :put}
-    settings.resources :expenses, :collection => {:update_all => :put}
-    settings.resources :assets, :collection => {:update_all => :put}
-
-    # 連携
-    settings.resources :account_link_requests, :as => :link_requests, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
-    # account_links
-    settings.with_options :controller => 'account_links' do |account_links|
-      # destroy に :id がいらない、create時はaccount_idをクエリーで渡したいなど変則的
-      account_links.resource :account_link, :as => :links, :path_prefix => 'settings/accounts/:account_id', :only => [:destroy]
-      account_links.resources :account_links, :as => :links, :path_prefix => 'settings/accounts', :only => [:index, :create]
+  namespace :settings do
+    resources :incomes do
+      collection do
+        put 'update_all', :as => ''
+      end
     end
-        # partner_accounts
-    settings.with_options :controller => 'partner_accounts' do |partner_accounts|
-      partner_accounts.resources :partner_accounts, :as => :partners, :path_prefix => 'settings/accounts', :only => [:index]
-      partner_accounts.resource :partner_account, :as => :partner, :path_prefix => 'settings/accounts/:account_id', :only => [:update]
+    resources :expenses do
+      collection do
+        put 'update_all', :as => ''
+      end
+    end
+    resources :assets do
+      collection do
+        put 'update_all', :as => ''
+      end
+    end
+    # 連携
+    resources :account_link_requests, :path => 'accounts/:account_id/link_requests', :only => [:destroy]
+
+    # account_links
+    scope :controller => :account_links, :path => 'accounts' do
+    # destroy に :id がいらない、create時はaccount_idをクエリーで渡したいなど変則的
+      scope :path => ':account_id' do
+        resource :account_link, :path => :links, :only => [:destroy]
+      end
+      resources :account_links, :path => :links, :only => [:index, :create]
+    end
+
+    # partner_accounts
+    scope :controller => :partner_accounts, :path => 'accounts' do
+      resources :partner_accounts, :path => :partners, :only => [:index]
+      resource :partner_account, :path => ':account_id/partner', :only => [:update]
     end
 
     # フレンド
-    settings.resource :friend_rejection, :as => :rejection, :path_prefix => "settings/friends/:target_login", :only => [:create, :destroy]
-    settings.resource :friend_acceptance, :as => :acceptance, :path_prefix => "settings/friends", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
-    settings.resources :friends, :only => [:index]
+    resource :friend_rejection, :path => 'friends/:target_login/rejection', :only => [:create, :destroy]
+    resource :friend_acceptance, :path => "friends/acceptance", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
+    resources :friends, :only => [:index]
+
 
     # カスタマイズ
-    settings.resource :preferences, :only => [:show, :update]
+    resource :preferences, :only => [:show, :update]
 
     # シングルログイン
-    settings.resources :single_logins, :only => [:index, :create, :destroy]
+    resources :single_logins, :only => [:index, :create, :destroy]
   end
 
   # DealsController
-  map.with_options :controller => 'deals' do |deals|
-    deals.resources :deals, :only => [:edit, :update, :destroy], :member => {:confirm => :put}, :sub_resources => {:entries => {:only => [:create]}}
+  controller :deals do
+    resources :deals, :only => [:edit, :update, :destroy] do
+      member do
+        put 'confirm'
+      end
+    end
+    # :sub_resources => {:entries => {:only => [:create]}}
+    post 'deals/:id/entries', :action => 'create_entry', :as => :deals_entries
 
-    deals.general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
-    deals.balance_deals 'balance_deals', :action => 'create_balance_deal', :conditions => {:method => :post}
-    deals.complex_deals 'complex_deals', :action => 'create_complex_deal', :conditions => {:method => :post}
-    deals.new_general_deal 'general_deals/new', :action => 'new_general_deal', :conditions => {:method => :get}
-    deals.new_balance_deal 'balance_deals/new', :action => 'new_balance_deal', :conditions => {:method => :get}
-    deals.new_complex_deal 'complex_deals/new', :action => 'new_complex_deal', :conditions => {:method => :get}
+    ['general', 'balance', 'complex'].each do |t|
+      post "#{t}_deals", :action => "create_#{t}_deal", :as => :"#{t}_deals"
+      get "#{t}_deals/new", :action => "new_#{t}_deal", :as => :"new_#{t}_deal"
+    end
 
-#    deals.resources :deals
-    deals.monthly_deals 'deals/:year/:month', :action => 'monthly', :conditions => {:method => :get}, :requirements => YEAR_MONTH_REQUIREMENTS
-    # TODO: 変更
+    get 'deals/:year/:month', :as => :monthly_deals, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # DealSuggestionsController
-  map.resources :deal_suggestions, :as => :suggestions, :path_prefix => 'deals', :only => [:index]
+  resources :deal_suggestions, :path => 'deals/suggestions', :only => [:index]
 
+  controller :mobiles do
+    resource :mobile_device do
+      member do
+        get 'confirm_destroy'
+      end
+    end
+  end
 
+  match '/home' => 'home#index', :as => :home
 
-  map.resource :mobile_device, :member => {"confirm_destroy" => :get}, :controller => "mobiles"
-#  map.mobile "/mobile", :controller => "mobiles", :action => "create_or_update", :codnitions => {:method => :put}
-#  map.confirm_destroy_mobile "/mobile/confirm_destroy", :controller => "mobiles", :action => "confirm_destroy", :conditions => {:method => :get}
-#  map.connect "/mobile", :controller => "mobiles", :action => "destroy", :conditions => {:method => :delete}
-  
-  map.home "/home", :controller => "home", :action => "index"
-
-  map.signup '/signup', :controller => 'users', :action => 'new', :conditions => {:method => :get}
-  map.signup_post '/signup', :controller => 'users', :action => 'create', :conditions => {:method => :post}
-
-#  map.login '/login', :controller => 'sessions', :action => 'new'  , :conditions => {:method => :get}
-  map.login_post '/login', :controller => 'sessions', :action => 'create', :conditions => {:method => :post}
-
-  map.logout '/logout', :controller => 'sessions', :action => 'destroy'  
-  map.single_login '/singe_login', :controller => 'sessions', :action => 'update', :conditions => {:method => :put}
-
-  map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate'
-
-  # 互換性のため
-  map.activate_login_engine '/user/home', :controller => 'users', :action => 'activate_login_engine'
-
-  map.forgot_password '/forgot_password', :controller => 'users', :action => 'forgot_password'
-  map.deliver_password_notification '/deliver_password_notification', :controller => 'users', :action => 'deliver_password_notification', :conditions => {:method => :post}
-  map.password '/password/:password_token', :controller => 'users', :action => 'edit_password', :conditions => {:method => :get}
-  map.password '/password/:password_token', :controller => 'users', :action => 'update_password', :conditions => {:method => :post}
-
-  map.resource :user
-
-  map.root :controller => "welcome"
-  
+  resource :user
 
   # SettlementsController
-  map.with_options :controller => 'settlements' do |settlements|
-    settlements.new_settlement_target_deals 'settlements/new/target_deals', :action => :target_deals, :conditions => {:method => :get}
-    settlements.resources :settlements, :only => [:index, :show, :new, :create, :destroy],
-      :member => {:print_form => :get, :submit => :put}
+  controller :settlements do
+    get 'settlements/new/target_deals', :as => :new_settlement_target_deals, :action => :target_deals
+    resources :settlements, :only => [:index, :show, :new, :create, :destroy] do
+      member do
+        get 'print_form'
+        put 'submit'
+      end
+    end
   end
+
   # AccountDealsController
   # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
-  map.with_options :controller => 'account_deals' do |account_deals|
-    account_deals.resources :account_deals, :as => :deals, :path_prefix => 'accounts', :only => [:index]
-    account_deals.with_options :path_prefix => 'accounts/:account_id' do |under_account|
-      under_account.monthly_account_deals 'deals/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
-      under_account.account_balance 'balance', :action => "balance"
-      under_account.account_general_deals 'general_deals', :action => 'create_general_deal', :conditions => {:method => :post}
-      ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |deal_type|
-        under_account.send("account_#{deal_type.pluralize}", "#{deal_type.pluralize}", :action => "create_#{deal_type}", :conditions => {:method => :post})
-        under_account.send("new_account_#{deal_type}", "new_#{deal_type}", :action => "new_#{deal_type}", :conditions => {:method => :get})
-        under_account.send("edit_account_#{deal_type}", "#{deal_type.pluralize}/:id", :action => "edit_#{deal_type}", :conditions => {:method => :get})
+  controller :account_deals do
+    resources :account_deals, :path => 'accounts/deals', :only => [:index]
+    scope :path => 'accounts/:account_id' do
+      match 'deals/:year/:month', :as => :monthly_account_deals, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+      match 'balance', :as => :account_balance, :action => :balance
+      post 'general_deals', :as => :account_general_deals, :action => 'create_general_deal'
+      ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |t|
+        post "#{t.pluralize}", :as => "account_#{t.pluralize}", :action => "create_#{t}"
+        get "new_#{t}", :as => "new_account_#{t}", :action => "new_#{t}"
+        get "#{t.pluralize}/:id", :as => "edit_account_#{t}", :action => "edit_#{t}"
       end
     end
   end
 
   # AssetsController
-  map.with_options :controller => 'assets' do |assets|
-    assets.resources :assets, :only => [:index]
-    assets.monthly_assets 'assets/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+  controller :assets do
+    resources :assets, :only => [:index]
+    match 'assets/:year/:month', :as => :monthly_assets, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # BalanceSheetController
-  map.with_options :controller => 'balance_sheet' do |balance_sheet|
-    balance_sheet.resource :balance_sheet, :only => [:show]
-    balance_sheet.monthly_balance_sheet 'balance_sheet/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+  controller :balance_sheet do
+    resource :balance_sheet, :only => [:show]
+    match 'balance_sheet/:year/:month', :as => :monthly_balance_sheet, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # ProfitAndLossController
-  map.with_options :controller => 'profit_and_loss' do |profit_and_loss|
-    profit_and_loss.resource :profit_and_loss, :only => [:show]
-    profit_and_loss.monthly_profit_and_loss 'profit_and_loss/:year/:month', :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+  controller :profit_and_loss do
+    resource :profit_and_loss, :only => [:show]
+    match 'profit_and_loss/:year/:month', :as => :monthly_profit_and_loss, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # MobileDealsController
-  map.with_options :controller => 'mobile_deals', :path_prefix => 'mobile' do |mobile_deals|
-    mobile_deals.mobile_daily_expenses 'expenses/:year/:month/:day', :action => 'daily_expenses', :conditions => {:method => :get}
-    mobile_deals.new_mobile_general_deal 'deals/general/new', :action => 'new_general_deal', :conditions => {:method => :get}
-    mobile_deals.mobile_general_deals 'deals/general', :action => 'create_general_deal', :conditions => {:method => :post}
-    mobile_deals.daily_created_mobile_deals 'deals/created/:year/:month/:day', :action => 'daily_created', :conditions => {:method => :get}
+  scope :controller => 'mobile_deals', :path => 'mobile' do
+    get 'expenses/:year/:month/:day', :as => :mobile_daily_expenses, :action => 'daily_expenses'
+    get 'deals/general/new', :as => :new_mobile_general_deal, :action => 'new_general_deal'
+    post 'deals/general', :as => :mobile_general_deals, :action => 'create_general_deal'
+    get 'deals/created/:year/:month/:day', :as => :daily_created_mobile_deals, :action => 'daily_created'
   end
 
   # ExportController
-  map.with_options(:controller => "export") do |export|
-    export.export 'export', :action => "index"
-    export.export_file 'export/:filename.:format', :action => "whole"
+  controller :export do
+    match 'export', :as => :export, :action => "index"
+    match 'export/:filename.:format', :as => :export_file, :action => "whole"
   end
 
   # HelpController
-  map.connect 'help/:action', :controller => 'help'
+  controller :help do
+    match 'help/:action'
+  end
 
-  # Install the default route as the lowest priority.
-  # TODO: except sessions, 
-  map.connect ':controller/:action/:id'
+#  # TODO: except sessions,
+#  map.connect ':controller/:action/:id'
+
+  root :to => "welcome#index"
+#  match 'news' => "welcome#news"
+
+  match '/signup' => 'users#new', :as => :signup, :via => :get
+  match '/signup' => 'users#create', :as => :signup_post, :via => :post # TODO: must be unified to signup
+  match '/login' => 'sessions#create', :as => :login_post, :via => :post # TODO: change to login
+  match '/logout' => 'sessions#destroy', :as => :logout, :via => :destroy
+  match '/singe_login' => 'sessions#update', :as => :single_login, :via => :put
+  match '/activate/:activation_code' => 'users#activate', :as => :activate
+
+  # 互換性のため
+  match '/user/home' => 'users#activate_login_engine', :as => :activate_login_engine
+
+  match '/forgot_password' => 'users#forgot_password', :as => :forgot_password
+  match  '/deliver_password_notification' => 'users#deliver_password_notification', :via => :post, :as => :deliver_password_notification
+  match '/password/:password_token' => 'users#edit_password', :via => :get, :as => :password
+  match '/password/:password_token' => 'users#update_password', :via => :post
+
+
+  # See how all your routes lay out with "rake routes"
+
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  # match ':controller(/:action(/:id(.:format)))'
 end

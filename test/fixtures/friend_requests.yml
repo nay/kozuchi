@@ -1,7 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first:
-  user_id: <%= Fixtures.identify(:old) %>
-  sender_id: <%= Fixtures.identify(:old2) %>
-another:
-  user_id: <%= Fixtures.identify(:old2) %>
-  sender_id: <%= Fixtures.identify(:old) %>

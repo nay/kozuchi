@@ -14,7 +14,7 @@
   <% else -%>
     <%= focus_on('login') %>
     <div id="login_form" class="box">
-      <% form_tag login_post_path do -%>
+      <%= form_tag login_post_path do -%>
         <div><label for="login">ログインID</label>
         <%= text_field_tag 'login', flash[:login] %></div>
          <div><label for="password">パスワード</label>
@@ -33,8 +33,8 @@
     <h2>お知らせ</h2>
     <div style="text-align:right;"><%= link_to '小槌.netへ', 'http://www.kozuchi.net' %></div>
     <% if @news # キャッシュがあるか、ニュースが正常に取得できた -%>
-      <% cache :action => 'news' do # welcome/news というアクションはないがキャッシュファイルを作るためにこう命名。/だとうまくファイルができない。キャッシュ自体は効くが、どこに格納されているかは不明。 -%>
-	    <%= @news %>
+      <% cache :action_suffix => 'news' do -%>
+        <%= @news %>
       <% end -%>
 	<% else # 取得エラー。キャッシュしない -%>
   	  <p>現在、ニュースを表示できません。</p>

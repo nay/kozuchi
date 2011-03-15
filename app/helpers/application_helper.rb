@@ -1,5 +1,5 @@
-# Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+
   include LoginEngine
 
   def bookkeeping_style?
@@ -71,16 +71,17 @@ module ApplicationHelper
   end
 
   def html_tag(&block)
-    inner_content = capture(&block)
-    content = <<EOF
+      inner_content = capture(&block)
+      
+      content = <<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 #{inner_content}
 </html>
 EOF
-    concat content
+    content.html_safe
   end
-  
+
   def head_tag(*stylesheets, &block)
     inner_content = capture(&block)
     content = <<EOF
@@ -95,7 +96,7 @@ EOF
     #{inner_content}
   </head>
 EOF
-    concat content
+    content.html_safe
   end
 
   def body_tag(&block)
@@ -108,7 +109,7 @@ EOF
     </div>
   </body>
 EOF
-    concat content
+    content.html_safe
   end
 
   # 通信欄
@@ -158,16 +159,16 @@ EOS
   def format_day(day)
     "#{day}日"
   end
-  
+
   WEEKDAY_SHORTNAMES = ['日', '月', '火', '水', '木', '金', '土']
   def format_wday(wday)
     "（#{WEEKDAY_SHORTNAMES[wday]}）"
   end
-  
+
   def format_date_full(date)
     format_year(date.year) + format_month(date.month) + format_day(date.day) + format_wday(date.wday)
   end
-   
+
   def header_menu(menu_title, url_options)
     if controller.title != menu_title
       link_to(menu_title, url_options)
@@ -175,15 +176,15 @@ EOS
       '<span class="current">' + menu_title + '</span>'
     end
   end
-  
+
   def format_date(date)
     date.strftime('%Y/%m/%d')
   end
-  
+
   def format_datetime(date)
     date.strftime('%Y/%m/%d %H:%M')
   end
-  
+
   def user_color_style
     # TODO: なんとかしたい
     begin
@@ -197,11 +198,11 @@ EOS
     style_content = "background-color: #{bgcolor};"
     return 'style="'+h(style_content)+'"'
   end
-  
+
 #  def format_deal(deal)
 #    return "記入 #{deal.date}-#{deal.daily_seq}"
 #  end
-  
+
   # 帳簿系表示ヘルパー
   # 一行を表示する　(table.book の下で呼ばれることを前提とする)
   def book_line(contents = {})
@@ -242,21 +243,21 @@ EOS
       end
       return groups
     end
-  
+
     def initialize(name)
       @name = name
       @accounts = []
     end
-  
+
     def << (account)
       @accounts << account
     end
   end
-  
+
 #  def load_menu(url)
 #    Menues.side_menues.load(url)
 #  end
-  
+
   def header_menu
     content = "<div id=\"header_menu\">"
     for menu in Menues.header_menues

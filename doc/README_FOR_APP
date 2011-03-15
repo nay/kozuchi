@@ -1,8 +1,2 @@
 Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake appdoc" to generate API documentation for your models and controllers.
-
-= Web家計簿 小槌
-
-== ニュースに関する設定
-ウェルカムページには、小槌サイトと連携してニュースが表示されます。この機能をOFFにしたいときは、定数 DISPLAY_NEWS の値をfalseにしてください。
-（未定義状態の場合は機能がONとなります。）
+Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.

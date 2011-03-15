@@ -1,68 +1,49 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Kozuchi::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# The production environment is meant for finished, "live" apps.
-# Code is not reloaded between requests
-config.cache_classes = true
+  # The production environment is meant for finished, "live" apps.
+  # Code is not reloaded between requests
+  config.cache_classes = true
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+  # Full error reports are disabled and caching is turned on
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-# Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
-config.action_controller.perform_caching             = true
+  # Specifies the header that your server uses for sending files
+  config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
+  # For nginx:
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
-# Disable delivery errors if you bad email addresses should just be ignored
-# config.action_mailer.raise_delivery_errors = false
+  # If you have no front-end server that supports something like X-Sendfile,
+  # just comment this out and Rails will serve the files
 
+  # See everything in the log (default is :info)
+  # config.log_level = :debug
 
-# Include your app's configuration here:
-require 'error_handler_basic' # defines AC::Base#rescue_action_in_public
+  # Use a different logger for distributed setups
+  # config.logger = SyslogLogger.new
 
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
 
-# 2.0対応時に動かなくなったのでコメントアウト
-#class << Dispatcher
-#  def dispatch(cgi = CGI.new,
-#               session_options = ActionController::CgiRequest::DEFAULT_SESSION_OPTIONS)
-#    begin
-#      request, response =
-#        ActionController::CgiRequest.new(cgi, session_options),
-#        ActionController::CgiResponse.new(cgi)
-#      prepare_application
-#      ActionController::Routing::Routes.recognize!(request).process(request, response).out
-#    rescue Object => exception
-#      begin
-#        ActionController::Base.process_with_exception(request, response, exception).out
-#      rescue ActionController::RoutingError
-#        # pass
-#      rescue ActionController::UnknownAction
-#        # pass
-#      rescue
-#        # The rescue action above failed also, probably for the same reason
-#        # the original action failed.  Do something simple which is unlikely
-#        # to fail.  You might want to redirect to a static page instead of this.
-#        e = exception
-#        ExceptionMailer.deliver_emergency(e)
-#
-#        cgi.header("type" => "text/html")
-#        cgi.out('cookie' => '') do
-#          <<-RESPONSE
-#    <html>
-#      <head><title>Application Error</title></head>
-#      <body>
-#        <h1>Application Error</h1>
-#        <b><pre>#{e.class}: #{e.message}</pre></b>
-#
-#        <pre>#{e.backtrace.join("\n")}</pre>
-#      </body>
-#    </html>
-#        RESPONSE
-#        end
-#      end
-#    ensure
-#      reset_application
-#    end
-#  end
-#end
+  # Disable Rails's static asset server
+  # In production, Apache or nginx will already do this
+  config.serve_static_assets = true
+
+  # Enable serving of images, stylesheets, and javascripts from an asset server
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Disable delivery errors, bad email addresses will be ignored
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable threaded mode
+  # config.threadsafe!
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+end

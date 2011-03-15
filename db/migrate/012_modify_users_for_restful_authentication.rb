@@ -1,5 +1,4 @@
 class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
-
   def self.up
     add_column :users, :crypted_password,  :string, :limit => 40
     add_column :users, :remember_token,    :string
@@ -15,7 +14,7 @@ class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
     remove_column :users, :deleted
     remove_column :users, :delete_after
 
-    User.update_all(["activated_at = ?, activation_code = NULL", Time.now.utc], "verified = 1")
+    execute "update users set activated_at = '#{Time.now.utc.to_s(:db)}', activation_code = NULL where verified = 1"
     
     remove_column :users, :verified
     

@@ -1,0 +1,34 @@
+<%= render :partial => "shared/doctype" %>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+  <head>
+    <%= render :partial => "shared/html_header" %>
+    <%= stylesheet_link_tag 'common' %>
+    <%# stylesheet_link_tag 'daily_booking' %>
+    <%= stylesheet_link_tag 'designs/simple' %>
+  </head>
+
+  <body>
+    <div id="page2">
+
+      <%= render :partial => 'shared/header_menu' %>    
+      
+
+    <div id="sidebar">
+      <% if @menu_tree %>
+      <% for menu in @menu_tree %>
+          <% if menu == @current_menu %>
+            <span><%= menu.name %></span>
+          <% else %>
+            <%= link_to(menu.name, url_for(menu.url_option)) %>
+          <% end %>
+      <% end %>
+      <% end %>
+    </div>
+
+
+    <%= yield %>
+
+    </div>
+
+  </body>
+</html>

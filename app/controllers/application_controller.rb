@@ -1,7 +1,8 @@
-# Filters added to this controller will be run for all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
-  mobile_filter
+  protect_from_forgery
+  
+#  mobile_filter
+  hankaku_filter
   trans_sid
   include AuthenticatedSystem
   before_filter :set_content_type_for_mobile
@@ -116,7 +117,7 @@ class ApplicationController < ActionController::Base
     @original_user = user || false
   end
 
-  
+
   private
 
   def find_date
@@ -130,11 +131,11 @@ class ApplicationController < ActionController::Base
   def set_content_type_for_mobile
     headers["Content-Type"] = "text/html; chartset=Shift_JIS" if request.mobile?
   end
-  
+
   def IE6?
     request.user_agent =~ /MSIE 6.0/ && !(request.user_agent =~ /Opera/)
   end
-  
+
   # 開発環境でエラーハンドリングを有効にしたい場合にコメントをはずす
 #  def local_request?
 #    false
@@ -148,25 +149,25 @@ class ApplicationController < ActionController::Base
 
   def flash_validation_errors(obj, now = false)
     f = now ? flash.now : flash
-    
+
     f[:errors] ||= []
     obj.errors.each do |attr, msg|
       f[:errors] << msg
     end
   end
-  
+
   def flash_error(message, now = false)
     # TODO: validation error で Validation Failed が出るのを防ぐ
     begin
       message = message.gsub(/Validation failed: /, '')
     rescue
     end
-    
+
     f = now ? flash.now : flash
     f[:errors] ||= []
     f[:errors] << message
   end
-  
+
   def flash_notice(message, now = false)
     f = now ? flash.now : flash
     f[:notice] = message
@@ -177,7 +178,7 @@ class ApplicationController < ActionController::Base
     write_target_date unless session[:target_date]
     [session[:target_date][:year], session[:target_date][:month], session[:target_date][:day]]
   end
-  
+
   # セッションに入っているyear, month, dayを更新する
   # 引数なし - 今日
   # date - 指定日
@@ -204,8 +205,8 @@ class ApplicationController < ActionController::Base
       session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
     end
   end
-  
-    
+
+
   #TODO: どこかにありそうなきがするが・・・
   def to_date(hash)
     raise "no hash" unless hash
@@ -230,4 +231,5 @@ class ApplicationController < ActionController::Base
   def require_mobile
     raise UnexpectedUserAgentError unless request.mobile?
   end
+
 end

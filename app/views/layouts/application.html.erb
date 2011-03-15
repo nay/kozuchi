@@ -1,10 +1,10 @@
-<% html_tag do -%>
+<%= html_tag do -%>
 
-  <% head_tag do -%>
+  <%= head_tag do -%>
   	<%= yield :head %>
   <% end -%>
   
-  <% body_tag do -%>
+  <%= body_tag do -%>
     <%= yield %>
   <% end -%>
 

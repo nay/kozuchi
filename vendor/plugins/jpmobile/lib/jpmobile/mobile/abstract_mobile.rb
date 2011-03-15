@@ -4,7 +4,8 @@ require 'ipaddr'
 module Jpmobile::Mobile
   # 携帯電話の抽象クラス。
   class AbstractMobile
-    def initialize(request)
+    def initialize(env, request)
+      @env     = env
       @request = request
     end
 
@@ -27,23 +28,21 @@ module Jpmobile::Mobile
     # そうでなければ +false+ を返す。
     # IP空間が定義されていない場合は +nil+ を返す。
     def self.valid_ip? remote_addr
-      addrs = nil
-      begin
-        addrs = self::IP_ADDRESSES
-      rescue NameError => e
-        return nil
-      end
-      remote = IPAddr.new(remote_addr)
-      addrs.any? {|ip| ip.include? remote }
+      @ip_list ||= ip_address_class
+      return false unless @ip_list
+
+      @ip_list.valid_ip?(remote_addr)
     end
 
     def valid_ip?
-      @__valid_ip ||= self.class.valid_ip? @request.remote_addr
+      @__valid_ip ||= self.class.valid_ip? @request.ip
     end
 
     # 画面情報を +Display+ クラスのインスタンスで返す。
     def display
-      @__displlay ||= Jpmobile::Display.new
+      @__displlay ||= Jpmobile::Mobile::Terminfo.new(self, @env)
+    rescue LoadError
+      puts "display method require jpmobile-terminfo plugin."
     end
 
     # クッキーをサポートしているか。
@@ -56,10 +55,20 @@ module Jpmobile::Mobile
       false
     end
 
+    # エンコーディング変換用
+    def to_internal(str)
+      str
+    end
+    def to_external(str, content_type, charset)
+      [str, charset]
+    end
+    def default_charset
+      "UTF-8"
+    end
     # リクエストがこのクラスに属するか調べる
     # メソッド名に関して非常に不安
-    def self.check_request(request)
-      self::USER_AGENT_REGEXP && request.user_agent =~ self::USER_AGENT_REGEXP
+    def self.check_carrier(env)
+      self::USER_AGENT_REGEXP && env['HTTP_USER_AGENT'] =~ self::USER_AGENT_REGEXP
     end
 
     #XXX: lib/jpmobile.rbのautoloadで先に各キャリアの定数を定義しているから動くのです
@@ -80,6 +89,11 @@ module Jpmobile::Mobile
       else
         @request.params
       end
+    end
+
+    #
+    def self.ip_address_class
+      eval("::Jpmobile::Mobile::IpAddresses::#{self.to_s.split(/::/).last}").new rescue nil
     end
   end
 end

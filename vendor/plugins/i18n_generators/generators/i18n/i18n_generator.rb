@@ -1,3 +1,4 @@
+require 'net/https'
 require 'rubygems'
 require 'rails_generator'
 require 'rails_generator/commands'
@@ -69,10 +70,13 @@ class I18nGenerator < Rails::Generator::NamedBase
   private
   def defined_in_rails_i18n_repository?
     begin
-      uri = "http://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/#{locale_name}.yml"
-      OpenURI.open_uri(uri) do |res|
-        (res.base_uri.to_s == uri) && (res.status == %w[200 OK])
-      end
+      uri = URI.parse "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/#{locale_name}.yml"
+      http = Net::HTTP.new uri.host, uri.port
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      req = Net::HTTP::Get.new uri.request_uri
+      res = http.request req
+      res.code == '200'
     rescue
       false
     end
@@ -82,4 +86,3 @@ end
 require File.join(File.dirname(__FILE__), '../i18n_locale/i18n_locale_command')
 require File.join(File.dirname(__FILE__), '../i18n_translation/i18n_translation_command')
 Rails::Generator::Commands::Create.send :include, I18nGenerator::Generator::Commands::Create
-

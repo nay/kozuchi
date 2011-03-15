@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 # =au携帯電話
 
-require 'ipaddr'
-
 module Jpmobile::Mobile
   # ==au携帯電話
   # CDMA 1X, CDMA 1X WINを含む。
   class Au < AbstractMobile
-    autoload :IP_ADDRESSES, 'jpmobile/mobile/z_ip_addresses_au'
-
     # 対応するUser-Agentの正規表現
     # User-Agent文字列中に "UP.Browser" を含むVodafoneの端末があるので注意が必要
     USER_AGENT_REGEXP = /^(?:KDDI|UP.Browser\/.+?)-(.+?) /
@@ -53,24 +49,6 @@ module Jpmobile::Mobile
       return @__posotion = l
     end
 
-    # 画面情報を +Display+ クラスのインスタンスで返す。
-    def display
-      return @__display if @__display
-
-      p_w = p_h = col_p = cols = nil
-      if r = @request.env['HTTP_X_UP_DEVCAP_SCREENPIXELS']
-        p_w, p_h = r.split(/,/,2).map {|x| x.to_i}
-      end
-      if r = @request.env['HTTP_X_UP_DEVCAP_ISCOLOR']
-        col_p = (r == '1')
-      end
-      if r = @request.env['HTTP_X_UP_DEVCAP_SCREENDEPTH']
-        a = r.split(/,/)
-        cols = 2 ** a[0].to_i
-      end
-      @__display = Jpmobile::Display.new(p_w, p_h, nil, nil, col_p, cols)
-    end
-
     # デバイスIDを返す
     def device_id
       if @request.env['HTTP_USER_AGENT'] =~ USER_AGENT_REGEXP
@@ -98,6 +76,33 @@ module Jpmobile::Mobile
       else
         true
       end
+    end
+
+    # 文字コード変換
+    def to_internal(str)
+      # 絵文字を数値参照に変換
+      str = Jpmobile::Emoticon.external_to_unicodecr_au(Jpmobile::Util.sjis(str))
+      # 文字コードを UTF-8 に変換
+      str = Jpmobile::Util.sjis_to_utf8(str)
+      # 数値参照を UTF-8 に変換
+      Jpmobile::Emoticon::unicodecr_to_utf8(str)
+      # 半角->全角変換
+    end
+    def to_external(str, content_type, charset)
+      # UTF-8を数値参照に
+      str = Jpmobile::Emoticon.utf8_to_unicodecr(str)
+      # 文字コードを Shift_JIS に変換
+      if [nil, "text/html", "application/xhtml+xml"].include?(content_type)
+        str = Jpmobile::Util.utf8_to_sjis(str)
+        charset = default_charset unless str.empty?
+      end
+      # 数値参照を絵文字コードに変換
+      str = Jpmobile::Emoticon.unicodecr_to_external(str, Jpmobile::Emoticon::CONVERSION_TABLE_TO_AU, true)
+
+      [str, charset]
+    end
+    def default_charset
+      "Shift_JIS"
     end
   end
 end
