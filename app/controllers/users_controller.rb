@@ -13,6 +13,7 @@ class UsersController < ApplicationController
   end
 
   def create
+    @title = "ユーザー登録"
     cookies.delete :auth_token
     # protects against session fixation attacks, wreaks havoc with 
     # request forgery protection.
