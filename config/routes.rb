@@ -101,7 +101,7 @@ Kozuchi::Application.routes.draw do
 
   # DealsController
   controller :deals do
-    resources :deals, :only => [:edit, :update, :destroy] do
+    resources :deals, :only => [:index, :edit, :update, :destroy] do
       member do
         put 'confirm'
       end
@@ -173,6 +173,7 @@ Kozuchi::Application.routes.draw do
 
   # ProfitAndLossController
   controller :profit_and_loss do
+    match 'profit_and_loss', :action => :index
     resource :profit_and_loss, :only => [:show]
     match 'profit_and_loss/:year/:month', :as => :monthly_profit_and_loss, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end

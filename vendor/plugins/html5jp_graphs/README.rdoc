@@ -1,0 +1,82 @@
+= Html5jpGraphs
+
+Html5jpGraphs is a Rails Plugin for HTML5.jp Graph Libraries. 
+
+HTML5.jp Graph Libraries are written by futomi, released under Apache License, Version 2.0.
+http://www.html5.jp/library/index.html
+
+There are 4 kinds of graphs in HTML5.jp.
+
+* vertical bar chart
+* radar chart
+* line chart
+* pie chart
+
+With this plugin, you can easily draw graphs using helper methods. 
+Helper methods accepts both simple array data and your original complex model objects.
+
+== Install
+
+  > git clone git://github.com/nay/html5jp_graphs.git vendor/plugins/html5jp_graphs
+
+If you use Rails 2.1 or later, you can install with this command.
+
+  > ruby script/plugin install git://github.com/nay/html5jp_graphs.git
+
+==Set Up
+
+First of all, you need to include javascripts. You can include these files by using :all option.
+
+ <%= javascript_include_tag :all %>
+ 
+Also you can include required files separately.
+
+* required for all graphs ... excanvas.js, excanvas-compressed.js
+* vertical bar chart ... vbar.js
+* radar chart ... radar.js
+* pie chart ... circle.js
+* line chart ... line.js
+
+Then, add :htmltjp_graphs as a helper in your controllers.
+
+ class GraphsController < ApplicationController
+   helper :html5jp_graphs
+ end
+
+==Example
+=== Draw a Vertical Bar Chart
+
+  <%= vertical_bar_chart [['accesses', 520, 340, 804, 602], ['clicks', 101, 76, 239, 321]] %>
+  
+   or you can use your own model obejct (with some methods. Please see RDoc for the requirements).
+
+  <%= vertical_bar_chart access_click_summaries %>
+ 
+=== Draw a Radar Chart
+
+  <%= radar_chart [['review1', 5, 4, 3], ['review2', 3, 5, 2]], :aCap => ['price', 'style', 'sound'] %>
+ 
+  <%= radar_chart reviews %>
+ 
+=== Draw a Line Chart
+
+  <%= line_chart [['accesses', 520, 340, 804, 602], ['clicks', 101, 76, 239, 321]] %>
+  
+  <%= line_chart access_click_summaries %>
+
+=== Draw a Pie Chart
+
+  <%= pie_chart([["very good", 400], ["good", 300], ["bad", 100], ["very bad", 300]]) %>
+
+  <%= pie_chart opinions %>
+
+=== Options
+
+You can use all options in HTML5.jp. Note that string options should be wrapped in ' ', or it would be used as a script code.
+
+For example, to specify the backgroundColor option to a radar chart, write like this.
+
+  <%= radar_chart reviews, :backgroundColor => "'red'" %>
+
+Copyright (c) 2008 Yasuko Ohba (y.ohba@everyleaf.com), released under the apache license
+
