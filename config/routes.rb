@@ -117,7 +117,8 @@ Kozuchi::Application.routes.draw do
       get "#{t}_deals/new", :action => "new_#{t}_deal", :as => :"new_#{t}_deal"
     end
 
-    get 'deals/:year/:month', :as => :monthly_deals, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+    # TODO: なぜか page.redirect_to redirect_options_proc.call(@deal) でrequirements があるとうまくいかない
+    get 'deals/:year/:month', :as => :monthly_deals, :action => 'monthly' #, :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # DealSuggestionsController

@@ -100,7 +100,10 @@ module DealsHelper
     text << "<div id='tabsheet' class='tabsheet'>"
     merged_before = "$('deal_year').value = $('date_year').value; $('deal_month').value = $('date_month').value; $('deal_day').value = $('date_day').value;"
     merged_before << options.delete(:before) if options[:before]
-    text << form_for(:deal, @deal, {:remote => true, :before => merged_before}.merge(options)) do |f|
+    html_options = options.delete(:html) || {}
+    # TODO: きれいにする
+    script = remote_function(options.merge(:before => merged_before, :submit => 'deal_form')) + "; return false;"
+    text << form_for(:deal, @deal, :url => options[:url], :html => {:id => 'deal_form', :onSubmit => script}.merge(html_options)) do |f|
       h = f.hidden_field(:year)
       h << f.hidden_field(:month)
       h << f.hidden_field(:day)

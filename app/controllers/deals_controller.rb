@@ -14,7 +14,7 @@ class DealsController < ApplicationController
   }
 
   REDIRECT_OPTIONS_PROC = lambda{|deal|
-    {:action => :monthly, :year => deal.date.year, :month => deal.date.month, :updated_deal_id => deal.id}
+    {:action => :monthly, :year => deal.date.year.to_s, :month => deal.date.month.to_s, :updated_deal_id => deal.id}
   }
   deal_actions_for :general_deal, :complex_deal, :balance_deal,
     :ajax => true,

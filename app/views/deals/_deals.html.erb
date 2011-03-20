@@ -63,7 +63,7 @@
               <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
               <% if first %>
-                <td rowspan="<%=deal.readonly_entries.size%>" class="action"><%= link_to_remote('変更' , :update => 'deal_editor', :url => {:action => 'edit', :id => deal.id}, :method => :get, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" ) %></td>
+                <td rowspan="<%=deal.readonly_entries.size%>" class="action"><%= link_to('変更', '#', :onClick => remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => deal.id}, :method => :get, :complete => "location.hash = '#{deal.id}';location.hash = 'top';" )) %></td>
                 <td rowspan="<%=deal.readonly_entries.size%>" class="action">
                   <% unless deal.settlement_attached? %>
                     <%= link_to '削除', deal_path(:id => deal), :method => :delete, :confirm => "#{deal.human_name} を削除します。よろしいですか？" %>
