@@ -63,23 +63,23 @@ module DealsHelper
   end
 
 
-  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil)
+  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, &block)
     tab_index = start_tab_index
     text = content_tag(:div, :id => 'datebox') do
       content_tag :form, :id => 'datebox_form' do
-        text = ''
-        text << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
+        d = ''
+        d << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
         tab_index += 1
-        text << text_field(:date, :month, :size => 2, :max_length => 2, :tabindex => tab_index, :value => month)
+        d << text_field(:date, :month, :size => 2, :max_length => 2, :tabindex => tab_index, :value => month)
         tab_index += 1
-        text << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
-        text
+        d << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
+        d.html_safe
       end
     end
-    text << content_tag(:div, :id => "deal_forms") do
-      yield
+    text << content_tag(:div, capture(&block), :id => "deal_forms") do
+      capture(&block)
     end
-    concat(text)
+    text.html_safe
   end
 
   def deal_tab(caption, url, current_caption, html_options = {})
@@ -87,25 +87,30 @@ module DealsHelper
       if current_caption == true || current_caption == caption
         caption
       else
-        link_to_remote caption, {:update => "deal_forms", :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}"}, html_options
+        # TODO: きれいにする
+        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}")
+        link_to caption, '#', {:onClick => func}.merge(html_options)
       end
     end
   end
 
-  def deal_form(current_caption, options = {})
-    concat("<div id='tabwindow'>")
-    concat(render :partial => 'deal_tabs', :locals => {:deal => @deal, :current_caption => current_caption})
-    concat("<div id='tabsheet' class='tabsheet'>")
+  def deal_form(current_caption, options = {}, &block)
+    text = "<div id='tabwindow'>"
+    text << render(:partial => 'deal_tabs', :locals => {:deal => @deal, :current_caption => current_caption})
+    text << "<div id='tabsheet' class='tabsheet'>"
     merged_before = "$('deal_year').value = $('date_year').value; $('deal_month').value = $('date_month').value; $('deal_day').value = $('date_day').value;"
     merged_before << options.delete(:before) if options[:before]
-    remote_form_for :deal, @deal, {:before => merged_before}.merge(options) do |f|
-      concat(f.hidden_field :year)
-      concat(f.hidden_field :month)
-      concat(f.hidden_field :day)
-      yield f
+    text << form_for(:deal, @deal, {:remote => true, :before => merged_before}.merge(options)) do |f|
+      h = f.hidden_field(:year)
+      h << f.hidden_field(:month)
+      h << f.hidden_field(:day)
+      h << capture(f, &block)
+#      yield f
+      h.html_safe
     end
-    concat("</div>")
-    concat("</div>")
+    text << "</div>"
+    text << "</div>"
+    text.html_safe
   end
 
   def datebox

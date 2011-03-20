@@ -1,5 +1,5 @@
 <div style="float:right">
-  <% form_tag({:controller => '/deals', :action => 'search'}, :method => :get) do -%>
+  <%= form_tag(search_deals_path, :method => :get) do -%>
     <%= text_field_tag :keyword, "", :size => 14 %> <%= submit_tag '明細を検索', :class => 'button', :onClick => "if($('keyword').value == '') {alert('キーワードを入力してください。'); return false;}" %>
   <% end -%>
 </div>
@@ -8,7 +8,7 @@
 
 <% deal_type = flash[:"#{controller_name}_deal_type"] %>
 <div id="deal_editor">
-  <% deal_editor 1, @year, @month, @day do %>
+  <%= deal_editor 1, @year, @month, @day do %>
     <%= render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form' %>
   <% end %>
 </div>

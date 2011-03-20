@@ -105,6 +105,9 @@ Kozuchi::Application.routes.draw do
       member do
         put 'confirm'
       end
+      collection do
+        get 'search'
+      end
     end
     # :sub_resources => {:entries => {:only => [:create]}}
     post 'deals/:id/entries', :action => 'create_entry', :as => :deals_entries
@@ -169,6 +172,7 @@ Kozuchi::Application.routes.draw do
   controller :balance_sheet do
     resource :balance_sheet, :only => [:show]
     match 'balance_sheet/:year/:month', :as => :monthly_balance_sheet, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+    match 'balance_sheet', :action => :index, :as => :balance_sheet
   end
 
   # ProfitAndLossController
