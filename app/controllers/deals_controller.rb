@@ -100,6 +100,7 @@ class DealsController < ApplicationController
 
   # 記入の削除
   def destroy
+    p "destroy #{@deal.id}"
     @deal.destroy
     flash[:notice] = "#{@deal.human_name} を削除しました。"
     write_target_date(@deal.date)
