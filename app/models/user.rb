@@ -112,6 +112,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  after_create :create_defaults
+
 #  # TODO: 関連に移行
 #  def assets
 #    accounts.types_in(:asset)
@@ -365,12 +367,12 @@ class User < ActiveRecord::Base
     self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
   end
 
-  def after_create
-    create_preferences()
+  private
+  def create_defaults
+    create_preferences
     Account::Base.create_default_accounts(self.id)
   end
 
-  private
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
     Deal::Base.find_all_by_user_id(self.id).each{|d| d.destroy }

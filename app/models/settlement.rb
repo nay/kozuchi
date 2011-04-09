@@ -21,7 +21,10 @@ class Settlement < ActiveRecord::Base
   attr_accessor :result_date, :result_partner_account_id
   attr_reader :deal_ids
 
-  before_validation_on_create :set_target_entries
+  before_validation :set_target_entries, :on => :create
+  after_save :create_result_deal
+  before_destroy :check_submitted
+  after_destroy :destroy_reuslt_deal
 
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
@@ -92,7 +95,20 @@ class Settlement < ActiveRecord::Base
     errors.add_to_base("対象取引が１件もありません。") if self.target_entries.empty?
   end
     
-  def after_save
+  private
+
+  def destroy_reuslt_deal
+    self.result_entry.deal.destroy if self.result_entry
+  end
+
+
+  def check_submitted
+    # submit されていたら消せない
+    raise "提出済の精算データは削除できません。" if self.submitted_settlement_id
+  end
+
+
+  def create_result_deal
     self.target_entries.each{|e| e.save!}
     if !self.result_entry && self.result_partner_account_id && self.result_date
       amount = 0
@@ -115,7 +131,7 @@ class Settlement < ActiveRecord::Base
 #        :user_id => self.user_id,
         :date => self.result_date,
         :summary => self.name,
-        :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする      
+        :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする
       )
       result_deal.user_id = user_id # TODO: こうでないとだめなことを確認
       result_deal.save!
@@ -123,17 +139,7 @@ class Settlement < ActiveRecord::Base
     end
     self.result_entry.save!
   end
-  
-  def before_destroy
-    # submit されていたら消せない
-    raise "提出済の精算データは削除できません。" if self.submitted_settlement_id
-  end
-  
-  def after_destroy
-    self.result_entry.deal.destroy if self.result_entry
-  end
 
-  private
   def set_target_entries
     return if !deal_ids || !target_entries.empty?
     # 対象取引を追加していく

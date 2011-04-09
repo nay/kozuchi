@@ -237,7 +237,7 @@ class Deal::General < Deal::Base
   end
 
   # 後の検索効率のため、idで妥協する
-  named_scope :recent_summaries, lambda{|keyword|
+  scope :recent_summaries, lambda{|keyword|
     {:select => "deals.summary, max(deals.id) as id",
     :group => "deals.summary",
     :conditions => ["deals.summary like ?", "#{keyword}%"],
@@ -246,7 +246,7 @@ class Deal::General < Deal::Base
     }
   }
 
-  named_scope :with_account, lambda{|account_id, debtor|
+  scope :with_account, lambda{|account_id, debtor|
    {
      :joins => "inner join account_entries on deals.id = account_entries.deal_id",
      :conditions => "account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"

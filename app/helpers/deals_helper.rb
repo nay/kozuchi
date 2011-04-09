@@ -103,7 +103,7 @@ module DealsHelper
     html_options = options.delete(:html) || {}
     # TODO: きれいにする
     script = remote_function(options.merge(:before => merged_before, :submit => 'deal_form')) + "; return false;"
-    text << form_for(:deal, @deal, :url => options[:url], :html => {:id => 'deal_form', :onSubmit => script}.merge(html_options)) do |f|
+    text << form_for(@deal, :as => :deal, :url => options[:url], :html => {:id => 'deal_form', :onSubmit => script}.merge(html_options)) do |f|
       h = f.hidden_field(:year)
       h << f.hidden_field(:month)
       h << f.hidden_field(:day)

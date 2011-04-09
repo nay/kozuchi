@@ -15,8 +15,8 @@ class Deal::Base < ActiveRecord::Base
   before_save :set_daily_seq
   validates_presence_of :date
   
-  named_scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
-  named_scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
+  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
+  scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
 
   def human_name
     "記入 #{date}-#{daily_seq}"

@@ -12,14 +12,14 @@
         submit_url = send(url_method, url_params.merge({:year => '_YEAR_', :month => '_MONTH_'}))
         callback_script = "var url = $('month_submit_form').action; url = url.replace('_YEAR_', $('calendar_year').value); url = url.replace('_MONTH_', $('calendar_month').value); $('month_submit_form').action = url; $('month_submit_form').submit();"
      %>
-    <% form_tag do %>
+    <%= form_tag do %>
       <% if calendar %>
         <%= render :partial => calendar %>
       <% end %>
       <input type="hidden" id="calendar_year" name="year" value="<%= year %>" />
       <input type="hidden" id="calendar_month" name="month" value="<%= month %>" />
     <% end %>
-    <% form_tag submit_url, :method => 'get', :id => 'month_submit_form' do %>
+    <%= form_tag submit_url, :method => 'get', :id => 'month_submit_form' do %>
     <% end %>
 
 <%= javascript_tag <<-END
