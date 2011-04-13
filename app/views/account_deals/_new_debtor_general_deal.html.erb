@@ -20,5 +20,12 @@
 
 <% end %>
 <%= error_messages_for :deal %>
-<%= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :method => :get, :url => deal_suggestions_path(:account_id => @account.id, :debtor => 'true'))%>
-
+<%= javascript_tag do %>
+  new Form.Element.Observer(
+    'deal_summary',
+    0.5,
+    function(element, value) {
+      new Ajax.Updater('patterns', '<%= deal_suggestions_path(:account_id => @account.id, :debtor => 'true') %>', {asynchronous:true, evalScripts:true, method:'get', parameters:'keyword=' + encodeURIComponent(value)})
+    }
+  )
+<% end %>

@@ -32,11 +32,11 @@ module DealsHelper
         amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => e.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)) + (e.object.settlement_attached? ? e.hidden_field(:amount) : '')}
         debtor_account_field_proc = if fixed_account
           lambda{|tabindex|
-            "<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => fixed_account.id)
+            ("<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
+            e.hidden_field(:account_id, :value => fixed_account.id)).html_safe
           }
         else
-          lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex}
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex).html_safe }
         end
       end
     end
@@ -50,11 +50,11 @@ module DealsHelper
       else
         creditor_account_field_proc = if fixed_account
           lambda{|tabindex|
-            "<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => fixed_account.id)
+            ("<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
+            e.hidden_field(:account_id, :value => fixed_account.id)).html_safe
           }
         else
-          lambda{|tabindex| e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex}
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex).html_safe }
         end
       end
     end

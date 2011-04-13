@@ -152,7 +152,7 @@ Kozuchi::Application.routes.draw do
   controller :account_deals do
     resources :account_deals, :path => 'accounts/deals', :only => [:index]
     scope :path => 'accounts/:account_id' do
-      match 'deals/:year/:month', :as => :monthly_account_deals, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+      match 'deals/:year/:month', :as => :monthly_account_deals, :action => 'monthly'# TODO: なぜかあるとうまくいかない, :requirements => YEAR_MONTH_REQUIREMENTS
       match 'balance', :as => :account_balance, :action => :balance
       post 'general_deals', :as => :account_general_deals, :action => 'create_general_deal'
       ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |t|
