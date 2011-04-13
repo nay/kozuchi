@@ -107,7 +107,7 @@ Kozuchi::Application.routes.draw do
       end
     end
     # :sub_resources => {:entries => {:only => [:create]}}
-    post 'deals/:id/entries', :action => 'create_entry', :as => :deals_entries
+    post 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries
 
     ['general', 'balance', 'complex'].each do |t|
       post "#{t}_deals", :action => "create_#{t}_deal", :as => :"#{t}_deals"
