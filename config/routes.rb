@@ -53,20 +53,17 @@ Kozuchi::Application.routes.draw do
 
   # settings
   namespace :settings do
-    resources :incomes do
-      collection do
-        put 'update_all', :as => ''
-      end
+    controller :incomes do
+      put 'incomes', :action => :update_all
+      resources :incomes
     end
-    resources :expenses do
-      collection do
-        put 'update_all', :as => ''
-      end
+    controller :expenses do
+      put 'expenses', :action => :update_all
+      resources :expenses
     end
-    resources :assets do
-      collection do
-        put 'update_all', :as => ''
-      end
+    controller :assets do
+      put 'assets', :action => :update_all
+      resources :assets
     end
     # 連携
     resources :account_link_requests, :path => 'accounts/:account_id/link_requests', :only => [:destroy]
