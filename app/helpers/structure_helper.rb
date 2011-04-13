@@ -12,11 +12,7 @@ module StructureHelper
       <td>#{inner_content}</td>
     </tr>
 EOS
-    if block_given?
-      concat content, block.binding
-    else
-      return content
-    end
+    content.html_safe
   end
 
 end
