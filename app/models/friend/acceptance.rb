@@ -3,7 +3,7 @@ class Friend::Acceptance < Friend::Permission
   after_create :create_target_request
   after_destroy :destroy_target_request
 
-  named_scope :requested, :joins => "inner join friend_requests on friend_permissions.user_id = friend_requests.user_id and friend_permissions.target_id = friend_requests.sender_id"
+  scope :requested, :joins => "inner join friend_requests on friend_permissions.user_id = friend_requests.user_id and friend_permissions.target_id = friend_requests.sender_id"
 
   def accepted_by_target?
     target.friend_acceptances.find_by_target_id(self.user_id) != nil
