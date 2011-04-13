@@ -1,11 +1,11 @@
-<% html_tag do -%>
+<%= html_tag do -%>
 
-  <% head_tag 'home' do -%>
+  <%= head_tag 'home' do -%>
   	<title>[小槌] ホーム</title>
 	<%= yield :head %>
   <% end -%>
   
-  <% body_tag do -%>
+  <%= body_tag do -%>
     <div id="header" style="margin-bottom: 2em;">
       <div id="home_icon">
         <%= link_to(image_tag("/images/izumo_kozuchi.png", :border => 0, :width => 32, :height => 32), root_path) %>

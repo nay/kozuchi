@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   
-  mobile_filter
+#  mobile_filter
   hankaku_filter
   trans_sid
   include AuthenticatedSystem
