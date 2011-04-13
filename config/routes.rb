@@ -178,8 +178,7 @@ Kozuchi::Application.routes.draw do
 
   # ProfitAndLossController
   controller :profit_and_loss do
-    match 'profit_and_loss', :action => :index
-    resource :profit_and_loss, :only => [:show]
+    get :profit_and_loss, :action => [:show]
     match 'profit_and_loss/:year/:month', :as => :monthly_profit_and_loss, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 

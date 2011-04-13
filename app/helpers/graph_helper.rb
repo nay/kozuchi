@@ -19,10 +19,10 @@ module GraphHelper
 #        return '<img width="300" height="200" src="' + url + '" />'
         return render_javascript_pie( id, data )
       else
-        return '<span>グラフは２つ以上の項目があるときに表示されます。</span>'
+        return '<span>グラフは２つ以上の項目があるときに表示されます。</span>'.html_safe
       end
     rescue => err
-      return "<span>エラーのためグラフを表示できません。<br />#{err}<br />#{err.backtrace}</span>"
+      return "<span>エラーのためグラフを表示できません。<br />#{err}<br />#{err.backtrace}</span>".html_safe
     end
   end
   
@@ -38,7 +38,8 @@ Event.observe(window, 'load', function () {
 	cg.draw(items);
 }, false);
     EOS
-    s << %Q(<div><canvas width="400" height="200" id="#{id}"></canvas></div>)
+    s << %Q(<div><canvas width="400" height="200" id="#{id}"></canvas></div>).html_safe
+    s
   end
   
   def to_items( data )
