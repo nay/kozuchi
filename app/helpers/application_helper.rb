@@ -196,7 +196,7 @@ EOS
     bgcolor = user.preferences.color
     return '' unless bgcolor;
     style_content = "background-color: #{bgcolor};"
-    return 'style="'+h(style_content)+'"'
+    return ('style="'+h(style_content)+'"').html_safe
   end
 
 #  def format_deal(deal)
