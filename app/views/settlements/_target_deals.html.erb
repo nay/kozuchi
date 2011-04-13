@@ -71,7 +71,7 @@
     </tr>
   </table>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
   settlement.debtorSum = <%= debtor_sum * -1 %>;
   settlement.creditorSum = <%= creditor_sum %>;
 <% end %>

@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
   var Settlement = Class.create();
   Settlement.prototype = {
     initialize: function() {
@@ -51,7 +51,7 @@
   }
 <% end %>
 <% change_condition = remote_function(:update => 'target_deals', :url => {:action => 'target_deals', :clear_selection => true}, :with => 'Form.serialize(\'target_deals_form\')', :method => :get) %>
-<% form_tag settlements_path, :id => 'target_deals_form' do %>
+<%= form_tag settlements_path, :id => 'target_deals_form' do %>
 <div id="select_credit_account">
   <table>
     <tr>

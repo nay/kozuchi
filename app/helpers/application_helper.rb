@@ -16,7 +16,8 @@ module ApplicationHelper
     while sub = names.pop
       after_sub = "<div class='sub_account_name'>#{sub}#{after_sub}</div>"
     end
-    name << "<div class='sub_account_names'>#{after_sub}</div>"
+    name << "<div class='sub_account_names'>#{after_sub}</div>".html_safe
+    name.html_safe
   end
 
   # 上部メニューで使う
@@ -122,7 +123,7 @@ EOF
 
   # 口座に注目したときの表記
   def display_account_entry(entry, style = nil)
-    <<EOS
+    s =<<EOS
       <td class="date" #{style}>#{format_date entry.date}</td>
       <td class="number" #{style}>#{entry.daily_seq}</td>
       <td class="summary" #{style}>#{h entry.deal.summary}</td>
@@ -130,9 +131,10 @@ EOF
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount.abs) if entry.amount < 0}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount) if entry.amount >= 0}</td>
 EOS
+    s.html_safe
   end
   def display_account_entry_header
-    <<EOS
+    s = <<EOS
       <th class="date">年月日</th>
       <th> </th>
       <th class="summary">摘要</th>
@@ -140,6 +142,7 @@ EOS
       <th class="amount">出金</th>
       <th>入金</th>
 EOS
+    s.html_safe
   end
 
 
