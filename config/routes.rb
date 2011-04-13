@@ -171,7 +171,7 @@ Kozuchi::Application.routes.draw do
 
   # BalanceSheetController
   controller :balance_sheet do
-    resource :balance_sheet, :only => [:show]
+    get :balance_sheet, :action => :show
     match 'balance_sheet/:year/:month', :as => :monthly_balance_sheet, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
     match 'balance_sheet', :action => :index, :as => :balance_sheet
   end

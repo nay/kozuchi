@@ -211,7 +211,7 @@ EOS
     string += "<td class='percentage'>#{contents[:percentage]}%</td>\n" if contents[:percentage]
     string += "<td class='amount'>#{number_with_delimiter(contents[:amount])}</td>\n" if contents[:amount]
     string += "</tr>\n"
-    string
+    string.html_safe
   end
 
   class AccountGroup
