@@ -21,9 +21,9 @@ module ApplicationHelper
   end
 
   # 上部メニューで使う
-  def link_to_menu_group(menu_group, path)
+  def link_to_menu_group(menu_group, path, options = {})
     if menu_group != @menu_group
-      link_to menu_group, path
+      link_to menu_group, path, options
     else
       content_tag("span", menu_group, :class => "current")
     end

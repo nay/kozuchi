@@ -207,7 +207,7 @@ Kozuchi::Application.routes.draw do
   match '/signup' => 'users#new', :as => :signup, :via => :get
   match '/signup' => 'users#create', :as => :signup_post, :via => :post # TODO: must be unified to signup
   match '/login' => 'sessions#create', :as => :login_post, :via => :post # TODO: change to login
-  match '/logout' => 'sessions#destroy', :as => :logout, :via => :destroy
+  match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
   match '/singe_login' => 'sessions#update', :as => :single_login, :via => :put
   match '/activate/:activation_code' => 'users#activate', :as => :activate
 
