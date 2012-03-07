@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AccountsBalanceReport
   attr_accessor :plus
   attr_accessor :minus

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class LooseAccountEtries < ActiveRecord::Migration
   def self.up
     change_column :account_entries, :user_id, :integer, :null => true

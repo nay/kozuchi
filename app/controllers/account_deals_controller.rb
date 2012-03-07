@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AccountDealsController < ApplicationController 
   layout 'main'
   menu_group "家計簿"

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 # 素直につくったときにnew objectのデフォルト値が0になってしまい都合がわるいのでやめる
 class RemoveNullFalseOfAmountFromAccountEntries < ActiveRecord::Migration
   def self.up

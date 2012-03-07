@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Friend::Rejection < Friend::Permission
   validate :validates_not_rejected
 

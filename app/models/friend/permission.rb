@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Friend::Permission < ActiveRecord::Base
   set_table_name "friend_permissions"
   belongs_to :user

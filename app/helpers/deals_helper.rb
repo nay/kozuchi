@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module DealsHelper
 
   # 仕訳帳中の指定された deal を示すURLを生成する

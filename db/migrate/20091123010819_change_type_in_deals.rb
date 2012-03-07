@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class ChangeTypeInDeals < ActiveRecord::Migration
   def self.up
     execute "update deals set type = 'General' where type = 'Deal'"

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MobilesController < ApplicationController
   before_filter :require_mobile
 

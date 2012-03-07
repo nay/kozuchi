@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class UpdateAmountOfBalances < ActiveRecord::Migration
   
   def self.up

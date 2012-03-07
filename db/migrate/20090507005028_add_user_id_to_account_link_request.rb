@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddUserIdToAccountLinkRequest < ActiveRecord::Migration
   def self.up
     add_column :account_link_requests, :user_id, :integer

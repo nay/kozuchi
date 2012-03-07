@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 # SubordinateDeal 削除に伴うデータ整理
 class DeleteParentDealIdFromDeals < ActiveRecord::Migration
   def self.up

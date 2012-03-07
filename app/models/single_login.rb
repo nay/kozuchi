@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class SingleLogin < ActiveRecord::Base
   belongs_to :user
   attr_accessor :password

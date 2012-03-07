@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Preferences < ActiveRecord::Base
   set_table_name "preferences"
   belongs_to :user

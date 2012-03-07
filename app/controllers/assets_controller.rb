@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AssetsController < ApplicationController
   layout 'main'
   helper :graph

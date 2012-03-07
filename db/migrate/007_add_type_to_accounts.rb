@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddTypeToAccounts < ActiveRecord::Migration
   def self.up
     add_column(:accounts, :type, :text)

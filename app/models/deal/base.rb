@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'time'
 
 class Deal::Base < ActiveRecord::Base

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # kozuchi version
 # リリースしたら直後に上げること
 

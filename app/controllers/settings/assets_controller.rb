@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Settings::AssetsController < ApplicationController
   layout 'main'
   cache_sweeper :export_sweeper

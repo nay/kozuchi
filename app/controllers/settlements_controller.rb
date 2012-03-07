@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   layout 'main'

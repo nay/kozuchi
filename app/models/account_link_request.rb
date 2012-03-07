@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AccountLinkRequest < ActiveRecord::Base
   belongs_to :sender, :class_name => "User", :foreign_key => "sender_id"
   belongs_to :account, :class_name => "Account::Base"

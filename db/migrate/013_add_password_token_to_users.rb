@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddPasswordTokenToUsers < ActiveRecord::Migration
   def self.up
     add_column :users, :password_token, :string, :limit => 40

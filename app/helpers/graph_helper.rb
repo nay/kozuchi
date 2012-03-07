@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module GraphHelper
 
 # HTML5.JP glaph_circle を用いて円グラフを描画する

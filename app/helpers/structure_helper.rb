@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module StructureHelper
 
   def with_label(label, inner_content = '', &block)

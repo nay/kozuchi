@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class DropFriends < ActiveRecord::Migration
   def self.up
     drop_table :friends

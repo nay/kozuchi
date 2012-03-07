@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # 外部にある勘定への操作の受け口となるクラス。まだ使わないがメモとして。
 class Account::Proxy
 

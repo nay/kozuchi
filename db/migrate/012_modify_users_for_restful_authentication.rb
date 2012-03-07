@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class ModifyUsersForRestfulAuthentication < ActiveRecord::Migration
   def self.up
     add_column :users, :crypted_password,  :string, :limit => 40

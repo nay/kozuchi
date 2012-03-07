@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Flow::Base
   attr_reader :list
   def initialize(account_name, flow, unknown, list, previous_flow)

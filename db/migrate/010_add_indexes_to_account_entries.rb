@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 # ざっくりindexをはる
 class AddIndexesToAccountEntries < ActiveRecord::Migration
   def self.up

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 # Ensure deals have non null timestamps.
 class SetTimestampToDeals < ActiveRecord::Migration
   def self.up

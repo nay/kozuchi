@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
   layout 'main'

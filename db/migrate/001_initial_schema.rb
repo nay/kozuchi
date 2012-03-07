@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class InitialSchema < ActiveRecord::Migration
 
   def self.up

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class CreateSettlements < ActiveRecord::Migration
   def self.up
     create_table :settlements do |t|

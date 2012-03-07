@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Account::Base < ActiveRecord::Base
 
   set_table_name "accounts"

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # カスタマイズ （個人的好みによる設定） 
 class Settings::PreferencesController < ApplicationController
   layout 'main'

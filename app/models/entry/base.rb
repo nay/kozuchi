@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # １口座への１記入を表す
 class Entry::Base < ActiveRecord::Base
   set_table_name 'account_entries'

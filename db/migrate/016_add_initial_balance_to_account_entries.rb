@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddInitialBalanceToAccountEntries < ActiveRecord::Migration
   def self.up
     add_column :account_entries, :initial_balance, :boolean, :null => false, :default => false

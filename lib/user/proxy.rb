@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # TODO: まだ使わないがメモとして。使う際はログインを使うのでSTIか。
 class User::Proxy
   # TODO: account_with_entry_id(entry_id) も追加する

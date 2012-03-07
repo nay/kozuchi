@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class SubmittedSettlement < Settlement
   # destroy時に自動でnilにしてもらうため
   has_one :resource, :class_name => 'Settlement', :foreign_key => 'submitted_settlement_id', :dependent => :nullify

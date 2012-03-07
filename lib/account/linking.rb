@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # 勘定にもたせる口座連携関係の機能を記述。
 module Account::Linking
 

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class DropDealLinks < ActiveRecord::Migration
   def self.up
     drop_table :deal_links

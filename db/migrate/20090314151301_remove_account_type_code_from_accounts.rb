@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class RemoveAccountTypeCodeFromAccounts < ActiveRecord::Migration
   def self.up
     remove_column :accounts, :account_type_code

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Settings::IncomesController < ApplicationController
   layout 'main'
   cache_sweeper :export_sweeper

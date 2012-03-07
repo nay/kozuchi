@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Settings::AccountLinkRequestsController < ApplicationController
   before_filter :find_account
 

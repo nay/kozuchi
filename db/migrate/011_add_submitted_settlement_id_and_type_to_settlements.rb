@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddSubmittedSettlementIdAndTypeToSettlements < ActiveRecord::Migration
   def self.up
     add_column :settlements, :submitted_settlement_id, :integer

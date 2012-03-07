@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddUsesComplexDealToPreferences < ActiveRecord::Migration
   def self.up
     add_column :preferences, :uses_complex_deal, :boolean, :default => false, :null => false

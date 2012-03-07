@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class ChangeAccountType < ActiveRecord::Migration
   def self.up
     rename_column(:accounts, :account_type, :account_type_code)

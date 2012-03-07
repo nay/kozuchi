@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'rss'
 require 'net/http'
 class WelcomeController < ApplicationController

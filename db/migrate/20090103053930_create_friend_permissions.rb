@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class CreateFriendPermissions < ActiveRecord::Migration
   def self.up
     create_table :friend_permissions do |t|

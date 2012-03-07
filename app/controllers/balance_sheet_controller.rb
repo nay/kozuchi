@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class BalanceSheetController < ApplicationController
   layout 'main'
   menu_group "家計簿"

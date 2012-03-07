@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #TODO: UserProxy対応
 class Settlement < ActiveRecord::Base
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'

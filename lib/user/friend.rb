@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module User::Friend
   def self.included(base)
     base.has_many :friend_requests, :class_name => "Friend::Request", :dependent => :destroy, :include => :sender

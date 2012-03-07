@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class ChangeTypeInAccounts < ActiveRecord::Migration
   def self.up
     # Income, Expense 以外を Assetにする。

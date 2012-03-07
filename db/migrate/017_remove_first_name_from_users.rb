@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class RemoveFirstNameFromUsers < ActiveRecord::Migration
   def self.up
     remove_column :users, :firstname

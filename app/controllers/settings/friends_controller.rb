@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # フレンド設定
 class Settings::FriendsController < ApplicationController
   layout 'main'

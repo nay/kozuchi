@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module HomeHelper
 
   def large_menu_button_to(name, url, options = {})

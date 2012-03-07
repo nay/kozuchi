@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class CreateAccountLinkRequests < ActiveRecord::Migration
   def self.up
     create_table :account_link_requests do |t|

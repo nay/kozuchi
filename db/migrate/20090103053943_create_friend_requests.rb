@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class CreateFriendRequests < ActiveRecord::Migration
   def self.up
     create_table :friend_requests do |t|

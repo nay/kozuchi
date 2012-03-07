@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MobileDealsController < ApplicationController
   cache_sweeper :export_sweeper, :only => [:create_general_deal]
 

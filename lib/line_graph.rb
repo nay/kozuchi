@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # 折れ線グラフ用のデータ
 class LineGraph
   attr_accessor :items_values, :item_labels, :x_values, :x_label, :unit, :grid, :y_values, :y_label, :min, :max

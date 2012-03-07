@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class RemoveDuplicateLinks < ActiveRecord::Migration
   def self.up
     for account_id, id in execute("select account_id, min(id) as count from account_links group by account_id") do

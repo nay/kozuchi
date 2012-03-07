@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class RemoveSaltedPasswordFromUsers < ActiveRecord::Migration
   def self.up
     execute "update users set crypted_password = salted_password where type = 'LoginEngineUser';"

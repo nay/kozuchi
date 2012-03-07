@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'digest/sha1'
 
 # this model expects a certain database layout and its based on the name/login pattern. 

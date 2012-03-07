@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddDateAndDailySeqToAccountEntries < ActiveRecord::Migration
   def self.up
     add_column :account_entries, :date, :date, :null => false
