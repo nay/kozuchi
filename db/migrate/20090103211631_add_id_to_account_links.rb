@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class AddIdToAccountLinks < ActiveRecord::Migration
   def self.up
     # データをメモリに格納しておく
