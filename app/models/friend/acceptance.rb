@@ -19,9 +19,9 @@ class Friend::Acceptance < Friend::Permission
   end
 
   def validates_not_rejected
-    errors.add_to_base("フレンド関係を拒否している相手のため、フレンド登録できません。登録するには拒否を撤回してください。") if Friend::Rejection.find_by_user_id_and_target_id(self.user_id, self.target_id)
+    errors.add(:base, "フレンド関係を拒否している相手のため、フレンド登録できません。登録するには拒否を撤回してください。") if Friend::Rejection.find_by_user_id_and_target_id(self.user_id, self.target_id)
   end
   def validates_not_accepted
-    errors.add_to_base("すでにフレンド登録されています。") if Friend::Acceptance.find_by_user_id_and_target_id(self.user_id, self.target_id)
+    errors.add(:base, "すでにフレンド登録されています。") if Friend::Acceptance.find_by_user_id_and_target_id(self.user_id, self.target_id)
   end
 end

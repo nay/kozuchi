@@ -12,7 +12,10 @@ class SubmittedSettlement < Settlement
   def validate
     
   end
-  def after_save
-    # なにもしない
+
+  private
+
+  def create_result_deal
   end
+
 end

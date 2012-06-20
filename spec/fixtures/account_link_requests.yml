@@ -1,0 +1,36 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+# taro's
+taro_to_hanako:
+  account_id: <%= Fixtures.identify :hanako_taro %>
+  sender_id: <%= Fixtures.identify :taro %>
+  sender_ex_account_id: <%= Fixtures.identify :taro_hanako %>
+taro_to_home:
+  account_id: <%= Fixtures.identify :home_taro %>
+  sender_id: <%= Fixtures.identify :taro %>
+  sender_ex_account_id: <%= Fixtures.identify :taro_home %>
+taro_to_home_cost:
+  account_id: <%= Fixtures.identify :home_income_from_two %>
+  sender_id: <%= Fixtures.identify :taro %>
+  sender_ex_account_id: <%= Fixtures.identify :taro_home_cost %>
+# hanako's
+hanako_to_taro:
+  account_id: <%= Fixtures.identify :taro_hanako %>
+  sender_id: <%= Fixtures.identify :hanako %>
+  sender_ex_account_id: <%= Fixtures.identify :hanako_taro %>
+hanako_to_home:
+  account_id: <%= Fixtures.identify :home_hanako %>
+  sender_id: <%= Fixtures.identify :hanako %>
+  sender_ex_account_id: <%= Fixtures.identify :hanako_home %>
+hanako_to_home_cost:
+  account_id: <%= Fixtures.identify :home_income_from_two %>
+  sender_id: <%= Fixtures.identify :hanako %>
+  sender_ex_account_id: <%= Fixtures.identify :hanako_home_cost %>
+# home's
+home_to_taro:
+  account_id: <%= Fixtures.identify :taro_home %>
+  sender_id: <%= Fixtures.identify :home %>
+  sender_ex_account_id: <%= Fixtures.identify :home_taro %>
+home_to_hanako:
+  account_id: <%= Fixtures.identify :hanako_home %>
+  sender_id: <%= Fixtures.identify :home %>
+  sender_ex_account_id: <%= Fixtures.identify :home_hanako %>

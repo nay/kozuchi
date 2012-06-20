@@ -7,9 +7,9 @@ class Deal::General < Deal::Base
   module EntriesAssociationExtension
     def build(*args)
       record = super
-      record.user_id = proxy_owner.user_id
-      record.date = proxy_owner.date
-      record.daily_seq = proxy_owner.daily_seq
+      record.user_id = proxy_association.owner.user_id
+      record.date = proxy_association.owner.date
+      record.daily_seq = proxy_association.owner.daily_seq
       record
     end
 
@@ -90,7 +90,7 @@ class Deal::General < Deal::Base
   # 単一記入では creditor に金額が指定されないことへの調整。
   # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
   # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。
-  def attributes=(deal_attributes = {})
+  def assign_attributes(deal_attributes = {}, options = {})
 
     return super unless deal_attributes && deal_attributes[:debtor_entries_attributes] && deal_attributes[:creditor_entries_attributes]
 
@@ -442,19 +442,19 @@ class Deal::General < Deal::Base
   def validate_entries
     # amount 合計が 0 でなければならない
     sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
-    errors.add_to_base("借方、貸方が同額ではありません。") unless sum == 0
+    errors.add(:base, "借方、貸方が同額ではありません。") unless sum == 0
 
     # 両サイドが１つだけで、かつ同じ口座ではいけない
-    errors.add_to_base("同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
+    errors.add(:base, "同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
 
-    errors.add_to_base("借方の記入が必要です。") if debtor_entries.empty?
-    errors.add_to_base("貸方の記入が必要です。") if creditor_entries.empty?
+    errors.add(:base, "借方の記入が必要です。") if debtor_entries.empty?
+    errors.add(:base, "貸方の記入が必要です。") if creditor_entries.empty?
 
     # TODO: ひとまず、Deal内のEntryの口座は一意でなければならないこととする
     # いずれ変更したい
     # 口座の吸収合併などを実装する場合は注意
     # 重複があってはいけない
-    errors.add_to_base("同じ口座を複数に記入することはできません。") if (debtor_entries.not_marked.map(&:account_id) + creditor_entries.not_marked.map(&:account_id)).uniq!
+    errors.add(:base, "同じ口座を複数に記入することはできません。") if (debtor_entries.not_marked.map(&:account_id) + creditor_entries.not_marked.map(&:account_id)).uniq!
   end
 
 

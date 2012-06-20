@@ -1,11 +1,14 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.5'
+gem 'rails', '3.2.6'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
+
+gem 'jpmobile'
+gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -27,6 +30,7 @@ gem 'mysql2'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :development, :test do
+  gem 'i18n_generators'
   gem "rspec-rails"
-#   gem 'webrat'
+  gem "capybara"
 end

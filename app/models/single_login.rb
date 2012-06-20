@@ -20,7 +20,7 @@ class SingleLogin < ActiveRecord::Base
     target_user = User.find_by_login(login)
     if target_user
       if target_user == self.user
-        errors.add_to_base("自分のアカウントへのシングルログイン設定は登録できません。")
+        errors.add(:base, "自分のアカウントへのシングルログイン設定は登録できません。")
         return
       end
       if target_user.authenticated?(password)
@@ -28,7 +28,7 @@ class SingleLogin < ActiveRecord::Base
         return # OK
       end
     end
-    errors.add_to_base("#{ERB::Util.h(login)}さんのアカウントにログインできません。")
+    errors.add(:base, "#{ERB::Util.h(login)}さんのアカウントにログインできません。")
   end
 
 end

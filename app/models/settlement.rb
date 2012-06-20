@@ -7,7 +7,13 @@ class Settlement < ActiveRecord::Base
            :class_name => 'Entry::General',
            :foreign_key => 'settlement_id',
            :order => 'deals.date, deals.daily_seq',
-           :include => :deal,
+           :include => :deal#,
+#           :dependent => :nullify
+
+  # TODO: Rails 3.2.6 nullify時のSQLでORDERがあるのにjoinされない問題の回避のため
+  has_many :nullify_target_entries,
+           :class_name => 'Entry::General',
+           :foreign_key => 'settlement_id',
            :dependent => :nullify
 
   has_one  :result_entry,
@@ -93,7 +99,7 @@ class Settlement < ActiveRecord::Base
   protected
   
   def validate
-    errors.add_to_base("対象取引が１件もありません。") if self.target_entries.empty?
+    errors.add(:base, "対象取引が１件もありません。") if self.target_entries.empty?
   end
     
   private
@@ -111,7 +117,9 @@ class Settlement < ActiveRecord::Base
 
   def create_result_deal
     self.target_entries.each{|e| e.save!}
-    if !self.result_entry && self.result_partner_account_id && self.result_date
+    unless result_entry
+      raise "No result_partner_account_id in #{self.inspect}" unless result_partner_account_id
+      raise "No result_date in #{self.inspect}" unless result_date
       amount = 0
       target_entries.each{|e| amount -= e.amount}
       # account への出し入れの逆の金額が来る

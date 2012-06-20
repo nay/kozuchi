@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Friend::Request < ActiveRecord::Base
-  set_table_name "friend_requests"
+  self.table_name = "friend_requests"
   belongs_to :user
   belongs_to :sender, :class_name => "User", :foreign_key => "sender_id"
   after_save :error_if_repeating

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Preferences < ActiveRecord::Base
-  set_table_name "preferences"
+  self.table_name = "preferences"
   belongs_to :user
 
   after_save :capital_to_credit

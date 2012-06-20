@@ -1,0 +1,164 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# taro's accounts
+taro_cache:
+  name: 現金
+  user: taro
+  type: Account::Asset
+  asset_kind: cache
+taro_food:
+  name: 食費
+  user: taro
+  type: Account::Expense
+taro_bank:
+  name: 銀行
+  user: taro
+  type: Account::Asset
+  asset_kind: banking_facility
+taro_card:
+  name: クレジットカードＸ
+  user: taro
+  type: Account::Asset
+  asset_kind: credit_card
+taro_hanako:
+  name: 花子
+  user: taro
+  type: Account::Asset
+  asset_kind: credit
+taro_home:
+  name: 家計
+  user: taro
+  type: Account::Asset
+  asset_kind: credit
+taro_home_cost:
+  name: 家計支出
+  user: taro
+  type: Account::Expense
+taro_salary:
+  name: 給料
+  user: taro
+  type: Account::Income
+# hanako's accounts
+hanako_cache:
+  name: 現金
+  user: hanako
+  type: Account::Asset
+  asset_kind: cache
+hanako_bank:
+  name: 銀行
+  user: hanako
+  type: Account::Asset
+  asset_kind: banking_facility
+hanako_taro:
+  name: 太郎
+  user: hanako
+  type: Account::Asset
+  asset_kind: credit
+hanako_home:
+  name: 家計
+  user: hanako
+  type: Account::Asset
+  asset_kind: credit
+hanako_home_cost:
+  name: 家計支出
+  user: hanako
+  type: Account::Expense
+hanako_salary:
+  name: 給料
+  user: hanako
+  type: Account::Income
+# home's accounts
+home_cache:
+  name: 現金
+  user: home
+  type: Account::Asset
+  asset_kind: cache
+home_bank:
+  name: 銀行
+  user: home
+  type: Account::Asset
+  asset_kind: banking_facility
+home_taro:
+  name: 太郎
+  user: home
+  type: Account::Asset
+  asset_kind: credit
+home_hanako:
+  name: 花子
+  user: home
+  type: Account::Asset
+  asset_kind: credit
+home_income_from_two:
+  name: 生活費入金
+  user: home
+  type: Account::Income
+# Others
+account_enrty_test_cache:
+  name: 現金
+  user: account_entry_test_user
+  type: Account::Asset
+  asset_kind: cache
+account_entry_test_food:
+  name: 食費
+  user: account_entry_test_user
+account_entry_test_cache_in_taro:
+  name: 現金
+  user: account_entry_test_user_taro
+  type: Account::Asset
+  asset_kind: cache
+account_entry_test_hanako_in_taro:
+  name: 花子
+  user: account_entry_test_user_taro
+  type: Account::Asset
+  asset_kind: credit
+account_entry_test_cache_in_hanako:
+  name: 現金
+  user: account_entry_test_user_hanako
+  type: Account::Asset
+  asset_kind: cache
+account_entry_test_taro_in_hanako:
+  name: 太郎
+  user: account_entry_test_user_hanako
+  type: Account::Asset
+  asset_kind: credit
+account_link_test_user_1:
+  name: target_user
+  user: account_link_test_user
+account_link_test_target_user_1:
+  name: user
+  user: account_link_test_target_user
+deal_test_cache:
+  name: 現金
+  user: deal_test_user
+  type: Account::Asset
+  asset_kind: cache
+deal_test_food:
+  name: 食費
+  user: deal_test_user
+  type: Account::Expense
+deal_test_bank:
+  name: 銀行
+  user: deal_test_user
+  type: Account::Asset
+  asset_kind: banking_facility
+docomo1_user_cache:
+  name: 現金
+  user: docomo1_user
+  type: Account::Asset
+  asset_kind: cache
+docomo2_user_cache:
+  name: 現金
+  type: Account::Asset
+  asset_kind: cache
+  user: docomo2_user
+au1_user_cache:
+  name: 現金
+  type: Account::Asset
+  asset_kind: cache
+  user: au1_user
+
+# one:
+#   column: value
+#
+# two:
+#   column: value

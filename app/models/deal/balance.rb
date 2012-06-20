@@ -12,9 +12,9 @@ class Deal::Balance < Deal::Base
              :order => "amount" do
     def build(attributes = {})
       record = super
-      record.user_id = proxy_owner.user_id
-      record.date = proxy_owner.date
-      record.daily_seq = proxy_owner.daily_seq
+      record.user_id = proxy_association.owner.user_id
+      record.date = proxy_association.owner.date
+      record.daily_seq = proxy_association.owner.daily_seq
       record
     end
   end

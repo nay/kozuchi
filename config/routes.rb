@@ -121,11 +121,9 @@ Kozuchi::Application.routes.draw do
   # DealSuggestionsController
   resources :deal_suggestions, :path => 'deals/suggestions', :only => [:index]
 
-  controller :mobiles do
-    resource :mobile_device do
-      member do
-        get 'confirm_destroy'
-      end
+  resource :mobile_device, :controller => :mobiles do
+    member do
+      get 'confirm_destroy'
     end
   end
 
@@ -161,22 +159,22 @@ Kozuchi::Application.routes.draw do
   end
 
   # AssetsController
-  controller :assets do
+  controller :assets, :path => 'f' do # /assets はじまりは無視されるため
+    get 'assets/:year/:month', {:as => :monthly_assets, :action => :monthly}.merge(YEAR_MONTH_REQUIREMENTS)
     resources :assets, :only => [:index]
-    match 'assets/:year/:month', :as => :monthly_assets, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
   end
 
   # BalanceSheetController
   controller :balance_sheet do
     get :balance_sheet, :action => :show
-    match 'balance_sheet/:year/:month', :as => :monthly_balance_sheet, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+    match 'balance_sheet/:year/:month', {:as => :monthly_balance_sheet, :action => 'monthly'}.merge(YEAR_MONTH_REQUIREMENTS)
     match 'balance_sheet', :action => :index, :as => :balance_sheet
   end
 
   # ProfitAndLossController
   controller :profit_and_loss do
-    get :profit_and_loss, :action => [:show]
-    match 'profit_and_loss/:year/:month', :as => :monthly_profit_and_loss, :action => 'monthly', :requirements => YEAR_MONTH_REQUIREMENTS
+    get :profit_and_loss, :action => :show
+    match 'profit_and_loss/:year/:month', {:as => :monthly_profit_and_loss, :action => 'monthly'}.merge(YEAR_MONTH_REQUIREMENTS)
   end
 
   # MobileDealsController
@@ -224,5 +222,5 @@ Kozuchi::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
+  # match ':controller(/:action(/:id))(.:format)'
 end

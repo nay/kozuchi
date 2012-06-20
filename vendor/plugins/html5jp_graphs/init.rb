@@ -1,1 +1,1 @@
-require File.join(RAILS_ROOT, 'vendor', 'plugins', 'html5jp_graphs', 'install.rb')
+require File.join(::Rails.root.to_s, 'vendor', 'plugins', 'html5jp_graphs', 'install.rb')

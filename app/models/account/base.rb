@@ -1,7 +1,9 @@
 # -*- encoding : utf-8 -*-
+require 'builder/xmlmarkup' # TODO:
+
 class Account::Base < ActiveRecord::Base
 
-  set_table_name "accounts"
+  self.table_name = "accounts"
 
   include Account::Common
   
@@ -191,7 +193,7 @@ class Account::Base < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 4
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     xml.tag!(serialized_type_name, XMLUtil.escape(self.name), serialized_attributes)
   end

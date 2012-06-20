@@ -2,7 +2,7 @@
 require 'time'
 
 class Deal::Base < ActiveRecord::Base
-  set_table_name "deals"
+  self.table_name = "deals"
 
   belongs_to :user
 

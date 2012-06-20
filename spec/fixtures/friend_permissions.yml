@@ -1,0 +1,45 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+# taro's
+taro_to_hanako:
+  user_id: <%= Fixtures.identify :taro  %>
+  target_id: <%= Fixtures.identify :hanako %>
+  type: Friend::Acceptance
+taro_to_home:
+  user_id: <%= Fixtures.identify :taro %>
+  target_id: <%= Fixtures.identify :home %>
+  type: Friend::Acceptance
+# hanako's
+hanako_to_taro:
+  user_id: <%= Fixtures.identify :hanako %>
+  target_id: <%= Fixtures.identify :taro %>
+  type: Friend::Acceptance
+hanako_to_home:
+  user_id: <%= Fixtures.identify :hanako %>
+  target_id: <%= Fixtures.identify :home %>
+  type: Friend::Acceptance
+# home's
+home_to_taro:
+  user_id: <%= Fixtures.identify :home %>
+  target_id: <%= Fixtures.identify :taro %>
+  type: Friend::Acceptance
+home_to_hanako:
+  user_id: <%= Fixtures.identify :home  %>
+  target_id: <%= Fixtures.identify :hanako %>
+  type: Friend::Acceptance
+# other's
+account_link_test_user_to_target_user:
+  user_id: <%= Fixtures.identify(:account_link_test_user) %>
+  target_id: <%= Fixtures.identify(:account_link_test_target_user) %>
+  type: Friend::Acceptance
+account_link_test_target_user_to_user:
+  user_id: <%= Fixtures.identify(:account_link_test_target_user) %>
+  target_id: <%= Fixtures.identify(:account_link_test_user) %>
+  type: Friend::Acceptance
+account_entry_test_taro_to_hanako:
+  user_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
+  target_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
+  type: Friend::Acceptance
+account_entry_test_hanako_to_taro:
+  user_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
+  target_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
+  type: Friend::Acceptance

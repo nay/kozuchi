@@ -64,7 +64,6 @@ class ApplicationController < ActionController::Base
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
           flash[:"#{controller_name}_deal_type"] = deal_type
-          p "going to call write_target_date. @deal.dete = #{@deal.date.inspect}"
           write_target_date(@deal.date)
 #          flash[:day] = @deal.date.day
           if ajax
