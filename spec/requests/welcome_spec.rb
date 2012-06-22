@@ -97,6 +97,26 @@ describe WelcomeController do
           it_behaves_like "having login form"
           it_behaves_like "not having welcome message"
         end
+
+        context "when logged in" do
+          include_context "no_mobile_ident_user logged in"
+          before do
+            visit "/"
+          end
+          it_behaves_like "index for mobile"
+          it_behaves_like "not having login form"
+          it_behaves_like "having welcome message"
+        end
+      end
+
+      context "with the passport" do
+        include_context "with the passport for DoCoMo"
+        before do
+          visit "/"
+        end
+        it_behaves_like "index for mobile"
+        it_behaves_like "not having login form"
+        it_behaves_like "having welcome message"
       end
     end
 
