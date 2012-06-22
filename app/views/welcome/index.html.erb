@@ -7,7 +7,7 @@
 
   <% if current_user -%>
     <div class="box">
-      <p style="text-align: right;"><%= link_to 'ログアウト', logout_path %></p>
+      <p style="text-align: right;"><%= link_to 'ログアウト', logout_path, :method => :delete %></p>
       <p>ようこそ、<%= h current_user.login %>さん！</p>
 	   <p style="text-align:center; font-size: 140%;"><%= link_to 'ホームへ',  :controller => 'home' %></p>
     </div>
@@ -47,7 +47,7 @@
 <div id="main">
   <div id="title">
     <h1>Web家計簿 小槌</h1>
-    <p><%= image_tag("/images/izumo_kozuchi.png", :size => "48x48")%></p>
+    <p><%= image_tag("izumo_kozuchi.png", :size => "48x48")%></p>
   </div>
   <p class="guide">小槌（こづち）はWebブラウザから使える家計簿です。無料でお使いいただけます。</p>
   <div id="features">

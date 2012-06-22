@@ -93,7 +93,7 @@ EOF
     <meta name="author" content="Nay" />
     <meta http-equiv="content-style-type" content="text/css" />
     #{stylesheet_link_tag *stylesheets.insert(0, 'common')}
-    #{javascript_include_tag 'prototype'}
+    #{javascript_include_tag 'application'}
     #{render :partial => "shared/google_analytics"}
     #{inner_content}
   </head>
