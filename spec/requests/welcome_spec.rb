@@ -23,11 +23,11 @@ describe WelcomeController do
     it {page.should_not have_css("div#login_form")}
   end
 
-  shared_examples "having login message" do
+  shared_examples "having welcome message" do
     it {page.should have_content('ようこそ')}
   end
 
-  shared_examples "not having login message" do
+  shared_examples "not having welcome message" do
     it {page.should_not have_content('ようこそ')}
   end
 
@@ -61,7 +61,7 @@ describe WelcomeController do
           end
           it_behaves_like "index for mobile"
           it_behaves_like "having login form"
-          it_behaves_like "not having login message"
+          it_behaves_like "not having welcome message"
         end
 
         context "when logged in" do
@@ -71,7 +71,7 @@ describe WelcomeController do
           end
           it_behaves_like "index for mobile"
           it_behaves_like "not having login form"
-          it_behaves_like "having login message"
+          it_behaves_like "having welcome message"
         end
       end
 
@@ -82,7 +82,7 @@ describe WelcomeController do
         end
         it_behaves_like "index for mobile"
         it_behaves_like "not having login form"
-        it_behaves_like "having login message"
+        it_behaves_like "having welcome message"
       end
     end
 
