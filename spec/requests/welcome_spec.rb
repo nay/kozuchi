@@ -2,7 +2,8 @@
 require 'spec_helper'
 
 describe WelcomeController do
-  fixtures :users
+  fixtures :users, :accounts
+  set_fixture_class  :accounts => Account::Base
 
   shared_examples "index for pc" do
     it {page.should have_content('Web家計簿 小槌')}
@@ -51,26 +52,40 @@ describe WelcomeController do
       end
     end
 
-    context "requested from AU without a passport" do
+    context "requested from AU" do
       include_context "requested from AU"
-      context "when not logged in" do
+      context "without a passport" do
+        context "when not logged in" do
+          before do
+            visit "/"
+          end
+          it_behaves_like "index for mobile"
+          it_behaves_like "having login form"
+          it_behaves_like "not having login message"
+        end
+
+        context "when logged in" do
+          include_context "no_mobile_ident_user logged in"
+          before do
+            visit "/"
+          end
+          it_behaves_like "index for mobile"
+          it_behaves_like "not having login form"
+          it_behaves_like "having login message"
+        end
+      end
+
+      context "with the passport" do
+        include_context "with the passport for AU"
         before do
           visit "/"
         end
         it_behaves_like "index for mobile"
-        it_behaves_like "having login form"
-        it_behaves_like "not having login message"
+        it_behaves_like "not having login form"
+        it_behaves_like "having login message"
       end
     end
 
-    context "requested from AU with the passport" do
-      include_context "requested from AU with the passport"
-      before do
-        visit "/"
-      end
-      it_behaves_like "index for mobile"
-      it_behaves_like "having login message"
-    end
   end
 
 end

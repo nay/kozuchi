@@ -7,7 +7,7 @@
   <h1 class="mobile_title">Web家計簿 小槌</h1>
   <% if current_user -%>
     <div class="box">
-      <p style="text-align: right;"><%= link_to 'ログアウト', logout_path %></p>
+      <p style="text-align: right;"><%= button_to 'ログアウト', logout_path, :method => :delete %></p>
       <p>ようこそ、<%= h current_user.login %>さん！</p>
 	   <p style="text-align:center; font-size: 140%;"><%= link_to 'ホームへ',  :controller => 'home' %></p>
     </div>
@@ -25,7 +25,7 @@
          <div><label for="password">パスワード</label>
          <%= password_field_tag 'password', "", :size => 10 %></div>
          <div class="error"><%= flash[:error] %></div>
-         <div><%= submit_tag "ログイン" %></div>
+         <div><%= submit_tag "ログイン", :name => nil, :id => 'loginButton' %></div>
       <% end -%>
     </div>
   <% end -%>

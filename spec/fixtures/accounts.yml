@@ -156,6 +156,11 @@ au1_user_cache:
   type: Account::Asset
   asset_kind: cache
   user: au1_user
+no_mobile_ident_user_cache:
+  name: 現金
+  type: Account::Asset
+  asset_kind: cache
+  user: no_mobile_ident_user
 
 # one:
 #   column: value

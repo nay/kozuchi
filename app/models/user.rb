@@ -197,7 +197,7 @@ class User < ActiveRecord::Base
     @activated = true
     self.activated_at = Time.now.utc
     self.activation_code = nil
-    save(false)
+    save(:validate => false)
   end
 
   def active?
@@ -241,13 +241,13 @@ class User < ActiveRecord::Base
   def remember_me_until(time)
     self.remember_token_expires_at = time
     self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
-    save(false)
+    save(:validate => false)
   end
 
   def forget_me
     self.remember_token_expires_at = nil
     self.remember_token            = nil
-    save(false)
+    save(:validate => false)
   end
 
   # Returns true if the user has just been activated.
@@ -258,7 +258,7 @@ class User < ActiveRecord::Base
   def update_password_token
     self.password_token_expires_at = 3.days.from_now.utc
     self.password_token            = encrypt("p-#{email}--#{password_token_expires_at}")
-    save(false)
+    save(:validate => false)
   end
 
   def password_token?
@@ -281,7 +281,7 @@ class User < ActiveRecord::Base
           self.activation_code = nil
         end
         self[:type] = nil
-        save(false)
+        save(:validate => false)
       end
     end
     result
@@ -298,7 +298,7 @@ class User < ActiveRecord::Base
       # 最新方式でない暗号化方式だった場合は、パスワードを変更したらクラスを最新にする
       if result && !password.blank? && self[:type]
         self[:type] = nil
-        save(false)
+        save(:validate => false)
       end
       result
     end
