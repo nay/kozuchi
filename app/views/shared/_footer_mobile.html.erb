@@ -1,2 +1,4 @@
+<% if current_user -%>
 <div style="margin-top: 10px;"><%= link_to "HOME", url_for(hash_for_home_path) %></div>
+<% end -%>
 <div id="footer" style="margin-top: 10px; padding: 0px;">小槌 Ver.<%= KOZUCHI_VERSION %></div>
