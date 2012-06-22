@@ -33,10 +33,12 @@
     <h2>お知らせ</h2>
     <div style="text-align:right;"><%= link_to '小槌.netへ', 'http://www.kozuchi.net' %></div>
     <% if @news # キャッシュがあるか、ニュースが正常に取得できた -%>
+    <div id="newsContents">
       <% cache :action_suffix => 'news' do -%>
-        <%= @news %>
+        <%= @news.html_safe %>
       <% end -%>
-	<% else # 取得エラー。キャッシュしない -%>
+    </div>
+	  <% else # 取得エラー。キャッシュしない -%>
   	  <p>現在、ニュースを表示できません。</p>
     <% end -%>
   </div>
