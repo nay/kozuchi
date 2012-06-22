@@ -1,10 +1,10 @@
-<% html_tag do -%>
+<%= html_tag do -%>
 
-  <% head_tag 'users' do -%>
+  <%= head_tag 'users' do -%>
   	<title>[小槌] <%= @title %></title>
   <% end -%>
   
-  <% body_tag do -%>
+  <%= body_tag do -%>
     <div id="title">
       <div style="float:right; "><%= link_to(image_tag("izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path, :style => "display:block;")%></div>
   	  <h1><%= @title %></h1>

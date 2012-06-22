@@ -155,6 +155,22 @@ describe WelcomeController do
       end
     end
 
+    describe "link ユーザー登録 (requested from pc, when not logged in)" do
+      before do
+        visit "/"
+        click_link("ユーザー登録")
+      end
+      it_behaves_like "users/new"
+    end
+
+    describe "link パスワードを忘れたとき (requested from pc, when not logged in)" do
+      before do
+        visit "/"
+        click_link("パスワードを忘れたとき")
+      end
+      it_behaves_like "users/forgot_password"
+    end
+
   end
 
 end
