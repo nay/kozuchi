@@ -1,11 +1,11 @@
-<% html_tag do -%>
+<%= html_tag do -%>
 
-  <% head_tag 'home' do -%>
+  <%= head_tag 'home' do -%>
   	<title>[小槌] ホーム</title>
 	<%= yield :head %>
   <% end -%>
   
-  <% body_tag do -%>
+  <%= body_tag do -%>
     <div>
       <h1 class="mobile_title"><%= h current_user.login %>さんの家計簿<br />HOME</h1>
       <%= yield %>

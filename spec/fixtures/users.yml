@@ -36,6 +36,7 @@ no_mobile_ident_user:
   login: no_mobile_ident_user
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   email: no_mobile_ident_user@everyleaf.com
+  activated_at: "2009-04-01 10:00:00"
 docomo1_user:
   login: docomo1_user
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test

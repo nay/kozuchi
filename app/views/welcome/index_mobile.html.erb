@@ -19,7 +19,7 @@
         </div>
         <br />
       <% end %>
-      <% form_tag login_post_path do -%>
+      <%= form_tag login_post_path do -%>
         <div><label for="login">ログイン</label>
         <%= text_field_tag 'login', flash[:login], :size => 10 %></div>
          <div><label for="password">パスワード</label>
