@@ -86,6 +86,20 @@ describe WelcomeController do
       end
     end
 
+    context "requested from DoCoMo" do
+      include_context "requested from DoCoMo"
+      context "without a passport" do
+        context "when not logged in" do
+          before do
+            visit "/"
+          end
+          it_behaves_like "index for mobile"
+          it_behaves_like "having login form"
+          it_behaves_like "not having welcome message"
+        end
+      end
+    end
+
   end
 
 end
