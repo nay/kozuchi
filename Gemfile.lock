@@ -152,6 +152,7 @@ DEPENDENCIES
   i18n_generators
   jpmobile
   mysql2
+  nokogiri
   prototype-rails!
   rails (= 3.2.6)
   rspec-rails

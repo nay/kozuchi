@@ -7,6 +7,6 @@ end
 module Jpmobile::Helpers
   def docomo_utn_button_to(*args)
     result = button_to(*args)
-    result.sub(/>/, " utn>")
+    result.sub(/>/, " utn>").html_safe
   end
 end

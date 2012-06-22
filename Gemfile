@@ -7,6 +7,7 @@ gem 'rails', '3.2.6'
 
 gem 'mysql2'
 
+gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
 gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 
