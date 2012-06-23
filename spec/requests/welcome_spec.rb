@@ -182,17 +182,29 @@ describe WelcomeController do
       it_behaves_like "users/forgot_password"
     end
 
-    describe "button 簡単ログイン (requested from DoCoMo device, when not logged in, with the passport)" do
+    describe "button 簡単ログイン (requested from DoCoMo device, when not logged in)" do
       include_context "requested from DoCoMo without X_DCMGUID"
-      include_context "with the passport for DoCoMo via utn"
-      before do
-        visit "/"
+      context "with the passport" do
+        include_context "with the passport for DoCoMo via utn"
+        before do
+          visit "/"
+        end
+        include_context "requested from DoCoMo without X_DCMGUID for utn form"
+        before do
+          click_button "passportButton"
+        end
+        it_behaves_like "home/index_mobile"
       end
-      include_context "requested from DoCoMo without X_DCMGUID for utn form"
-      before do
-        click_button "passportButton"
+      context "without a passport" do
+        before do
+          visit "/"
+        end
+        include_context "requested from DoCoMo without X_DCMGUID for utn form"
+        before do
+          click_button "passportButton"
+        end
+        it {page.should have_content("に失敗しました")}
       end
-      it_behaves_like "home/index_mobile"
     end
 
   end
