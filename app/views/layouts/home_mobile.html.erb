@@ -11,7 +11,7 @@
       <%= yield %>
     </div>
     
-    <div><%= link_to "ログアウト", logout_path %></div>
+    <div><%= button_to "ログアウト", logout_path, :method => :delete %></div>
 
   <% end -%>
 <% end -%>

@@ -15,7 +15,7 @@
     <div id="login_form" class="box">
       <% if request.mobile.docomo? %>
         <div>
-          <%= docomo_utn_button_to "簡単ログイン", login_post_path, :name => "submit" %>
+          <%= docomo_utn_button_to "簡単ログイン", login_post_path(:passport => 1), :name => nil, :form => {:"accept-charset" => "Shift_JIS"}, :id => 'passportButton' %>
         </div>
         <br />
       <% end %>

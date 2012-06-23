@@ -10,3 +10,7 @@ end
 shared_examples "users/forgot_password" do
   it {page.should have_content("パスワードを忘れたとき")}
 end
+
+shared_examples "home/index_mobile" do
+  it {page.should have_content("今日の支出")}
+end

@@ -23,6 +23,14 @@ describe WelcomeController do
     it {page.should_not have_css("div#login_form")}
   end
 
+  shared_examples "having 簡単ログイン button" do
+    it {page.should have_css("input#passportButton")}
+  end
+
+  shared_examples "not having 簡単ログイン button" do
+    it {page.should_not have_css("input#passportButton")}
+  end
+
   shared_examples "having welcome message" do
     it {page.should have_content('ようこそ')}
   end
@@ -92,6 +100,7 @@ describe WelcomeController do
           it_behaves_like "having login form"
           it_behaves_like "not having welcome message"
           it_behaves_like "not having news contents"
+          it_behaves_like "not having 簡単ログイン button"
         end
 
         context "when logged in" do
@@ -129,6 +138,7 @@ describe WelcomeController do
           it_behaves_like "having login form"
           it_behaves_like "not having welcome message"
           it_behaves_like "not having news contents"
+          it_behaves_like "having 簡単ログイン button"
        end
 
         context "when logged in" do
@@ -140,6 +150,7 @@ describe WelcomeController do
           it_behaves_like "not having login form"
           it_behaves_like "having welcome message"
           it_behaves_like "not having news contents"
+          it_behaves_like "not having 簡単ログイン button"
        end
       end
 
@@ -169,6 +180,19 @@ describe WelcomeController do
         click_link("パスワードを忘れたとき")
       end
       it_behaves_like "users/forgot_password"
+    end
+
+    describe "button 簡単ログイン (requested from DoCoMo device, when not logged in, with the passport)" do
+      include_context "requested from DoCoMo without X_DCMGUID"
+      include_context "with the passport for DoCoMo via utn"
+      before do
+        visit "/"
+      end
+      include_context "requested from DoCoMo without X_DCMGUID for utn form"
+      before do
+        click_button "passportButton"
+      end
+      it_behaves_like "home/index_mobile"
     end
 
   end
