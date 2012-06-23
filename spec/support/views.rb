@@ -5,6 +5,7 @@
 
 shared_examples "users/new" do
   it {page.should have_content("ようこそ小槌へ！")}
+  it {page.should have_css("form#signupForm")}
 end
 
 shared_examples "users/forgot_password" do
