@@ -1,5 +1,5 @@
 <% deal_editor 1, @deal.date.year, @deal.date.month, @deal.date.day do %>
-  <% deal_form nil, :url => deal_path(:id => @deal.id), :method => :put, :html => {:id => 'deal_form'} do |f| %>
+  <%= deal_form nil, :url => deal_path(:id => @deal.id), :method => :put, :html => {:id => 'deal_form'} do |f| %>
     <% case @deal when Deal::General %>
       <% if params[:complex] != 'true' && @deal.simple? %>
         <%= render :partial => 'general_deal_form_contents', :locals => {:f => f} %>
