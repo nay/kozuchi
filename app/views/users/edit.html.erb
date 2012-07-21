@@ -15,7 +15,7 @@
       </div>
     <% end  %>
 	<div>
-      <%= link_to 'アカウントを削除する', {:action => 'destroy',}, { :confirm =>"アカウントとデータをすべて削除します。復活させることはできません。削除してよろしいですか？", :method => 'delete'} %>
+      <%= link_to 'アカウントを削除する', {:action => 'destroy',}, { :data => {:confirm =>"アカウントとデータをすべて削除します。復活させることはできません。削除してよろしいですか？"}, :method => 'delete'} %>
 	</div>
 
   </div>

@@ -22,7 +22,7 @@
   <% end %>
   <td class="button_action">
     <% if account.deletable? %>
-      <%= link_to "削除", settings_asset_path(:id => account.id), :method => :delete, :confirm => "「#{account.errors.empty? ? account.name : account.stored_name}」を削除します。よろしいですか？" %>
+      <%= link_to "削除", settings_asset_path(:id => account.id), :method => :delete, :data => {:confirm => "「#{account.errors.empty? ? account.name : account.stored_name}」を削除します。よろしいですか？"} %>
     <% else %>
       <% delete_error_message = account.delete_errors.join('\n')%>
       <span>×(<a href='javascript:alert("<%= delete_error_message %>");'>理由</a>)</span>

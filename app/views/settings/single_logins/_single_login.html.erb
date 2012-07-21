@@ -1,3 +1,3 @@
 <tr>
-  <td><%= h single_login.login %></td><td><%= single_login.active? ? '有効' : '無効' %></td><td><%= link_to '削除', settings_single_login_path(:id => single_login.id), :method => :delete, :confirm => "#{h single_login.login}さんへのシングルログイン設定を削除します。よろしいですか？" %></td>
+  <td><%= h single_login.login %></td><td><%= single_login.active? ? '有効' : '無効' %></td><td><%= link_to '削除', settings_single_login_path(:id => single_login.id), :method => :delete, :data => {:confirm => "#{h single_login.login}さんへのシングルログイン設定を削除します。よろしいですか？"} %></td>
 </tr>
