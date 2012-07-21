@@ -11,6 +11,7 @@ gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
 gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs'
+gem 'dynamic_form'
 
 # Use unicorn as the web server
 # gem 'unicorn'
