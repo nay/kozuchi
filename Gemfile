@@ -10,6 +10,7 @@ gem 'mysql2'
 gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
 gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
+gem 'html5jp_graphs'
 
 # Use unicorn as the web server
 # gem 'unicorn'
