@@ -1,5 +1,5 @@
 taro_preference:
-  user: taro
+  user_id: <%= Fixtures.identify(:taro) %>
   deals_scroll_height: 
   color: 
   business_use: 1
