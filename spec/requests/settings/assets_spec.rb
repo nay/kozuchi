@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-# TODO: とりあえずindex表示だけ
-describe DealsController do
+describe Settings::AssetsController do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
