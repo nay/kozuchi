@@ -2,7 +2,7 @@
   # 前提 ： @accountがあること、account_type_name、path が locals で渡されること
 %>
 <div class="form_box">
-  <% form_for :account, @account, path do |f| %>
+  <%= form_for :account, :object => @account, :url => path do |f| %>
     <div class="flatField"><%= f.label :name, account_type_name + "名" %></div>
     <div class="flatField"><%= f.text_field :name, :size => 16, :class => "text" %></div>
     <div class="flatField"><%= f.label :asset_kind, "種別" %></div>
