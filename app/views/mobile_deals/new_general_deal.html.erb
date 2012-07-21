@@ -1,7 +1,7 @@
 <%= flash[:notice] if flash[:notice] %>
 <div style="text-align:right;"><%= today = Date.today; link_to "記入履歴へ", daily_created_mobile_deals_path(:year => today.year, :month => today.month, :day => today.day) %></div>
 <%= error_messages_for :deal %>
-<% form_for :deal, @deal, :url => mobile_general_deals_path do |f| %>
+<%= form_for @deal, :as => :deal, :url => mobile_general_deals_path do |f| %>
   <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
   <% @date = Date.today %>
   <%= @date.to_s(:db) %>
