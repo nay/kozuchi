@@ -2,6 +2,7 @@
 # ユーザーに紐づくロジックは多いので、機能別にモジュールを記述してincludeする
 require 'digest/sha1'
 class User < ActiveRecord::Base
+  require 'user/friend' # TODO: User::Friendのincludeが(少なくともdevelopmentモードで)エラーになるため応急措置
   include User::Friend
   include User::Mobile
 
