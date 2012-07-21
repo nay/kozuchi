@@ -17,7 +17,7 @@
       <tr>
         <td><%= h account.name_with_asset_type %></td>
         <td>
-          <%= form_for :account, :object => account, :url => settings_partner_account_path(:account_id => account.id), :html => {:method => :put} do |f| %>
+          <%= form_for account, :as => :account, :url => settings_partner_account_path(:account_id => account.id), :html => {:method => :put} do |f| %>
 
             <%= f.select :partner_account_id, "<option value=''>-- 設定なし --</option>" + options_from_collection_for_select(
                 @partner_account_candidates[account], "id", "name_with_asset_type", account.partner_account_id), {}, :style => "width:16em;" %>
