@@ -7,7 +7,7 @@
 <%= render :partial => 'shared/information' %>
 <%= error_messages_for :single_login %>
 <div style="margin-bottom: 1em;">
-  <% form_for :single_login do |f| %>
+  <%= form_for :single_login do |f| %>
     <table class="form_box">
       <tr>
         <th><%= f.label :login, 'ログインID' %></th><td><%= f.text_field :login %></td>
