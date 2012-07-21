@@ -1,6 +1,6 @@
 <%= render :partial => 'shared/information' %>
 <div class="top_box">
-  <% form_for :preferences, :object => @preferences, :url => settings_preferences_path, :html => {:method => :put} do |f| %>
+  <%= form_for @preferences, :as => :preferences, :url => settings_preferences_path, :html => {:method => :put} do |f| %>
     <div class="form_box">
       <table class="form_fields horizontal">
         <tr>
