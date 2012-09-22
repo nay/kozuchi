@@ -36,4 +36,5 @@ group :development, :test do
   gem 'i18n_generators'
   gem "rspec-rails"
   gem "capybara"
+  gem "factory_girl_rails", "~> 4.0"
 end

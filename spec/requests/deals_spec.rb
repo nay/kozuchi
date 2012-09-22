@@ -23,12 +23,27 @@ describe DealsController do
     include_context "太郎 logged in"
     before do
       visit "/deals/2012/7"
-      fill_in 'keyword', :with => 'test'
-      click_button('明細を検索')
     end
 
-    it do
-      page.should have_content("「test」を含む明細は登録されていません。")
+    describe "when no deal with the keyword exists" do
+      before do
+        fill_in 'keyword', :with => 'test'
+        click_button('明細を検索')
+      end
+      it do
+        page.should have_content("「test」を含む明細は登録されていません。")
+      end
+    end
+
+    describe "when one deal with the keyword exists" do
+      before do
+        @deal = FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
+        fill_in 'keyword', :with => 'ランチ'
+        click_button('明細を検索')
+      end
+      it do
+        page.should have_content("「ランチ」を含む明細は1件あります。")
+      end
     end
     
   end
