@@ -18,4 +18,18 @@ describe DealsController do
       page.should have_css('input#deal_summary')
     end
   end
+
+  describe "/deals/search" do
+    include_context "太郎 logged in"
+    before do
+      visit "/deals/2012/7"
+      fill_in 'keyword', :with => 'test'
+      click_button('明細を検索')
+    end
+
+    it do
+      page.should have_content("「test」を含む明細は登録されていません。")
+    end
+    
+  end
 end

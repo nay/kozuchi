@@ -1,5 +1,5 @@
 <div>
-	<%= @keywords.map{|k| "「#{k}」"} %>を含む明細は<%= @deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"%>
+	<%= @keywords.map{|k| "「#{k}」"}.join('') %>を含む明細は<%= @deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"%>
 </div>
 <div style="text-align: center;padding: 4px;"><%= link_to '戻る', :action => 'index' %></div>
 <% unless @deals.empty? -%>
