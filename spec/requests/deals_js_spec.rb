@@ -13,20 +13,29 @@ describe DealsController, :js => true do
     Deal::Base.delete_all
   end
 
-  describe "残高明細の削除" do
+  include_context "太郎 logged in"
+
+  describe "通常明細を削除できる" do
+    before do
+      FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
+      visit "/deals/2012/7"
+      click_link('削除')
+      page.driver.browser.switch_to.alert.accept
+    end
+    it do
+      page.should have_content("削除しました。")
+    end
+  end
+
+  describe "残高明細を削除できる" do
     before do
       FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
+      visit "/deals/2012/7"
+      click_link('削除')
+      page.driver.browser.switch_to.alert.accept
     end
-    include_context "太郎 logged in"
-    context "target is a balance deal" do
-      before do
-        visit "/deals/2012/7"
-        click_link('削除')
-        page.driver.browser.switch_to.alert.accept
-      end
-      it do
-        page.should have_content("削除しました。")
-      end
+    it do
+      page.should have_content("削除しました。")
     end
   end
 end
