@@ -108,16 +108,26 @@ describe DealsController, :js => true do
     end
 
     describe "残高" do
+      before do
+        FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000')
+        visit "/deals/2012/7"
+        click_link '変更'
+      end
       describe "タブを表示できる" do
-        before do
-          FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000')
-          visit "/deals/2012/7"
-          click_link '変更'
-        end
-
         it "タブが表示される" do
           page.should have_content("変更(2012-07-20-1)")
           find("input#deal_balance").value.should == '2000'
+        end
+      end
+
+      describe "実行できる" do
+        before do
+          fill_in 'deal_balance', :with => '2080'
+          click_button '変更'
+        end
+        it "一覧に表示される" do
+          page.should have_content("更新しました。")
+          page.should have_content('2,080')
         end
       end
     end
