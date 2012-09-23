@@ -5,7 +5,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 end
 
-describe DealsController do
+describe DealsController, :js => true do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -13,19 +13,16 @@ describe DealsController do
     Deal::Base.delete_all
   end
 
-  # 削除
-  describe "DELETE /deals/3" do
+  describe "残高明細の削除" do
     before do
-        FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
+      FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
     end
     include_context "太郎 logged in"
-    context "target is a balance deal", :js => true do
+    context "target is a balance deal" do
       before do
-        wait_until { Deal::Balance.first }
         visit "/deals/2012/7"
         click_link('削除')
-        alert = page.driver.browser.switch_to.alert
-        alert.accept
+        page.driver.browser.switch_to.alert.accept
       end
       it do
         page.should have_content("削除しました。")
