@@ -6,6 +6,7 @@
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Deal::Balance < Deal::Base
 
+  before_destroy :cache_account_id # entries より上にないといけない（entriesが削除される前に実行する必要がある）
   has_many   :entries, :class_name => "Entry::Balance",
              :foreign_key => 'deal_id',
              :dependent => :destroy,
@@ -123,6 +124,10 @@ class Deal::Balance < Deal::Base
     current_initial_balance = Entry::Base.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
     self.balance.to_i - balance_before(this_will_be_initial)
+  end
+
+  def cache_account_id
+    account_id # entries を検索して account_id をキャッシュする
   end
 
   # 対象口座のinitial_balance値を更新する

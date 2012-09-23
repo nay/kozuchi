@@ -112,6 +112,18 @@ describe Deal::Balance do
 
   end
 
+  describe "destroy" do
+    before do
+      Deal::Base.delete_all
+      new_balance(:balance => 1000).save!
+      @balance = Deal::Balance.first # entries 未ロードの状態
+    end
+
+    it do
+      expect {@balance.destroy}.not_to raise_error
+    end
+  end
+
   def new_balance(attributes={})
     Deal::Balance.new({:date => Date.today, :user_id => Fixtures.identify(:taro), :account_id => Fixtures.identify(:taro_cache), :balance => 1000}.merge(attributes))
   end
