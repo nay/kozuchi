@@ -15,6 +15,23 @@ describe DealsController, :js => true do
 
   include_context "太郎 logged in"
 
+  describe "通常明細を登録できる" do
+    before do
+      visit "/deals" # 今月へ。日付は入っているはず
+      fill_in 'deal_summary', :with => '朝食のおにぎり'
+      fill_in 'deal_debtor_entries_attributes_0_amount', :with => '210'
+      select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+      select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+      click_button '記入'
+    end
+
+    it do
+      page.should have_content('追加しました。')
+      page.should have_content('朝食のおにぎり')
+    end
+  end
+
+
   describe "通常明細を削除できる" do
     before do
       FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
