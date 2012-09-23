@@ -10,7 +10,7 @@ describe DealsController, :js => true do
   set_fixture_class  :accounts => Account::Base
 
   before do
-    Deal::Base.delete_all
+    Deal::Base.destroy_all
   end
 
   include_context "太郎 logged in"
@@ -31,6 +31,40 @@ describe DealsController, :js => true do
     end
   end
 
+  describe "残高記入のタブを表示できる" do
+    before do
+      visit "/deals" # 今月へ。日付は入っているはず
+      click_link "残高"
+    end
+
+    it do
+      page.should have_css('select#deal_account_id')
+      page.should have_content('計算')
+      page.should have_content('残高:')
+      page.should have_content('記入')
+
+      page.should_not have_css('input#deal_summary')
+    end
+  end
+  
+  describe "残高をパレットをつかって登録できる" do
+    before do
+      visit "/deals" # 今月へ。日付は入っているはず
+      click_link "残高"
+      select '現金', :from => 'deal_account_id'
+      fill_in 'gosen', :with => '1'
+      fill_in 'jyu', :with => '3'
+      click_button '計算'
+      click_button '記入'
+    end
+
+    it do
+      page.should have_content("追加しました。")
+      page.should have_content("残高確認")
+      page.should have_content("5,030")
+    end
+
+  end
 
   describe "通常明細を削除できる" do
     before do
