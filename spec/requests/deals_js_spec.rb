@@ -34,12 +34,12 @@ describe DealsController, :js => true do
     end
 
     describe "残高" do
-      describe "タブを表示できる" do
-        before do
-          visit "/deals" # 今月へ。日付は入っているはず
-          click_link "残高"
-        end
+      before do
+        visit "/deals" # 今月へ。日付は入っているはず
+        click_link "残高"
+      end
 
+      describe "タブを表示できる" do
         it do
           page.should have_css('select#deal_account_id')
           page.should have_content('計算')
@@ -52,8 +52,6 @@ describe DealsController, :js => true do
 
       describe "パレットをつかって登録できる" do
         before do
-          visit "/deals" # 今月へ。日付は入っているはず
-          click_link "残高"
           select '現金', :from => 'deal_account_id'
           fill_in 'gosen', :with => '1'
           fill_in 'jyu', :with => '3'
@@ -72,13 +70,13 @@ describe DealsController, :js => true do
 
   describe "変更" do
     describe "通常明細" do
-      describe "タブを表示できる" do
-        before do
-          FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
-          visit "/deals/2012/7"
-          click_link '変更'
-        end
+      before do
+        FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
+        visit "/deals/2012/7"
+        click_link '変更'
+      end
 
+      describe "タブを表示できる" do
         it "変更タブが表示される" do
           page.should have_content("変更(2012-07-10-1)")
           find("input#deal_summary").value.should == "ラーメン"
@@ -87,9 +85,6 @@ describe DealsController, :js => true do
 
       describe "実行できる" do
         before do
-          FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
-          visit "/deals/2012/7"
-          click_link '変更'
           fill_in 'date_day', :with => '11'
           fill_in 'deal_summary', :with => '冷やし中華'
           fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
@@ -113,6 +108,7 @@ describe DealsController, :js => true do
         visit "/deals/2012/7"
         click_link '変更'
       end
+      
       describe "タブを表示できる" do
         it "タブが表示される" do
           page.should have_content("変更(2012-07-20-1)")
