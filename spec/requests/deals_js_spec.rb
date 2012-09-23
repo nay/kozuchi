@@ -15,6 +15,8 @@ describe DealsController, :js => true do
 
   include_context "太郎 logged in"
 
+  # 登録
+
   describe "通常明細を登録できる" do
     before do
       visit "/deals" # 今月へ。日付は入っているはず
@@ -58,13 +60,51 @@ describe DealsController, :js => true do
       click_button '記入'
     end
 
-    it do
+    it "残高タブが表示される" do
       page.should have_content("追加しました。")
       page.should have_content("残高確認")
       page.should have_content("5,030")
     end
-
   end
+
+  # 変更
+
+  describe "通常明細の変更タブを表示できる" do
+    before do
+      FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
+      visit "/deals/2012/7"
+      click_link '変更'
+    end
+
+    it "変更タブが表示される" do
+      page.should have_content("変更(2012-07-10-1)")
+      find("input#deal_summary").value.should == "ラーメン"
+    end
+  end
+
+  describe "通常明細を変更できる" do
+    before do
+      FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
+      visit "/deals/2012/7"
+      click_link '変更'
+      fill_in 'date_day', :with => '11'
+      fill_in 'deal_summary', :with => '冷やし中華'
+      fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
+      select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+      click_button '変更'
+    end
+
+    it "変更された記入が表示される" do
+      page.should have_content("更新しました。")
+      page.should have_content("2012/07/11")
+      page.should have_content('冷やし中華')
+      page.should have_content('920')
+      page.should have_content('クレジットカードＸ')
+    end
+  end
+
+
+  # 削除
 
   describe "通常明細を削除できる" do
     before do
@@ -89,4 +129,5 @@ describe DealsController, :js => true do
       page.should have_content("削除しました。")
     end
   end
+
 end
