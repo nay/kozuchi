@@ -66,6 +66,19 @@ describe DealsController, :js => true do
         end
       end
 
+      describe "記入欄を増やすことができる" do
+        before do
+          click_link '記入欄を増やす'
+        end
+
+        it "6つめの記入欄が表示される" do
+          page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
+          page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
+          page.should have_css('input#deal_debtor_entries_attributes_5_amount')
+          page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
+        end
+      end
+
       describe "1対2の明細が登録できる" do
         before do
           fill_in 'deal_summary', :with => '買い物'
