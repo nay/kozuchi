@@ -12,6 +12,15 @@ FactoryGirl.define do
     date Date.today
   end
 
+  # 複数記入
+  factory :complex_deal, :class => Deal::General do
+    user_id Fixtures.identify(:taro)
+    summary '買い物'
+    debtor_entries_attributes [{:account_id => Fixtures.identify(:taro_food), :amount => 800}, {:account_id => Fixtures.identify(:taro_other), :amount => 200}]
+    creditor_entries_attributes [:account_id => Fixtures.identify(:taro_cache), :amount => -1000]
+    date Date.today
+  end
+
   # 残高記入
   factory :balance_deal, :class => Deal::Balance do
     user_id Fixtures.identify(:taro)
