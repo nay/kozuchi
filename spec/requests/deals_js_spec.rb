@@ -33,6 +33,42 @@ describe DealsController, :js => true do
       end
     end
 
+    describe "複数明細" do
+      before do
+        current_user.preferences.update_attribute(:uses_complex_deal, true)
+        visit "/deals"
+        click_link "明細(複数)"
+      end
+
+      it "タブを表示できる" do
+        page.should have_css('input#deal_summary')
+        page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
+        page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
+        page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
+        page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
+        page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
+        page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
+        page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
+        page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
+        page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
+        page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
+        page.should have_css('input#deal_debtor_entries_attributes_0_amount')
+        page.should have_css('input#deal_debtor_entries_attributes_1_amount')
+        page.should have_css('input#deal_debtor_entries_attributes_2_amount')
+        page.should have_css('input#deal_debtor_entries_attributes_3_amount')
+        page.should have_css('input#deal_debtor_entries_attributes_4_amount')
+        page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
+        page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
+        page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
+        page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
+        page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
+      end
+
+      after do
+        current_user.preferences.update_attribute(:uses_complex_deal, false)
+      end
+    end
+
     describe "残高" do
       before do
         visit "/deals" # 今月へ。日付は入っているはず

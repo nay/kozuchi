@@ -13,7 +13,7 @@
       <% if current_user.preferences.bookkeeping_style? %>
         <div>借方</div>
       <% end %>
-      <% f.fields_for entry_types.first do |e| %>
+      <%= f.fields_for entry_types.first do |e| %>
         <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
@@ -45,7 +45,7 @@
       <% if current_user.preferences.bookkeeping_style? %>
         <div>貸方</div>
       <% end %>
-      <% f.fields_for entry_types.last do |e| %>
+      <%= f.fields_for entry_types.last do |e| %>
         <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
