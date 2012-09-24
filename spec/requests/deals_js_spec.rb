@@ -40,28 +40,51 @@ describe DealsController, :js => true do
         click_link "明細(複数)"
       end
 
-      it "タブを表示できる" do
-        page.should have_css('input#deal_summary')
-        page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
-        page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
-        page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
-        page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
-        page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
-        page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
-        page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
-        page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
-        page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
-        page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
-        page.should have_css('input#deal_debtor_entries_attributes_0_amount')
-        page.should have_css('input#deal_debtor_entries_attributes_1_amount')
-        page.should have_css('input#deal_debtor_entries_attributes_2_amount')
-        page.should have_css('input#deal_debtor_entries_attributes_3_amount')
-        page.should have_css('input#deal_debtor_entries_attributes_4_amount')
-        page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
-        page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
-        page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
-        page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
-        page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
+      describe "タブを表示できる" do
+        it "タブが表示される" do
+          page.should have_css('input#deal_summary')
+          page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
+          page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
+          page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
+          page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
+          page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
+          page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
+          page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
+          page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
+          page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
+          page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
+          page.should have_css('input#deal_debtor_entries_attributes_0_amount')
+          page.should have_css('input#deal_debtor_entries_attributes_1_amount')
+          page.should have_css('input#deal_debtor_entries_attributes_2_amount')
+          page.should have_css('input#deal_debtor_entries_attributes_3_amount')
+          page.should have_css('input#deal_debtor_entries_attributes_4_amount')
+          page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
+          page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
+          page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
+          page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
+          page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
+        end
+      end
+
+      describe "1対2の明細が登録できる" do
+        before do
+          fill_in 'deal_summary', :with => '買い物'
+          fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
+          select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
+          select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+          fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
+          select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
+          click_button '記入'
+        end
+        
+        it "明細が一覧に表示される" do
+          page.should have_content '追加しました。'
+          page.should have_content '買い物'
+          page.should have_content '1,000'
+          page.should have_content '800'
+          page.should have_content '200'
+        end
       end
 
       after do

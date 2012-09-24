@@ -10,6 +10,10 @@ taro_food:
   name: 食費
   user: taro
   type: Account::Expense
+taro_other:
+  name: 雑費
+  user: taro
+  type: Account::Expense
 taro_bank:
   name: 銀行
   user: taro
