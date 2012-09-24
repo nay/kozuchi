@@ -274,6 +274,24 @@ describe DealsController, :js => true do
       end
     end
 
+    describe "複数明細" do
+      before do
+        current_user.preferences.update_attribute(:uses_complex_deal, true)
+        FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))
+        visit "/deals/2012/7"
+        click_link "削除"
+        page.driver.browser.switch_to.alert.accept
+      end
+
+      it do
+        page.should have_content("削除しました。")
+      end
+
+      after do
+        current_user.preferences.update_attribute(:uses_complex_deal, false)
+      end
+    end
+
     describe "残高" do
       before do
         FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
