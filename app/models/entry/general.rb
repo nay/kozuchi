@@ -19,7 +19,7 @@ class Entry::General < Entry::Base
   end
 
   def reversed_amount=(ra)
-    self.amount = ra.blank? ? ra : ra.to_i * -1
+    self.amount = ra.blank? ? ra : Entry::Base.parse_amount(ra).to_i * -1
   end
 
   def reversed_amount

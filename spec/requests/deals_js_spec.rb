@@ -185,9 +185,49 @@ describe DealsController, :js => true do
       describe "タブを表示できる" do
         it "タブが表示される" do
           page.should have_content("変更(2012-07-07-1)")
+          find("input#deal_creditor_entries_attributes_0_reversed_amount").value.should == '1000'
+          find("input#deal_debtor_entries_attributes_0_amount").value.should == '800'
+          find("input#deal_debtor_entries_attributes_1_amount").value.should == '200'
         end
       end
 
+      describe "変更ができる" do
+        before do
+          fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1200'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '900'
+          fill_in 'deal_debtor_entries_attributes_1_amount', :with => '300'
+          select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
+          click_button '変更'
+        end
+
+        it "変更内容が一覧に表示される" do
+          page.should have_content "更新しました。"
+          page.should have_content '銀行'
+          page.should have_content '1,200'
+          page.should have_content '900'
+          page.should have_content '300'
+        end
+      end
+
+      describe "カンマ入りの数字を入れて口座を変えても変更ができる" do
+        # reversed_amount の代入時にparseされていない不具合がたまたまこのスペックで発見できた
+        before do
+          fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1,200'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '900'
+          fill_in 'deal_debtor_entries_attributes_1_amount', :with => '300'
+          select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
+          click_button '変更'
+        end
+
+        it "変更内容が一覧に表示される" do
+          page.should have_content "更新しました。"
+          page.should have_content '銀行'
+          page.should have_content '1,200'
+          page.should have_content '900'
+          page.should have_content '300'
+        end
+      end
+      
       after do
         current_user.preferences.update_attribute(:uses_complex_deal, false)
       end
