@@ -31,7 +31,7 @@
 <div id="monthly_contents">
 
   <!-- 通信欄-->
-  <% if flash[:notice] || flash[:notice].to_s != ""%>
+  <% if flash[:notice].present? %>
     <div id="notice"><%=flash[:notice]%></div>
   <% end %>
   <div class="title"><%= h @account.name %>の出納一覧（<%= @year %>年<%= @month %>月）</div>

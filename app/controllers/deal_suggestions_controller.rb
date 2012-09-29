@@ -3,6 +3,8 @@ class DealSuggestionsController < ApplicationController
 
   # 候補を出力する Ajax メソッド
   def index
+    flash.keep
+
     account = if params[:account_id]
       current_user.accounts.find_by_id(params[:account_id])
     else
