@@ -15,6 +15,18 @@ describe DealsController, :js => true do
 
   include_context "太郎 logged in"
 
+  describe "カレンダー（翌月）のクリック" do
+    let(:target_month) {(Date.today >> 1).month}
+    before do
+      click_link '家計簿'
+      click_link "#{target_month}月"
+    end
+
+    it "カレンダーの選択月が翌月に変わる" do
+      find("td.selected_month").text.should == "#{target_month}月"
+    end
+  end
+
   describe "登録" do
 
     describe "通常明細" do

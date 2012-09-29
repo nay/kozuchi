@@ -110,9 +110,15 @@ Calendar.prototype = {
         str += "<td class='selected_month' >";
       }
       else {
-        str += "<td class='selectable_month' onClick='calendar.selectMonth("+month.year+","+month.month+", true); '>";
+//        str += "<td class='selectable_month' onClick='calendar.selectMonth("+month.year+","+month.month+", true); '>";
+        str += "<td class='selectable_month'>";
+        str += "<a style='display:block; text-decoration:none; text-align:right;' href='javascript:calendar.selectMonth("+month.year+","+month.month+", true);'>";
       }
-      str += month.month + "月</td>";
+      str += month.month + "月";
+      if (!this.selectedMonth.equals(month)) {
+        str += '</a>';
+      }
+      str += '</td>';
       month.next();
     }
     str += "</tr>"
