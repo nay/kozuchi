@@ -41,6 +41,31 @@ describe AccountDealsController, :js => true do
       end
     end
 
+    describe "入金" do
+      before do
+        click_link '入金'
+      end
+
+      it "タブが表示される" do
+        page.should have_css('input#deal_summary')
+        page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
+      end
+
+      describe "記入を追加したとき" do
+        before do
+          select '現金', :from => 'account_id'
+          fill_in 'deal_summary', :with => 'おろした'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '20000'
+          select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
+          click_button '記入'
+        end
+        it "一覧に表示される" do
+          page.should have_content('追加しました。')
+          page.should have_content('おろした')
+        end
+      end
+    end
+
   end
 
 end
