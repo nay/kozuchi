@@ -91,4 +91,17 @@ describe AccountDealsController, :js => true do
 
   end
 
+  describe "移動" do
+    describe "記入" do
+      before do
+        FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
+        visit "/accounts/#{Fixtures.identify(:taro_cache)}/deals/2012/7"
+        click_link '→'
+      end
+      it do
+        page.should have_css('tr.updated_line')
+      end
+    end
+  end
+
 end
