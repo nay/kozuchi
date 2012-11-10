@@ -66,6 +66,16 @@ describe AccountDealsController, :js => true do
       end
     end
 
+    describe "残高" do
+      before do
+        click_link '残高'
+      end
+
+      it "タブが表示される" do
+        page.should have_css('input#deal_balance')
+      end
+    end
+
   end
 
 end
