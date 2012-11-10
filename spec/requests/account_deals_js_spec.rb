@@ -74,6 +74,19 @@ describe AccountDealsController, :js => true do
       it "タブが表示される" do
         page.should have_css('input#deal_balance')
       end
+
+      describe "残高を記入したとき" do
+        before do
+          select '現金', :from => 'account_id'
+          fill_in 'deal_balance', :with => '1200'
+          click_button '記入'
+        end
+        it "一覧に表示される" do
+          page.should have_content('追加しました。')
+          page.should have_content('残高確認')
+          page.should have_content('1,200')
+        end
+      end
     end
 
   end
