@@ -13,5 +13,8 @@ describe Settings::IncomesController do
     it "口座名入力欄がある" do
       page.should have_css('input#account_name')
     end
+    it "各口座のフォームがある" do
+      page.should have_css('table.masters')
+    end
   end
 end

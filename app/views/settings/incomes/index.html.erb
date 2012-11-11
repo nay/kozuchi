@@ -5,7 +5,7 @@
 <%= error_messages @account %>
 
 <div class="bottom_box">
-  <% form_tag settings_incomes_path, :method => :put do %>
+  <%= form_tag settings_incomes_path, :method => :put do %>
   <table class="masters" width="100%">
     <tr>
       <th><%= Account::Income.human_name %>名</th>
