@@ -22,6 +22,22 @@ describe SettlementsController do
       end
     end
 
+    context "資産口座にカードがあるとき" do
+
+      context "対象記入がないとき" do
+        before do
+          visit '/settlements/new'
+        end
+        it "口座や期間のフォームがあり、データがない旨が表示される" do
+          page.should have_css("select#settlement_account_id")
+          page.should have_css("select#start_date_year")
+          page.should have_css("select#end_date_day")
+          page.should have_css("div#target_deals")
+          page.should have_content("の未精算取引 は 全0件あります。")
+        end
+      end
+    end
+
   end
 
 end
