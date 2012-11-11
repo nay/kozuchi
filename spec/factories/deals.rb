@@ -28,4 +28,5 @@ FactoryGirl.define do
     balance 5431
     date Date.today
   end
+
 end

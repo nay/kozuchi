@@ -13,6 +13,11 @@ class Account::Asset < Account::Base
   short_name '口座'
   connectable_type Account::Asset
 
+  scope :categorized_as, ->(*kinds) {
+    raise "You must specify at least one kind for Account::Asset.categorized_as" if kinds.empty?
+    {:conditions => ["accounts.asset_kind in (?)", kinds]}
+  }
+
   def capital_fund?
     asset_kind == "capital_fund"
   end

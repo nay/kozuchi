@@ -13,7 +13,12 @@ class User < ActiveRecord::Base
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
   has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
   has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
-  has_many  :assets, :class_name => "Account::Asset", :order => "sort_key"
+  has_many  :assets, :class_name => "Account::Asset", :order => "sort_key" do
+    def credit
+      credit_asset_kinds = asset_kinds{|attributes| attributes[:credit]}.map{|k| k.to_s}
+      categorized_as(*credit_asset_kinds)
+    end
+  end
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
 #  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 

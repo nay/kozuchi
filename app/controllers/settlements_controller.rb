@@ -111,8 +111,7 @@ class SettlementsController < ApplicationController
   end
   
   def check_credit_account
-    credit_asset_kinds = asset_kinds{|attributes| attributes[:credit]}.map{|k| k.to_s}
-    @credit_accounts = current_user.assets.find(:all, :conditions => ["asset_kind in (?)", credit_asset_kinds])
+    @credit_accounts = current_user.assets.credit
     if @credit_accounts.empty?
       render :action => 'no_credit_account'
       return false
