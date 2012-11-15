@@ -3,7 +3,7 @@
 <p class="amount resultAmount"><%= @account.balance_before(Date.today + 1) %>円</p>
 
 <div>
-  <% form_tag({:controller => "account_deals", :action => "balance", :account_id => nil}, {:method => :get}) do %>
+  <%= form_tag({:controller => "account_deals", :action => "balance", :account_id => nil}, {:method => :get}) do %>
   <%= select_tag :account_id, options_from_collection_for_select(current_user.assets, :id, :name) %>
   <%= submit_tag "表示" %>
   <% end %>

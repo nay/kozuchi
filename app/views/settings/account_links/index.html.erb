@@ -1,7 +1,7 @@
 <div class="top_box">
   <div class="form_box">
     <% if @friends.size > 0%>
-      <% form_tag settings_account_links_path do %>
+      <%= form_tag settings_account_links_path do %>
         <%= h current_user.login %>
         <span>さんの</span>
         <%= select_tag :account_id, options_from_collection_for_select(@accounts, :id, :name_with_asset_type, flash[:form] ? flash[:form]['account_id'].to_i : nil) %>
@@ -24,6 +24,7 @@
       <span class="guide_title">贈与や出資、支払い分担などを連動するには：</span><br />
       <span>あなたの家計簿の費目（または収入内訳）と、フレンドの家計簿の収入内訳（または費目）を関連づけます。</span><br /><br />
       <span>フレンドと取引連動については、<%= link_to("ヘルプの「フレンドの項」", :controller => '/help', :action => 'functions', :anchor => "friend")%>に詳しいのでご参照ください。  </span>
+    </p>
   </div>
 </div>
 <%= render :partial => 'shared/information' %>
