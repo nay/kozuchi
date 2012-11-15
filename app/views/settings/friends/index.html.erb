@@ -1,6 +1,6 @@
 <div class="top_box">
   <div class="form_box">
-    <% form_tag settings_friend_acceptance_path do %>
+    <%= form_tag settings_friend_acceptance_path do %>
       <label for="target_login">ユーザーID</label><%= text_field_tag :target_login, flash[:target_login] %>
       <button type="submit">フレンドを登録する</button>
     <% end %>
