@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+@import url("calendar.css");
 
 /* ============== 共通情報　=============== */
 
@@ -298,38 +299,6 @@ a.small_button, .action a {
   font-size: 120%;
   font-weight: bold;
   margin-bottom: 4px;
-}
-
-/** カレンダー **/
-
-#calendar * {
-  color: black;
-  font-weight: bold;
-  text-align: left;
-}
-
-#calendar table {
-  background-color: #FFDDBC;
-}
-
-#calendar table tr td {
-  width: 48px;
-  padding: 0px 4px;
-  background-color: #FFDDBC;
-}
-
-#calendar table tr td.selected_month {
-  border: 4px inset #ffb7db;
-  text-align: right;
-  background-color: #ffb7db;
-  color: black;
-}
-
-#calendar table tr td.selectable_month {
-  border: 4px outset #FFDDBC;
-  text-align: right;
-  background-color: #FFDDBC;
-  color: black;
 }
 
 /*　------ 入力欄  ------- */

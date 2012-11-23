@@ -80,31 +80,36 @@ Calendar.prototype = {
     if (current.month >= 2) {
       colspan = 12 - (current.month - 1)
     }
+    var yearClass = (current.year % 2) ? 'odd_year' : 'even_year'
 
     var str = "<table>"
     str += "<tr>"
-    str += "<td rowspan='2' style='width: 12px; cursor:pointer;' onClick='calendar.selectMonth("+ (this.selectedMonth.year - 1) +"," + this.selectedMonth.month+", true);'>&lt;&lt;</td>"
-    str += "<td colspan='" + colspan + "'>" + current.year + "</td>"
+    str += "<td rowspan='2' id='prev_year' onClick='calendar.selectMonth("+ (this.selectedMonth.year - 1) +"," + this.selectedMonth.month+", true);'>&lt;&lt;</td>"
+    str += "<td class='year " + yearClass + "' colspan='" + colspan + "'>" + current.year + "</td>"
     if (colspan < 12) {
       var nextYear = current.year + 1
+      yearClass = (nextYear % 2) ? 'odd_year' : 'even_year'
       var secondColspan = 12 - colspan
-      str += "<td colspan='" + secondColspan +"'>" + nextYear + "</td>"
+      str += "<td class='year " + yearClass + "' colspan='" + secondColspan +"'>" + nextYear + "</td>"
     }
-    str += "<td rowspan='2' style='width: 12px; cursor:pointer;' onClick='calendar.selectMonth("+ (this.selectedMonth.year + 1) +"," + this.selectedMonth.month+", true);'>&gt;&gt;</td>"
+    str += "<td rowspan='2' id='next_year' onClick='calendar.selectMonth("+ (this.selectedMonth.year + 1) +"," + this.selectedMonth.month+", true);'>&gt;&gt;</td>"
     str += "</tr>"
     str += "<tr>"
     for (var i = 0; i < 12; i++) {
+      yearClass = (current.year % 2) ? 'odd_year' : 'even_year'
       if (this.selectedMonth.equals(current)) {
-        str += "<td class='selected_month' >"
+        str += "<td class='selected_month'><div class='" + yearClass + "'>"
       }
       else {
         str += "<td class='selectable_month'>"
-        str += "<a style='display:block; text-decoration:none; text-align:right;' href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
+        str += "<div class='" + yearClass + "'>"
+        str += "<a href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
       }
       str += current.month + "月"
       if (!this.selectedMonth.equals(current)) {
         str += '</a>'
       }
+      str += "</div>"
       str += '</td>'
       current.next()
     }
