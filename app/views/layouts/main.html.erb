@@ -15,7 +15,12 @@
     <%= stylesheet_link_tag 'print', :media => :print %>
     <%#  stylesheet_link_tag 'daily_booking' %>
     <%= javascript_include_tag :application %>
+    <%= javascript_include_tag '/javascripts/jquery-1.8.3.min' %>
     <%= render :partial => "shared/google_analytics" %>
+    <%= javascript_tag do %>
+      jQuery.noConflict()
+    <% end %>
+    <%= javascript_include_tag '/javascripts/main' %>
     <%= yield :head %>
   </head>
   <body>
@@ -32,9 +37,9 @@
       <%= render :partial => "shared/menu_groups" %>
     </div>
     <div id="sidebar">
-      <div id="user_and_today" class="top_box" <%= user_color_style %>>
-        <%= h current_user.login_id %>さん<br />
-        <%= format_date(Time.now) %>
+      <div id="user_and_today" class="top_box" link="<%= deals_path :today => 1 %>" <%= user_color_style %>>
+        <%= t 'terms.user', :name => current_user.login_id %><br />
+        <%= l Date.today %>
       </div>
       <!-- menu -->
       <%= render :partial => "shared/menus" %>

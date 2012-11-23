@@ -70,6 +70,7 @@ class DealsController < ApplicationController
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行
   def index
+    write_target_date if params[:today]
     year, month = read_target_date
     redirect_to monthly_deals_path(:year => year, :month => month)
   end
