@@ -26,6 +26,26 @@ describe AccountDealsController, :js => true do
     end
   end
 
+  describe "カレンダー（翌年）のクリック" do
+    before do
+      find("#next_year").click
+    end
+
+    it "翌年が入力された状態になる" do
+      find("input#date_year").value.should == (Date.today >> 12).year.to_s
+    end
+  end
+
+  describe "カレンダー（前年）のクリック" do
+    before do
+      find("#prev_year").click
+    end
+
+    it "前年が入力された状態になる" do
+      find("input#date_year").value.should == (Date.today << 12).year.to_s
+    end
+  end
+
   describe "日ナビゲーターのクリック" do
     let(:target_month) {(Date.today << 1).month} # 前月
     before do
