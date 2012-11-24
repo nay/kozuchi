@@ -18,6 +18,7 @@
       <div class="scroll_box" <%= "style='height:#{h @deals_scroll_height};'" if @deals_scroll_height && @deals_scroll_height != ''%>>
       <div class="scroll_inner_box">
       <table class="book">
+        <% date = Date.new(@year.to_i, @month.to_i, 1) %>
         <% for deal in @deals %>
           <% first = true %>
 
@@ -25,11 +26,17 @@
             <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed? %>>
               <td class="date">
                 <% if first %>
-                  <a name="<%=deal.id%>"><%= format_date(deal.date) %></a>
+                  <% while date <= deal.date %>
+                    <a name="day<%= date.day%>"></a>
+                    <% date += 1 %>
+                  <% end %>
+                  <%= format_date(deal.date) %>
                 <% end %>
               </td>
               <td class="number">
-                <%= deal.daily_seq if first %>
+                <% if first %>
+                  <a name="<%= deal.id %>"><%= deal.daily_seq %></a>
+                <% end %>
               </td>
               <% if first %>
                 <td class="summary" rowspan="<%=deal.readonly_entries.size%>">
