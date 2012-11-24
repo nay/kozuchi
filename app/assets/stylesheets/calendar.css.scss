@@ -1,0 +1,89 @@
+/* Calendar Stylesheet */
+
+#calendar {
+  $even_color: #E8D8E8;
+  $odd_color: #FFDDBC;
+  $selected_color: #ffb7db;
+
+  * {
+    color: black;
+    font-weight: bold;
+  }
+
+  table {
+    border-collapse: collapse;
+
+    td {
+      padding: 0px 0px;
+
+      div {
+        padding: 0px 2px;
+        text-align: right;
+        width: 48px;
+      }
+    }
+
+    /* year headers */
+
+    td.year {
+      text-align: center;
+    }
+
+    td.even_year {
+      background-color: $even_color;
+      border-top: solid 1px $even_color;
+      border-bottom: outset 1px $even_color;
+      border-left: outset 1px $even_color;
+      border-right: outset 1px $even_color;
+    }
+
+    td.odd_year {
+      background-color: $odd_color;
+      border-top: solid 1px $odd_color;
+      border-bottom: outset 1px $odd_color;
+      border-left: outset 1px $odd_color;
+      border-right: outset 1px $odd_color;
+    }
+
+    /* month buttons */
+
+    td.selected_month {
+      div {
+        border: 2px inset $selected_color;
+        background-color: $selected_color;
+      }
+    }
+
+    td.selectable_month {
+      a {
+        display:block;
+        text-decoration:none;
+        text-align:right;
+      }
+
+      div.odd_year {
+        border: 2px outset $odd_color;
+        background-color:  $odd_color;
+      }
+
+      div.even_year {
+        border: 2px outset $even_color;
+        background-color: $even_color;
+      }
+    }
+  }
+
+  /* prev & next year buttons */
+
+  #prev_year, #next_year {
+    padding: 0px 4px;
+    cursor:pointer;
+    background-color: $odd_color;
+    border: 2px outset $odd_color;
+  }
+
+
+}
+
+
+
