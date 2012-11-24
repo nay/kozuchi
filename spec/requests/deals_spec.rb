@@ -18,6 +18,9 @@ describe DealsController do
       it "明細入力欄がある" do
         page.should have_css('input#deal_summary')
       end
+      it "日ナビゲーターがある" do
+        page.should have_css('#day_navigator')
+      end
     end
 
     context "with one balance deal" do

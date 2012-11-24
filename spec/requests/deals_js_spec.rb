@@ -67,6 +67,23 @@ describe DealsController, :js => true do
     end
   end
 
+  describe "日ナビゲーターのクリック" do
+    let(:target_month) {(Date.today << 1).month} # 前月
+    before do
+      click_link '家計簿'
+      click_link "#{target_month}月"
+      # 3日をクリック
+      date = Date.new((Date.today << 1).year, target_month, 3)
+      click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
+    end
+
+    it "URLに対応する日付ハッシュがつき、日の欄に指定した日が入る" do
+      current_url =~ (/^.*#(.*)$/)
+      $1.should == 'day3'
+      find("input#date_day").value.should == '3'
+    end
+  end
+
   describe "登録" do
 
     describe "通常明細" do
