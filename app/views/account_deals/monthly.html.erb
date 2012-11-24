@@ -1,5 +1,10 @@
 <%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month, :url_method => :monthly_account_deals_path, :url_params => {:account_id => @account.id}}) %>
 
+<div id="day_navigator_frame">
+  <%= render :partial => 'shared/day_navigator', :locals => {:data => @entries} %>
+</div>
+
+<div id="deals_frame">
 <% deal_type = flash[:"#{controller_name}_deal_type"] %>
 
 <%= deal_editor 2, @year, @month, @day do %>
@@ -86,10 +91,17 @@
     </table>
   <% end -%>
   <table class="book">
+    <% date = Date.new(@year.to_i, @month.to_i, 1) %>
     <% for entry in @entries %>
       <% if entry.balance? %>
         <tr class="balance_line">
-          <td class="date"><%= format_date(entry.deal.date) %></td>
+          <td class="date">
+            <% while date <= entry.date %>
+              <a name="day<%= date.day%>"></a>
+              <% date += 1 %>
+            <% end %>
+            <%= format_date(entry.deal.date) %>
+          </td>
           <td class="number"><%=entry.deal.daily_seq%></td>
           <td>残高確認</td>
           <td class="account">不明金</td>
@@ -100,7 +112,13 @@
         </tr>
       <% else %>
         <tr <%= 'class="unconfirmed"' if !entry.deal.confirmed? %>>
-          <td class="date"><%= format_date(entry.date) %></td>
+          <td class="date">
+            <% while date <= entry.date %>
+              <a name="day<%= date.day%>"></a>
+              <% date += 1 %>
+            <% end %>
+            <%= format_date(entry.date) %>
+          </td>
           <td class="number"><%= entry.daily_seq%></td>
           <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed? %><%= h entry.deal.summary%></td>
           <td class="account"><%= h entry.partner_account_name %></td>
@@ -133,5 +151,7 @@
     </tr>
     </table>
   <% end -%>
+
+</div>
 
 </div>
