@@ -45,6 +45,28 @@ describe DealsController, :js => true do
     end
   end
 
+  describe "カレンダー（翌年）のクリック" do
+    before do
+      click_link '家計簿'
+      find("#next_year").click
+    end
+
+    it "翌年が入力された状態になる" do
+      find("input#date_year").value.should == (Date.today >> 12).year.to_s
+    end
+  end
+
+  describe "カレンダー（前年）のクリック" do
+    before do
+      click_link '家計簿'
+      find("#prev_year").click
+    end
+
+    it "前年が入力された状態になる" do
+      find("input#date_year").value.should == (Date.today << 12).year.to_s
+    end
+  end
+
   describe "登録" do
 
     describe "通常明細" do
