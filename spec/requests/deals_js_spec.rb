@@ -100,6 +100,17 @@ describe DealsController, :js => true do
         page.should have_content('追加しました。')
         page.should have_content('朝食のおにぎり')
       end
+
+      describe "サジェッション" do
+        before do
+          fill_in 'deal_summary', :with => '朝食'
+          sleep 0.6
+        end
+        it "先に登録したデータがサジェッション表示される" do
+          page.should have_css("#patterns div.clickable_text")
+        end
+      end
+
     end
 
     describe "複数明細" do

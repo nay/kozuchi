@@ -24,5 +24,11 @@
     <% end %>
     <div style="clear:left;"></div>
   </div>
-  <%#= observe_field("deal_summary", :update => 'patterns', :frequency => 0.5, :with => 'keyword', :method => :get, :url => deal_suggestions_path )%>
+  <%= javascript_tag do %>
+    jQuery(document).ready(function($){
+      $("input#deal_summary").observe_field(0.5, function() {
+        $('#patterns').load('<%= deal_suggestions_path %>?keyword='+this.value)
+      });
+    })
+  <% end %>
 

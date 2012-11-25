@@ -20,6 +20,7 @@
     <%= javascript_tag do %>
       jQuery.noConflict()
     <% end %>
+    <%= javascript_include_tag '/javascripts/jquery.observe_field' %>
     <%= javascript_include_tag '/javascripts/main' %>
     <%= yield :head %>
   </head>
