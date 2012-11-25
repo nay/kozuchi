@@ -101,16 +101,42 @@ describe DealsController, :js => true do
         page.should have_content('朝食のおにぎり')
       end
 
-      describe "サジェッション" do
+    end
+
+    describe "通常明細のサジェッション" do
+      describe "'のない明細" do
         before do
+          FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食のサンドイッチ")
+          visit "/deals" # 今月へ。日付は入っているはず
+
           fill_in 'deal_summary', :with => '朝食'
           sleep 0.6
         end
         it "先に登録したデータがサジェッション表示される" do
           page.should have_css("#patterns div.clickable_text")
         end
+        it "サジェッションをクリックするとデータが入る" do
+          page.find("#patterns div.clickable_text").click
+          page.find("#deal_summary").value.should == '朝食のサンドイッチ'
+        end
       end
 
+      describe "'のある明細" do
+        before do
+          FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食の'サンドイッチ'")
+          visit "/deals" # 今月へ。日付は入っているはず
+
+          fill_in 'deal_summary', :with => '朝食'
+          sleep 0.6
+        end
+        it "先に登録したデータがサジェッション表示される" do
+          page.should have_css("#patterns div.clickable_text")
+        end
+        it "サジェッションをクリックするとデータが入る" do
+          page.find("#patterns div.clickable_text").click
+          page.find("#deal_summary").value.should == "朝食の'サンドイッチ'"
+        end
+      end
     end
 
     describe "複数明細" do
