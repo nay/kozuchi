@@ -241,6 +241,27 @@ describe DealsController, :js => true do
           page.should have_content('クレジットカードＸ')
         end
       end
+
+      describe "複数明細利用時でも実行できる" do
+        before do
+          current_user.preferences.update_attribute(:uses_complex_deal, true)
+
+          fill_in 'date_day', :with => '11'
+          fill_in 'deal_summary', :with => '冷やし中華'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
+          select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+          click_button '変更'
+        end
+
+        it "一覧に表示される" do
+          page.should have_content("更新しました。")
+          page.should have_content("2012/07/11")
+          page.should have_content('冷やし中華')
+          page.should have_content('920')
+          page.should have_content('クレジットカードＸ')
+        end
+      end
+
     end
 
     describe "複数明細" do
