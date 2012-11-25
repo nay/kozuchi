@@ -210,6 +210,36 @@ describe DealsController, :js => true do
   end
 
   describe "変更" do
+    describe "複数明細利用時" do
+      before do
+        current_user.preferences.update_attribute(:uses_complex_deal, true)
+        FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
+        visit "/deals/2012/7"
+        click_link '変更'
+      end
+      it "変更タブが表示される" do
+        page.should have_content("変更(2012-07-10-1)")
+        find("input#deal_summary").value.should == "ラーメン"
+      end
+
+      describe "複数記入への変更" do
+        before do
+          click_link '複数記入にする'
+        end
+        it "フォーム部分だけが変わる" do
+          page.should have_content("仕訳帳")
+          page.should have_css("select#deal_creditor_entries_attributes_4_account_id")
+        end
+        it "記入欄を増やせる" do
+          click_link '記入欄を増やす'
+          page.should have_css("select#deal_creditor_entries_attributes_5_account_id")
+        end
+      end
+      after do
+        current_user.preferences.update_attribute(:uses_complex_deal, false)
+      end
+    end
+
     describe "通常明細" do
       before do
         FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
@@ -241,27 +271,6 @@ describe DealsController, :js => true do
           page.should have_content('クレジットカードＸ')
         end
       end
-
-      describe "複数明細利用時でも実行できる" do
-        before do
-          current_user.preferences.update_attribute(:uses_complex_deal, true)
-
-          fill_in 'date_day', :with => '11'
-          fill_in 'deal_summary', :with => '冷やし中華'
-          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
-          select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
-          click_button '変更'
-        end
-
-        it "一覧に表示される" do
-          page.should have_content("更新しました。")
-          page.should have_content("2012/07/11")
-          page.should have_content('冷やし中華')
-          page.should have_content('920')
-          page.should have_content('クレジットカードＸ')
-        end
-      end
-
     end
 
     describe "複数明細" do
@@ -278,6 +287,19 @@ describe DealsController, :js => true do
           find("input#deal_creditor_entries_attributes_0_reversed_amount").value.should == '1000'
           find("input#deal_debtor_entries_attributes_0_amount").value.should == '800'
           find("input#deal_debtor_entries_attributes_1_amount").value.should == '200'
+        end
+      end
+
+      describe "記入欄を増やすことができる" do
+        before do
+          click_link '記入欄を増やす'
+        end
+
+        it "6つめの記入欄が表示される" do
+          page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
+          page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
+          page.should have_css('input#deal_debtor_entries_attributes_5_amount')
+          page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
         end
       end
 
