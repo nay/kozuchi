@@ -16,7 +16,11 @@
 
     <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
     <% if !@deal.new_record? && current_user.uses_complex_deal? %>
-      <%= link_to '複数記入にする' , :update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';", :remote => true %>
+      <%
+        # TODO: きれいにする
+        func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
+      %>
+      <%= link_to '複数記入にする', '#', :onClick => func %>
     <% end %>
     <div style="clear:left;"></div>
   </div>
