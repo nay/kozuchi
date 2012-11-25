@@ -29,7 +29,9 @@ class Deal::Balance < Deal::Base
   after_save :reset_attributes, :update_initial_balance
   after_destroy :update_initial_balance
 
-
+  def summary
+    @unified_summary || entry.summary
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 4
@@ -107,7 +109,7 @@ class Deal::Balance < Deal::Base
   # before_create
   def build_entry
     raise "no user_id" unless self.user_id
-    e = entries.build(:balance => self.balance, :account_id => self.account_id)
+    e = entries.build(:balance => self.balance, :account_id => self.account_id, :summary => summary)
     e.amount = calc_amount
     e
   end

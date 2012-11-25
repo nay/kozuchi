@@ -29,7 +29,7 @@ class Deal::General < Deal::Base
 
   accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
 
-  before_validation :set_required_data_in_entries, :fill_amount_to_one_side
+  before_validation :set_required_data_in_entries, :fill_amount_to_one_side, :set_unified_summary
   validate :validate_entries
 #  before_update :clear_entries_before_update
 
@@ -40,7 +40,7 @@ class Deal::General < Deal::Base
   after_update :respond_to_sender_when_confirmed
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
-
+  attr_accessor :summary_mode # unified なら統一モードとして summary= で統一上書き。それ以外なら summary= を無視する
 
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
@@ -87,6 +87,14 @@ class Deal::General < Deal::Base
     alias_method_chain :"#{side}_entries_attributes=", :account_care
   end
 
+  def summary_unified?
+    (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
+  end
+
+  def summary
+    @unified_summary || debtor_entries.first.summary
+  end
+
   # 単一記入では creditor に金額が指定されないことへの調整。
   # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
   # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。
@@ -116,9 +124,9 @@ class Deal::General < Deal::Base
 
   # 内容をコピーする
   def load(from)
-    self.summary = from.summary
-    self.debtor_entries_attributes = from.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount}}
-    self.creditor_entries_attributes = from.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount}}
+#    self.summary = from.summary
+    self.debtor_entries_attributes = from.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    self.creditor_entries_attributes = from.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
     self
   end
 
@@ -239,9 +247,10 @@ class Deal::General < Deal::Base
 
   # 後の検索効率のため、idで妥協する
   scope :recent_summaries, lambda{|keyword|
-    {:select => "deals.summary, max(deals.id) as id",
-    :group => "deals.summary",
-    :conditions => ["deals.summary like ?", "#{keyword}%"],
+    {:select => "account_entries.summary, max(deals.id) as id",
+      :joins => "inner join account_entries on account_entries.deal_id = deals.id",
+    :group => "account_entries.summary",
+    :conditions => ["account_entries.summary like ?", "#{keyword}%"],
     :order => "deals.id desc",
     :limit => 5
     }
@@ -337,6 +346,17 @@ class Deal::General < Deal::Base
   end
 
   private
+
+  def set_unified_summary
+    if @unified_summary && @summary_mode == 'unify'
+      debtor_entries.each do |e|
+        e.summary = @unified_summary
+      end
+      creditor_entries.each do |e|
+        e.summary = @unified_summary
+      end
+    end
+  end
 
   def remote_condition(remote_user_id, remote_ex_deal_id)
     {:deal_id => id, :linked_user_id => remote_user_id, :linked_ex_deal_id => remote_ex_deal_id}
