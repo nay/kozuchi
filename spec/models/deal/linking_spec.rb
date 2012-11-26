@@ -368,7 +368,7 @@ describe "Deal Linking" do
 
   private
   def prepare_simple_taro_deal_with_one_link
-    @taro_deal = @taro.general_deals.build(:summary => 'test', :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => 'test', :summary_mode => 'unify', :date => Date.today,
       :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -300}],
       :debtor_entries_attributes => [{:account_id => @taro_hanako.id, :amount => 300}]
     )
@@ -376,7 +376,7 @@ describe "Deal Linking" do
 
   def prepare_simpe_taro_deal_with_two_links
     # taro_home と taro_home_cost
-    @taro_deal = @taro.general_deals.build(:summary => "test", :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => "test", :summary_mode => 'unify', :date => Date.today,
       :debtor_entries_attributes => [{:account_id => @taro_home_cost.id, :amount => 300}],
       :creditor_entries_attributes => [{:account_id => @taro_home.id, :amount => -300}])
   end

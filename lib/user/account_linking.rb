@@ -69,8 +69,10 @@ module User::AccountLinking
         # 未確認の場合、summary, date を更新する
         unless linked_deal.confirmed?
           linked_deal.summary = summary # 使わないが念のためあわせておく
+          linked_deal.summary_mode = 'unify'
           linked_deal.date = date
-          Deal::General.update_all(["summary = ?, date = ?", summary, date], "id = #{linked_deal.id}")
+          Deal::General.update_all(["date = ?", date], "id = #{linked_deal.id}")
+          Entry::General.update_all(["summary = ?", summary], "deal_id = #{linked_deal.id}")
         end
 
         linked_entries = {}
@@ -85,7 +87,7 @@ module User::AccountLinking
       end
     end
     # なければ作成
-    linked_deal ||= general_deals.build(:summary => summary, :confirmed => false, :date => date)
+    linked_deal ||= general_deals.build(:summary => summary, :summary_mode => 'unify', :confirmed => false, :date => date)
 
     linked_deal.for_linking = true
 
