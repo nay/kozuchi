@@ -40,7 +40,17 @@
                   <% end %>
                 <% end %>
                 <!-- number -->
-                <%= content_tag :td, content_tag(:a, deal.daily_seq, :name => deal.id), :class => 'number', :rowspan => size %>
+                <%= content_tag :td, :class => 'number', :rowspan => size do %>
+                  <div style="position:relative;">
+                    <div class="timestamps">
+                      登録: <%= l deal.created_at, :format => :short %>
+                      <% if deal.created_at != deal.updated_at %>
+                      <br />更新: <%= l deal.updated_at, :format => :short %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <%= content_tag(:a, deal.daily_seq, :name => deal.id) %>
+                <% end %>
               <% end %>
               <!-- summary -->
               <%= content_tag :td, account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
@@ -96,6 +106,15 @@
         <% end %>
       <% end %>
       <%= javascript_tag do %>
+        jQuery(document).ready(function($) {
+          $('td.number').mouseover(function() {
+            $('.timestamps', this).show()
+          })
+          $('td.number').mouseout(function() {
+            $('.timestamps', this).hide()
+          })
+        })
+
         function focus_line(deal_id) {
           alert('focus_line');
           var selector = new Selector("tr[class='updated_line']");
