@@ -72,11 +72,12 @@ class Entry::Base < ActiveRecord::Base
     xml_attributes = {:account => "account#{self.account_id}"}
     xml_attributes[:settlement] = "settlement#{self.settlement_id}" unless self.settlement_id.blank?
     xml_attributes[:result_settlement] = "settlement#{self.result_settlement_id}" unless self.result_settlement_id.blank?
+    xml_attributes[:summary] = XMLUtil.escape(summary) if summary.present?
     xml.entry(amount, xml_attributes)
   end
 
   def to_csv
-    ["entry", self.deal_id, self.account_id, self.settlement_id, self.result_settlement_id, amount].join(',')
+    ["entry", self.deal_id, self.account_id, self.settlement_id, self.result_settlement_id, amount, "\"#{summary}\""].join(',')
   end
 
   # 精算が紐付いているかどうかを返す。外部キーを見るだけで実際に検索は行わない。

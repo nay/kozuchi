@@ -176,7 +176,6 @@ class Deal::General < Deal::Base
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     xml.deal(:id => "deal#{self.id}", :date => self.date_as_str, :position => self.daily_seq, :confirmed => self.confirmed) do
-      xml.description XMLUtil.escape(self.summary)
       xml.entries do
         # include で検索している前提
         readonly_entries.each{|e| e.to_xml(:builder => xml, :skip_instruct => true)}
@@ -185,7 +184,7 @@ class Deal::General < Deal::Base
   end
 
   def to_csv_lines
-    csv_lines = [["deal", id, date_as_str, daily_seq, "\"#{summary}\"", confirmed].join(',')]
+    csv_lines = [["deal", id, date_as_str, daily_seq, confirmed].join(',')]
     readonly_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
   end

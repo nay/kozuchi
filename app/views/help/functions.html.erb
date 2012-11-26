@@ -106,12 +106,10 @@
     &lt;!-- １件の記入 --&gt;
     &lt;!-- dateに日付、confirmedに確認状態かどうか、positionに１日の中での記入順、idにシステム上の識別子が入ります --&gt;
     &lt;deal date="2009-05-15" confirmed=true" position="1" id="deal1" &gt;
-      &lt;!-- 摘要 --&gt;
-      &lt;description&gt;昼食&lt;description&gt;
       &lt;!-- 識別子'account1'の勘定（口座または費目または収入内訳）から識別子'account2'の勘定への800円の移動 --&gt;
       &lt;entries&gt;
-        &lt;entry account="account1">-800&lt;/entry&gt;
-        &lt;entry account="account2">800&lt;/entry&gt;
+        &lt;entry account="account1" summary="昼食">-800&lt;/entry&gt;
+        &lt;entry account="account2" summary="昼食">800&lt;/entry&gt;
         &lt;!-- 精算と紐付いていれば entryのsettlement属性に精算の識別子が入ります --&gt;
       &lt;/entries&gt;
     &lt;/deal&gt;
@@ -119,7 +117,6 @@
     ...
     &lt;!-- 残高記入 （通常の記入と混在）--&gt;
     &lt;balance account="account23" date="2009-05-21" position="2" id="balance745"&gt;
-      &lt;description/&gt;
       &lt;amount&gt;1300&lt;/amount&gt;
     &lt;/balance&gt;
     ...
@@ -147,9 +144,9 @@
       <tr><td>口座行</td><td>asset,口座識別子,口座種別,並び順,口座名</td></tr>
       <tr><td>費目行</td><td>expense,費目識別子,,並び順,費目名</td></tr>
       <tr><td>収入内訳行</td><td>income,収入内訳識別子,,並び順,収入内訳名</td></tr>
-      <tr><td>記入の開始行<br />（entryで始まる後続行とセット）</td><td>deal,記入識別子,日付,１日のなかでの記入順,摘要,確認状態</td></tr>
-      <tr><td>記入の内容行（１勘定分）</td><td>entry,記入識別子,勘定識別子,精算識別子,自分が精算結果取引となっている精算識別子,金額</td></tr>
-      <tr><td>残高記入行</td><td>balance,残高記入識別子,日付,１日のなかでの記入順,摘要,勘定識別子,金額</td></tr>
+      <tr><td>記入の開始行<br />（entryで始まる後続行とセット）</td><td>deal,記入識別子,日付,１日のなかでの記入順,確認状態</td></tr>
+      <tr><td>記入の内容行（１勘定分）</td><td>entry,記入識別子,勘定識別子,精算識別子,自分が精算結果取引となっている精算識別子,金額,摘要</td></tr>
+      <tr><td>残高記入行</td><td>balance,残高記入識別子,日付,１日のなかでの記入順,勘定識別子,金額</td></tr>
       <tr><td>精算行</td><td>settlement,精算識別子,勘定識別子,名前,備考</td></tr>
     </table>
   </div>

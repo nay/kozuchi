@@ -48,7 +48,7 @@ class Deal::Balance < Deal::Base
   end
 
   def to_csv
-    ["balance", self.id, date_as_str, daily_seq, "\"#{summary}\"", account_id, balance].join(",")
+    ["balance", self.id, date_as_str, daily_seq, account_id, balance].join(",")
   end
 
   def initial_balance?

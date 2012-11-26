@@ -14,5 +14,5 @@
         lines.concat current_user.settlements.map{|s| s.to_csv}
 -%>
 <% for line in lines -%>
-<%= line %>
+<%= line.html_safe %>
 <% end -%>
