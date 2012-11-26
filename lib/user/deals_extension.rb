@@ -5,7 +5,7 @@ module User::DealsExtension
   # keywordsをsummaryに含む明細をすべて検索する。 keywordsは配列で受け取り、and検索する。
   def including(keywords)
     raise ArgumentError.new("No keywords") if keywords.blank?
-    find(:all, :conditions => [keywords.map{"summary like ?"}.join(' and ')].concat(keywords.map{|k| "%#{k}%"}))
+    find(:all, :select => "distinct deals.*", :joins => "inner join account_entries on account_entries.deal_id = deals.id", :conditions => [keywords.map{"account_entries.summary like ?"}.join(' and ')].concat(keywords.map{|k| "%#{k}%"}))
   end
   
   # summary の前方一致で検索する

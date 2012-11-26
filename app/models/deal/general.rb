@@ -268,15 +268,15 @@ class Deal::General < Deal::Base
       return [] if summary_key.empty?
       # まず summary と created_atのセットを返す
       results = if account_id
-        find_by_sql("select summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0 and deals.user_id = #{user_id} and deals.type='General' and deals.summary like '#{summary_key}%' group by deals.summary limit #{limit}")
+        find_by_sql("select account_entries.summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0 and deals.user_id = #{user_id} and deals.type='General' and account_entries.summary like '#{summary_key}%' group by account_entries.summary limit #{limit}")
       else
-        find_by_sql("select summary as summary, max(created_at) as created_at from deals where user_id = #{user_id} and type='General' and summary like '#{summary_key}%' group by summary limit #{limit}")
+        find_by_sql("select account_entries.summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where deals.user_id = #{user_id} and deals.type='General' and account_entries.summary like '#{summary_key}%' group by account_entries.summary limit #{limit}")
       end
       return [] if results.size == 0
       conditions = ""
       for r in results
         conditions += " or " unless conditions.empty?
-        conditions += "(deals.summary = '#{r.summary}' and deals.created_at = '#{r.created_at.to_s(:db)}')"
+        conditions += "(account_entries.summary = '#{r.summary}' and deals.created_at = '#{r.created_at.to_s(:db)}')"
       end
       conditions = "deals.user_id = #{user_id} and (#{conditions})"
 
