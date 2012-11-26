@@ -30,7 +30,11 @@ class Deal::Balance < Deal::Base
   after_destroy :update_initial_balance
 
   def summary
-    @unified_summary || entry.summary
+    entry.summary
+  end
+
+  def summary_unified?
+    true
   end
 
   def to_xml(options = {})

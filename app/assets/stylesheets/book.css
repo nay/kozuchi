@@ -111,6 +111,9 @@ input.number, #datebox input, #deal_amount, #deal_balance {
   padding: 2px;
   background-color: white;
 }
+.book td.date, .book td.number {
+  vertical-align: top;
+}
 .book_header th, .book_header tbody tr th {
   padding: 2px;
   background-color: #efefef;

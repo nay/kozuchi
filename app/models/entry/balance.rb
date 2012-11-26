@@ -6,4 +6,8 @@ class Entry::Balance < Entry::Base
 
 
   scope :without_initial, :conditions => {:initial_balance => false}
+
+  def summary
+    '残高確認'
+  end
 end

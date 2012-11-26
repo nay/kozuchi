@@ -24,28 +24,27 @@
 
           <% for account_entry in deal.readonly_entries %>
             <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed? %>>
-              <td class="date">
-                <% if first %>
-                  <% while date <= deal.date %>
-                    <a name="day<%= date.day%>"></a>
-                    <% date += 1 %>
-                  <% end %>
-                  <%= format_date(deal.date) %>
-                <% end %>
-              </td>
-              <td class="number">
-                <% if first %>
-                  <a name="<%= deal.id %>"><%= deal.daily_seq %></a>
-                <% end %>
-              </td>
+              <% size = deal.readonly_entries.size %>
               <% if first %>
-                <td class="summary" rowspan="<%=deal.readonly_entries.size%>">
+                <!-- date -->
+                <%= content_tag :td, :class => 'date', :rowspan => size do %>
+                  <% while date <= deal.date %>
+                    <%= tag :a, :name => "day#{date.day}" %>
+                  <%
+                    date += 1
+                    end
+                  %>
+                  <%= l deal.date %>
                   <% if !deal.confirmed? %>
-                    <%= link_to '確認' , confirm_deal_path(:id => deal), :method => :put, :class => 'small_button', :alt => '確認状態にします。' %>
+                    <br /><%= link_to '確認' , confirm_deal_path(:id => deal), :method => :put, :class => 'small_button', :alt => '確認状態にします。' %>
                   <% end %>
-                  <%= deal.balance ? "残高確認" : h(deal.summary) %>
-                </td>
+                <% end %>
+                <!-- number -->
+                <%= content_tag :td, content_tag(:a, deal.daily_seq, :name => deal.id), :class => 'number', :rowspan => size %>
               <% end %>
+              <!-- summary -->
+              <%= content_tag :td, account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
+              <!-- account -->
               <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
                 <td class="account">
                   <%= display_account_name(account_entry.account) %>
@@ -85,18 +84,18 @@
       </div>
       </div>
       <% if @target_month && !@date%>
-        <script>
+        <%= javascript_tag do %>
           $('deal_year').value = '<%=@target_month.year%>'
           $('deal_month').value = '<%=@target_month.month%>'
           $('deal_day').value = '<%=@target_month.day if @target_month.day%>'
-        </script>
+        <% end %>
       <% end %>
       <% if @updated_deal%>
-        <script>
+        <%= javascript_tag do %>
           location.hash = "<%=@updated_deal.id%>";
-        </script>
+        <% end %>
       <% end %>
-      <script>
+      <%= javascript_tag do %>
         function focus_line(deal_id) {
           alert('focus_line');
           var selector = new Selector("tr[class='updated_line']");
@@ -106,6 +105,6 @@
           alert(elements.length);
 //          elements.each(function(elem) { alert(elem.innerHTML); });
         }
-      </script>
+      <% end %>
       
       
