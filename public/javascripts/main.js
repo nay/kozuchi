@@ -10,7 +10,7 @@ jQuery(document).ready(function($){
 function unifySummary() {
   jQuery('.entry_summary').hide()
   jQuery('#deal_summary_frame').show()
-  jQuery('#deal_summary_mode').val('unified')
+  jQuery('#deal_summary_mode').val('unify')
 }
 
 function splitSummary() {

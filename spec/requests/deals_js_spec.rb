@@ -187,6 +187,7 @@ describe DealsController, :js => true do
 
       describe "1対2の明細が登録できる" do
         before do
+          find('a.entry_summary').click # unifyモードにする
           fill_in 'deal_summary', :with => '買い物'
           fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
           select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'

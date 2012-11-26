@@ -7,6 +7,7 @@ FactoryGirl.define do
   factory :general_deal, :class => Deal::General do
     user_id Fixtures.identify(:taro)
     summary "ランチ"
+    summary_mode 'unify'
     debtor_entries_attributes [:account_id => Fixtures.identify(:taro_food), :amount => 800]
     creditor_entries_attributes [:account_id => Fixtures.identify(:taro_cache), :amount => -800]
     date Date.today
@@ -16,6 +17,7 @@ FactoryGirl.define do
   factory :complex_deal, :class => Deal::General do
     user_id Fixtures.identify(:taro)
     summary '買い物'
+    summary_mode 'unify'
     debtor_entries_attributes [{:account_id => Fixtures.identify(:taro_food), :amount => 800}, {:account_id => Fixtures.identify(:taro_other), :amount => 200}]
     creditor_entries_attributes [:account_id => Fixtures.identify(:taro_cache), :amount => -1000]
     date Date.today

@@ -1,5 +1,5 @@
   <div style="<%= @deal.summary_unified? ? '' : 'display:none;' %>" id="deal_summary_frame">
-    <%= f.hidden_field :summary_mode, :value => @deal.summary_unified? ? 'unified' : 'split' %>
+    <%= f.hidden_field :summary_mode, :value => @deal.summary_unified? ? 'unify' : 'split' %>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
     <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), 'javascript: splitSummary()' %>
     <div id="patterns"></div>
