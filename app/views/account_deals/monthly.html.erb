@@ -100,7 +100,7 @@
               <a name="day<%= date.day%>"></a>
               <% date += 1 %>
             <% end %>
-            <%= format_date(entry.deal.date) %>
+            <%= l entry.date %>
           </td>
           <td class="number"><%=entry.deal.daily_seq%></td>
           <td>残高確認</td>
@@ -117,10 +117,10 @@
               <a name="day<%= date.day%>"></a>
               <% date += 1 %>
             <% end %>
-            <%= format_date(entry.date) %>
+            <%= l entry.date %>
           </td>
           <td class="number"><%= entry.daily_seq%></td>
-          <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed? %><%= h entry.deal.summary%></td>
+          <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed? %><%= entry.summary %></td>
           <td class="account"><%= h entry.partner_account_name %></td>
           <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 %></td>
           <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 %></td>
