@@ -127,8 +127,8 @@ EOF
     s =<<EOS
       <td class="date" #{style}>#{format_date entry.date}</td>
       <td class="number" #{style}>#{entry.daily_seq}</td>
-      <td class="summary" #{style}>#{h entry.deal.summary}</td>
-      <td class="account" #{style}>#{h entry.mate_account_name}</td>
+      <td class="summary" #{style}>#{entry.summary}</td>
+      <td class="account" #{style}>#{entry.mate_account_name}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount.abs) if entry.amount < 0}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount) if entry.amount >= 0}</td>
 EOS
