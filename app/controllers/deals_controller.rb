@@ -24,7 +24,7 @@ class DealsController < ApplicationController
 
   # 変更フォームを表示するAjaxアクション
   def edit
-    if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple?)
+    if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
       @deal.fill_complex_entries
     end
     render :partial => 'edit'

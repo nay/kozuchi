@@ -60,6 +60,7 @@ class Deal::General < Deal::Base
         matched_old_entries = []
         not_matched_old_entries.each do |old|
           if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
+            old.summary = matched_hash[:summary] # サマリーが変更されている場合に伝える
             not_matched_new_entries.delete(matched_hash)
             matched_old_entries << old
           end
@@ -80,7 +81,6 @@ class Deal::General < Deal::Base
           e.mark_for_destruction
         end
       end
-
       send(:"#{side}_entries_attributes_without_account_care=", attributes)
     end
 
