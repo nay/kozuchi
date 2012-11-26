@@ -10,4 +10,8 @@ class Entry::Balance < Entry::Base
   def summary
     '残高確認'
   end
+
+  def partner_account_name
+    '不明金'
+  end
 end

@@ -26,7 +26,7 @@ class Entry::Base < ActiveRecord::Base
 
   after_destroy :update_balance #, :request_unlinking
 
-  attr_accessor :balance_estimated, :unknown_amount, :account_to_be_connected, :another_entry_account, :flow_sum
+  attr_accessor :account_to_be_connected, :another_entry_account, :pure_balance
   attr_accessor :skip_linking # 要請されて作る場合、リンクしにいくのは不要なので
   attr_reader :new_plus_link
   attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
@@ -39,6 +39,7 @@ class Entry::Base < ActiveRecord::Base
   scope :ordered, :order => "date, daily_seq"
   scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
   scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
+  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["account_entries.date >= ? and account_entries.date <= ?", from, to]}}
 
   delegate :year, :month, :day, :to => :date
 

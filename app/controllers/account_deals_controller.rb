@@ -34,38 +34,8 @@ class AccountDealsController < ApplicationController
     @day = read_target_date[2]
 
     start_date = Date.new(@year, @month, 1)
-    end_date = (start_date >> 1) -1
-    
-    deals = @account.deals.in_a_time_between(start_date, end_date)
-    
-    @entries = []
-    @balance_start = @account.balance_before(start_date)
-    balance_estimated = @balance_start
-    flow_sum = 0
-    for deal in deals do
-      for account_entry in deal.entries do
-        next if account_entry.account.id != @account.id.to_i
 
-        if account_entry.balance?
-          account_entry.unknown_amount = account_entry.balance - balance_estimated
-          balance_estimated = account_entry.balance
-          flow_sum -= account_entry.amount unless account_entry.initial_balance?
-        else
-          # 確定のときだけ残高に反映
-          if deal.confirmed?
-            balance_estimated += account_entry.amount
-            flow_sum += account_entry.amount
-          end
-          account_entry.balance_estimated = balance_estimated
-          account_entry.flow_sum = flow_sum
-          account_entry.partner_account_name = deal.partner_account_name_of(account_entry) # 効率上自分で入れておく
-        end
-
-        @entries << account_entry
-      end
-    end
-    @balance_end = @entries.size > 0 ? (@entries.last.balance || @entries.last.balance_estimated) : @balance_start 
-    @flow_end = flow_sum
+    @account_entries = AccountEntries.new(@account, start_date, start_date.end_of_month)
 
     # 登録用
     @deal = Deal::General.new
