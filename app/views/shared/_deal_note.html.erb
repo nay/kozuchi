@@ -1,0 +1,8 @@
+<div style="position:relative;">
+  <div class="timestamps">
+    登録: <%= l deal.created_at, :format => :short %>
+    <% if deal.created_at != deal.updated_at %>
+    <br />更新: <%= l deal.updated_at, :format => :short %>
+    <% end %>
+  </div>
+</div>

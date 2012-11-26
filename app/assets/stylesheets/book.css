@@ -123,6 +123,7 @@ input.number, #datebox input, #deal_amount, #deal_balance {
   left: 8px;
   padding: 4px;
   background-color: #FFFFCC;
+  color: #000000;
   border: 1px solid #FFDDBC;
   display: none;
 }
