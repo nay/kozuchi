@@ -38,8 +38,8 @@ describe Deal::Balance do
         @balance.entry.date.should == @balance.date
         @balance.entry.daily_seq.should == @balance.daily_seq
       end
-      it "サマリーは空文字列" do
-        @balance.summary.should == ""
+      it "サマリーはつねに残高確認" do
+        @balance.summary.should == "残高確認"
       end
     end
 
