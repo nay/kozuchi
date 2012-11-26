@@ -95,6 +95,11 @@ class Deal::General < Deal::Base
     @unified_summary || debtor_entries.first.summary
   end
 
+  def reload
+    @unified_summary = nil
+    super
+  end
+
   # 単一記入では creditor に金額が指定されないことへの調整。
   # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
   # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。

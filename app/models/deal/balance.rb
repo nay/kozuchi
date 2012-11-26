@@ -30,7 +30,7 @@ class Deal::Balance < Deal::Base
   after_destroy :update_initial_balance
 
   def summary
-    entry.summary
+    entry.try(:summary)
   end
 
   def summary_unified?
@@ -113,7 +113,7 @@ class Deal::Balance < Deal::Base
   # before_create
   def build_entry
     raise "no user_id" unless self.user_id
-    e = entries.build(:balance => self.balance, :account_id => self.account_id, :summary => summary)
+    e = entries.build(:balance => self.balance, :account_id => self.account_id)
     e.amount = calc_amount
     e
   end

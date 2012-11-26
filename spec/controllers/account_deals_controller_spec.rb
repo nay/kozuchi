@@ -24,14 +24,17 @@ describe AccountDealsController do
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
+          :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date_and_summary(Date.new(2010, 7, 7), 'test')
+      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
+      deal.debtor_entries.first.summary.should == 'test'
+      deal.creditor_entries.first.summary.should == 'test'
     end
   end
 
@@ -48,14 +51,17 @@ describe AccountDealsController do
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
+          :summary_mode => 'unify',
           :debtor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => 1000}],
           :creditor_entries_attributes => [{:account_id => :taro_bank.to_id}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date_and_summary(Date.new(2010, 7, 7), 'test')
+      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
+      deal.debtor_entries.first.summary.should == 'test'
+      deal.creditor_entries.first.summary.should == 'test'
     end
   end
 

@@ -33,14 +33,17 @@ describe DealsController do
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '7'},
           :summary => 'test',
+          :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date_and_summary(Date.new(2010, 7, 7), 'test')
+      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
+      deal.debtor_entries.first.summary.should == 'test'
+      deal.creditor_entries.first.summary.should == 'test'
     end
   end
   describe "new_complex_deal" do
@@ -55,14 +58,18 @@ describe DealsController do
         :deal => {
           :date => {:year => '2010', :month => '7', :day => '9'},
           :summary => 'test_complex',
+          :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800}, {:account_id => :taro_hanako.to_id, :amount => -200}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date_and_summary(Date.new(2010, 7, 9), 'test_complex')
+      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 9), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 2
+      deal.debtor_entries.first.summary.should == 'test_complex'
+      deal.creditor_entries.first.summary.should == 'test_complex'
+      deal.creditor_entries.last.summary.should == 'test_complex'
     end
   end
   describe "new_balance_deal" do
@@ -136,6 +143,7 @@ describe DealsController do
       put :update, :id => @deal.id, :deal => {
           :date => {:year => '2010', :month => '7', :day => '9'},
           :summary => 'changed like test_complex',
+          :summary_mode => 'unify',
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
       }
@@ -180,6 +188,7 @@ describe DealsController do
   private
   def create_deal(attributes = {})
     deal = @current_user.general_deals.build({:summary => 'in created_deal',
+      :summary_mode => 'unify',
       :date => {:year => '2010', :month => '7', :day => '8'},
       :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 500}],
       :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -500}]}.merge(attributes))
