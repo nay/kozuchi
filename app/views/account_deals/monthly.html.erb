@@ -102,7 +102,9 @@
             <% end %>
             <%= l entry.date %>
           </td>
-          <td class="number"><%=entry.deal.daily_seq%></td>
+          <td class="number">
+            <%=entry.deal.daily_seq%>
+          </td>
           <td>残高確認</td>
           <td class="account">不明金</td>
           <td class="amount"><%= number_with_delimiter(entry.unknown_amount) if entry.unknown_amount >= 0%></td>
@@ -118,9 +120,12 @@
               <% date += 1 %>
             <% end %>
             <%= l entry.date %>
+            <% if !entry.deal.confirmed? %>
+              <br /><span class="system">未確定</span>
+            <% end %>
           </td>
           <td class="number"><%= entry.daily_seq%></td>
-          <td><%= '<span class="system">未確定</span>' if !entry.deal.confirmed? %><%= entry.summary %></td>
+          <td><%= entry.summary %></td>
           <td class="account"><%= h entry.partner_account_name %></td>
           <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 %></td>
           <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 %></td>
