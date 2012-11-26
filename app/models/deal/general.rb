@@ -262,7 +262,7 @@ class Deal::General < Deal::Base
 
   scope :with_account, lambda{|account_id, debtor|
    {
-     :joins => "inner join account_entries on deals.id = account_entries.deal_id",
+# account_entries との join はされている想定
      :conditions => "account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
    }
   }

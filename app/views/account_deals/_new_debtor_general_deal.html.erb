@@ -1,6 +1,7 @@
 <%= deal_form '入金', :url => account_debtor_general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}" do |f| %>
   <div>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
+    <%= f.hidden_field :summary_mode, :value => 'unify' %>
     <div id="patterns"></div>
   </div>
   <div class="entry">
