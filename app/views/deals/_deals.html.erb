@@ -23,7 +23,16 @@
           <% first = true %>
 
           <% for account_entry in deal.readonly_entries %>
-            <tr <%= "class='updated_line'" if (@updated_deal && deal.id == @updated_deal.id)%><%= 'class="unconfirmed"' if !deal.confirmed? %>>
+            <%
+              tr_class = if (@updated_deal && deal.id == @updated_deal.id)
+                'updated_line'
+              elsif !deal.confirmed?
+                'unconfirmed'
+              else
+                nil
+              end
+            %>
+            <%= content_tag :tr, :class => tr_class do %>
               <% size = deal.readonly_entries.size %>
               <% if first %>
                 <!-- date -->
@@ -79,7 +88,7 @@
                   <% end %>
                 </td>
               <% end %>
-            </tr>
+            <% end  %>
             <% first = false %>
           <% end %>
         <% end %>
