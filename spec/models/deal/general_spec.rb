@@ -48,16 +48,14 @@ describe Deal::General do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1300, :taro_bank => 0})
       deal.valid?.should be_false
     end
-    # この制約は不具合を出にくくするために入れている
-    # 暫定措置
-    it "複合Dealの各Entryの口座に重複がないこと" do
+    it "複合Dealの各Entryの口座に重複があっても構わない" do
       deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
-      deal.valid?.should be_false
+      deal.valid?.should be_true
     end
 
-    it "同じ口座間での移動が検証を通らないこと" do
+    it "同じ口座間での移動が検証を通る" do
       deal = new_deal(3, 1, :taro_food, :taro_food, 300)
-      deal.valid?.should be_false
+      deal.valid?.should be_true
     end
     it "金額が0ではいけないこと" do
       deal = new_deal(3, 1, :taro_food, :taro_cache, 0)
@@ -76,6 +74,34 @@ describe Deal::General do
       deal = new_complex_deal(3, 1, {:taro_food => '1,300'},{:taro_cache => '-1,000', :taro_bank => '-300'})
       deal.save.should be_true
       deal.debtor_entries.any?{|e| e.amount.to_i == 1300}.should be_true
+    end
+    it "複合Dealの各Entryの口座に重複があっても作成できること" do
+      deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
+      deal.save.should be_true
+
+      d = deal.debtor_entries.first
+      d.account_id.should == Fixtures.identify(:taro_food)
+      d.amount.should == 1400
+
+      c = deal.creditor_entries.first
+      c.account_id.should == Fixtures.identify(:taro_cache)
+      c.amount.should == -1300
+
+      c = deal.creditor_entries.last
+      c.account_id.should == Fixtures.identify(:taro_food)
+      c.amount.should == -100
+    end
+
+    it "同じ口座間での移動記入が作成できること" do
+      deal = new_deal(3, 1, :taro_food, :taro_food, 300)
+      deal.save.should be_true
+      d = deal.debtor_entries.first
+      d.account_id.should == Fixtures.identify(:taro_food)
+      d.amount.should == 300
+
+      c = deal.creditor_entries.first
+      c.account_id.should == Fixtures.identify(:taro_food)
+      c.amount.should == -300
     end
 
     describe "連携なし" do
@@ -188,6 +214,17 @@ describe Deal::General do
       new_creditor_entry.user_id.should == old_creditor_entry.user_id
     end
   
+  end
+
+  describe "#destroy" do
+    let(:complex_deal_contains_same_accounts) {
+      deal = new_complex_deal(3, 1, {:taro_food => '1,300'},{:taro_cache => '-1,000', :taro_bank => '-300'})
+      deal.save!
+      deal
+    }
+    it "重複のある複数明細が削除できる" do
+      expect{complex_deal_contains_same_accounts.destroy}.not_to raise_error
+    end
   end
 
   def to_account_id(value)
