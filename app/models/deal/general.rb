@@ -440,17 +440,8 @@ class Deal::General < Deal::Base
     sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
     errors.add(:base, "借方、貸方が同額ではありません。") unless sum == 0
 
-    # 両サイドが１つだけで、かつ同じ口座ではいけない
-    errors.add(:base, "同じ口座から口座への異動は記録できません。") if creditor_entries.not_marked.size == 1 && debtor_entries.not_marked.size == 1 && creditor_entries.first.account_id && creditor_entries.first.account_id.to_i == debtor_entries.first.account_id.to_i
-
     errors.add(:base, "借方の記入が必要です。") if debtor_entries.empty?
     errors.add(:base, "貸方の記入が必要です。") if creditor_entries.empty?
-
-    # TODO: ひとまず、Deal内のEntryの口座は一意でなければならないこととする
-    # いずれ変更したい
-    # 口座の吸収合併などを実装する場合は注意
-    # 重複があってはいけない
-    errors.add(:base, "同じ口座を複数に記入することはできません。") if (debtor_entries.not_marked.map(&:account_id) + creditor_entries.not_marked.map(&:account_id)).uniq!
   end
 
   def set_required_data_in_entries
