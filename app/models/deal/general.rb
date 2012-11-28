@@ -29,13 +29,11 @@ class Deal::General < Deal::Base
 
   accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
 
-  before_validation :set_required_data_in_entries, :fill_amount_to_one_side, :set_unified_summary
+  before_validation :set_required_data_in_entries, :set_unified_summary
   validate :validate_entries
-#  before_update :clear_entries_before_update
 
-  before_destroy :destroy_entries
+#  before_destroy :destroy_entries
   before_update :cache_previous_receivers
-  after_save :create_relations
   after_save :request_linkings
   after_update :respond_to_sender_when_confirmed
   after_destroy :request_unlinkings
@@ -123,13 +121,12 @@ class Deal::General < Deal::Base
         # この creditor は deal_attributes にあるものを直接書き換える
       end
     end
-    
+
     super
   end
 
   # 内容をコピーする
   def load(from)
-#    self.summary = from.summary
     self.debtor_entries_attributes = from.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
     self.creditor_entries_attributes = from.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
     self
@@ -212,31 +209,6 @@ class Deal::General < Deal::Base
   def partner_account_name_of(e)
     raise "invalid entry" if e.deal_id != self.id
     e.amount.to_i >= 0 ? creditor_account_name : debtor_account_name
-  end
-
-  def plus_account_id
-    refresh_account_info unless refreshed?
-    @plus_account_id
-  end
-  def plus_account_id=(id)
-    refresh_account_info unless refreshed?
-    @plus_account_id = id
-  end
-  def minus_account_id
-    refresh_account_info unless refreshed?
-    @minus_account_id
-  end
-  def minus_account_id=(id)
-    refresh_account_info unless refreshed?
-    @minus_account_id = id
-  end
-  def amount
-    refresh_account_info unless refreshed?
-    @amount
-  end
-  def amount=(a)
-    refresh_account_info unless refreshed?
-    @amount = a
   end
 
   def settlement_attached?
@@ -479,107 +451,6 @@ class Deal::General < Deal::Base
     # 口座の吸収合併などを実装する場合は注意
     # 重複があってはいけない
     errors.add(:base, "同じ口座を複数に記入することはできません。") if (debtor_entries.not_marked.map(&:account_id) + creditor_entries.not_marked.map(&:account_id)).uniq!
-  end
-
-
-  # before_destroy
-  # TODO: 効いてる？
-  def destroy_entries
-    entries.destroy_all # account_entry の before_destroy 処理を呼ぶ必要があるため明示的に
-  end
-
-#  def clear_entries_before_update
-#    for entry in entries
-#      # この取引の勘定でなくなっていたら、entryを消す
-#      if self.plus_account_id.to_i != entry.account_id.to_i && self.minus_account_id.to_i != entry.account_id.to_i
-#        #        p "plus_account_id = #{self.plus_account_id} . minus_account_id = #{self.minus_account_id}. this_entry_account_id = #{entry.account_id}"
-#        entry.destroy
-#      end
-#    end
-#  end
-
-  def clear_relations
-    entries.clear
-  end
-
-  def update_account_entry(is_minus, is_first)
-    if is_minus
-      entry_account_id = self.minus_account_id
-      entry_amount = self.amount.to_i*(-1)
-      another_entry_account = is_first ? Account::Base.find(self.plus_account_id) : nil
-      # second に上記をわたしても無害だが不要なため処理を省く
-    else
-      entry_account_id = self.plus_account_id
-      entry_amount = self.amount.to_i
-      another_entry_account = is_first ? Account::Base.find(self.minus_account_id) : nil
-      # second に上記をわたしても無害だが不要なため処理を省く
-    end
-    
-    entry = entry(entry_account_id)
-    if !entry
-      entry = entries.build(
-        :amount => entry_amount,
-        :another_entry_account => another_entry_account)
-      entry.account_id = entry_account_id
-      entry.save # TODO: save!でなくていいの？
-    else
-      # 金額、日付が変わったときは変わったとみなす。サマリーだけ変えても影響なし。
-      # entry.save がされるということは、リンクが消されて新しくDeal が作られるということを意味する。
-      if entry_amount != entry.amount || self.old_date != self.date
-        #        # すでにリンクがある場合、消して作り直す際は変更前のリンク先口座を優先的に選ぶ。
-        #        if entry.linked_account_entry
-        #          entry.account_to_be_connected = entry.linked_account_entry.account
-        #        end
-        entry.amount = entry_amount
-        entry.another_entry_account = another_entry_account
-        entry.save!
-      end
-    end
-    return entry
-  end
-  
-  def create_relations
-    # 当該account_entryがなくなっていたら消す。金額が変更されていたら更新する。あって金額がそのままなら変更しない。
-    # 小さいほうが前になるようにする。これにより、minus, plus, amount は値が逆でも差がなくなる
-    return unless self.amount # TODO: 間接でないのをとりあえずこれで判断
-    entry = nil
-    entry = update_account_entry(true, true) if self.amount.to_i >= 0     # create minus
-    entry = update_account_entry(false, !entry) # create plus
-    update_account_entry(true, false) if self.amount.to_i < 0   # create_minus
-    entries(true)
-  end
-  
-  def refreshed?
-    return true if new_record?
-    @refreshed ||= false
-    @refreshed
-  end
-  
-  # 高速化のため、after_find でやっていたのを lazy にしてここへ
-  def refresh_account_info
-    @refreshed = true
-    # TODO:
-    #    p "Invalid Deal Object #{self.id} with #{entries.size} entries." unless entries.size == 2
-    return unless entries.size == 2
-    
-    for et in entries
-      if et.amount >= 0
-        @plus_account_id = et.account_id
-        @amount = et.amount
-      else
-        @minus_account_id = et.account_id
-      end
-    end
-        
-  end
-
-  # TODO: 不要になる（変更時はどのみち代入時までに対処しないといけないのでこれに頼れない）
-  def fill_amount_to_one_side
-#    if creditor_entries.size == 1 && creditor_entries.first.amount.nil? && !debtor_entries.any?{|e| e.amount.nil?}
-#      creditor_entries.first.amount = debtor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
-#    elsif debtor_entries.size == 1 && debtor_entries.first.amount.nil? && !creditor_entries.any?{|e| e.amount.nil?}
-#      debtor_entries.first.amount = creditor_entries.inject(0) {|r, e| r += e.amount.to_i} * -1
-#    end
   end
 
   def set_required_data_in_entries

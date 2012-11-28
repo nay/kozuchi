@@ -205,7 +205,6 @@ describe Deal::General do
     d = Deal::General.new(:summary => "#{month}/#{day}の買い物",
       :debtor_entries_attributes => [:account_id => to_account_id(to), :amount => amount],
       :creditor_entries_attributes => [:account_id => to_account_id(from), :amount => amount * -1],
-      #      :amount => amount, :minus_account_id => from.id, :plus_account_id => to.id,
       :date => Date.new(year, month, day))
     to_account = Account::Base.find(to_account_id(to))
     d.user_id = to_account.user_id

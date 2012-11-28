@@ -98,9 +98,6 @@ describe "Account::Asset" do
     attributes = {:summary => "#{month}/#{day}の買い物",
       :debtor_entries_attributes => [{:account_id => Fixtures.identify(to), :amount => amount}],
       :creditor_entries_attributes => [{:account_id => Fixtures.identify(from), :amount => amount.to_i * -1}],
-#      :amount => amount,
-#      :minus_account_id => Fixtures.identify(from),
-#      :plus_account_id => Fixtures.identify(to),
       :user_id => @current_user.id, :date => Date.new(@year, month, day)}.merge(attributes)
     Deal::General.create!(attributes)
   end

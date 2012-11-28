@@ -134,10 +134,6 @@ class Settlement < ActiveRecord::Base
       result_deal = Deal::General.new(
         :debtor_entries_attributes => [{:account_id => plus_account_id, :amount => amount.abs}],
         :creditor_entries_attributes => [{:account_id => minus_account_id, :amount => amount.abs*-1}],
-#        :minus_account_id => minus_account_id,
-#        :plus_account_id => plus_account_id,
- #       :amount => amount.abs,
-#        :user_id => self.user_id,
         :date => self.result_date,
         :summary => self.name,
         :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする
