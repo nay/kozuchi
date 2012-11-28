@@ -59,8 +59,8 @@ describe DealsController do
           :date => {:year => '2010', :month => '7', :day => '9'},
           :summary => 'test_complex',
           :summary_mode => 'unify',
-          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800}, {:account_id => :taro_hanako.to_id, :amount => -200}],
-          :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
+          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
+          :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
         }
       response.should be_success
       deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 9), :order => 'created_at desc')
@@ -144,8 +144,8 @@ describe DealsController do
           :date => {:year => '2010', :month => '7', :day => '9'},
           :summary => 'changed like test_complex',
           :summary_mode => 'unify',
-          :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
-          :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
+          :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
+          :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
       }
       response.should be_success
       @deal.reload

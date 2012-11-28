@@ -163,8 +163,8 @@ describe "Deal Linking" do
         @home_deal = @home.general_deals.build(
           :summary => 'complex',
           :date => Date.today,
-          :debtor_entries_attributes => [{:account_id => @home_cache.id, :amount => 10000}],
-          :creditor_entries_attributes => [{:account_id => @home_taro.id, :amount => -4000}, {:account_id => @home_hanako.id, :amount => -6000}]
+          :debtor_entries_attributes => [{:account_id => @home_cache.id, :amount => 10000, :line_number => 0}],
+          :creditor_entries_attributes => [{:account_id => @home_taro.id, :amount => -4000, :line_number => 0}, {:account_id => @home_hanako.id, :amount => -6000, :line_number => 1}]
         )
         raise "creditor_entries must be 2" unless @home_deal.creditor_entries.size == 2
       end

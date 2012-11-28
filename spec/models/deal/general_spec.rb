@@ -146,11 +146,11 @@ describe Deal::General do
     it "貸し方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries(true).first.id},
-          '1' => {:account_id => :deal_test_food.to_id, :amount => -300}
+          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries(true).first.id, :line_number => 0},
+          '1' => {:account_id => :deal_test_food.to_id, :amount => -300, :line_number => 1}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries(true).first.id}
+          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries(true).first.id, :line_number => 0}
         }
       }
       @deal.creditor_entries.size.should == 3 # 一時的に３つになる
@@ -166,11 +166,11 @@ describe Deal::General do
     it "借り方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries(true).first.id}
+          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries(true).first.id, :line_number => 0}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries(true).first.id},
-          '1' => {:account_id => :deal_test_food.to_id, :amount => 300}
+          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries(true).first.id, :line_number => 0},
+          '1' => {:account_id => :deal_test_food.to_id, :amount => 300, :line_number => 1}
         }
       }
       @deal.debtor_entries.size.should == 3 # 一時的に３つになる
@@ -253,9 +253,9 @@ describe Deal::General do
     summary = options[:summary] || "#{month}/#{day}の記入"
     date = Date.new(options[:year] || 2010, month, day)
 
-    deal = Deal::General.new(:summary => summary, :date => date,
-      :debtor_entries_attributes => debtors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value} },
-      :creditor_entries_attributes => creditors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}
+    deal = Deal::General.new(:summary => summary, :summary_mode => 'unify', :date => date,
+      :debtor_entries_attributes => debtors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}.each_with_index{|e, i| e[:line_number] = i},
+      :creditor_entries_attributes => creditors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}.each_with_index{|e, i| e[:line_number] = i}
     )
     
     key = debtors.keys.first

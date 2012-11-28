@@ -3,6 +3,8 @@
 class Entry::Base < ActiveRecord::Base
   self.table_name = 'account_entries'
   unsavable
+
+  MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
   
   belongs_to :account,
              :class_name => 'Account::Base',
@@ -44,6 +46,9 @@ class Entry::Base < ActiveRecord::Base
   delegate :year, :month, :day, :to => :date
 
   belongs_to :linked_user, :class_name => 'User', :foreign_key => 'linked_user_id'
+
+  validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
+  # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
   def balance?
     !!balance

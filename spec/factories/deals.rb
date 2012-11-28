@@ -18,8 +18,8 @@ FactoryGirl.define do
     user_id Fixtures.identify(:taro)
     summary '買い物'
     summary_mode 'unify'
-    debtor_entries_attributes [{:account_id => Fixtures.identify(:taro_food), :amount => 800}, {:account_id => Fixtures.identify(:taro_other), :amount => 200}]
-    creditor_entries_attributes [:account_id => Fixtures.identify(:taro_cache), :amount => -1000]
+    debtor_entries_attributes [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}]
+    creditor_entries_attributes [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 0]
     date Date.today
   end
 

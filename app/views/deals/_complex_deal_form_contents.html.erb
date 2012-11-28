@@ -15,13 +15,17 @@
       <% if current_user.preferences.bookkeeping_style? %>
         <div>借方</div>
       <% end %>
-      <% first_entry = true %>
+      <%
+        first_entry = true
+        line_number = -1
+      %>
       <%= f.fields_for entry_types.first do |e| %>
         <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
         <% else %>
           <div class="entry">
+            <%= e.hidden_field :line_number, :value => line_number += 1 %>
             <%= e.text_field :summary, :class => 'entry_summary', :style => "width: 260px; margin-bottom: 0px; #{@deal.summary_unified? ? 'display:none;' : ''}", :tabindex => tab_index += 1 %>
             <% if first_entry %>
               <%= link_to image_tag('minus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), 'javascript: unifySummary()', :class => 'entry_summary', :style => @deal.summary_unified? ? "display:none;" : nil %>
@@ -54,12 +58,14 @@
       <% if current_user.preferences.bookkeeping_style? %>
         <div>貸方</div>
       <% end %>
+      <% line_number = -1 %>
       <%= f.fields_for entry_types.last do |e| %>
         <% fixed = e.object.settlement_attached? %>
         <% if e.object.marked_for_destruction? %>
           <%= e.hidden_field :_delete, :value => '1' %>
         <% else %>
           <div class="entry">
+            <%= e.hidden_field :line_number, :value => line_number += 1 %>
             <%= e.text_field :summary, :style => "width: 260px; margin-bottom: 0px; #{@deal.summary_unified? ? 'display:none;' : ''}", :class=>'entry_summary', :tabindex => tab_index += 1 %>
             <%= tag(:br, :class => 'entry_summary', :style => @deal.summary_unified? ? "display:none;" : nil) %>
             <div style="float:left;">
