@@ -13,7 +13,6 @@ class Deal::General < Deal::Base
   end
 
   include ::Deal
-  before_validation :set_unified_summary
   validate :validate_entries
 
   before_save :adjust_entry_line_numbers
@@ -22,7 +21,6 @@ class Deal::General < Deal::Base
   after_update :respond_to_sender_when_confirmed
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
-  attr_accessor :summary_mode # unified なら統一モードとして summary= で統一上書き。それ以外なら summary= を無視する
 
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
@@ -68,19 +66,6 @@ class Deal::General < Deal::Base
     end
 
     alias_method_chain :"#{side}_entries_attributes=", :account_care
-  end
-
-  def summary_unified?
-    (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
-  end
-
-  def summary
-    @unified_summary || debtor_entries.first.summary
-  end
-
-  def reload
-    @unified_summary = nil
-    super
   end
 
   # 単一記入では creditor に金額が指定されないことへの調整。
@@ -333,17 +318,6 @@ class Deal::General < Deal::Base
   end
 
   private
-
-  def set_unified_summary
-    if @unified_summary && @summary_mode == 'unify'
-      debtor_entries.each do |e|
-        e.summary = @unified_summary
-      end
-      creditor_entries.each do |e|
-        e.summary = @unified_summary
-      end
-    end
-  end
 
   def remote_condition(remote_user_id, remote_ex_deal_id)
     {:deal_id => id, :linked_user_id => remote_user_id, :linked_ex_deal_id => remote_ex_deal_id}
