@@ -13,7 +13,7 @@ class Deal::General < Deal::Base
   end
 
   include ::Deal
-  before_validation :set_required_data_in_entries, :set_unified_summary
+  before_validation :copy_deal_info_to_entries, :set_unified_summary
   validate :validate_entries
 
 #  before_destroy :destroy_entries
@@ -502,16 +502,12 @@ class Deal::General < Deal::Base
     errors.add(:base, "貸方の記入が必要です。") if creditor_entries.empty?
   end
 
-  def set_required_data_in_entries
+  def copy_deal_info_to_entries
     self.creditor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
+      copy_deal_info(e)
     end
     self.debtor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
+      copy_deal_info(e)
     end
   end
 end
