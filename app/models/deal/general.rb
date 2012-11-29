@@ -29,7 +29,8 @@ class Deal::General < Deal::Base
 
   accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
 
-  before_validation :set_creditor_to_entries, :set_required_data_in_entries, :set_unified_summary
+  include ::Deal
+  before_validation :set_required_data_in_entries, :set_unified_summary
   validate :validate_entries
 
 #  before_destroy :destroy_entries
@@ -344,11 +345,6 @@ class Deal::General < Deal::Base
   end
 
   private
-
-  def set_creditor_to_entries
-    debtor_entries.each {|e| e.creditor = false}
-    creditor_entries.each {|e| e.creditor = true}
-  end
 
   def set_unified_summary
     if @unified_summary && @summary_mode == 'unify'

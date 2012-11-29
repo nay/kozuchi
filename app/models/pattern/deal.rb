@@ -6,6 +6,8 @@ class Pattern::Deal < ActiveRecord::Base
   has_many :debtor_entries, :conditions => {:creditor => false}, :order => :line_number, :dependent => :destroy
   has_many :creditor_entries, :conditions => {:creditor => true}, :order => :line_number, :dependent => :destroy
 
+  include ::Deal
+
   before_validation :set_user_id_to_entries
 
   private
