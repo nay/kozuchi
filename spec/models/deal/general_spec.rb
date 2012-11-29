@@ -91,6 +91,23 @@ describe Deal::General do
       c.account_id.should == Fixtures.identify(:taro_food)
       c.amount.should == -100
     end
+    it "片側に空白欄のある複合Dealが作成でき、空白欄の分が維持される" do
+      deal = FactoryGirl.build(:complex_deal,
+        :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}],
+        :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 1] # 0でない
+      )
+      deal.save.should be_true
+      deal.creditor_entries.first.line_number.should == 1
+    end
+    it "両側に空白欄のある複合Dealが作成でき、空白分が詰められる" do
+      deal = FactoryGirl.build(:complex_deal,
+        :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 2}],
+        :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 2] # 0, 1でない
+      )
+      deal.save.should be_true
+      deal.debtor_entries.map(&:line_number).should == [0, 1]
+      deal.creditor_entries.first.line_number.should == 1
+    end
 
     it "同じ口座間での移動記入が作成できること" do
       deal = new_deal(3, 1, :taro_food, :taro_food, 300)
@@ -214,6 +231,26 @@ describe Deal::General do
       new_creditor_entry.user_id.should == old_creditor_entry.user_id
     end
   
+    context "with a complex deal" do
+      let!(:deal) {
+        FactoryGirl.create(:complex_deal,
+          :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}],
+          :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 1] # 0でない
+        )
+      }
+      it "複数仕訳のDealの上側のEntryの金額を更新すると、idは変わるが位置は変わらない" do
+        entry = deal.debtor_entries.first
+        deal.debtor_entries_attributes = [{:account_id => Fixtures.identify(:taro_food), :amount => 900, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}]
+        deal.creditor_entries_attributes = [:account_id => Fixtures.identify(:taro_cache), :amount => -1100, :line_number => 1]
+        expect{ deal.save! }.not_to raise_error
+        deal.reload
+
+        deal.debtor_entries.first.id.should_not == entry.id
+        deal.debtor_entries.first.account_id.should == entry.account_id
+        deal.debtor_entries.first.line_number.should == entry.line_number
+      end
+    end
+
   end
 
   describe "#destroy" do
