@@ -4,7 +4,6 @@
     <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), 'javascript: splitSummary()' %>
     <div id="patterns"></div>
   </div>
-
   <div>
     <%
       entry_types = [:debtor_entries, :creditor_entries]
@@ -87,14 +86,33 @@
         <% end %>
       <% end %>
     </div>
+    <div class="deal_patterns" style="float:left; margin-left: 10px;">
+      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10 %></div>
+      <div></div>
+    </div>
     <div style="clear: left;"></div>
   </div>
   <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', '#', :onClick => remote_function(:update => @deal.new_record? ? 'deal_forms' : 'deal_editor', :url => deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), :submit => 'deal_form') %></div>
   <div>
       <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
+      <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>
   </div>
   <%= javascript_tag do %>
     jQuery(document).ready(function($){
+      $('a#add_pattern').click(function() {
+        if (
+             ($('#deal_summary_mode').val() == 'unify' && $('#deal_summary').val() == '')
+              ||
+             ($('#deal_summary_mode').val() != 'unify' && jQuery.grep(
+                                                                 $('input.entry_summary').val(),
+                                                                 function(n, i) { return n != ''}
+                                                                ).length == 0)
+            ) {
+          alert('パターンを登録するには摘要が必要です。')
+          return false
+        } // end if
+      }) // end click
+
       $("input#deal_summary").observe_field(0.5, function() {
         $('div.entry').each(function() {
           if ($('input.amount', this).val() != '' || $('select', this).val() != '') {
