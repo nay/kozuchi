@@ -38,6 +38,36 @@ module Deal
     super
   end
 
+  # sizeに満たない場合にフィールドを補完する
+  # line_numberが飛び石になっている場合に間に空フィールドを挟む処理も行う
+  # 未保存オブジェクトをリストの間に挿入するAPIがhas_many関連にないので、関連proxyからtargetを直接使う
+  # 削除マークありのオブジェクトがない前提
+  def fill_complex_entries(size = nil)
+    size ||= 5
+    # 大きいほうにあわせる
+    # lastが最大であるはずだが、更新直後などはソートできてないかもしれないので全部で比較
+    # 5行用意するということは最後の行は4
+    max_line_number = (debtor_entries.map(&:line_number) + creditor_entries.map(&:line_number) + [size-1]).max
+
+    for line_number in 0..max_line_number
+      unless debtor_entries.detect{|e| e.line_number.to_i == line_number}
+        # この行があればそのまま
+        # なければ、追加してソートする
+        debtor_entries.build(:line_number => line_number)
+        association(:debtor_entries).target.sort!{|a, b| a.line_number.to_i <=> b.line_number.to_i}
+      end
+
+      unless creditor_entries.detect{|e| e.line_number.to_i == line_number}
+        # この行があればそのまま
+        # なければ、追加してソートする
+        creditor_entries.build(:line_number => line_number)
+        association(:creditor_entries).target.sort!{|a, b| a.line_number.to_i <=> b.line_number.to_i}
+      end
+    end
+
+    self
+  end
+
   private
   # Entryのline_numberを調整する
   def adjust_entry_line_numbers
