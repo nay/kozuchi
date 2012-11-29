@@ -4,30 +4,13 @@ class Deal::General < Deal::Base
 
   SHOKOU = '(諸口)'
 
-  module EntriesAssociationExtension
-    def build(*args)
-      record = super
-      record.user_id = proxy_association.owner.user_id
-      record.date = proxy_association.owner.date
-      record.daily_seq = proxy_association.owner.daily_seq
-      record
-    end
-
-    def not_marked
-      find_all{|e| !e.marked_for_destruction?}
-    end
-
-  end
-
   before_destroy :cache_previous_receivers  # dependent destroy より先に
 
-  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
+  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
     e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => "line_number", :include => :account, :autosave => true
     e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => "line_number", :include => :account, :autosave => true
     e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
-
-  accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
 
   include ::Deal
   before_validation :set_required_data_in_entries, :set_unified_summary
@@ -342,6 +325,13 @@ class Deal::General < Deal::Base
       ex_account_id = e.account.link.try(:target_ex_account_id) || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}.sender_ex_account_id
       {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount}
     end
+  end
+
+  def copy_deal_info(entry)
+    super
+    entry.date = date
+    entry.daily_seq = daily_seq
+    entry
   end
 
   private
