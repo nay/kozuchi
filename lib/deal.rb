@@ -39,19 +39,20 @@ module Deal
 
   private
   def set_creditor_to_entries
-    debtor_entries.each {|e| e.creditor = false}
-    creditor_entries.each {|e| e.creditor = true}
+    debtor_entries.each {|e| e.creditor = false }
+    creditor_entries.each {|e| e.creditor = true }
   end
 
   def copy_deal_info_to_entries
-    creditor_entries.each {|e| copy_deal_info(e) }
-    debtor_entries.each {|e| copy_deal_info(e) }
+    each_entry {|e| copy_deal_info(e) }
   end
 
   def set_unified_summary
-    if @unified_summary && @summary_mode == 'unify'
-      debtor_entries.each {|e| e.summary = @unified_summary }
-      creditor_entries.each {|e| e.summary = @unified_summary }
-    end
+    each_entry {|e| e.summary = @unified_summary } if @unified_summary && @summary_mode == 'unify'
+  end
+
+  def each_entry(&block)
+    debtor_entries.each(&block)
+    creditor_entries.each(&block)
   end
 end
