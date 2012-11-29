@@ -16,7 +16,6 @@ class Deal::General < Deal::Base
   before_validation :set_unified_summary
   validate :validate_entries
 
-#  before_destroy :destroy_entries
   before_save :adjust_entry_line_numbers
   before_update :cache_previous_receivers
   after_save :request_linkings
@@ -28,7 +27,6 @@ class Deal::General < Deal::Base
   [:debtor, :creditor].each do |side|
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
       # 金額も口座IDも入っていないentry情報は無視する
-#      attributes = attributes.dup
       attributes = attributes.values if attributes.kind_of?(Hash)
 
       # attributes が array のときは　key が相当する
