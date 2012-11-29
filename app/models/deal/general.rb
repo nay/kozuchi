@@ -15,7 +15,6 @@ class Deal::General < Deal::Base
   include ::Deal
   validate :validate_entries
 
-  before_save :adjust_entry_line_numbers
   before_update :cache_previous_receivers
   after_save :request_linkings
   after_update :respond_to_sender_when_confirmed
@@ -342,51 +341,6 @@ class Deal::General < Deal::Base
     sender_ids = readonly_entries(reload).map{|e| e.account.link_requests.map(&:sender_id)}.flatten
     sender_ids.uniq!
     sender_ids
-  end
-
-  # Entryのline_numberを調整する
-  def adjust_entry_line_numbers
-    if debtor_entries.size == 1 && creditor_entries.size == 1
-      # 1:1 の場合は強制で双方0にする
-      debtor_entries.first.line_number = creditor_entries.first.line_number = 0
-    else
-      # 複数仕訳の場合、途中にある完全空白行は詰める
-      line_number = 0
-
-      # 引き当てなどをした結果、順序が逆になっている場合がある
-      debtors = debtor_entries.not_marked.sort{|a, b| a.line_number <=> b.line_number}
-      creditors = creditor_entries.not_marked.sort{|a, b| a.line_number <=> b.line_number}
-
-      # line_number に重複がある（代入漏れなどで）場合はループ前提が崩れるため先にエラーにする
-      raise "Duplicated line number in debtor entries. #{debtor_entries.inspect}" if debtors.map(&:line_number).uniq.size != debtors.size
-      raise "Duplicated line number in creditor entries. #{debtor_entries.inspect}" if creditors.map(&:line_number).uniq.size != creditors.size
-
-      while((!debtors.empty? || !creditors.empty?) && line_number <= Entry::Base::MAX_LINE_NUMBER)
-        exists = false
-        # どちらかにこの行番号があれば、次のデータへ
-        if debtors.first && debtors.first.line_number == line_number
-          exists = true
-          debtors.shift
-        end
-        if creditors.first && creditors.first.line_number == line_number
-          exists = true
-          creditors.shift
-        end
-        if exists
-          # 存在したのであれば次の行番号を検査する
-          line_number += 1
-          next
-        end
-        # どちらにもこの行番号がなかったのであれば、残っているデータのline_numberをすべてひとつ小さくする
-        # line_number が 負になるようだとプログラムエラー（無限ループ入り）なので念のため例外を発生させる
-        debtors.each {|e| e.line_number -= 1; raise "Wrong Loop" if e.line_number < 0}
-        creditors.each {|e| e.line_number -= 1;  raise "Wrong Loop" if e.line_number < 0}
-
-        # もう一度同じ行番号で検査する
-      end
-
-      # 関連内の要素が直接書き変わっているはずなのであとは続く処理に任せる
-    end
   end
 
   # 変更前にこのDealから連携していたユーザーを記憶しておく
