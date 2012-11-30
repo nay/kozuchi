@@ -2,8 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.6'
 
-gem 'sass-rails'
-
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
@@ -14,6 +12,13 @@ gem 'jpmobile'
 gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs'
 gem 'dynamic_form'
+gem 'therubyracer'
+
+group :assets do
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier', '>= 1.0.3'
+end
 
 # Use unicorn as the web server
 # gem 'unicorn'
