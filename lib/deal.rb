@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Deal
 
   module EntriesAssociationExtension
@@ -27,6 +28,10 @@ module Deal
 
   def summary_unified?
     (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
+  end
+
+  def summary=(s)
+    @unified_summary = s
   end
 
   def summary

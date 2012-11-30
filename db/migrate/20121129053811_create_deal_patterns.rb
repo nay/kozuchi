@@ -4,7 +4,7 @@ class CreateDealPatterns < ActiveRecord::Migration
     create_table :deal_patterns do |t|
       t.integer :user_id, :null => false
       t.string :code, :limit => 10 # NULL 可
-      t.string :name, :null => false, :defualt => ''
+      t.string :name, :null => false, :default => ''
 
       t.timestamps
     end

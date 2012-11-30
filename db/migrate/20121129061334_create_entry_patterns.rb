@@ -7,8 +7,8 @@ class CreateEntryPatterns < ActiveRecord::Migration
       t.boolean :creditor, :null => false, :default => false
       t.integer :line_number, :null => false, :defualt => 0
       t.string :summary, :null => false, :default => ''
-      t.integer :account_id, :null => false
-      t.integer :amount, :null => false
+      t.integer :account_id
+      t.integer :amount
     end
     add_index :entry_patterns, [:deal_pattern_id, :creditor, :line_number],
       :name => :creditor_line_number,
