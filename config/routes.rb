@@ -122,6 +122,9 @@ Kozuchi::Application.routes.draw do
   # DealSuggestionsController
   resources :deal_suggestions, :path => 'deals/suggestions', :only => [:index]
 
+  # DealPatternsController
+  resources :deal_patterns, :path => 'deals/patterns', :only => [:create]
+
   resource :mobile_device, :controller => :mobiles do
     member do
       get 'confirm_destroy'
