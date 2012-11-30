@@ -39,6 +39,11 @@ class Entry::General < Entry::Base
     self
   end
 
+  # attributes と内容が等しいかを調べる
+  def matched_with_attributes?(attributes)
+    attributes[:account_id].to_s == account_id.to_s && (Entry::Base.parse_amount(attributes[:amount]).to_s == amount.to_s || Entry::Base.parse_amount(attributes[:reversed_amount]).to_s == (amount * -1).to_s )
+  end
+
   private
   def validate_amount_is_not_zero
     errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0

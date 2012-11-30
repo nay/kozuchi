@@ -35,7 +35,7 @@ class Deal::General < Deal::Base
         matched_old_entries = []
         matched_new_entries = []
         old_entries.each do |old|
-          if matched_hash = attributes.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
+          if matched_hash = attributes.detect{|new_entry_hash| old.matched_with_attributes?(new_entry_hash) }
             matched_hash[:id] = old.id.to_s # IDを付け替える
             matched_old_entries << old
             matched_new_entries << matched_hash
