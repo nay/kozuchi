@@ -104,7 +104,7 @@ describe "Account::Asset" do
 
   # 現金の残高記入をする
   def create_balance(account_fixture_name, balance, month, day)
-    Deal::Balance.create!(:summary => "", :balance => balance, :account_id => Fixtures.identify(account_fixture_name), :user_id => @user.id, :date => Date.new(@year, month, day))
+    Deal::Balance.create!(:balance => balance, :account_id => Fixtures.identify(account_fixture_name), :user_id => @user.id, :date => Date.new(@year, month, day))
   end
 
 end

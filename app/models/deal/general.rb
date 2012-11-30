@@ -25,27 +25,24 @@ class Deal::General < Deal::Base
     define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
       # 金額も口座IDも入っていないentry情報は無視する
       attributes = attributes.values if attributes.kind_of?(Hash)
-
-      # attributes が array のときは　key が相当する
       attributes.reject!{|value| value[:amount].blank? && value[:account_id].blank?}
 
-      # 更新時は ID ではなく、内容で既存のデータと紐づける
+      # 更新時は必ずしも ID ではなく、内容で既存のデータと紐づける
       unless new_record?
-        not_matched_old_entries = send(:"#{side}_entries", true).dup
-        not_matched_new_entries = attributes
+        old_entries = Array.new(send(:"#{side}_entries", true))
 
         # attirbutes の中と引き当てていく
         matched_old_entries = []
-        not_matched_old_entries.each do |old|
-          if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
-            # サマリー・行数の引き継ぎ
-            old.summary = matched_hash[:summary]
-            old.line_number = matched_hash[:line_number] || 0 # なければゼロ = 1:1のときのみ発生する想定
-            not_matched_new_entries.delete(matched_hash)
+        matched_new_entries = []
+        old_entries.each do |old|
+          if matched_hash = attributes.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
+            matched_hash[:id] = old.id.to_s # IDを付け替える
             matched_old_entries << old
+            matched_new_entries << matched_hash
           end
         end
-        not_matched_old_entries -= matched_old_entries
+        not_matched_new_entries = attributes - matched_new_entries
+        not_matched_old_entries = old_entries - matched_old_entries
 
         # 引き当てられなかったhashからは :id をなくす
         # これにより、account_id の変更を防ぐ
@@ -61,6 +58,8 @@ class Deal::General < Deal::Base
           e.mark_for_destruction
         end
       end
+
+      # もとの（空は削除された）attributesを渡す。更新時は中のハッシュのidが加工された状態。
       send(:"#{side}_entries_attributes_without_account_care=", attributes)
     end
 
