@@ -19,6 +19,54 @@ module Deal
     base.accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
     base.before_validation :copy_deal_info_to_entries, :set_creditor_to_entries, :set_unified_summary
     base.before_save :adjust_entry_line_numbers
+
+    base.class_eval do
+      [:debtor, :creditor].each do |side|
+        define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
+          # 金額も口座IDも入っていないentry情報は無視する
+          attributes = attributes.values if attributes.kind_of?(Hash)
+          attributes.reject!{|value| value[:amount].blank? && value[:account_id].blank?}
+
+          # 更新時は必ずしも ID ではなく、内容で既存のデータと紐づける
+          unless new_record?
+            old_entries = Array.new(send(:"#{side}_entries", true))
+
+            # attirbutes の中と引き当てていく
+            matched_old_entries = []
+            matched_new_entries = []
+            old_entries.each do |old|
+              if matched_hash = attributes.detect{|new_entry_hash| old.matched_with_attributes?(new_entry_hash) }
+                matched_hash[:id] = old.id.to_s # IDを付け替える
+                matched_old_entries << old
+                matched_new_entries << matched_hash
+              end
+            end
+            not_matched_new_entries = attributes - matched_new_entries
+            not_matched_old_entries = old_entries - matched_old_entries
+
+            # 引き当てられなかったhashからは :id をなくす
+            # これにより、account_id の変更を防ぐ
+            not_matched_new_entries.each do |hash|
+              hash[:id] = nil # shallow copyにより attributes 内のhashが直接更新される
+            end
+
+            # 引き当てられなかったold entriesを削除予定にする
+            # 現在の関連のなかの該当オブジェクトにマークする
+            not_matched_old_entries.each do |old|
+              e = send(:"#{side}_entries").detect{|e| e.id == old.id}
+              raise "Could not find entry for 'old'" unless e
+              e.mark_for_destruction
+            end
+          end
+
+          # もとの（空は削除された）attributesを渡す。更新時は中のハッシュのidが加工された状態。
+          send(:"#{side}_entries_attributes_without_account_care=", attributes)
+        end
+
+        alias_method_chain :"#{side}_entries_attributes=", :account_care
+      end
+    end
+
   end
 
   def copy_deal_info(entry)
@@ -74,6 +122,13 @@ module Deal
   end
 
   private
+
+  # attributes と内容が等しいかを調べる
+  # デフォルト動作として、idだけ調べる
+  def matched_with_attributes?(attributes)
+    !id.to_s.blank? && attributes[:id].to_s == id.to_s
+  end
+
   # Entryのline_numberを調整する
   def adjust_entry_line_numbers
     if debtor_entries.size == 1 && creditor_entries.size == 1
