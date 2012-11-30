@@ -111,7 +111,7 @@
           alert('パターンを登録するには摘要が必要です。')
           return false
         } // end if
-        
+        $.post('<%= deal_patterns_path %>', $('form#deal_form').serializeArray(), function() {}, 'JSON')
       }) // end click
 
       $("input#deal_summary").observe_field(0.5, function() {
