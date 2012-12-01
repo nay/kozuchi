@@ -199,6 +199,10 @@ ja:
         incomes: "所得"  #g
         friend_requests: "友達リクエスト"  #g
 
+      pattern/deal:
+        code: "コード"
+        name: "名前"
+
       preferences:
         deals_scroll_height: "お得な高さをスクロール"  #g
         color: "カラー"  #g

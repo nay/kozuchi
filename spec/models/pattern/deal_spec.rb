@@ -37,4 +37,18 @@ describe Pattern::Deal do
       it { should == '*給料'}
     end
   end
+
+  describe "udpate" do
+    let(:deal_pattern) { FactoryGirl.create(:deal_pattern) }
+    describe "code" do
+      before do
+        deal_pattern.code = 'NEWCODE'
+      end
+      it "変更できる" do
+        deal_pattern.save.should be_true
+        deal_pattern.reload
+        deal_pattern.code.should == 'NEWCODE'
+      end
+    end
+  end
 end

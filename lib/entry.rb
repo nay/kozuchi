@@ -34,7 +34,14 @@ module Entry
     creditor? ? (amount ? amount * -1 : nil) : nil
   end
 
+  # attributes と内容が等しいかを調べる
+  # デフォルト動作として、idだけ調べる
+  def matched_with_attributes?(attributes)
+    !id.to_s.blank? && attributes[:id].to_s == id.to_s
+  end
+
   private
+
   def validate_amount_is_not_zero
     errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0
   end

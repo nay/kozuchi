@@ -1,18 +1,45 @@
-div.masters {
-  background-color: #FFF2E5;
-  padding: 4px;
+.settings {
+  h2 {
+    font-size: 20px;
+    border-left: 10px solid #FFDDBC;
+    border-bottom: 4px double #FFDDBC;
+    padding: 2px 8px 0px 8px;
+    color: #041A61;
+    margin-bottom: 8px;
+  }
 
-  div.row {
-    border-bottom: 1px solid #FFDDBC;
+  div.masters {
+    background-color: #FFF2E5;
+    padding: 4px;
 
-    .timestamp {
-      color: #666666;
-      margin: 0px 20px 0px 20px;
-      float: right;
+    div.row {
+      border-bottom: 1px solid #FFDDBC;
+      padding-left: 20px;
+
+      .timestamp {
+        color: #666666;
+        margin: 0px 20px 0px 20px;
+        float: right;
+      }
+      .delete {
+        margin: 0px 20px 0px 20px;
+        float: right;
+      }
     }
-    .delete {
-      margin: 0px 20px 0px 20px;
-      float: right;
+  }
+
+  .form_box {
+    .timestamps {
+      text-align: right;
+      font-size: 11px;
     }
+
+    .floating_field {
+      float: left;
+      margin-right: 10px;
+    }
+  }
+
+  #deal_pattern_form {
   }
 }

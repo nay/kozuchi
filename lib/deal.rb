@@ -124,12 +124,6 @@ module Deal
 
   private
 
-  # attributes と内容が等しいかを調べる
-  # デフォルト動作として、idだけ調べる
-  def matched_with_attributes?(attributes)
-    !id.to_s.blank? && attributes[:id].to_s == id.to_s
-  end
-
   # Entryのline_numberを調整する
   def adjust_entry_line_numbers
     if debtor_entries.size == 1 && creditor_entries.size == 1

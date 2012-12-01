@@ -48,9 +48,9 @@
       <%= yield :side %>
     </div>
     <!-- contents -->
-    <div id="contents">
+    <%= content_tag :div, :id => "contents", :class => controller.class.name =~ /^Settings::/ ? 'settings' : nil do %>
       <%= yield %>
-    </div>
+    <% end %>
     <!-- footer -->
     <%= render :partial => "shared/footer" %>
     </div>
