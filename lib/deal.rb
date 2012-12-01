@@ -84,7 +84,7 @@ module Deal
   end
 
   def summary
-    @unified_summary || debtor_entries.first.summary
+    @unified_summary || (debtor_entries + creditor_entries).detect{|e| e.summary.present?}.try(:summary) || ''
   end
 
   def reload

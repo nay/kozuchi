@@ -1,0 +1,7 @@
+<% recent_deal_patterns = current_user.deal_patterns.recent.all %>
+<% unless recent_deal_patterns.empty? %>
+  <!-- recent deal patterns -->
+  <div id="recent_deal_patterns">
+    <%= render :partial => 'shared/deal_patterns/deal_pattern', :collection => recent_deal_patterns %>
+  </div>
+<% end %>

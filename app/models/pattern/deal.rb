@@ -12,6 +12,12 @@ class Pattern::Deal < ActiveRecord::Base
 
   before_validation :set_user_id_to_entries
 
+  scope :recent, lambda { order('updated_at desc').limit(10) }
+
+  def to_s
+    "#{"#{code} " if code.present?}#{name.present? ? name : "*#{summary}"}"
+  end
+
   private
   def set_user_id_to_entries
     debtor_entries.each do |e|

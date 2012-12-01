@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
 #  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
+  has_many :deal_patterns, :class_name => "Pattern::Deal"
+
   ACCOUNTS_OPTIONS_ASC = ['Account::Asset', 'Account::Income', 'Account::Expense']
   ACCOUNTS_OPTIONS_DESC = ['Account::Expense', 'Account::Asset', 'Account::Income']
   has_many  :accounts, :class_name => 'Account::Base', :order => 'accounts.sort_key' do

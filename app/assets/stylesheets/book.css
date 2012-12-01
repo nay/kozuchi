@@ -2,6 +2,7 @@
  *= require_self
  *= require calendar
  *= require day_navigator
+ *= require deal_patterns
 */
 
 /* ============== 共通情報　=============== */

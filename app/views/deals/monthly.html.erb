@@ -1,3 +1,7 @@
+<%= content_for :side do %>
+  <%= render :partial => 'shared/deal_patterns/recent' %>
+<% end %>
+
 <div style="float:right">
   <%= form_tag(search_deals_path, :method => :get) do -%>
     <%= text_field_tag :keyword, "", :size => 14 %>
