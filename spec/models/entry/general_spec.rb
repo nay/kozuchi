@@ -7,14 +7,22 @@ describe Entry::General do
   set_fixture_class  :accounts => Account::Base
   include EntrySpecHelper
 
-  describe "valid?" do
+  describe "#valid?" do
     let(:entry) {new_general_entry(:taro_cache, 300)}
     it "正しい情報を与えたときにtrueとなる" do
       entry.should be_valid
     end
 
-    it_behaves_like "including ::Entry"
-
+    it_behaves_like "valid? when including ::Entry"
   end
 
+  describe "create" do
+    let(:entry) {new_general_entry(:taro_cache, 300)}
+    it_behaves_like "save when including ::Entry"
+  end
+
+  describe "update" do
+    let(:entry) {e = new_general_entry(:taro_cache, 300); e.save!; e}
+    it_behaves_like "save when including ::Entry"
+  end
 end

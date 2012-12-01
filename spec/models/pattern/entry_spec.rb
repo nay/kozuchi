@@ -18,6 +18,17 @@ describe Pattern::Entry do
       entry.should be_valid
     end
 
-    it_behaves_like "including ::Entry"
+    it_behaves_like "valid? when including ::Entry"
   end
+
+  describe "create" do
+    let(:entry) {FactoryGirl.build(:entry_pattern)}
+    it_behaves_like "save when including ::Entry"
+  end
+
+  describe "update" do
+    let(:entry) {FactoryGirl.build(:entry_pattern)}
+    it_behaves_like "save when including ::Entry"
+  end
+
 end
