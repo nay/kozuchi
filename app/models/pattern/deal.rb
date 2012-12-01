@@ -7,6 +7,8 @@ class Pattern::Deal < ActiveRecord::Base
     e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => :line_number, :dependent => :destroy
   end
   include ::Deal
+  # 読み出し専用の共通的なentry
+  has_many :readonly_entries, :include => :account, :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :order => 'line_number, creditor', :readonly => true
 
   attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes
 
@@ -16,6 +18,10 @@ class Pattern::Deal < ActiveRecord::Base
 
   def to_s
     "#{"#{code} " if code.present?}#{name.present? ? name : "*#{summary}"}"
+  end
+
+  def human_name
+    "#{self.class.model_name.human}「#{to_s}」"
   end
 
   private

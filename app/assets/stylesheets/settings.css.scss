@@ -1,0 +1,18 @@
+div.masters {
+  background-color: #FFF2E5;
+  padding: 4px;
+
+  div.row {
+    border-bottom: 1px solid #FFDDBC;
+
+    .timestamp {
+      color: #666666;
+      margin: 0px 20px 0px 20px;
+      float: right;
+    }
+    .delete {
+      margin: 0px 20px 0px 20px;
+      float: right;
+    }
+  }
+}

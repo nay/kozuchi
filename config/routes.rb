@@ -88,6 +88,8 @@ Kozuchi::Application.routes.draw do
     resource :friend_acceptance, :path => "friends/acceptance", :only => [:create, :destroy] # createでは クエリーで target_login を渡したいため
     resources :friends, :only => [:index]
 
+    # 記入パターン
+    resources :deal_patterns, :path => 'deals/patterns'
 
     # カスタマイズ
     resource :preferences, :only => [:show, :update]

@@ -1,0 +1,11 @@
+<div class="row deal_pattern">
+  <%= link_to deal_pattern.to_s, settings_deal_pattern_path(deal_pattern) %>
+  <div class="delete">
+    <%= link_to '削除', settings_deal_pattern_path(deal_pattern), :method => :delete, :confirm => "#{deal_pattern.human_name}を削除します。よろしいですか？" %>
+  </div>
+  <div class="timestamp">
+    <%= l deal_pattern.updated_at %> 更新
+  </div>
+  <div style="clear:right;"></div>
+</div>
+

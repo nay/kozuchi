@@ -22,6 +22,18 @@ module Entry
     account_id.blank? && amount.blank? && summary.blank?
   end
 
+  def debtor?
+    !creditor?
+  end
+
+  def debtor_amount
+    debtor? ? amount : nil
+  end
+
+  def creditor_amount
+    creditor? ? (amount ? amount * -1 : nil) : nil
+  end
+
   private
   def validate_amount_is_not_zero
     errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0
