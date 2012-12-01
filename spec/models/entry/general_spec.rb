@@ -8,13 +8,12 @@ describe Entry::General do
   include EntrySpecHelper
 
   describe "valid?" do
+    let(:entry) {new_general_entry(:taro_cache, 300)}
     it "正しい情報を与えたときにtrueとなる" do
-      new_general_entry(:taro_cache, 300).should be_valid
+      entry.should be_valid
     end
 
-    it "金額に0が与えられるとfalse" do
-      new_general_entry(:taro_cache, 0).should_not be_valid
-    end
+    it_behaves_like "including ::Entry"
 
   end
 
