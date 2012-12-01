@@ -24,6 +24,7 @@ module Deal
       [:debtor, :creditor].each do |side|
         define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
           # 金額も口座IDも入っていないentry情報は無視する
+          # TODO: 摘要をだまって無視することになるため変えたいがエラーメッセージ等の調整が必要
           attributes = attributes.values if attributes.kind_of?(Hash)
           attributes.reject!{|value| value[:amount].blank? && value[:account_id].blank?}
 
