@@ -1,20 +1,2 @@
 <h2><%= @deal_pattern.human_name %>の編集</h2>
-<div class="navigation">
-  <%= link_to '一覧へ', settings_deal_patterns_path %>
-</div>
-<div class="form_box">
-  <div class="timestamps">
-    <%= l @deal_pattern.created_at %> 登録<br />
-    <%= l @deal_pattern.updated_at %> 更新<br />
-  </div>
-  <%= form_for @deal_pattern, :as => :deal_pattern, :url => settings_deal_pattern_path(@deal_pattern), :html => {:id => 'deal_pattern_form'} do |f| %>
-    <div class="floating_field"><%= f.label :code %>: <%= f.text_field :code, :size => 10, :class => 'code', :tabindex => 1 %></div>
-    <div class="floating_field"><%= f.label :name %>: <%= f.text_field :name, :size => 40, :class => 'name', :tabindex => 2 %></div>
-    <div style="clear:left;"></div>
-    <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern} %>
-    <div>
-      <%= f.submit @deal_pattern.new_record? ? '登録' : '更新', :tablindex => "1099", :class => 'button' %>
-      <%= link_to 'この記入パターンを削除', settings_deal_pattern_path(@deal_pattern), :confirm => confirm_message_on_destroy(@deal_pattern), :class => 'button', :method => :delete %>
-    </div>
-  <% end %>
-</div>
+<%= render :partial => 'form' %>

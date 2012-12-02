@@ -15,9 +15,18 @@ class Settings::DealPatternsController < ApplicationController
   end
 
   def new
+    @deal_pattern = current_user.deal_patterns.build
+    @deal_pattern.fill_complex_entries
   end
 
   def create
+    @deal_pattern = current_user.deal_patterns.build(params[:deal_pattern])
+    if @deal_pattern.save
+      redirect_to settings_deal_patterns_path, :notice => message_on_create(@deal_pattern)
+    else
+      @deal_pattern.fill_complex_entries
+      render :new
+    end
   end
 
   def update

@@ -7,6 +7,9 @@
     color: #041A61;
     margin-bottom: 8px;
   }
+  .errorExplanation h2 {
+    color: #FF6347;
+  }
 
   div.masters {
     background-color: #FFF2E5;
@@ -40,6 +43,12 @@
     }
   }
 
+  .errorExplanation {
+      border: 1px solid orange;
+      padding: 4px;
+  }
+
   #deal_pattern_form {
   }
+
 }

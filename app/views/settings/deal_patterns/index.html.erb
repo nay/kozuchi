@@ -1,4 +1,7 @@
 <h2>記入パターン一覧</h2>
+<div class="navigation">
+  <%= link_to '新規登録', new_settings_deal_pattern_path %>
+</div>
 <%= render 'shared/information' %>
 <div class="masters">
   <%= render :partial => 'deal_pattern', :collection => @deal_patterns %>

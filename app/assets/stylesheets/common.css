@@ -115,6 +115,10 @@ option {
     background-color: orange;
 }
 
+#errorExplanation h2 {
+  border: 0;
+}
+
 /* ------ ボタン ---------- */
 button, input.button, td.button input {
     white-space: nowrap;

@@ -51,4 +51,13 @@ describe Pattern::Deal do
       end
     end
   end
+
+  describe "#valid?" do
+    context "Entryがないとき" do
+      let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :debtor_entries_attributes => [], :creditor_entries_attributes => []) }
+      it do
+        deal_pattern.should_not be_valid
+      end
+    end
+  end
 end

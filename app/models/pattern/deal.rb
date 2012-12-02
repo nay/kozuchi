@@ -13,6 +13,7 @@ class Pattern::Deal < ActiveRecord::Base
   attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes
 
   before_validation :set_user_id_to_entries
+  validate :validate_entry_exists
 
   scope :recent, lambda { order('updated_at desc').limit(10) }
 
@@ -25,6 +26,11 @@ class Pattern::Deal < ActiveRecord::Base
   end
 
   private
+
+  def validate_entry_exists
+    errors.add(:base, '記入内容がありません。') if debtor_entries.empty? && creditor_entries.empty?
+  end
+
   def set_user_id_to_entries
     debtor_entries.each do |e|
       e.user_id = user_id
