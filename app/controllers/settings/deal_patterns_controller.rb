@@ -23,13 +23,16 @@ class Settings::DealPatternsController < ApplicationController
   def update
     @deal_pattern.attributes = params[:deal_pattern]
     if @deal_pattern.save
-      redirect_to settings_deal_patterns_path, :notice => "#{@deal_pattern.human_name}を更新しました。"
+      redirect_to settings_deal_patterns_path, :notice => message_on_update(@deal_pattern)
     else
       render :show
     end
   end
 
   def destroy
+    human_name = @deal_pattern.human_name # entryが削除されると再現できなくなる
+    @deal_pattern.destroy
+    redirect_to settings_deal_patterns_path, :notice => message_on_destroy(human_name)
   end
 
   private

@@ -5,6 +5,14 @@
 #  - Tsutomu Kuroda (t-kuroda@oiax.jp)
 
 ja:
+  messages:
+    confirm:
+      destroy: "%{target}を削除します。よろしいですか？"
+    complete:
+      create: "%{target}を登録しました。"
+      update: "%{target}を更新しました。"
+      destroy: "%{target}を削除しました。"
+    empty: "%{target}はありません。"
   date:
     formats:
       default: "%Y/%m/%d"

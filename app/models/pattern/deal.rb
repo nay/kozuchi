@@ -20,8 +20,8 @@ class Pattern::Deal < ActiveRecord::Base
     "#{"#{code} " if code.present?}#{name.present? ? name : "*#{summary}"}"
   end
 
-  def human_name
-    "#{self.class.model_name.human}「#{to_s}」"
+  def name_for_human
+    to_s
   end
 
   private
