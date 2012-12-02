@@ -47,11 +47,8 @@ class Settings::DealPatternsController < ApplicationController
 
   # 記入欄を増やす
   def create_entry
-    p params[:deal_pattern].inspect
     entries_size = params[:deal_pattern][:debtor_entries_attributes].size
     @deal_pattern.attributes = params[:deal_pattern]
-    p @deal_pattern.debtor_entries.inspect
-    p @deal_pattern.creditor_entries.inspect
     @deal_pattern.fill_complex_entries(entries_size+1)
     render @deal_pattern.new_record? ? :new : :show
   end

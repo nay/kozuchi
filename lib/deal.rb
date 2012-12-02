@@ -76,7 +76,7 @@ module Deal
   end
 
   def summary_unified?
-    (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
+    summary_mode != 'split' && (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
   end
 
   def summary=(s)
