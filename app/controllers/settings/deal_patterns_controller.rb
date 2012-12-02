@@ -5,6 +5,7 @@ class Settings::DealPatternsController < ApplicationController
   menu "記入パターン"
 
   before_filter :find_deal_pattern, :only => [:show, :update, :destroy]
+  before_filter :find_or_build_deal_pattern, :only => [:create_entry]
 
   def index
     @deal_patterns = current_user.deal_patterns.order('updated_at desc').all # TODO: paginate
@@ -44,9 +45,27 @@ class Settings::DealPatternsController < ApplicationController
     redirect_to settings_deal_patterns_path, :notice => message_on_destroy(human_name)
   end
 
+  # 記入欄を増やす
+  def create_entry
+    p params[:deal_pattern].inspect
+    entries_size = params[:deal_pattern][:debtor_entries_attributes].size
+    @deal_pattern.attributes = params[:deal_pattern]
+    p @deal_pattern.debtor_entries.inspect
+    p @deal_pattern.creditor_entries.inspect
+    @deal_pattern.fill_complex_entries(entries_size+1)
+    render @deal_pattern.new_record? ? :new : :show
+  end
+
   private
 
   def find_deal_pattern
     @deal_pattern = current_user.deal_patterns.find(params[:id])
+  end
+  def find_or_build_deal_pattern
+    @deal_pattern = if params[:id] == 'new'
+      current_user.deal_patterns.build
+    else
+      current_user.deal_patterns.find(params[:id])
+    end
   end
 end

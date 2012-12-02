@@ -14,6 +14,7 @@
     <div class="floating_field"><%= f.label :name %>: <%= f.text_field :name, :size => 40, :class => 'name', :tabindex => 2 %></div>
     <div style="clear:left;"></div>
     <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern} %>
+    <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', settings_deal_pattern_entries_path(@deal_pattern.new_record? ? 'new' : @deal_pattern), :id => 'add_entry_link' %></div>
     <div>
       <%= f.submit @deal_pattern.new_record? ? '登録' : '更新', :tablindex => "1099", :class => 'button' %>
       <% unless @deal_pattern.new_record? %>
@@ -22,3 +23,12 @@
     </div>
   <% end %>
 </div>
+<%= javascript_tag do %>
+  jQuery(document).ready(function($){
+    $('#add_entry_link').click(function() {
+      $('#deal_pattern_form').attr('action', $(this).attr('href'))
+      $('#deal_pattern_form').submit()
+      return false;
+    })
+  })
+<% end %>

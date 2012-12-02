@@ -89,7 +89,10 @@ Kozuchi::Application.routes.draw do
     resources :friends, :only => [:index]
 
     # 記入パターン
-    resources :deal_patterns, :path => 'deals/patterns'
+    controller :deal_patterns do
+      resources :deal_patterns, :path => 'deals/patterns'
+      match 'deals/patterns/:id/entries', :action => 'create_entry', :as => :deal_pattern_entries, :via => [:post, :put]
+    end
 
     # カスタマイズ
     resource :preferences, :only => [:show, :update]
