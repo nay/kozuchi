@@ -53,6 +53,16 @@ class Settings::DealPatternsController < ApplicationController
     render @deal_pattern.new_record? ? :new : :show
   end
 
+  # 指定されたコードでそのユーザーに記入パターンが登録済みか調べる
+  def code
+    if pattern_deal = current_user.deal_patterns.find_by_code(params[:code])
+      render :text => pattern_deal.code
+    else
+      render :text => '' # :nothing => true だと半角スペースが入って返されてしまうので
+    end
+  end
+
+
   private
 
   def find_deal_pattern

@@ -8,6 +8,7 @@ class CreateDealPatterns < ActiveRecord::Migration
 
       t.timestamps
     end
+    execute "ALTER TABLE deal_patterns MODIFY code varchar(10) BINARY;"
     add_index :deal_patterns, [:user_id, :code], :unique => true
   end
 

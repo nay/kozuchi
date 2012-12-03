@@ -92,6 +92,7 @@ Kozuchi::Application.routes.draw do
     controller :deal_patterns do
       resources :deal_patterns, :path => 'deals/patterns'
       match 'deals/patterns/:id/entries', :action => 'create_entry', :as => :deal_pattern_entries, :via => [:post, :put]
+      get 'deals/patterns/codes/:code', :action => 'code', :as => :deal_pattern_codes
     end
 
     # カスタマイズ

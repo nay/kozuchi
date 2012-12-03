@@ -13,6 +13,7 @@
     <div class="floating_field"><%= f.label :code %>: <%= f.text_field :code, :size => 10, :class => 'code', :tabindex => 1 %></div>
     <div class="floating_field"><%= f.label :name %>: <%= f.text_field :name, :size => 40, :class => 'name', :tabindex => 2 %></div>
     <div style="clear:left;"></div>
+    <div id="code_duplication" style="display:none;" class="warning">コード<span id="duplicated_code"></span>のパターンがすでに登録されています。<%= f.check_box :overwrites_code %>上書き登録する</div>
     <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern} %>
     <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', settings_deal_pattern_entries_path(@deal_pattern.new_record? ? 'new' : @deal_pattern), :id => 'add_entry_link' %></div>
     <div>
@@ -25,10 +26,31 @@
 </div>
 <%= javascript_tag do %>
   jQuery(document).ready(function($){
+
+    // add entry
     $('#add_entry_link').click(function() {
       $('#deal_pattern_form').attr('action', $(this).attr('href'))
       $('#deal_pattern_form').submit()
       return false;
     })
+    
+    // show code duplication alert and checkbox if reuqired
+    $("input#deal_pattern_code").observe_field(0.5, function() {
+      if ($('#deal_pattern_code').val() == '') return
+      $.ajax({
+        url: '<%= settings_deal_pattern_codes_path(:code => 'code_template') %>'.replace('code_template', $('input#deal_pattern_code').val()),
+        dataType: 'text',
+        success: function(data, dataType) {
+          if (data != '') {
+            $('#duplicated_code').text('「' + data + '」')
+            $('#code_duplication').show()
+          } else {
+            $('#code_duplication').hide()
+            $('#deal_pattern_overwrites_code').attr('checked', false)
+          }
+        }
+      })
+    });
+
   })
 <% end %>

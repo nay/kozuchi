@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Pattern::Deal < ActiveRecord::Base
   self.table_name = 'deal_patterns'
-  
+
+  belongs_to :user, :foreign_key => "user_id"
   with_options :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
     e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => :line_number, :dependent => :destroy
     e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => :line_number, :dependent => :destroy
@@ -10,9 +11,11 @@ class Pattern::Deal < ActiveRecord::Base
   # 読み出し専用の共通的なentry
   has_many :readonly_entries, :include => :account, :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :order => 'line_number, creditor', :readonly => true
 
-  attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes
+  attr_accessor :overwrites_code
+  attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes, :overwrites_code
 
   before_validation :set_user_id_to_entries
+  validates :code, :uniqueness => {:scope => :user_id, :if => lambda{|r| !r.overwrites_code?}}
   validate :validate_entry_exists
 
   scope :recent, lambda { order('updated_at desc').limit(10) }
@@ -24,6 +27,50 @@ class Pattern::Deal < ActiveRecord::Base
   def name_for_human
     to_s
   end
+
+  def overwrites_code?
+    overwrites_code.to_i == 1 || overwrites_code == true
+  end
+
+  def assignable_attributes
+    attributes.merge({
+        # 検証時の見せ方に影響するため必要
+        'summary_mode' => summary_mode,
+        'summary' => @unified_summary,
+        # Entry は今のところカラム情報だけで足りる
+        'debtor_entries_attributes' => debtor_entries.map(&:attributes),
+        'creditor_entries_attributes' => debtor_entries.map(&:attributes)
+      }).except('id', 'user_id', 'created_at', 'updated_at')
+  end
+
+  # コードの上書きが指定されていた場合、上書きモードにする
+  # id が更新された場合は true を返す
+  def prepare_overwrite
+    return false unless overwrites_code?
+
+    # 対応するcodeを持つ既存レコードを取得
+    target = self.class.find_by_code(code)
+    return false unless target # 対象が存在しなければ無視（通常の create or update）
+
+    # 自分がそのレコードであればなにもしない（普通に更新する）
+    return false if !new_record? && self.id == target.id
+
+    # 内容を保存しておく
+    copied_attributes = assignable_attributes
+
+    # 対応するcodeを持つ既存レコードを表すオブジェクトに変換する（Rails依存）
+    self.id = target.id
+    @new_record = false
+    reload
+
+    # 変更内容を入れる
+    self.attributes = copied_attributes
+    # 上書きモードは解除する
+    self.overwrites_code = nil
+
+    true
+  end
+
 
   private
 
@@ -39,4 +86,5 @@ class Pattern::Deal < ActiveRecord::Base
       e.user_id = user_id
     end
   end
+
 end
