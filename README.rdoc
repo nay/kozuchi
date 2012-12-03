@@ -1,3 +1,5 @@
+{<img src="https://travis-ci.org/everyleaf/kozuchi.png?branch=getting_started_with_travis" />}[https://travis-ci.org/everyleaf/kozuchi.png?branch=getting_started_with_travis]]
+
 = Kozuchi
 
 Kozuchi is a home-accounting web application. ('家計簿' in Japanese.)
