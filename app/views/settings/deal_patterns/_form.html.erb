@@ -25,7 +25,25 @@
   <% end %>
 </div>
 <%= javascript_tag do %>
+  function checkCodeDuplication() {
+    if (jQuery('#deal_pattern_code').val() == '') return
+    jQuery.ajax({
+      url: '<%= settings_deal_pattern_codes_path(:code => 'code_template') %>'.replace('code_template', jQuery('input#deal_pattern_code').val()),
+      dataType: 'text',
+      success: function(data, dataType) {
+        if (data != '') {
+          jQuery('#duplicated_code').text('「' + data + '」')
+          jQuery('#code_duplication').show()
+        } else {
+          jQuery('#code_duplication').hide()
+          jQuery('#deal_pattern_overwrites_code').attr('checked', false)
+        }
+      }
+    })
+  }
+
   jQuery(document).ready(function($){
+    checkCodeDuplication()
 
     // add entry
     $('#add_entry_link').click(function() {
@@ -35,22 +53,7 @@
     })
     
     // show code duplication alert and checkbox if reuqired
-    $("input#deal_pattern_code").observe_field(0.5, function() {
-      if ($('#deal_pattern_code').val() == '') return
-      $.ajax({
-        url: '<%= settings_deal_pattern_codes_path(:code => 'code_template') %>'.replace('code_template', $('input#deal_pattern_code').val()),
-        dataType: 'text',
-        success: function(data, dataType) {
-          if (data != '') {
-            $('#duplicated_code').text('「' + data + '」')
-            $('#code_duplication').show()
-          } else {
-            $('#code_duplication').hide()
-            $('#deal_pattern_overwrites_code').attr('checked', false)
-          }
-        }
-      })
-    });
+    $("input#deal_pattern_code").observe_field(0.5, checkCodeDuplication)
 
   })
 <% end %>
