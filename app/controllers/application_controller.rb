@@ -40,8 +40,16 @@ class ApplicationController < ActionController::Base
       when /complex/
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
-          load = params[:load] ? current_user.general_deals.find_by_id(params[:load]) : nil
-          load ||= params[:pattern_id] ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
+          load = params[:load].present? ? current_user.general_deals.find_by_id(params[:load]) : nil
+          if !load && params[:pattern_code].present?
+            load =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+            # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+            unless load
+              render :text => 'Code not found'
+              return
+            end
+          end
+          load ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
           if load
             @deal.load(load)
             @deal.fill_complex_entries

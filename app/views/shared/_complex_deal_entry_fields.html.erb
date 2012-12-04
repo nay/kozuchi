@@ -87,12 +87,45 @@
       <% end %>
     <% end %>
   </div>
-  <% if deal.kind_of?(Deal::Base) %>
-    <div class="deal_patterns" style="float:left; margin-left: 10px;">
-      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
-      <div></div>
-    </div>
-  <% end %>
+  <div class="deal_patterns" style="float:left; margin-left: 10px;">
+    <div style="display:none;" id="load_pattern_url"><%= 
+      case deal
+      when Deal::General
+        deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : ''
+      when Pattern::Deal
+        deal.new_record? ? '' : ''
+      else
+        raise "unknown Deal object"
+      end
+    %></div>
+    <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
+    <div id="found_patterns" style="width: 240px;" class="warning"></div>
+  </div>
   <div style="clear: left;"></div>
 </div>
+<%= javascript_tag do %>
+  jQuery(document).ready(function($){
+    $('input#pattern_keyword').keypress(function(e){
+      // When the return key is pressed on pattern_keyword field
+      if (e.which && e.which === 13) {
+        $('#found_patterns')[0].innerHTML = ''
+        var code = $('input#pattern_keyword').val()
+        if (code != '') {
+          // try to load that pattern
+          $('#notice').hide()
+          var url = $('#load_pattern_url').text().replace('template_pattern_code', encodeURIComponent(code))
+          // 指定したコードがないときは 'Code not found' が返る
+          $.get(url, function(data) {
+            if (data == 'Code not found') {
+              $('#found_patterns')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
+            } else {
+              $('#deal_forms')[0].innerHTML = data
+            }
+          })
+        }
+        return false
+      }
+    })
+  })
 
+<% end %>
