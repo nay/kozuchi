@@ -42,7 +42,7 @@ class Pattern::Deal < ActiveRecord::Base
       }).except(:id, :user_id, :created_at, :updated_at)
   end
 
-  def save
+  def save(*)
     transaction do
       old_id = new_record? ? nil : id
       prepare_overwrite
@@ -54,7 +54,7 @@ class Pattern::Deal < ActiveRecord::Base
     end
   end
 
-  def save!
+  def save!(*)
     transaction do
       old_id = new_record? ? nil : id
       prepare_overwrite

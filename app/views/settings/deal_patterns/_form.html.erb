@@ -28,7 +28,7 @@
   function checkCodeDuplication() {
     if (jQuery('#deal_pattern_code').val() == '') return
     jQuery.ajax({
-      url: '<%= settings_deal_pattern_codes_path(:code => 'code_template') %>'.replace('code_template', jQuery('input#deal_pattern_code').val()),
+      url: '<%= settings_deal_pattern_codes_path(:code => 'code_template', :except => @deal_pattern.new_record? ? nil : @deal_pattern.id) %>'.replace('code_template', jQuery('input#deal_pattern_code').val()),
       dataType: 'text',
       success: function(data, dataType) {
         if (data != '') {
