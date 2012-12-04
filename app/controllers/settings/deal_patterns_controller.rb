@@ -50,7 +50,8 @@ class Settings::DealPatternsController < ApplicationController
     entries_size = params[:deal_pattern][:debtor_entries_attributes].size
     @deal_pattern.attributes = params[:deal_pattern]
     @deal_pattern.fill_complex_entries(entries_size+1)
-    render @deal_pattern.new_record? ? :new : :show
+    render :partial => 'form'
+#    render @deal_pattern.new_record? ? :new : :show
   end
 
   # 指定されたコードでそのユーザーに記入パターンが登録済みか調べる
