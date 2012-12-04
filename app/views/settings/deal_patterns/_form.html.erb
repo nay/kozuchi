@@ -48,9 +48,6 @@
     // add entry
     $('#add_entry_link').click(function() {
       $('#form_frame').load(this.href, $('#deal_pattern_form').serializeArray())
-
-//      $('#deal_pattern_form').attr('action', $(this).attr('href'))
-//      $('#deal_pattern_form').submit()
       return false;
     })
     
