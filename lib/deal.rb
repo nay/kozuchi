@@ -69,6 +69,12 @@ module Deal
 
   end
 
+  def load(from)
+    self.debtor_entries_attributes = from.debtor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    self.creditor_entries_attributes = from.creditor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    self
+  end
+
   def copy_deal_info(entry)
     entry.user_id = user_id
     entry

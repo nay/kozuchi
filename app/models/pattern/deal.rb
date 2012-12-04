@@ -14,8 +14,10 @@ class Pattern::Deal < ActiveRecord::Base
   attr_accessor :overwrites_code
   attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes, :overwrites_code
 
-  before_validation :set_user_id_to_entries
-  validates :code, :uniqueness => {:scope => :user_id, :if => lambda{|r| !r.overwrites_code?}}
+  before_validation :set_user_id_to_entries, :avoid_empty_code
+  # 検証なしの場合も保証したいため以下は before_save で重複して実行する
+  before_save :set_user_id_to_entries, :avoid_empty_code
+  validates :code, :uniqueness => {:scope => :user_id, :allow_nil => true, :if => lambda{|r| !r.overwrites_code?}}
   validate :validate_entry_exists
 
   scope :recent, lambda { order('updated_at desc').limit(10) }
@@ -71,6 +73,7 @@ class Pattern::Deal < ActiveRecord::Base
   # id が更新された場合は true を返す
   def prepare_overwrite
     return false unless overwrites_code?
+    return false if code.blank? # 強制でnil にする前に通ると思われるためblank?で判定する
 
     # 対応するcodeを持つ既存レコードを取得
     target = self.class.find_by_code(code)
@@ -98,16 +101,20 @@ class Pattern::Deal < ActiveRecord::Base
 
   private
 
+  def avoid_empty_code
+    self.code = nil if code.blank?
+  end
+
   def validate_entry_exists
     errors.add(:base, '記入内容がありません。') if debtor_entries.empty? && creditor_entries.empty?
   end
 
   def set_user_id_to_entries
     debtor_entries.each do |e|
-      e.user_id = user_id
+      e.user_id ||= user_id
     end
     creditor_entries.each do |e|
-      e.user_id = user_id
+      e.user_id ||= user_id
     end
   end
 

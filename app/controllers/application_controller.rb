@@ -41,6 +41,7 @@ class ApplicationController < ActionController::Base
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
           load = params[:load] ? current_user.general_deals.find_by_id(params[:load]) : nil
+          load ||= params[:pattern_id] ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
           if load
             @deal.load(load)
             @deal.fill_complex_entries

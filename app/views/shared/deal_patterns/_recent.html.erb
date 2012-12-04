@@ -4,4 +4,13 @@
   <div id="recent_deal_patterns">
     <%= render :partial => 'shared/deal_patterns/deal_pattern', :collection => recent_deal_patterns %>
   </div>
+  <%= javascript_tag do %>
+    jQuery(document).ready(function($){
+      $('a.new_deal_with_pattern_link').click(function() {
+        $('#notice').hide()
+        $('#deal_form').load(this.href)
+        return false
+      })
+    })
+  <% end %>
 <% end %>

@@ -48,14 +48,6 @@ class Deal::General < Deal::Base
     super
   end
 
-  # 内容をコピーする
-  def load(from)
-    self.debtor_entries_attributes = from.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
-    self.creditor_entries_attributes = from.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
-    self
-  end
-
-
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
     error_if_not_empty

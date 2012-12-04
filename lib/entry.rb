@@ -7,7 +7,11 @@ module Entry
 
     base.before_save :reject_if_empty
   end
-  
+
+  def copyable_attributes
+    HashWithIndifferentAccess.new(attributes).slice(:account_id, :amount, :line_number, :summary)
+  end
+
   def reversed_amount=(ra)
     # TODO: parse_amount の位置をどうするか
     self.amount = ra.blank? ? ra : Entry::Base.parse_amount(ra).to_i * -1
