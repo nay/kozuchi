@@ -40,6 +40,14 @@
     .floating_field {
       float: left;
       margin-right: 10px;
+
+      .field_with_errors {
+        display: inline;
+
+        input[type='text'] {
+          background-color: yellow;
+        }
+      }
     }
   }
 
