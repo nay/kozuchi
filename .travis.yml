@@ -1,5 +1,7 @@
 language: ruby
 rvm:
- - 1.9.3
+  - "1.9.3"
 
-before_install: cp config/database.yml.sample config/database.yml
+before_script:
+  - cp config/database.yml.sample config/database.yml
+  - rake db:migrate
