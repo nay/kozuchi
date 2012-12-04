@@ -11,13 +11,45 @@ class Settings::DealPatternsController < ApplicationController
     @deal_patterns = current_user.deal_patterns.order('updated_at desc').all # TODO: paginate
   end
   
+  # :pattern_code が指定されていたら対応する内容を画面上にコピーする
+  # 何も指定していない場合、リセットの役割を果たす(TODO: I/F未実装)
+  # request が Ajax かどうかで両対応
   def show
+    load = nil
+    if params[:pattern_code].present?
+      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      unless load
+        render :text => 'Code not found'
+        return
+      end
+    elsif params[:pattern_id].present?
+      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+    end
+    @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
+
+    render :partial => 'form' if request.xhr?
   end
 
+  # :pattern_code が指定されていたら対応する内容を画面上にコピーする
+  # 何も指定していない場合、リセットの役割を果たす(TODO: I/F未実装)
+  # request が Ajax かどうかで両対応
   def new
+    load = nil
+    if params[:pattern_code].present?
+      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      unless load
+        render :text => 'Code not found'
+        return
+      end
+    elsif params[:pattern_id].present?
+      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+    end
     @deal_pattern = current_user.deal_patterns.build
+    @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
+
+    render :partial => 'form' if request.xhr?
   end
 
   def create

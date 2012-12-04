@@ -1,3 +1,7 @@
+<%
+  # TODO: url や更新場所など、呼び出し元依存の分岐コードが入ってしまっているのを整理したい
+  update_area_id = deal.kind_of?(Deal::Base) ? 'deal_forms' : 'form_frame'
+%>
 <%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
   <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
   <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
@@ -93,7 +97,7 @@
       when Deal::General
         deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : edit_deal_path(:id => deal.id, :pattern_code => 'template_pattern_code')
       when Pattern::Deal
-        deal.new_record? ? '' : ''
+        deal.new_record? ? new_settings_deal_pattern_path(:pattern_code => 'template_pattern_code') : settings_deal_pattern_path(:id => deal.id, :pattern_code => 'template_pattern_code')
       else
         raise "unknown Deal object"
       end
@@ -119,7 +123,7 @@
             if (data == 'Code not found') {
               $('#found_patterns')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
             } else {
-              $('#deal_forms')[0].innerHTML = data
+              $('#<%= update_area_id %>')[0].innerHTML = data
             }
           })
         }
