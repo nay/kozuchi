@@ -91,7 +91,7 @@
     <div style="display:none;" id="load_pattern_url"><%= 
       case deal
       when Deal::General
-        deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : ''
+        deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : edit_deal_path(:id => deal.id, :pattern_code => 'template_pattern_code')
       when Pattern::Deal
         deal.new_record? ? '' : ''
       else

@@ -23,10 +23,22 @@ class DealsController < ApplicationController
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
   # 変更フォームを表示するAjaxアクション
+  # :pattern_code が指定されていたら画面上はパターン内容をロードする（コードがなければ Code not found）
+  # :pattern_id が指定されていたら（TODO: I/F未実装、候補選択でできる予定）それをロードするが、なければもとのまま
   def edit
-    if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
-      @deal.fill_complex_entries
+    load = nil
+    if params[:pattern_code].present?
+      load =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+      # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+      unless load
+        render :text => 'Code not found'
+        return
+      end
+    elsif params[:pattern_id].present?
+      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
     end
+    @deal.load(load) if load
+    @deal.fill_complex_entries if load || @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
     render :partial => 'edit'
   end
 
