@@ -79,6 +79,19 @@ describe Pattern::Deal do
           deal_pattern.save.should be_true
         end
       end
+      context "重複コードが登録されており、overwrites_codeが指定されているとき" do
+        let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => 'CODEX', :name => 'TEST PATTERN 2', :overwrites_code => '1') }
+        it "saveできる" do
+          deal_pattern.save.should be_true
+          deal_pattern.id.should == existing.id
+          deal_pattern.debtor_entries.size.should == 2
+          deal_pattern.creditor_entries.size.should == 1
+          deal_pattern.reload
+          deal_pattern.id.should == existing.id
+          deal_pattern.debtor_entries.size.should == 2
+          deal_pattern.creditor_entries.size.should == 1
+        end
+      end
     end
   end
 
@@ -91,10 +104,8 @@ describe Pattern::Deal do
           it "id が変更され、編集内容が反映される" do
             deal_pattern.prepare_overwrite.should be_true
             deal_pattern.id.should == existing.id # 既存のものを更新しようとする状態になる
-          end
-          it "prepare_overwrite 後、saveできる" do
-            deal_pattern.prepare_overwrite
-            deal_pattern.save.should be_true
+            deal_pattern.debtor_entries.not_marked.size.should == 2
+            deal_pattern.creditor_entries.not_marked.size.should == 1
           end
         end
       end
@@ -108,10 +119,8 @@ describe Pattern::Deal do
           it "id が変更され、編集内容が反映される" do
             deal_pattern.prepare_overwrite.should be_true
             deal_pattern.id.should == existing.id # 既存のものを更新しようとする状態になる
-          end
-          it "prepare_overwrite 後、saveできる" do
-            deal_pattern.prepare_overwrite
-            deal_pattern.save.should be_true
+            deal_pattern.debtor_entries.not_marked.size.should == 2
+            deal_pattern.creditor_entries.not_marked.size.should == 1
           end
         end
       end
@@ -128,6 +137,28 @@ describe Pattern::Deal do
         deal_pattern.save.should be_true
         deal_pattern.reload
         deal_pattern.code.should == 'NEWCODE'
+      end
+    end
+    describe "コードの重複" do
+      let!(:existing) { FactoryGirl.create(:deal_pattern, :code => 'CODEX', :name => 'TEST PATTERN') }
+      context "重複コードが登録されており、overwrites_codeが指定されているとき" do
+        let!(:deal_pattern) { FactoryGirl.create(:deal_pattern, :code => 'CODEZ', :name => 'ANOTHER TEST PATTERN') }
+        let!(:old_id) {deal_pattern.id}
+        before do
+          deal_pattern.code = 'CODEX'
+          deal_pattern.overwrites_code = '1'
+        end
+        it "saveでき、もとのオブジェクトが削除される" do
+          deal_pattern.save.should be_true
+          deal_pattern.id.should == existing.id
+          deal_pattern.debtor_entries.size.should == 2
+          deal_pattern.creditor_entries.size.should == 1
+          deal_pattern.reload
+          deal_pattern.id.should == existing.id
+          deal_pattern.debtor_entries.size.should == 2
+          deal_pattern.creditor_entries.size.should == 1
+          Pattern::Deal.find_by_id(old_id).should be_nil
+        end
       end
     end
   end

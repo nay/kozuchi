@@ -9,4 +9,8 @@ class Pattern::Entry < ActiveRecord::Base
   include ::Entry
   attr_accessible :account_id, :amount, :line_number, :summary, :reversed_amount
 
+  def assignable_attributes
+    HashWithIndifferentAccess.new(attributes).slice(:id, :account_id, :amount, :line_number, :summary, :reversed_amount)
+  end
+
 end

@@ -33,14 +33,38 @@ class Pattern::Deal < ActiveRecord::Base
   end
 
   def assignable_attributes
-    attributes.merge({
+    HashWithIndifferentAccess.new(attributes).merge({
         # 検証時の見せ方に影響するため必要
-        'summary_mode' => summary_mode,
-        'summary' => @unified_summary,
-        # Entry は今のところカラム情報だけで足りる
-        'debtor_entries_attributes' => debtor_entries.map(&:attributes),
-        'creditor_entries_attributes' => debtor_entries.map(&:attributes)
-      }).except('id', 'user_id', 'created_at', 'updated_at')
+        :summary_mode => summary_mode,
+        :summary => @unified_summary,
+        :debtor_entries_attributes => debtor_entries.map(&:assignable_attributes),
+        :creditor_entries_attributes => creditor_entries.map(&:assignable_attributes)
+      }).except(:id, :user_id, :created_at, :updated_at)
+  end
+
+  def save
+    transaction do
+      old_id = new_record? ? nil : id
+      prepare_overwrite
+      if (result = super) && old_id && old_id != id
+        old = self.class.find_by_id(old_id)
+        old.destroy if old
+      end
+      return result
+    end
+  end
+
+  def save!
+    transaction do
+      old_id = new_record? ? nil : id
+      prepare_overwrite
+      result = super
+      if old_id && old_id != id
+        old = self.class.find_by_id(old_id)
+        old.destroy if old
+      end
+      return result
+    end
   end
 
   # コードの上書きが指定されていた場合、上書きモードにする
