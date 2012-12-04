@@ -89,7 +89,7 @@
   </div>
   <% if deal.kind_of?(Deal::Base) %>
     <div class="deal_patterns" style="float:left; margin-left: 10px;">
-      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10 %></div>
+      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
       <div></div>
     </div>
   <% end %>
