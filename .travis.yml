@@ -4,4 +4,6 @@ rvm:
 
 before_script:
   - cp config/database.yml.sample config/database.yml
+  - rake db:drop
+  - rake db:create
   - rake db:migrate
