@@ -1,30 +1,24 @@
 # -*- encoding : utf-8 -*-
 class UserMailer < ActionMailer::Base
   def signup_notification(user)
-    setup_email(user)
-    @subject    += 'ご登録内容の確認'
-    @body[:url]  = "#{ROOT_URL}/activate/#{user.activation_code}"
-  
+    @url = "#{ROOT_URL}/activate/#{user.activation_code}"
+    setup_email(user, 'ご登録内容の確認')
   end
-  
+
   def activation(user)
-    setup_email(user)
-    @subject    += 'ご登録完了のお知らせ'
-    @body[:url]  = "#{ROOT_URL}/"
+    @url = "#{ROOT_URL}/"
+    setup_email(user, 'ご登録完了のお知らせ')
   end
-  
+
   def password_notification(user)
-    setup_email(user)
-    @subject    += "パスワード変更のご案内"
-    @body[:url]  = "#{ROOT_URL}/password/#{user.password_token}"
+    @url = "#{ROOT_URL}/password/#{user.password_token}"
+    setup_email(user, 'パスワード変更のご案内')
   end
-  
+
   protected
-    def setup_email(user)
-      @recipients  = "#{user.email}"
-      @from        = SUPPORT_EMAIL_ADDRESS
-      @subject     = "[小槌] "
-      @sent_on     = Time.now
-      @body[:user] = user
+    def setup_email(user, subject)
+      @user = user
+      mail_obj = mail(:to => user.email, :from => SUPPORT_EMAIL_ADDRESS, :subject => "[小槌] #{subject}" )
+      mail_obj.transport_encoding = '8bit'
     end
 end
