@@ -55,7 +55,7 @@ class UsersController < ApplicationController
       return
     end
     user.update_password_token
-    UserMailer.deliver_password_notification(user)
+    UserMailer.password_notification(user).deliver
     @email = params[:email]
   end
   
