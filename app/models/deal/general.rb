@@ -235,9 +235,12 @@ class Deal::General < Deal::Base
   end
 
   # 相手勘定名を返す
-  def mate_account_name_for(account_id)
-    # TODO: 諸口対応、不正データ対応
-    entries.detect{|e| e.account_id != account_id}.account.name
+  def mate_account_name_for(entry)
+    if entry.creditor?
+      debtor_entries.size > 1 ? '諸口' : debtor_entries.first.account.name
+    else
+      creditor_entries.size > 1 ? '諸口' : creditor_entries.first.account.name
+    end
   end
 
   # 後の検索効率のため、idで妥協する

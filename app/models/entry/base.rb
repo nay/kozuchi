@@ -94,7 +94,7 @@ class Entry::Base < ActiveRecord::Base
   # 相手勘定名を返す
   def mate_account_name
     raise AssociatedObjectMissingError, "no deal" unless deal
-    deal.mate_account_name_for(account_id)
+    deal.mate_account_name_for(self)
   end
 
   # リンクされたaccount_entry を返す
