@@ -136,6 +136,7 @@ class Settlement < ActiveRecord::Base
         :creditor_entries_attributes => [{:account_id => minus_account_id, :amount => amount.abs*-1}],
         :date => self.result_date,
         :summary => self.name,
+        :summary_mode => 'unify',
         :confirmed => true # false にすると、相手方の操作によって消されてしまう。リスク低減のためtrueにする
       )
       result_deal.user_id = user_id # TODO: こうでないとだめなことを確認
