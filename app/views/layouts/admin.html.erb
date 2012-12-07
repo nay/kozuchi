@@ -1,6 +1,7 @@
 <%= render :partial => "shared/doctype" %>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
+    <%= csrf_meta_tags %>
     <title><%= @title || controller.action_name %></title>
     <%= render :partial => "shared/html_header" %>
     <%= stylesheet_link_tag 'common' %>

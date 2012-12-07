@@ -92,8 +92,9 @@ EOF
     <meta http-equiv="Content-Script-Type" content="text/javascript; charset=utf-8" />
     <meta name="author" content="Nay" />
     <meta http-equiv="content-style-type" content="text/css" />
+    #{csrf_meta_tags}
     #{stylesheet_link_tag *stylesheets.insert(0, 'common')}
-    #{javascript_include_tag 'application'}
+    #{javascript_include_tag :application}
     #{render :partial => "shared/google_analytics"}
     #{inner_content}
   </head>

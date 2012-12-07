@@ -4,6 +4,8 @@
 <% sub_title = @menu || controller.action_name -%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
   <head>
+    <%= csrf_meta_tags %>
+
     <%= render :partial => "shared/html_header" -%>
     <title>
       <%= title %> - <%= sub_title %> 
