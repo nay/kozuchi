@@ -14,7 +14,7 @@ class BalanceSheetController < ApplicationController
     @month = params[:month]
 
     date = Date.new(@year.to_i, @month.to_i, 1) >> 1
-    asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'") # TODO: マシにする
+    asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Account::Income' and accounts.type != 'Account::Expense'") # TODO: マシにする
     @assets = AccountsBalanceReport.new(asset_accounts, date)
   end
   

@@ -12,7 +12,7 @@ class MobileDealsController < ApplicationController
 
   # その日の支出
   def daily_expenses
-    @expenses = current_user.accounts.flows(@date, @date + 1, ["accounts.type = ?", "Expense"]) # TODO: Account整理
+    @expenses = current_user.accounts.flows(@date, @date + 1, ["accounts.type = ?", "Account::Expense"]) # TODO: Account整理
   end
 
   # １日の記入履歴の表示

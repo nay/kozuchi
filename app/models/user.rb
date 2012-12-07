@@ -58,14 +58,14 @@ class User < ActiveRecord::Base
     
     # 指定した期間における収入口座のフロー合計を得る。収入の不明金も含める。
     def income_sum(start_date, end_date)
-      result = flow_sum(start_date, end_date, "accounts.type = 'Income'")
+      result = flow_sum(start_date, end_date, "accounts.type = 'Account::Income'")
       unknowns(start_date, end_date).delete_if{|a| a.unknown >= 0}.each{|a| result += a.unknown}
       result
     end
 
     # 指定した期間における支出口座のフロー合計を得る。支出の不明金も含める。
     def expense_sum(start_date, end_date)
-      result = flow_sum(start_date, end_date, "accounts.type = 'Expense'")
+      result = flow_sum(start_date, end_date, "accounts.type = 'Account::Expense'")
       unknowns(start_date, end_date).delete_if{|a| a.unknown <= 0}.each{|a| result += a.unknown}
       result
     end
@@ -333,7 +333,7 @@ class User < ActiveRecord::Base
   # 指定した月の末日の資産合計、純資産合計の配列を得る
   def assets_summary(year, month)
     date = Date.new(year.to_i, month.to_i, 1) >> 1
-    assets = accounts.balances(date, "accounts.type != 'Income' and accounts.type != 'Expense'")
+    assets = accounts.balances(date, "accounts.type != 'Account::Income' and accounts.type != 'Account::Expense'")
     assets_sum = 0
     pure_assets_sum = 0
     for a in assets
