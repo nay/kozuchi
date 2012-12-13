@@ -105,10 +105,16 @@
         <!-- date -->
         <td class="date">
           <% while date <= entry.date %>
-            <a name="day<%= date.day%>"></a>
+            <%= tag :a, :name => "day#{date.day}" %>
             <% date += 1 %>
           <% end %>
           <%= l entry.date %>
+          <% if @account_entries.entries.last == entry %>
+            <% while date.month == entry.date.month %>
+              <%= tag :a, :name => "day#{date.day}" %>
+              <% date += 1 %>
+            <% end %>
+          <% end %>
           <% unless entry.deal.confirmed? %>
             <br /><span class="system">未確定</span>
           <% end %>
@@ -156,12 +162,14 @@
 <%= javascript_tag do %>
   jQuery(document).ready(function($) {
     // if hash is set, add class (works only when loaded)
-    if (location.hash != '') {
+    if (location.hash.match(/^#[0-9]+$/)) {
       $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
     }
     $(window).hashchange(function() {
       $("tr").removeClass("updated_line")
-      $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+      if (location.hash.match(/^#[0-9]+$/)) {
+        $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+      }
     })
 
     $('td.number').mouseover(function() {
