@@ -3,6 +3,10 @@ module ApplicationHelper
 
   include LoginEngine
 
+  def day_anchor(date)
+    tag :a, :name => "day#{date.day}"
+  end
+
   def bookkeeping_style?
     return false unless current_user
     current_user.preferences.bookkeeping_style?
