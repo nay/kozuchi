@@ -105,13 +105,13 @@
         <!-- date -->
         <td class="date">
           <% while date <= entry.date %>
-            <%= tag :a, :name => "day#{date.day}" %>
+            <%= day_anchor date %>
             <% date += 1 %>
           <% end %>
           <%= l entry.date %>
           <% if @account_entries.entries.last == entry %>
             <% while date.month == entry.date.month %>
-              <%= tag :a, :name => "day#{date.day}" %>
+              <%= day_anchor date %>
               <% date += 1 %>
             <% end %>
           <% end %>

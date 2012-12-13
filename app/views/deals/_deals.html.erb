@@ -38,7 +38,7 @@
                 <!-- date -->
                 <%= content_tag :td, :class => 'date', :rowspan => size do %>
                   <% while date <= deal.date %>
-                    <%= tag :a, :name => "day#{date.day}" %>
+                    <%= day_anchor date %>
                   <%
                     date += 1
                     end
@@ -46,7 +46,7 @@
                   <%= l deal.date %>
                   <% if @deals.last == deal %>
                     <% while date.month == deal.date.month %>
-                      <%= tag :a, :name => "day#{date.day}" %>
+                      <%= day_anchor date %>
                       <% date += 1 %>
                     <% end %>
                   <% end %>
