@@ -49,6 +49,8 @@ class SessionsController < ApplicationController
     end
     self.original_user ||= self.current_user
     self.current_user = User.find_by_login(single_login.login) # TODO: きれいに
+    # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
+    clear_user_session
     redirect_to home_path
   end
 

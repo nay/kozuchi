@@ -1,5 +1,9 @@
 <%= render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month, :url_method => :monthly_account_deals_path, :url_params => {:account_id => @account.id}}) %>
 
+<% if @account.kind_of?(Account::Asset) && @account.any_credit? %>
+<div class="navigation"><%= link_to '新しい精算を作成する', new_settlement_path %></div>
+<% end %>
+
 <div id="day_navigator_frame">
   <%= render :partial => 'shared/day_navigator', :locals => {:data => @account_entries.entries} %>
 </div>

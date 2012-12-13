@@ -12,6 +12,7 @@
       <th class="summary">摘要</th>
       <th class="account"></th>
       <th>出金</th><th>入金</th>
+      <th> </th>
     </tr>
     <% for entry in @entries %>
       <% selected = @selected_deals.include?(entry.deal) %>
@@ -31,10 +32,11 @@
       <td colspan="5"></td>
       <td class="amount"><div id='debtor_sum'><%= number_with_delimiter(debtor_sum*-1) if debtor_sum < 0 %></div></td>
       <td class="amount"><div id='creditor_sum'><%= number_with_delimiter(creditor_sum) if creditor_sum > 0%></div></td>
+      <td></td>
     </tr>
     <tr>
       <td colspan="3">精算内容</td>
-      <td colspan="4" style="text-align:center;">
+      <td colspan="5" style="text-align:center;">
         <% if debtor_sum == creditor_sum %>
           <div>精算は発生しません。</div>
         <% else %>

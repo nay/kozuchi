@@ -264,6 +264,14 @@ ul {
   display: block;
 }
 
+td.account_deals_link {
+  width: 16px;
+  text-align: center;
+}
+td.account_deals_link a {
+  text-decoration: none;
+}
+
 input.readonly {
   background-color: floralwhite;
 }
