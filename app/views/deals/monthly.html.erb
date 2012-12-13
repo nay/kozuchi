@@ -52,7 +52,7 @@
     <%= remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
   }
   function displaySuggestionsForComplex() {
-    <%= remote_function :update => 'patterns', :with => "'keyword=' + $('deal_summary').value", :method => :get, :url => deal_suggestions_path(:from => 'complex_deal') %>;
+    <%= remote_function :update => 'patterns', :with => "'keyword=' + encodeURIComponent($('deal_summary').value)", :method => :get, :url => deal_suggestions_path(:from => 'complex_deal') %>;
   }
 <% end %>
 

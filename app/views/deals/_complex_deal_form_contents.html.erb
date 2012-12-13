@@ -101,7 +101,7 @@
             $('input.entry_summary', this).val($('input#deal_summary').val())
           }
         })
-        $('#patterns').load('<%= deal_suggestions_path(:from => 'complex_deal') %>&keyword='+this.value)
+        $('#patterns').load('<%= deal_suggestions_path(:from => 'complex_deal') %>&keyword=' + encodeURIComponent(this.value))
       });
     })
   <% end %>

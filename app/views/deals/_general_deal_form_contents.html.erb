@@ -28,7 +28,7 @@
   <%= javascript_tag do %>
     jQuery(document).ready(function($){
       $("input#deal_summary").observe_field(0.5, function() {
-        $('#patterns').load('<%= deal_suggestions_path %>?keyword='+this.value)
+        $('#patterns').load('<%= deal_suggestions_path %>?keyword=' + encodeURIComponent(this.value))
       });
     })
   <% end %>
