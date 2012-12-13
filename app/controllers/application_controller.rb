@@ -121,6 +121,45 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # 関心のある勘定を覚えておく
+  def current_account=(account)
+    old = session[:account_id]
+    session[:account_id] = account.try(:id)
+    # 変化があった場合は精算期間情報を消す
+    if session[:account_id].to_i != old.to_i
+      self.settlement_start_date = nil
+      self.settlement_end_date = nil
+    end
+    session[:account_id]
+  end
+
+  # 関心のある勘定を取得する
+  def current_account
+    @current_account ||= current_user.accounts.find_by_id(session[:account_id]) if session[:account_id]
+    @current_account
+  end
+
+  # 覚えた精算の期間情報を返す
+  # 文字列にしてもよいが、Dateはそのまま入れても問題は少ないだろう。ねんのためクラスチェックする
+  def settlement_start_date
+    session[:settlement_start_date]
+  end
+  def settlement_start_date=(d)
+    raise "wrong object #{d}" unless d.nil? || d.kind_of?(Date)
+    session[:settlement_start_date] = d
+  end
+  def settlement_end_date
+    session[:settlement_end_date]
+  end
+  def settlement_end_date=(d)
+    raise "wrong object #{d}" unless d.nil? || d.kind_of?(Date)
+    session[:settlement_end_date] = d
+  end
+
+  def clear_user_session
+    [:account_id, :settlement_start_date, :settlement_end_date].each{|key| session.delete(key)}
+  end
+
   def find_date
     @date = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
   end

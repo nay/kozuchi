@@ -14,17 +14,25 @@ class SettlementsController < ApplicationController
 
   # 新しい精算口座を作る
   def new
-    @settlement.account = @credit_accounts.first
+    @settlement.account = @credit_accounts.detect{|a| a == current_account} || @credit_accounts.first
     @settlement.name = "#{@settlement.account.name}の精算"
   
-    @start_date = Date.today << 1
-    @start_date = Date.new(@start_date.year, @start_date.month, 1)
-    @end_date = @start_date >> 1
-    @end_date -= 1
+    # 現在記憶している精算期間があればそれを使う。
+    # 精算期間の記憶がなく、現在月の場合は前月にする
+    # 初期表示なので、記憶はしない（ほかのページへいってもどっても同じように計算される）
+    if @settlement.account == current_account && settlement_start_date && settlement_end_date
+      @start_date = settlement_start_date
+      @end_date = settlement_end_date
+    else
+      this_month = Date.new(Date.today.year, Date.today.month, 1)
+      @start_date = this_month << 1 # 前月
+      @end_date = @start_date.end_of_month
+    end
     
     load_deals
     
     # その後の処理のためにセッションに情報を入れておく
+    # TODO: current_acocunt導入により、機能がかぶった可能性もあるがいったん保留
     session[:settlement_credit_account_id] = @settlement.account.id
   end
   
@@ -34,6 +42,11 @@ class SettlementsController < ApplicationController
     @start_date = to_date(params[:start_date])
     @end_date = to_date(params[:end_date])
     @settlement.account = @user.accounts.find(params[:settlement][:account_id])
+    # 勘定、精算期間を保存する
+    self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
+    self.settlement_start_date = @start_date
+    self.settlement_end_date = @end_date
+
     @settlement.name = "#{@settlement.account.name}の精算"
 
     load_deals
@@ -47,6 +60,9 @@ class SettlementsController < ApplicationController
     @settlement.result_date = to_date(params[:result_date])
     
     if @settlement.save
+      # 覚えた精算期間を消す
+      self.settlement_start_date = nil
+      self.settlement_end_date = nil
       redirect_to :action => 'index'
     else
       @start_date = to_date(params[:start_date])

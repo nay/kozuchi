@@ -22,7 +22,7 @@ class AccountDealsController < ApplicationController
 
   def index
     year, month = read_target_date
-    redirect_to monthly_account_deals_path(:year => year, :month => month, :account_id => current_user.accounts.first.id)
+    redirect_to monthly_account_deals_path(:year => year, :month => month, :account_id => (current_account || current_user.accounts.first).id)
   end
   
   def monthly
@@ -31,6 +31,7 @@ class AccountDealsController < ApplicationController
     @year = params[:year].to_i
     @month = params[:month].to_i
     write_target_date(@year, @month)
+    self.current_account = @account
     @day = read_target_date[2]
 
     start_date = Date.new(@year, @month, 1)
