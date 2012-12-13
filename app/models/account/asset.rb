@@ -26,6 +26,11 @@ class Account::Asset < Account::Base
     asset_kind == "credit_card"
   end
 
+  # 精算可能なクレジット系勘定かの判定
+  def any_credit?
+    credit_asset_kinds = asset_kinds{|attributes| attributes[:credit]}.map{|k| k.to_s}
+    credit_asset_kinds.include?(asset_kind)
+  end
 
   # TODO: Rails 2.2
   def self.human_name
