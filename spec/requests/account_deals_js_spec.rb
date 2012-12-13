@@ -17,12 +17,12 @@ describe AccountDealsController, :js => true do
   end
 
   describe "カレンダー（翌月）のクリック" do
-    let(:target_month) {(Date.today >> 1).month}
+    let(:target_date) {Date.today >> 1}
     before do
-      click_link("#{target_month}月")
+      click_link("#{target_date.month}月")
     end
     it do
-      page.should have_content("#{current_user.accounts.first.name}の出納一覧（#{Date.today.year}年#{target_month}月）")
+      page.should have_content("#{current_user.accounts.first.name}の出納一覧（#{target_date.year}年#{target_date.month}月）")
     end
   end
 
