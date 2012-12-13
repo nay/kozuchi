@@ -112,7 +112,7 @@
         <!-- number -->
         <td class="number">
           <%= render 'shared/deal_note', :deal => entry.deal %>
-          <%= entry.deal.daily_seq %>
+          <%= content_tag :a, entry.deal.daily_seq, :name => entry.id %>
         </td>
         <!-- summary -->
         <td><%= entry.summary %></td>
@@ -151,6 +151,15 @@
 </div>
 <%= javascript_tag do %>
   jQuery(document).ready(function($) {
+    // if hash is set, add class (works only when loaded)
+    if (location.hash != '') {
+      $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+    }
+    $(window).hashchange(function() {
+      $("tr").removeClass("updated_line")
+      $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+    })
+
     $('td.number').mouseover(function() {
       $('.timestamps', this).show()
     })
