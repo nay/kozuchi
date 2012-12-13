@@ -5,7 +5,7 @@
           <th class="date">日付</th>
           <th class="number"> </th>
           <th>摘要</th>
-          <th class="account"> </th>
+          <th class="account" colspan="2"> </th>
           <th class="jump"></th>
           <th class="amount"><%= bookkeeping_style? ? '借方' : '入金' %></th>
           <th class="amount"><%= bookkeeping_style? ? '貸方' : '出金' %></th>
@@ -77,6 +77,7 @@
                   <%= h account_entry.account.name %>
                 </td>
               <% end %>
+              <td class="account_deals_link"><%= link_to '→', monthly_account_deals_path(:account_id => account_entry.account.id, :year => @year, :month => @month, :anchor => account_entry.id) %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.amount) if account_entry.amount  > 0 && !account_entry.initial_balance? %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
               <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
