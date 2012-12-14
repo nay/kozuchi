@@ -10,6 +10,28 @@ describe Deal::General do
     @bank = accounts(:deal_test_bank)
   end
 
+  describe "#confirm!" do
+    context "初回残高記入よりも前に未確定記入があるとき" do
+      # 800円 現金→食費
+      let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 12, 1), :confirmed => false) }
+      let!(:initial_balance) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 12, 5), :balance => 1000)}
+
+      it "現金の初回残高記入のamountは1000である" do
+        initial_balance.amount.should == 1000
+      end
+
+      context "未確定記入(現金からの支出800円)を確定したとき" do
+        before do
+          deal.confirm!
+          initial_balance.reload
+        end
+        it "初回残高記入のamountは1800である" do
+          initial_balance.amount.should == 1800
+        end
+      end
+    end
+  end
+
   describe "new" do
     it "複数行のDealオブジェクトの作成に成功すること" do
 

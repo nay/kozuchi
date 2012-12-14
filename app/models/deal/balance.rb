@@ -129,7 +129,7 @@ class Deal::Balance < Deal::Base
   def calc_amount
     current_initial_balance = Entry::Base.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
-    self.balance.to_i - balance_before(this_will_be_initial)
+    Entry::Base.parse_amount(balance).to_i - balance_before(this_will_be_initial)
   end
 
   def cache_account_id
@@ -152,7 +152,8 @@ class Deal::Balance < Deal::Base
     # マークがついていない＝状態が変わったので修正する
     Entry::Base.update_all(["initial_balance = ?", false], ["account_id = ?", account_id])
     Entry::Base.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
-    self.entry.initial_balance = true if self.entry.id == initial_balance_entry.id
+    # オブジェクトがあるときはオブジェクトの状態も変えておく
+    entry.initial_balance = true if entry && entry.id == initial_balance_entry.id
   end
   
   

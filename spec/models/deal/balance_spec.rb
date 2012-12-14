@@ -38,8 +38,21 @@ describe Deal::Balance do
         @balance.entry.date.should == @balance.date
         @balance.entry.daily_seq.should == @balance.daily_seq
       end
-      it "サマリーはつねに残高確認" do
-        @balance.summary.should == "残高確認"
+      context "初回残高記入の場合" do
+        before do
+          @balance.entry.initial_balance = true
+        end
+        it do
+          @balance.summary.should == "残高確認（初回）"
+        end
+      end
+      context "初回残高記入でない場合" do
+        before do
+          @balance.entry.initial_balance = false
+        end
+        it do
+          @balance.summary.should == "残高確認"
+        end
       end
     end
 

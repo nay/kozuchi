@@ -50,6 +50,12 @@ class Entry::Base < ActiveRecord::Base
   validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
   # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
+  # TODO: Dealのconfirmed?が変わったときにEntryのセーブ系コールバックが呼ばれないと残高がおかしくなるため、強制的に更新させる
+  # Entryにもconfirmed?を持たせるようにして、Dirtyを効率的に使うようにしたい
+  def changed_for_autosave?
+    true
+  end
+
   def balance?
     !!balance
   end

@@ -8,10 +8,11 @@ class Entry::Balance < Entry::Base
   scope :without_initial, :conditions => {:initial_balance => false}
 
   def summary
-    '残高確認'
+    initial_balance? ? '残高確認（初回）' : '残高確認'
   end
 
   def partner_account_name
-    '不明金'
+    initial_balance? ? '' : '不明金'
   end
+
 end

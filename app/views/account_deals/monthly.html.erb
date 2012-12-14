@@ -127,8 +127,8 @@
         <!-- summary -->
         <td><%= entry.summary %></td>
         <td class="account"><%= entry.partner_account_name %></td>
-        <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 %></td>
-        <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 %></td>
+        <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance? %></td>
+        <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance? %></td>
         <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*' %></td>
         <td class="icon_to_deal"><%= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id %></td>
       <% end %>
