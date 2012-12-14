@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
     if original_user && original_user.login == params[:login]
       self.current_user = original_user
       self.original_user = nil
-      redirect_to home_path
+      switch_user
       return
     end
 
@@ -49,9 +49,7 @@ class SessionsController < ApplicationController
     end
     self.original_user ||= self.current_user
     self.current_user = User.find_by_login(single_login.login) # TODO: きれいに
-    # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
-    clear_user_session
-    redirect_to home_path
+    switch_user
   end
 
 
@@ -61,5 +59,19 @@ class SessionsController < ApplicationController
     reset_session
     flash[:notice] = "You have been logged out."
     redirect_back_or_default(root_path)
+  end
+
+  private
+
+  def switch_user
+    # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
+    clear_user_session
+    flash[:notice] = "#{current_user.login}さんの家計簿に移動しました。"
+    redirect_to case params[:to]
+    when 'deals'
+      deals_path
+    else
+      home_path
+    end
   end
 end

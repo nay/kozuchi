@@ -3,6 +3,15 @@ module ApplicationHelper
 
   include LoginEngine
 
+  # 現在の機能によってシングルログインでアカウント移動時の移動先識別子を返す
+  def single_login_destination
+    if controller_name == 'deals' && action_name == 'monthly'
+      :deals
+    else
+      nil
+    end
+  end
+
   def day_anchor(date)
     tag :a, :name => "day#{date.day}"
   end
