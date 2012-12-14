@@ -1,8 +1,8 @@
 <!-- 通信欄-->
-<% if flash[:notice] && flash[:notice].to_s != ""%>
+<% if flash[:notice].present? %>
   <div id="notice"><%= flash[:notice]%></div>
 <% end %>
-<% if flash[:errors] && !flash[:errors].empty? %>
+<% if flash[:errors].present? %>
   <div id="errors" class="middle_box">
   <% if flash[:errors].size > 1%>
     <div>エラーがありました。ご確認ください。</div>

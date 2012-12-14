@@ -72,6 +72,7 @@ class DealsController < ApplicationController
   def index
     write_target_date if params[:today]
     year, month = read_target_date
+    flash.keep
     redirect_to monthly_deals_path(:year => year, :month => month)
   end
 

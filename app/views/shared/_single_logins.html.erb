@@ -1,13 +1,13 @@
 <% if current_user && (original_user || !current_user.single_logins.empty?)%>
 <div id="singleLogins">
   <% if original_user %>
-    <%= link_to h(original_user.login), single_login_path(:login => original_user.login), :method => :put, :class => "singleLoginButton returnToOriginal" %>
+    <%= link_to h(original_user.login), single_login_path(:login => original_user.login, :to => single_login_destination), :method => :put, :class => "singleLoginButton returnToOriginal" %>
     <div style="float:right; color: #884444; font-size: small; padding-top: 8px; border-bottom: 1px solid #884444; width: 160px;">戻る</div>
     <div style="clear:right;"></div>
   <% else %>
     <% unless current_user.single_logins.empty? %>
     <% for single_login in current_user.single_logins %>
-      <%= link_to h(single_login.login), single_login_path(:login => single_login.login), :method => :put, :class => "singleLoginButton" %>
+      <%= link_to h(single_login.login), single_login_path(:login => single_login.login, :to => single_login_destination), :method => :put, :class => "singleLoginButton" %>
     <% end %>
     <div style="float:right; color: #444488; font-size: small; padding-top: 8px; border-bottom: 1px solid #444488; width: 160px;">シングルログイン</div>
     <div style="clear:right;"></div>
