@@ -22,10 +22,6 @@ class Entry::General < Entry::Base
     self.amount = ra.blank? ? ra : Entry::Base.parse_amount(ra).to_i * -1
   end
 
-  def reversed_amount
-    self.amount.blank? ? self.amount : self.amount.to_i * -1
-  end
-
   # 精算から呼ぶ。リンクするはずのentryが正しくリンクするようにする。
   def ensure_linking(receiver)
     unless linked_account_entry
