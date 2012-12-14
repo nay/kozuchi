@@ -36,34 +36,18 @@ class SessionsController < ApplicationController
     if original_user && original_user.login == params[:login]
       self.current_user = original_user
       self.original_user = nil
-      switch_user
-      return
+    else
+      single_login = current_user.single_logins.find_by_login(params[:login])
+      raise IllegalStateError unless single_login
+      if !single_login.active?
+        flash[:errors] = ["#{single_login.login}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
+        redirect_to home_path # TODO:
+        return
+      end
+      self.original_user ||= self.current_user
+      self.current_user = User.find_by_login(single_login.login) # TODO: きれいに
     end
 
-    single_login = current_user.single_logins.find_by_login(params[:login])
-    raise IllegalStateError unless single_login
-    if !single_login.active?
-      flash[:errors] = ["#{single_login.login}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
-      redirect_to home_path # TODO:
-      return
-    end
-    self.original_user ||= self.current_user
-    self.current_user = User.find_by_login(single_login.login) # TODO: きれいに
-    switch_user
-  end
-
-
-  def destroy
-    self.current_user.forget_me if logged_in?
-    cookies.delete :auth_token
-    reset_session
-    flash[:notice] = "You have been logged out."
-    redirect_back_or_default(root_path)
-  end
-
-  private
-
-  def switch_user
     # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
     clear_user_session
     flash[:notice] = "#{current_user.login}さんの家計簿に移動しました。"
@@ -74,4 +58,13 @@ class SessionsController < ApplicationController
       home_path
     end
   end
+
+  def destroy
+    self.current_user.forget_me if logged_in?
+    cookies.delete :auth_token
+    reset_session
+    flash[:notice] = "You have been logged out."
+    redirect_back_or_default(root_path)
+  end
+
 end
