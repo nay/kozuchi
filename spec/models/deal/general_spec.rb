@@ -176,10 +176,16 @@ describe Deal::General do
   end
 
   describe "update" do
+    let!(:old_time_stamp) {Time.zone.now - 10000}
+    let!(:deal) do
+      d = new_deal(6, 1, @cache, @bank, 3500)
+      d.save!
+      d.class.update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp], "id = #{d.id}")
+      d.reload
+      d
+    end
     before do
-      @deal = new_deal(6, 1, @cache, @bank, 3500)
-      @deal.save!
-      @deal.reload
+      @deal = deal # TODO: 互換性のためいったん残す
     end
     # 複数記入への変更
     it "貸し方の項目を足して複数記入に変更できる" do
@@ -223,11 +229,30 @@ describe Deal::General do
       @deal.debtor_entries.size.should == 2
       
     end
-    it "dateを変更したらentriesのdateも変更される" do
-      @deal.date = @deal.date - 7
-      @deal.save!
-      @deal.entries.detect{|e| e.user_id != @deal.user_id || e.date != @deal.date || e.daily_seq != @deal.daily_seq}.should be_nil
+    context "日付を変更したとき" do
+      before do
+        deal.date = deal.date - 7
+        deal.save!
+      end
+      it "entriesのdateも変更される" do
+        deal.entries.detect{|e| e.user_id != deal.user_id || e.date != deal.date || e.daily_seq != deal.daily_seq}.should be_nil
+      end
+      it "dealのcreated_atは変化せず、updated_atは更新される" do
+        deal.created_at.to_s.should == old_time_stamp.to_s
+        deal.updated_at.to_s.should_not == old_time_stamp.to_s
+      end
     end
+    context "摘要を変更したとき" do
+      before do
+        deal.summary = "#{deal.summary}（仮）"
+        deal.save!
+      end
+      it "dealのcreated_atは変化せず、updated_atは更新される" do
+        deal.created_at.to_s.should == old_time_stamp.to_s
+        deal.updated_at.to_s.should_not == old_time_stamp.to_s
+      end
+    end
+
     it "NestedAttributesを使って変更なしでsave!されたとき、entryが変化しない" do
       old_debtor_entry = @deal.debtor_entries.first
       old_creditor_entry = @deal.creditor_entries.first

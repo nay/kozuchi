@@ -14,6 +14,7 @@ class Deal::Base < ActiveRecord::Base
 
   before_validation :update_date
   before_save :set_daily_seq
+  before_save :touch_if_not_changed
   validates_presence_of :date
   
   scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
@@ -144,6 +145,9 @@ class Deal::Base < ActiveRecord::Base
 
   private
 
+  def touch_if_not_changed
+    touch unless changed?
+  end
   
   # daily_seq をセットする。
   # super.before_save では呼び出せないためひとまずこの方式で。
