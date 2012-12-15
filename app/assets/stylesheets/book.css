@@ -465,3 +465,12 @@ p.deprecated {
 .book tbody tr.disabled td {
   background-color: #dddddd;
 }
+.end_of_month_button {
+  font-size: 12px;
+  padding: 2px 4px;
+  text-decoration: none;
+  color: #000000;
+  background-color: #FFDDBC;
+  border: 1px solid #000000;
+  cursor: pointer;
+}

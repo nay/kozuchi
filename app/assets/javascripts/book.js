@@ -18,3 +18,15 @@
    }
    $('deal_balance').value = amount;
  }
+
+ function endOfMonth(year, month) {
+   if (!year || year == '' || !month || month == '') return null
+
+   year = parseInt(year)
+   month = parseInt(month)
+
+   nextYear = month == 12 ? year + 1 : year
+   nextMonth = month == 12 ? 1 : month + 1
+   
+   return new Date(nextYear, nextMonth -1, 0).getDate()
+ }
