@@ -12,6 +12,25 @@ class Account::Base < ActiveRecord::Base
 
   has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
 
+  # この勘定の残高記入を日時のはやいほうからsaveしなおしていくことで、残高計算を正しくする
+  # ツールとして利用する
+  def fix_balance!
+    entries = balances.order("date, daily_seq")
+    transaction do
+      entries.each {|e| e.save! }
+    end
+  end
+
+  # 残高計算に狂いがないか確認する
+  # ツールとして利用する
+  def balance_valid?
+    return true if entries.empty?
+    from = entries.minimum(:date)
+    to = entries.maximum(:date)
+    account_entries = AccountEntries.new(self, from, to)
+    account_entries.balance_end == balance_before(to + 1)
+  end
+
   # DBを検索してDBに格納された名前を得る
   # オブジェクトに格納されたnameが格納された名前と異なる場合があるので用意
   def stored_name
