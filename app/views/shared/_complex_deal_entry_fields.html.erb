@@ -102,7 +102,10 @@
         raise "unknown Deal object"
       end
     %></div>
-    <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
+    <div>
+      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
+      <div class="inline_guide">コードを指定してリターンを押してください</div>
+    </div>
     <div id="found_patterns" style="width: 240px;" class="warning"></div>
   </div>
   <div style="clear: left;"></div>
