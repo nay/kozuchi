@@ -106,7 +106,7 @@
       <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 9 %></div>
       <div class="inline_guide">コードを指定してリターンを押してください</div>
     </div>
-    <div id="found_patterns" style="width: 240px;" class="warning"></div>
+    <div id="pattern_search_result" style="width: 240px;" class="warning"></div>
   </div>
   <div style="clear: left;"></div>
 </div>
@@ -115,7 +115,7 @@
     $('input#pattern_keyword').keypress(function(e){
       // When the return key is pressed on pattern_keyword field
       if (e.which && e.which === 13) {
-        $('#found_patterns')[0].innerHTML = ''
+        $('#pattern_search_result')[0].innerHTML = ''
         var code = $('input#pattern_keyword').val()
         if (code != '') {
           // try to load that pattern
@@ -124,7 +124,7 @@
           // 指定したコードがないときは 'Code not found' が返る
           $.get(url, function(data) {
             if (data == 'Code not found') {
-              $('#found_patterns')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
+              $('#pattern_search_result')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
             } else {
               $('#<%= update_area_id %>')[0].innerHTML = data
             }
