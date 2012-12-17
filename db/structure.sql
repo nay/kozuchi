@@ -73,7 +73,7 @@ CREATE TABLE `deal_patterns` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_deal_patterns_on_user_id_and_code` (`user_id`,`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `deals` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -100,7 +100,7 @@ CREATE TABLE `entry_patterns` (
   `amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `creditor_line_number` (`deal_pattern_id`,`creditor`,`line_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `friend_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -129,7 +129,6 @@ CREATE TABLE `preferences` (
   `business_use` tinyint(1) NOT NULL DEFAULT '0',
   `use_daily_booking` tinyint(1) NOT NULL DEFAULT '1',
   `bookkeeping_style` tinyint(1) NOT NULL DEFAULT '0',
-  `uses_complex_deal` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -147,7 +146,7 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   KEY `index_sessions_on_session_id` (`session_id`),
   KEY `index_sessions_on_updated_at` (`updated_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `settlements` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -272,6 +271,8 @@ INSERT INTO schema_migrations (version) VALUES ('20121128171301');
 INSERT INTO schema_migrations (version) VALUES ('20121129053811');
 
 INSERT INTO schema_migrations (version) VALUES ('20121129061334');
+
+INSERT INTO schema_migrations (version) VALUES ('20121217174344');
 
 INSERT INTO schema_migrations (version) VALUES ('3');
 

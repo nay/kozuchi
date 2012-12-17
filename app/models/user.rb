@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   include User::Friend
   include User::Mobile
 
-  delegate :uses_complex_deal?, :bookkeeping_style?, :to => :preferences
+  delegate :bookkeeping_style?, :to => :preferences
 
   has_many  :single_logins, :dependent => :destroy
   has_many  :settlements, :dependent => :destroy

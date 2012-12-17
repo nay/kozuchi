@@ -16,7 +16,7 @@
     %>
 
     <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
-    <% if !@deal.new_record? && current_user.uses_complex_deal? %>
+    <% if !@deal.new_record? %>
       <%
         # TODO: きれいにする
         func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
