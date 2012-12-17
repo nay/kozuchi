@@ -1,6 +1,18 @@
+/* should be moved to common, etc */
+div.side_box {
+  border: 1px solid #D3D3D8;
+
+  h4 {
+    font-size: 11px;
+    text-align: center;
+    border: none;
+    background-color: #EFEFEF;
+    margin: 0;
+  }
+}
+
 div#recent_deal_patterns {
   margin-top: 10px;
-  border: 1px solid #D3D3D8;
 
   .deal_pattern {
     padding: 2px;
