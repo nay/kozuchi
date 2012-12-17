@@ -19,6 +19,7 @@
           return false
         } // end if
         $('#deal_pattern_frame').load('<%= deal_patterns_path %>', $(".pattern_field, input[name='authenticity_token']:first, input[name='utf8']:first").serializeArray())
+        return false
       }) // end click
 
       $("input#deal_summary").observe_field(0.5, function() {

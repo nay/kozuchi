@@ -1,6 +1,6 @@
   <div>
-    <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
-    <%= f.hidden_field :summary_mode, :value => 'unify' %>
+    <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
+    <%= f.hidden_field :summary_mode, :value => 'unify', :class => 'pattern_field' %>
     <div id="patterns"></div>
   </div>
   <div class="entry">
@@ -21,8 +21,9 @@
         # TODO: きれいにする
         func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
       %>
-      <%= link_to '複数記入にする', '#', :onClick => func %>
+      <%= link_to '複数記入にする', '#', :onClick => func %>&nbsp;
     <% end %>
+    <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>
     <div style="clear:left;"></div>
   </div>
   <%= javascript_tag do %>
@@ -30,6 +31,16 @@
       $("input#deal_summary").observe_field(0.5, function() {
         $('#patterns').load('<%= deal_suggestions_path %>?keyword=' + encodeURIComponent(this.value))
       });
+
+      $('a#add_pattern').click(function() {
+        if ($('#deal_summary').val() == '') {
+          alert('パターンを登録するには摘要が必要です。')
+          return false
+        } // end if
+        $('#deal_pattern_frame').load('<%= deal_patterns_path %>', $(".pattern_field, input[name='authenticity_token']:first, input[name='utf8']:first").serializeArray())
+        return false
+      }) // end click
     })
+
   <% end %>
 
