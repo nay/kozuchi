@@ -1,31 +1,40 @@
-  <div>
-    <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
-    <%= f.hidden_field :summary_mode, :value => 'unify', :class => 'pattern_field' %>
-    <div id="patterns"></div>
-  </div>
-  <div class="entry">
-    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
+  <div style="float:left;">
+    <div>
+      <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
+      <%= f.hidden_field :summary_mode, :value => 'unify', :class => 'pattern_field' %>
+      <div id="patterns"></div>
+    </div>
+    <div class="entry">
+      <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
 
-    <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
-      :locals => {
-        :amount_field_proc => amount_field_proc,
-        :debtor_account_field_proc => debtor_account_field_proc,
-        :creditor_account_field_proc => creditor_account_field_proc,
-        :tab_index => 10 # この次からはじまる
-      }
-    %>
-
-    <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
-    <% if !@deal.new_record? %>
-      <%
-        # TODO: きれいにする
-        func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
+      <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
+        :locals => {
+          :amount_field_proc => amount_field_proc,
+          :debtor_account_field_proc => debtor_account_field_proc,
+          :creditor_account_field_proc => creditor_account_field_proc,
+          :tab_index => 10 # この次からはじまる
+        }
       %>
-      <%= link_to '複数記入にする', '#', :onClick => func %>&nbsp;
-    <% end %>
-    <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>
-    <div style="clear:left;"></div>
+
+      <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
+      <br />
+      <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>&nbsp;
+      <% if !@deal.new_record? %>
+        <%
+          # TODO: きれいにする
+          func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
+        %>
+        <%= link_to '複数記入にする', '#', :onClick => func %>
+      <% end %>
+      <div style="clear:left;"></div>
+    </div>
   </div>
+  <div class="deal_patterns" style="float:left; margin-left: 10px;">
+    <div style="display:none;" id="load_pattern_url"><%= @deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : edit_deal_path(:id => @deal.id, :pattern_code => 'template_pattern_code') %></div>
+    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area_id => 'deal_forms'} %>
+  </div>
+  <div style="clear:left;"></div>
+
   <%= javascript_tag do %>
     jQuery(document).ready(function($){
       $("input#deal_summary").observe_field(0.5, function() {
