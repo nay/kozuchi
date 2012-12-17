@@ -17,7 +17,7 @@
     <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern} %>
     <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', settings_deal_pattern_entries_path(@deal_pattern.new_record? ? 'new' : @deal_pattern), :id => 'add_entry_link' %></div>
     <div>
-      <%= f.submit @deal_pattern.new_record? ? '登録' : '更新', :tablindex => "1099", :class => 'button' %>
+      <%= f.submit @deal_pattern.new_record? ? '登録' : '更新', :tabindex => "1099", :class => 'button' %>
       <% unless @deal_pattern.new_record? %>
         <%= link_to 'この記入パターンを削除', settings_deal_pattern_path(@deal_pattern), :confirm => confirm_message_on_destroy(@deal_pattern), :class => 'button', :method => :delete %>
       <% end %>

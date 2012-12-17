@@ -52,6 +52,14 @@ class ApplicationController < ActionController::Base
           load ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
           if load
             @deal.load(load)
+            # 見つかったパターンが単純明細の場合は単純明細処理に切り替える
+            if load.kind_of?(Pattern::Deal) && !@deal.complex?
+              changed_deal_type = deal_type.to_s.gsub(/complex/, 'general').to_sym
+              changed_render_options = render_options_proc ? render_options_proc.call(changed_deal_type) : {}
+              flash[:"#{controller_name}_deal_type"] = changed_deal_type # reloadに強い
+              render 'new_#{new_deal_type}', changed_render_options
+              return
+            end
             @deal.fill_complex_entries
           else
             @deal.build_complex_entries

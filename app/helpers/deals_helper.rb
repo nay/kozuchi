@@ -101,7 +101,7 @@ EOS
         caption
       else
         # TODO: きれいにする
-        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}")
+        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}") + "; return false;"
         link_to caption, '#', {:onClick => func}.merge(html_options)
       end
     end

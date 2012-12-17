@@ -56,6 +56,10 @@ class Deal::General < Deal::Base
     self
   end
 
+  def complex?
+    debtor_entries.not_marked.size > 1 || creditor_entries.not_marked.size > 1
+  end
+
   # 複数記入用のオブジェクト（未保存）を作成する
   def build_complex_entries(size = 5)
     error_if_not_empty

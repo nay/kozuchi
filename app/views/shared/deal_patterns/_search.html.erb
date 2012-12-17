@@ -19,7 +19,10 @@
             if (data == 'Code not found') {
               $('#pattern_search_result')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
             } else {
-              $('#<%= update_area_id %>')[0].innerHTML = data
+              $('#<%= update_area_id %>').empty()
+              $('#<%= update_area_id %>').append(data)
+              // focus on submit button
+              $("#<%= update_area_id %> input[type='submit']").focus()
             }
           })
         }

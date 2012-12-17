@@ -16,7 +16,7 @@
         }
       %>
 
-      <%= f.submit @deal.new_record? ? '記入' : '変更', :tablindex => "14", :class => 'button' %>
+      <%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "14", :class => 'button' %>
       <br />
       <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>&nbsp;
       <% if !@deal.new_record? %>
