@@ -63,7 +63,7 @@ class Pattern::Deal < ActiveRecord::Base
         :summary => @unified_summary,
         :debtor_entries_attributes => debtor_entries.map(&:assignable_attributes),
         :creditor_entries_attributes => creditor_entries.map(&:assignable_attributes)
-      }).except(:id, :user_id, :created_at, :updated_at)
+      }).except(:id, :user_id, :created_at, :updated_at, :used_at)
   end
 
   def save(*)
