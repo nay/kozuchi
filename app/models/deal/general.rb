@@ -2,8 +2,6 @@
 # 異動明細クラス。
 class Deal::General < Deal::Base
 
-  SHOKOU = '(諸口)'
-
   before_destroy :cache_previous_receivers  # dependent destroy より先に
 
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|

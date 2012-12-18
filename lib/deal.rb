@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Deal
+  SHOKOU = '(諸口)'
 
   module EntriesAssociationExtension
     def build(*args)
@@ -113,13 +114,13 @@ module Deal
   # 借り方勘定名を返す
   def creditor_account_name
     creditor_entries
-    creditor_entries.size == 1 ? creditor_entries.first.account.try(:name) : Deal::General::SHOKOU
+    creditor_entries.size == 1 ? creditor_entries.first.account.try(:name) : SHOKOU
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
     debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.try(:name) : Deal::General::SHOKOU
+    debtor_entries.size == 1 ? debtor_entries.first.account.try(:name) : SHOKOU
   end
 
   def load(from)
