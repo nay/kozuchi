@@ -62,7 +62,7 @@ CREATE TABLE `accounts` (
   PRIMARY KEY (`id`),
   KEY `index_accounts_on_user_id` (`user_id`),
   KEY `index_accounts_on_partner_account_id` (`partner_account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `deal_patterns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -74,7 +74,7 @@ CREATE TABLE `deal_patterns` (
   `used_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_deal_patterns_on_user_id_and_code` (`user_id`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `deals` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -101,7 +101,7 @@ CREATE TABLE `entry_patterns` (
   `amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `creditor_line_number` (`deal_pattern_id`,`creditor`,`line_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `friend_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

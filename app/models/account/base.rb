@@ -124,11 +124,6 @@ class Account::Base < ActiveRecord::Base
                           :class_name => 'Account::Base',
                           :foreign_key => 'partner_account_id'
 
-  # any_entry:: 削除可能性チェックのために用意。削除可能性チェック結果表示のための一覧では include すること。
-  has_one                 :any_entry,
-                          :class_name => 'Entry::Base',
-                          :foreign_key => 'account_id'
-  
 #  attr_accessor :balance, 
   attr_accessor :percentage
   validates_presence_of :name,
@@ -142,7 +137,7 @@ class Account::Base < ActiveRecord::Base
   def deletable?
     @delete_errors = []
     begin
-      assert_not_used(false) # キャッシュを使う
+      assert_not_used
       return true
     rescue Account::Base::UsedAccountException => err
       delete_errors << err.message
@@ -250,10 +245,9 @@ class Account::Base < ActiveRecord::Base
   end
   
   # 使われていないことを確認する。
-  # force:: true ならその時点でデータベースを新しく調べる。 false ならキャッシュを利用する。
-  def assert_not_used(force = true)
+  def assert_not_used
     # 使われていたら消せない
-    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if self.any_entry(force)
+    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if !new_record? && (Entry::Base.find_by_account_id(id) || Pattern::Entry.find_by_account_id(id))
   end
 
 end

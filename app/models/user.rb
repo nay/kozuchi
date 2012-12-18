@@ -20,7 +20,6 @@ class User < ActiveRecord::Base
     end
   end
   has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
-#  has_many  :accounts, :class_name => 'Account::Base', :include => [:link_requests, :link, :any_entry], :order => 'accounts.sort_key' do
 
   has_many :deal_patterns, :class_name => "Pattern::Deal"
 
