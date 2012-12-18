@@ -10,11 +10,11 @@ jQuery(document).ready(function($){
 function unifySummary() {
   jQuery('.entry_summary').hide()
   jQuery('#deal_summary_frame').show()
-  jQuery('#deal_summary_mode').val('unify')
+  jQuery('#deal_summary_mode, #deal_pattern_summary_mode').val('unify')
 }
 
 function splitSummary() {
   jQuery('#deal_summary_frame').hide()
   jQuery('.entry_summary').show()
-  jQuery('#deal_summary_mode').val('split')
+  jQuery('#deal_summary_mode, #deal_pattern_summary_mode').val('split')
 }

@@ -7,7 +7,7 @@ class Deal::Base < ActiveRecord::Base
   belongs_to :user
 
   # 実験的に読み出し専用の共通的なentryを設定
-  has_many :readonly_entries, :include => :account, :class_name => "Entry::Base", :foreign_key => 'deal_id', :order => 'line_number, creditor', :readonly => true
+  has_many :readonly_entries, :include => :account, :class_name => "Entry::Base", :foreign_key => 'deal_id', :order => 'creditor, line_number', :readonly => true
 
   attr_writer :insert_before
   attr_accessor :old_date
@@ -19,10 +19,6 @@ class Deal::Base < ActiveRecord::Base
   
   scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
   scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
-
-  def summary=(s)
-    @unified_summary = s
-  end
 
   def human_name
     "記入 #{date}-#{daily_seq}"

@@ -1,0 +1,58 @@
+<div class="navigation">
+  <%= link_to '一覧へ', settings_deal_patterns_path %>
+</div>
+<%= error_messages_for :deal_pattern %>
+<div class="form_box">
+  <% unless @deal_pattern.new_record? %>
+    <div class="timestamps">
+      <%= l @deal_pattern.created_at %> 登録<br />
+      <%= l @deal_pattern.updated_at %> 更新<br />
+    </div>
+  <% end %>
+  <%= form_for @deal_pattern, :as => :deal_pattern, :url => @deal_pattern.new_record? ? settings_deal_patterns_path : settings_deal_pattern_path(@deal_pattern), :html => {:id => 'deal_pattern_form'} do |f| %>
+    <div class="floating_field"><%= f.label :code %>: <%= f.text_field :code, :size => 10, :class => 'code', :tabindex => 1 %></div>
+    <div class="floating_field"><%= f.label :name %>: <%= f.text_field :name, :size => 40, :class => 'name', :tabindex => 2 %></div>
+    <div style="clear:left;"></div>
+    <div id="code_duplication" style="display:none;" class="warning">コード<span id="duplicated_code"></span>のパターンがすでに登録されています。<%= f.check_box :overwrites_code %>上書き登録する</div>
+    <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern} %>
+    <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', settings_deal_pattern_entries_path(@deal_pattern.new_record? ? 'new' : @deal_pattern), :id => 'add_entry_link' %></div>
+    <div>
+      <%= f.submit @deal_pattern.new_record? ? '登録' : '更新', :tabindex => "1099", :class => 'button' %>
+      <% unless @deal_pattern.new_record? %>
+        <%= link_to 'この記入パターンを削除', settings_deal_pattern_path(@deal_pattern), :confirm => confirm_message_on_destroy(@deal_pattern), :class => 'button', :method => :delete %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<%= javascript_tag do %>
+  function checkCodeDuplication() {
+    if (jQuery('#deal_pattern_code').val() == '') return
+    jQuery.ajax({
+      url: '<%= settings_deal_pattern_codes_path(:code => 'code_template', :except => @deal_pattern.new_record? ? nil : @deal_pattern.id) %>'.replace('code_template', jQuery('input#deal_pattern_code').val()),
+      dataType: 'text',
+      success: function(data, dataType) {
+        if (data != '') {
+          jQuery('#duplicated_code').text('「' + data + '」')
+          jQuery('#code_duplication').show()
+        } else {
+          jQuery('#code_duplication').hide()
+          jQuery('#deal_pattern_overwrites_code').attr('checked', false)
+        }
+      }
+    })
+  }
+
+  jQuery(document).ready(function($){
+    checkCodeDuplication()
+
+    // add entry
+    $('#add_entry_link').click(function() {
+      $('#form_frame').load(this.href, $('#deal_pattern_form').serializeArray())
+      return false;
+    })
+    
+    // show code duplication alert and checkbox if reuqired
+    $("input#deal_pattern_code").observe_field(0.5, checkCodeDuplication)
+
+  })
+<% end %>

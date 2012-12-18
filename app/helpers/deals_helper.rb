@@ -30,14 +30,14 @@ module DealsHelper
       if e.object.marked_for_destruction?
         concat(e.hidden_field :_delete, :value => '1')
       else
-        amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => e.object.settlement_attached?, :class => 'amount', :tabindex => tabindex)) + (e.object.settlement_attached? ? e.hidden_field(:amount) : '')}
+        amount_field_proc = lambda{|tabindex | (e.text_field(:amount, :size => "8", :disabled => e.object.settlement_attached?, :class => 'amount pattern_field', :tabindex => tabindex)) + (e.object.settlement_attached? ? e.hidden_field(:amount) : '')}
         debtor_account_field_proc = if fixed_account
           lambda{|tabindex|
             ("<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => fixed_account.id)).html_safe
+            e.hidden_field(:account_id, :value => fixed_account.id, :class => 'pattern_field')).html_safe
           }
         else
-          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), :tabindex => tabindex).html_safe }
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
         end
       end
     end
@@ -52,10 +52,10 @@ module DealsHelper
         creditor_account_field_proc = if fixed_account
           lambda{|tabindex|
             ("<input type='text' disabled='true' class='readonly' value='#{fixed_account.name}' tabindex='#{tabindex}' />" +
-            e.hidden_field(:account_id, :value => fixed_account.id)).html_safe
+            e.hidden_field(:account_id, :value => fixed_account.id, :class => 'pattern_field')).html_safe
           }
         else
-          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), :tabindex => tabindex).html_safe }
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
         end
       end
     end
@@ -101,7 +101,7 @@ EOS
         caption
       else
         # TODO: きれいにする
-        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}")
+        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}") + "; return false;"
         link_to caption, '#', {:onClick => func}.merge(html_options)
       end
     end

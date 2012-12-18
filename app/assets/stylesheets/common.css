@@ -115,6 +115,10 @@ option {
     background-color: orange;
 }
 
+#errorExplanation h2 {
+  border: 0;
+}
+
 /* ------ ボタン ---------- */
 button, input.button, td.button input {
     white-space: nowrap;
@@ -168,6 +172,9 @@ table.simple_form .operation {
     padding-left: 1em;
 }
 .error, .errorExplanation {
+    color: #ff6347;
+}
+.warning {
     color: #ff6347;
 }
 .errorExplanation h2 {

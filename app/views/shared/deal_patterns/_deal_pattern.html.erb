@@ -1,0 +1,4 @@
+<div class="deal_pattern">
+  <%= link_to truncate(deal_pattern.to_s, :length => 11), new_complex_deal_path(:pattern_id => deal_pattern.id), :class => 'new_deal_with_pattern_link' %>
+  <div style="text-align:right; font-size: 12px; line-height: 14px;">[ <%= link_to '編集', settings_deal_pattern_path(deal_pattern) %> ]</div>
+</div>
