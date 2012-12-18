@@ -21,7 +21,15 @@ class Pattern::Deal < ActiveRecord::Base
   validate :validate_entry_exists
   after_save :set_used_at
 
-  scope :recent, lambda { order('used_at desc').limit(10) }
+  scope :recent, lambda { order('used_at desc') }
+  scope :contains, lambda{|keyword| select("DISTINCT deal_patterns.*").joins("inner join entry_patterns on entry_patterns.deal_pattern_id = deal_patterns.id").where("deal_patterns.code LIKE ? OR deal_patterns.name LIKE ? OR entry_patterns.summary LIKE ?", "#{keyword}%", "#{keyword}%", "#{keyword}%")}
+
+  scope :with_account, lambda{|account_id, debtor|
+   {
+# entry_patterns との join はされている想定
+     :conditions => ["entry_patterns.account_id = ? and entry_patterns.creditor = ?", account_id, !debtor]
+   }
+  }
 
   def to_s
     "#{"#{code} " if code.present?}#{name.present? ? name : "*#{summary}"}"
@@ -29,6 +37,15 @@ class Pattern::Deal < ActiveRecord::Base
 
   def name_for_human
     to_s
+  end
+
+  def caption
+    to_s
+  end
+
+  # サジェッション等で使う識別子
+  def css_class
+    'deal_pattern'
   end
 
   def overwrites_code?
@@ -107,7 +124,7 @@ class Pattern::Deal < ActiveRecord::Base
   private
 
   def set_used_at
-    update_all({:used_at => updated_at}, "id = #{id}")
+    self.class.update_all({:used_at => updated_at}, "id = #{id}")
   end
 
   def avoid_empty_code

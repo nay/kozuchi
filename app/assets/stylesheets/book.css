@@ -24,6 +24,9 @@
   border: 1px outset gold;
   background-color: lightyellow;
 }
+.clickable_text .deal_pattern {
+  background-color: #ffeddb;
+}
 
 #user_and_today {
   background-color: indigo;

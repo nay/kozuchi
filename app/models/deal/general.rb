@@ -56,10 +56,6 @@ class Deal::General < Deal::Base
     self
   end
 
-  def complex?
-    debtor_entries.not_marked.size > 1 || creditor_entries.not_marked.size > 1
-  end
-
   # 複数記入用のオブジェクト（未保存）を作成する
   def build_complex_entries(size = 5)
     error_if_not_empty
@@ -68,10 +64,6 @@ class Deal::General < Deal::Base
       creditor_entries.build
     end
     self
-  end
-
-  def simple?
-    debtor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1 && creditor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1
   end
 
   def to_s
@@ -90,25 +82,20 @@ class Deal::General < Deal::Base
     end
   end
 
+  # サジェッション等で使う日本語部分
+  def caption
+    summary
+  end
+
+  # サジェッション等で使う識別子
+  def css_class
+    'deal'
+  end
+
   def to_csv_lines
     csv_lines = [["deal", id, date_as_str, daily_seq, confirmed].join(',')]
     readonly_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
-  end
-
-  # 貸し方勘定名を返す
-  def debtor_account_name
-    debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.name : SHOKOU
-  end
-
-  def debtor_amount
-    debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
-  end
-  # 借り方勘定名を返す
-  def creditor_account_name
-    creditor_entries
-    creditor_entries.size == 1 ? creditor_entries.first.account.name : SHOKOU
   end
 
   def partner_account_name_of(e)
@@ -143,7 +130,7 @@ class Deal::General < Deal::Base
   scope :with_account, lambda{|account_id, debtor|
    {
 # account_entries との join はされている想定
-     :conditions => "account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
+     :conditions => ["account_entries.account_id = ? and account_entries.creditor = ?", account_id, !debtor]
    }
   }
 
@@ -176,6 +163,11 @@ class Deal::General < Deal::Base
     rescue => e
       return []
     end
+  end
+
+  # パターンと統一的に扱えるようにするため
+  def used_at
+    updated_at
   end
 
   # 自分の取引のなかに指定された口座IDが含まれるか

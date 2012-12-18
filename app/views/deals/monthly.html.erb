@@ -49,13 +49,13 @@
       }
     }
   }
-  function onGeneralDealSelectedFromComplex(summary, amount, minus_account_id, plus_account_id, dealId) {
+  function onGeneralDealSelectedFromComplex(summary, amount, minus_account_id, plus_account_id, id, type) {
     if($('notice')){ $('notice').hide();}
-    <%= remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+    <%= remote_function :update => "deal_forms", :with => "type == 'deal' ? 'load=' + id : 'pattern_id=' + id", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
   }
-  function fillForComplexDeal(dealId) {
+  function fillForComplexDeal(id, type) {
     if($('notice')){ $('notice').hide();}
-    <%= remote_function :update => "deal_forms", :with => "'load=' + dealId", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+    <%= remote_function :update => "deal_forms", :with => "type == 'deal' ? 'load=' + id : 'pattern_id=' + id", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
   }
   function displaySuggestionsForComplex() {
     <%= remote_function :update => 'patterns', :with => "'keyword=' + encodeURIComponent($('deal_summary').value)", :method => :get, :url => deal_suggestions_path(:from => 'complex_deal') %>;

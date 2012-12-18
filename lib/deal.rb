@@ -69,6 +69,31 @@ module Deal
 
   end
 
+  def complex?
+    debtor_entries.not_marked.size > 1 || creditor_entries.not_marked.size > 1
+  end
+
+  def simple?
+    !complex?
+  end
+
+  def debtor_amount
+    nil if debtor_entries.detect{|e| e.amount.nil? }
+    debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
+  end
+
+  # 借り方勘定名を返す
+  def creditor_account_name
+    creditor_entries
+    creditor_entries.size == 1 ? creditor_entries.first.account.try(:name) : Deal::General::SHOKOU
+  end
+
+  # 貸し方勘定名を返す
+  def debtor_account_name
+    debtor_entries # 一度全部とる
+    debtor_entries.size == 1 ? debtor_entries.first.account.try(:name) : Deal::General::SHOKOU
+  end
+
   def load(from)
     self.debtor_entries_attributes = from.debtor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
     self.creditor_entries_attributes = from.creditor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
