@@ -47,7 +47,7 @@ module Entry
   private
 
   def validate_amount_is_not_zero
-    errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0
+    errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0 && errors[:amount].empty?
   end
 
   # 空の場合は例外を発生させる

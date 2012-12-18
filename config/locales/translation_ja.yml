@@ -7,9 +7,8 @@ ja:
       account/income: "アカウント/所得"  #g
       account_link: "[アカウント]リンク"  #g
       account_link_request: "アカウントのリンク設定のリクエスト"  #g
-      deal:
-        balance: "残高記入"
-        general: "記入"
+      deal/balance: "残高記入"
+      deal/general: "記入"
       entry/balance: "エントリー/バランス"  #g
       entry/base: "エントリを/ベース"  #g
       entry/general: "入力/一般"  #g
@@ -103,17 +102,16 @@ ja:
         user: "ユーザー"  #g
         readonly_entries: "読み取り専用のエントリ"  #g
 
-      deal:
-        general:
-          date: "日付"  #g
-          daily_seq: "毎日の配列"  #g
-          summary: "概要"  #g
-          confirmed: "確認済み"  #g
-          creditor_entries: "債権のエントリ"  #g
-          debtor_entries: "債務者のエ​​ントリ"  #g
-          user: "ユーザー"  #g
-          readonly_entries: "読み取り専用のエントリ"  #g
-          entries: "エントリ"  #g
+      deal/general:
+        date: "日付"  #g
+        daily_seq: "毎日の配列"  #g
+        summary: "概要"  #g
+        confirmed: "確認済み"  #g
+        creditor_entries: "債権のエントリ"  #g
+        debtor_entries: "債務者のエ​​ントリ"  #g
+        user: "ユーザー"  #g
+        readonly_entries: "読み取り専用のエントリ"  #g
+        entries: "エントリ"  #g
 
       entry/balance:
         amount: "量"  #g
@@ -125,10 +123,9 @@ ja:
         deal: "契約"  #g
         user: "ユーザー"  #g
         linked_user: "リンクされたユーザー"  #g
-        account: "アカウント"  #g
 
       entry/base:
-        amount: "量"  #g
+        amount: "金額"
         balance: "バランス"  #g
         initial_balance: "期首残高"  #g
         date: "日付"  #g
@@ -137,10 +134,9 @@ ja:
         deal: "契約"  #g
         user: "ユーザー"  #g
         linked_user: "リンクされたユーザー"  #g
-        account: "アカウント"  #g
+        account_id: "口座"
 
       entry/general:
-        amount: "量"  #g
         balance: "バランス"  #g
         initial_balance: "期首残高"  #g
         date: "日付"  #g
@@ -151,7 +147,6 @@ ja:
         user: "ユーザー"  #g
         settlement: "決済"  #g
         linked_user: "リンクされたユーザー"  #g
-        account: "アカウント"  #g
 
       friend/acceptance:
         user: "ユーザー"  #g

@@ -17,10 +17,12 @@ class Entry::Base < ActiveRecord::Base
 
   belongs_to :user # to_s で使う
 
-  validates :amount, :account_id, :presence => true
   
   before_validation :error_if_account_is_is_chanegd # 最初にやる
+  validates :amount, :account_id, :presence => true
   validate :validate_account_id_is_users
+  validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
+  # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
   before_save :copy_deal_attributes
   after_save :update_balance #, #:request_linking
@@ -45,9 +47,6 @@ class Entry::Base < ActiveRecord::Base
   delegate :year, :month, :day, :to => :date
 
   belongs_to :linked_user, :class_name => 'User', :foreign_key => 'linked_user_id'
-
-  validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
-  # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
   # TODO: Dealのconfirmed?が変わったときにEntryのセーブ系コールバックが呼ばれないと残高がおかしくなるため、強制的に更新させる
   # Entryにもconfirmed?を持たせるようにして、Dirtyを効率的に使うようにしたい
