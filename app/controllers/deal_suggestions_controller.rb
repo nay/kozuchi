@@ -15,15 +15,21 @@ class DealSuggestionsController < ApplicationController
     @patterns = if summary_key.blank?
       []
     else
+      # TODO: AccountEntryにサマリーが移動したのでロジックを変えたい
       recent_summaries = current_user.general_deals.recent_summaries(summary_key)
       if account
         recent_summaries = recent_summaries.with_account(account.id, params[:debtor] == 'true')
       end
-      Deal::General.find(recent_summaries.map(&:id), :order => "id desc")
-    end
+      deals = Deal::General.find(recent_summaries.map(&:id), :order => "id desc")
 
+      patterns = current_user.deal_patterns.contains(summary_key).recent.limit(5)
+      patterns = patterns.with_account(account.id, params[:debtor] == 'true') if account
+
+      deals + patterns
+    end
     # 臨時措置：口座別出納では複数仕訳を隠したい
-    @patterns.reject!{|d| d.debtor_entries.size > 1 || d.creditor_entries.size > 1} if account
+    @patterns.reject!{|d| d.complex? } if account
+    @patterns = @patterns.sort{|a, b| b.used_at <=> a.used_at}[0, 5]
 
     case params[:from]
     when 'complex_deal'

@@ -2,6 +2,8 @@
  *= require_self
  *= require calendar
  *= require day_navigator
+ *= require deal_patterns
+ *= require settings
 */
 
 /* ============== 共通情報　=============== */
@@ -21,6 +23,9 @@
 .clickable_text {
   border: 1px outset gold;
   background-color: lightyellow;
+}
+.clickable_text .deal_pattern {
+  background-color: #ffeddb;
 }
 
 #user_and_today {

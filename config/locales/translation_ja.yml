@@ -18,6 +18,7 @@ ja:
       friend/rejection: "友達/拒否"  #g
       friend/request: "友達/リクエスト"  #g
       login_engine_user: "ログインエンジンのユーザー"  #g
+      pattern/deal: "記入パターン"
       preferences: "設定"  #g
       settlement: "決済"  #g
       single_login: "単一のログイン"  #g
@@ -197,6 +198,10 @@ ja:
         entries: "エントリ"  #g
         incomes: "所得"  #g
         friend_requests: "友達リクエスト"  #g
+
+      pattern/deal:
+        code: "コード"
+        name: "名前"
 
       preferences:
         deals_scroll_height: "お得な高さをスクロール"  #g

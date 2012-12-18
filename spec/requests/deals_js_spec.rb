@@ -141,7 +141,6 @@ describe DealsController, :js => true do
 
     describe "複数明細" do
       before do
-        current_user.preferences.update_attribute(:uses_complex_deal, true)
         visit "/deals"
         click_link "明細(複数)"
       end
@@ -207,9 +206,6 @@ describe DealsController, :js => true do
         end
       end
 
-      after do
-        current_user.preferences.update_attribute(:uses_complex_deal, false)
-      end
     end
 
     describe "残高" do
@@ -250,7 +246,6 @@ describe DealsController, :js => true do
   describe "変更" do
     describe "複数明細利用時" do
       before do
-        current_user.preferences.update_attribute(:uses_complex_deal, true)
         FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
         visit "/deals/2012/7"
         click_link '変更'
@@ -272,9 +267,6 @@ describe DealsController, :js => true do
           click_link '記入欄を増やす'
           page.should have_css("select#deal_creditor_entries_attributes_5_account_id")
         end
-      end
-      after do
-        current_user.preferences.update_attribute(:uses_complex_deal, false)
       end
     end
 
@@ -313,7 +305,6 @@ describe DealsController, :js => true do
 
     describe "複数明細" do
       before do
-        current_user.preferences.update_attribute(:uses_complex_deal, true)
         FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))
         visit "/deals/2012/7"
         click_link "変更"
@@ -378,9 +369,6 @@ describe DealsController, :js => true do
         end
       end
       
-      after do
-        current_user.preferences.update_attribute(:uses_complex_deal, false)
-      end
     end
 
     describe "残高" do
@@ -426,7 +414,6 @@ describe DealsController, :js => true do
 
     describe "複数明細" do
       before do
-        current_user.preferences.update_attribute(:uses_complex_deal, true)
         FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))
         visit "/deals/2012/7"
         click_link "削除"
@@ -437,9 +424,6 @@ describe DealsController, :js => true do
         page.should have_content("削除しました。")
       end
 
-      after do
-        current_user.preferences.update_attribute(:uses_complex_deal, false)
-      end
     end
 
     describe "残高" do

@@ -4,8 +4,8 @@
     <table>
     <% for pattern in @patterns %>
       <tr>
-        <% if pattern.debtor_entries.size == 1 && pattern.creditor_entries.size == 1 %>
-          <td><div class="clickable_text" onClick="<%= @general_callback %>('<%= j pattern.summary %>', '<%= pattern.debtor_entries.first.amount %>', '<%= pattern.creditor_entries.first.account_id %>', '<%= pattern.debtor_entries.first.account_id%>', <%= pattern.id %> );"><%= pattern.summary %></div></td>
+        <% if pattern.simple? %>
+          <td><div class="clickable_text" onClick="<%= @general_callback %>('<%= j pattern.summary %>', '<%= pattern.debtor_entries.first.amount %>', '<%= pattern.creditor_entries.first.account_id %>', '<%= pattern.debtor_entries.first.account_id%>', <%= pattern.id %>, '<%= pattern.css_class %>' );"><div class="<%= pattern.css_class %>"><%= pattern.caption %></div></div></td>
           <td><%= number_with_delimiter(pattern.debtor_entries.first.amount) %></td>
           <% if current_user.bookkeeping_style? %>
             <td>(借) <%= h pattern.debtor_account_name %></td>
@@ -16,7 +16,7 @@
             <td>[<%= h pattern.debtor_account_name %>]</td>
           <% end %>
         <% else %>
-          <td><div class="clickable_text" onClick="fillForComplexDeal('<%= pattern.id %>');"><%= pattern.summary %></div></td>
+          <td><div class="clickable_text" onClick="fillForComplexDeal('<%= pattern.id %>', '<%= pattern.css_class %>');"><div class="<%= pattern.css_class %>"><%= pattern.caption %></div></div></td>
           <td><%= number_with_delimiter(pattern.debtor_amount) %></td>
           <% if current_user.bookkeeping_style? %>
             <td>(借) <%= h pattern.debtor_account_name %></td>

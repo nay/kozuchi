@@ -4,102 +4,22 @@ class Deal::General < Deal::Base
 
   SHOKOU = '(諸口)'
 
-  module EntriesAssociationExtension
-    def build(*args)
-      record = super
-      record.user_id = proxy_association.owner.user_id
-      record.date = proxy_association.owner.date
-      record.daily_seq = proxy_association.owner.daily_seq
-      record
-    end
-
-    def not_marked
-      find_all{|e| !e.marked_for_destruction?}
-    end
-
-  end
-
   before_destroy :cache_previous_receivers  # dependent destroy より先に
 
-  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  EntriesAssociationExtension do |e|
+  with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
     e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => "line_number", :include => :account, :autosave => true
     e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => "line_number", :include => :account, :autosave => true
     e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
 
-  accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
-
-  before_validation :set_creditor_to_entries, :set_required_data_in_entries, :set_unified_summary
+  include ::Deal
   validate :validate_entries
 
-#  before_destroy :destroy_entries
-  before_save :adjust_entry_line_numbers
   before_update :cache_previous_receivers
   after_save :request_linkings
   after_update :respond_to_sender_when_confirmed
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
-  attr_accessor :summary_mode # unified なら統一モードとして summary= で統一上書き。それ以外なら summary= を無視する
-
-  [:debtor, :creditor].each do |side|
-    define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|
-      # 金額も口座IDも入っていないentry情報は無視する
-#      attributes = attributes.dup
-      attributes = attributes.values if attributes.kind_of?(Hash)
-
-      # attributes が array のときは　key が相当する
-      attributes.reject!{|value| value[:amount].blank? && value[:account_id].blank?}
-
-      # 更新時は ID ではなく、内容で既存のデータと紐づける
-      unless new_record?
-        not_matched_old_entries = send(:"#{side}_entries", true).dup
-        not_matched_new_entries = attributes
-
-        # attirbutes の中と引き当てていく
-        matched_old_entries = []
-        not_matched_old_entries.each do |old|
-          if matched_hash = not_matched_new_entries.detect{|new_entry_hash| new_entry_hash[:account_id].to_s == old.account_id.to_s && (Entry::Base.parse_amount(new_entry_hash[:amount]).to_s == old.amount.to_s || Entry::Base.parse_amount(new_entry_hash[:reversed_amount]).to_s == (old.amount * -1).to_s )}
-            # サマリー・行数の引き継ぎ
-            old.summary = matched_hash[:summary]
-            old.line_number = matched_hash[:line_number] || 0 # なければゼロ = 1:1のときのみ発生する想定
-            not_matched_new_entries.delete(matched_hash)
-            matched_old_entries << old
-          end
-        end
-        not_matched_old_entries -= matched_old_entries
-
-        # 引き当てられなかったhashからは :id をなくす
-        # これにより、account_id の変更を防ぐ
-        not_matched_new_entries.each do |hash|
-          hash[:id] = nil # shallow copyにより attributes 内のhashが直接更新される
-        end
-
-        # 引き当てられなかったold entriesを削除予定にする
-        # 現在の関連のなかの該当オブジェクトにマークする
-        not_matched_old_entries.each do |old|
-          e = send(:"#{side}_entries").detect{|e| e.id == old.id}
-          raise "Could not find entry for 'old'" unless e
-          e.mark_for_destruction
-        end
-      end
-      send(:"#{side}_entries_attributes_without_account_care=", attributes)
-    end
-
-    alias_method_chain :"#{side}_entries_attributes=", :account_care
-  end
-
-  def summary_unified?
-    (debtor_entries.map(&:summary) + creditor_entries.map(&:summary)).find_all{|s| !s.blank?}.uniq.size == 1
-  end
-
-  def summary
-    @unified_summary || debtor_entries.first.summary
-  end
-
-  def reload
-    @unified_summary = nil
-    super
-  end
 
   # 単一記入では creditor に金額が指定されないことへの調整。
   # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
@@ -128,14 +48,6 @@ class Deal::General < Deal::Base
     super
   end
 
-  # 内容をコピーする
-  def load(from)
-    self.debtor_entries_attributes = from.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
-    self.creditor_entries_attributes = from.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
-    self
-  end
-
-
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
     error_if_not_empty
@@ -154,40 +66,6 @@ class Deal::General < Deal::Base
     self
   end
 
-  # sizeに満たない場合にフィールドを補完する
-  # line_numberが飛び石になっている場合に間に空フィールドを挟む処理も行う
-  # 未保存オブジェクトをリストの間に挿入するAPIがhas_many関連にないので、関連proxyからtargetを直接使う
-  # 削除マークありのオブジェクトがない前提
-  def fill_complex_entries(size = nil)
-    size ||= 5
-    # 大きいほうにあわせる
-    # lastが最大であるはずだが、更新直後などはソートできてないかもしれないので全部で比較
-    # 5行用意するということは最後の行は4
-    max_line_number = (debtor_entries.map(&:line_number) + creditor_entries.map(&:line_number) + [size-1]).max
-
-    for line_number in 0..max_line_number
-      unless debtor_entries.detect{|e| e.line_number.to_i == line_number}
-        # この行があればそのまま
-        # なければ、追加してソートする
-        debtor_entries.build(:line_number => line_number)
-        association(:debtor_entries).target.sort!{|a, b| a.line_number.to_i <=> b.line_number.to_i}
-      end
-
-      unless creditor_entries.detect{|e| e.line_number.to_i == line_number}
-        # この行があればそのまま
-        # なければ、追加してソートする
-        creditor_entries.build(:line_number => line_number)
-        association(:creditor_entries).target.sort!{|a, b| a.line_number.to_i <=> b.line_number.to_i}
-      end
-    end
-    
-    self
-  end
-
-  def simple?
-    debtor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1 && creditor_entries.find_all{|e| !e.marked_for_destruction? }.size == 1
-  end
-
   def to_s
     "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})" + ((debtor_entries + creditor_entries).map{|e| "(#{e.account_id})#{e.amount}"}.join(','))
   end
@@ -204,25 +82,20 @@ class Deal::General < Deal::Base
     end
   end
 
+  # サジェッション等で使う日本語部分
+  def caption
+    summary
+  end
+
+  # サジェッション等で使う識別子
+  def css_class
+    'deal'
+  end
+
   def to_csv_lines
     csv_lines = [["deal", id, date_as_str, daily_seq, confirmed].join(',')]
     readonly_entries.each{|e| csv_lines << e.to_csv}
     csv_lines
-  end
-
-  # 貸し方勘定名を返す
-  def debtor_account_name
-    debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.name : SHOKOU
-  end
-
-  def debtor_amount
-    debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
-  end
-  # 借り方勘定名を返す
-  def creditor_account_name
-    creditor_entries
-    creditor_entries.size == 1 ? creditor_entries.first.account.name : SHOKOU
   end
 
   def partner_account_name_of(e)
@@ -257,7 +130,7 @@ class Deal::General < Deal::Base
   scope :with_account, lambda{|account_id, debtor|
    {
 # account_entries との join はされている想定
-     :conditions => "account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
+     :conditions => ["account_entries.account_id = ? and account_entries.creditor = ?", account_id, !debtor]
    }
   }
 
@@ -290,6 +163,11 @@ class Deal::General < Deal::Base
     rescue => e
       return []
     end
+  end
+
+  # パターンと統一的に扱えるようにするため
+  def used_at
+    updated_at
   end
 
   # 自分の取引のなかに指定された口座IDが含まれるか
@@ -343,23 +221,14 @@ class Deal::General < Deal::Base
     end
   end
 
+  def copy_deal_info(entry)
+    super
+    entry.date = date
+    entry.daily_seq = daily_seq
+    entry
+  end
+
   private
-
-  def set_creditor_to_entries
-    debtor_entries.each {|e| e.creditor = false}
-    creditor_entries.each {|e| e.creditor = true}
-  end
-
-  def set_unified_summary
-    if @unified_summary && @summary_mode == 'unify'
-      debtor_entries.each do |e|
-        e.summary = @unified_summary
-      end
-      creditor_entries.each do |e|
-        e.summary = @unified_summary
-      end
-    end
-  end
 
   def remote_condition(remote_user_id, remote_ex_deal_id)
     {:deal_id => id, :linked_user_id => remote_user_id, :linked_ex_deal_id => remote_ex_deal_id}
@@ -384,51 +253,6 @@ class Deal::General < Deal::Base
     sender_ids = readonly_entries(reload).map{|e| e.account.link_requests.map(&:sender_id)}.flatten
     sender_ids.uniq!
     sender_ids
-  end
-
-  # Entryのline_numberを調整する
-  def adjust_entry_line_numbers
-    if debtor_entries.size == 1 && creditor_entries.size == 1
-      # 1:1 の場合は強制で双方0にする
-      debtor_entries.first.line_number = creditor_entries.first.line_number = 0
-    else
-      # 複数仕訳の場合、途中にある完全空白行は詰める
-      line_number = 0
-
-      # 引き当てなどをした結果、順序が逆になっている場合がある
-      debtors = debtor_entries.not_marked.sort{|a, b| a.line_number <=> b.line_number}
-      creditors = creditor_entries.not_marked.sort{|a, b| a.line_number <=> b.line_number}
-
-      # line_number に重複がある（代入漏れなどで）場合はループ前提が崩れるため先にエラーにする
-      raise "Duplicated line number in debtor entries. #{debtor_entries.inspect}" if debtors.map(&:line_number).uniq.size != debtors.size
-      raise "Duplicated line number in creditor entries. #{debtor_entries.inspect}" if creditors.map(&:line_number).uniq.size != creditors.size
-
-      while((!debtors.empty? || !creditors.empty?) && line_number <= Entry::Base::MAX_LINE_NUMBER)
-        exists = false
-        # どちらかにこの行番号があれば、次のデータへ
-        if debtors.first && debtors.first.line_number == line_number
-          exists = true
-          debtors.shift
-        end
-        if creditors.first && creditors.first.line_number == line_number
-          exists = true
-          creditors.shift
-        end
-        if exists
-          # 存在したのであれば次の行番号を検査する
-          line_number += 1
-          next
-        end
-        # どちらにもこの行番号がなかったのであれば、残っているデータのline_numberをすべてひとつ小さくする
-        # line_number が 負になるようだとプログラムエラー（無限ループ入り）なので念のため例外を発生させる
-        debtors.each {|e| e.line_number -= 1; raise "Wrong Loop" if e.line_number < 0}
-        creditors.each {|e| e.line_number -= 1;  raise "Wrong Loop" if e.line_number < 0}
-
-        # もう一度同じ行番号で検査する
-      end
-
-      # 関連内の要素が直接書き変わっているはずなのであとは続く処理に任せる
-    end
   end
 
   # 変更前にこのDealから連携していたユーザーを記憶しておく
@@ -516,16 +340,4 @@ class Deal::General < Deal::Base
     errors.add(:base, "貸方の記入が必要です。") if creditor_entries.empty?
   end
 
-  def set_required_data_in_entries
-    self.creditor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
-    end
-    self.debtor_entries.each do |e|
-      e.user_id = self.user_id
-      e.date = self.date
-      e.daily_seq = self.daily_seq
-    end
-  end
 end

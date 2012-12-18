@@ -23,7 +23,6 @@ class Deal::Balance < Deal::Base
   attr_writer :account_id, :balance
   validates_presence_of :account_id
   validates_presence_of :balance, :message => '残高を入力してください。'
-  before_validation :set_blank_summary
   before_create :build_entry
   before_update :update_entry
   after_save :reset_attributes, :update_initial_balance
@@ -103,11 +102,6 @@ class Deal::Balance < Deal::Base
     @balance = nil
     @account_id = nil
     # should be got from entry if required
-  end
-
-  # before_validation
-  def set_blank_summary
-    self.summary = ""
   end
 
   # before_create

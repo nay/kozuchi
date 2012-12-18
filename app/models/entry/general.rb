@@ -6,11 +6,9 @@ class Entry::General < Entry::Base
   belongs_to :settlement
   belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
+  include ::Entry
+
   before_destroy :assert_no_settlement
-
-  validates_numericality_of :amount, :only_integer => true
-
-  validate :validate_amount_is_not_zero
 
   attr_writer :partner_account_name # 相手勘定名
 
@@ -37,9 +35,9 @@ class Entry::General < Entry::Base
     self
   end
 
-  private
-  def validate_amount_is_not_zero
-    errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0
+  # attributes と内容が等しいかを調べる
+  def matched_with_attributes?(attributes)
+    attributes[:account_id].to_s == account_id.to_s && (Entry::Base.parse_amount(attributes[:amount]).to_s == amount.to_s || Entry::Base.parse_amount(attributes[:reversed_amount]).to_s == (amount * -1).to_s )
   end
 
 end
