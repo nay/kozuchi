@@ -4,5 +4,8 @@
 </div>
 <%= render 'shared/information' %>
 <div class="masters">
+  <% if @deal_patterns.empty? %>
+  <p>記入パターンは１つも登録されていません。</p>
+  <% end %>
   <%= render :partial => 'deal_pattern', :collection => @deal_patterns %>
 </div>
