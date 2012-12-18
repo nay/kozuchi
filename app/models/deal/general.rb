@@ -21,33 +21,6 @@ class Deal::General < Deal::Base
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
 
-  # 単一記入では creditor に金額が指定されないことへの調整。
-  # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
-  # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。
-  def assign_attributes(deal_attributes = {}, options = {})
-
-    return super unless deal_attributes && deal_attributes[:debtor_entries_attributes] && deal_attributes[:creditor_entries_attributes]
-
-    debtor_attributes = deal_attributes[:debtor_entries_attributes]
-    creditor_attributes = deal_attributes[:creditor_entries_attributes]
-    debtor_attributes = debtor_attributes.values if debtor_attributes.kind_of?(Hash)
-    creditor_attributes = creditor_attributes.values if creditor_attributes.kind_of?(Hash)
-
-    # 借方と借り方に有効なデータが１つだけあるとき
-    if debtor_attributes.find_all{|v| v[:account_id]}.size == 1 && creditor_attributes.find_all{|v| v[:account_id]}.size == 1
-      # 貸方に金額データがなければ補完する
-      creditor = creditor_attributes.detect{|v| v[:account_id]}
-      if !creditor[:amount] && !creditor[:reversed_amount]
-        debtor = debtor_attributes.detect{|v| v[:account_id]}
-        debtor_amount = debtor[:reversed_amount] ? (Entry::Base.parse_amount(debtor[:reversed_amount]).to_i * -1) : Entry::Base.parse_amount(debtor[:amount]).to_i
-        creditor[:amount] = (debtor_amount * -1).to_s
-        # この creditor は deal_attributes にあるものを直接書き換える
-      end
-    end
-
-    super
-  end
-
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
     error_if_not_empty
