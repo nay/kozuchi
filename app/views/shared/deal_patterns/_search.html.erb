@@ -23,6 +23,9 @@
               $('#<%= update_area_id %>').append(data)
               // focus on submit button
               $("#<%= update_area_id %> input[type='submit']").focus()
+
+              // refresh recent patterns
+              $('#deal_pattern_frame').load('<%= recent_deal_patterns_path %>')
             }
           })
         }

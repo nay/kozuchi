@@ -25,7 +25,7 @@ CREATE TABLE `account_entries` (
   KEY `index_account_entries_on_user_id` (`user_id`),
   KEY `index_account_entries_on_settlement_id` (`settlement_id`),
   KEY `index_account_entries_on_result_settlement_id` (`result_settlement_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=184 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `account_link_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -71,9 +71,10 @@ CREATE TABLE `deal_patterns` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `used_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_deal_patterns_on_user_id_and_code` (`user_id`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `deals` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -87,7 +88,7 @@ CREATE TABLE `deals` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_deals_on_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `entry_patterns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -100,7 +101,7 @@ CREATE TABLE `entry_patterns` (
   `amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `creditor_line_number` (`deal_pattern_id`,`creditor`,`line_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `friend_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -273,6 +274,8 @@ INSERT INTO schema_migrations (version) VALUES ('20121129053811');
 INSERT INTO schema_migrations (version) VALUES ('20121129061334');
 
 INSERT INTO schema_migrations (version) VALUES ('20121217174344');
+
+INSERT INTO schema_migrations (version) VALUES ('20121217233646');
 
 INSERT INTO schema_migrations (version) VALUES ('3');
 

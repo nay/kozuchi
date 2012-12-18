@@ -10,4 +10,8 @@ class DealPatternsController < ApplicationController
     render :partial => '/shared/deal_patterns/recent'
   end
 
+  def recent
+    render :partial => '/shared/deal_patterns/recent'
+  end
+
 end

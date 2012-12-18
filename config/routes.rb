@@ -102,6 +102,12 @@ Kozuchi::Application.routes.draw do
     resources :single_logins, :only => [:index, :create, :destroy]
   end
 
+  # DealPatternsController
+  controller :deal_patterns do
+    get 'deals/patterns/recent', :action => 'recent', :as => 'recent_deal_patterns'
+    resources :deal_patterns, :path => 'deals/patterns', :only => [:create]
+  end
+
   # DealsController
   controller :deals do
     resources :deals, :only => [:index, :edit, :update, :destroy] do
@@ -127,9 +133,6 @@ Kozuchi::Application.routes.draw do
 
   # DealSuggestionsController
   resources :deal_suggestions, :path => 'deals/suggestions', :only => [:index]
-
-  # DealPatternsController
-  resources :deal_patterns, :path => 'deals/patterns', :only => [:create]
 
   resource :mobile_device, :controller => :mobiles do
     member do

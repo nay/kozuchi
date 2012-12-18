@@ -41,19 +41,24 @@ class ApplicationController < ActionController::Base
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
           load = params[:load].present? ? current_user.general_deals.find_by_id(params[:load]) : nil
-          if !load && params[:pattern_code].present?
-            load =  current_user.deal_patterns.find_by_code(params[:pattern_code])
-            # コードが見つからないときはクライアント側で特別に処理するので目印を返す
-            unless load
-              render :text => 'Code not found'
-              return
+          pattern = nil
+          if !load
+            if params[:pattern_code].present?
+              pattern =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+              # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+              unless pattern
+                render :text => 'Code not found'
+                return
+              end
             end
+            pattern ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
+            pattern.use if pattern
+            load ||= pattern
           end
-          load ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
           if load
             @deal.load(load)
             # 見つかったパターンが単純明細の場合は単純明細処理に切り替える
-            if load.kind_of?(Pattern::Deal) && !@deal.complex?
+            if pattern && !@deal.complex?
               changed_deal_type = deal_type.to_s.gsub(/complex/, 'general').to_sym
               changed_render_options = render_options_proc ? render_options_proc.call(changed_deal_type) : {}
               flash[:"#{controller_name}_deal_type"] = changed_deal_type # reloadに強い

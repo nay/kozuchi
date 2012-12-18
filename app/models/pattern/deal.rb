@@ -19,8 +19,9 @@ class Pattern::Deal < ActiveRecord::Base
   before_save :set_user_id_to_entries, :avoid_empty_code
   validates :code, :uniqueness => {:scope => :user_id, :allow_nil => true, :if => lambda{|r| !r.overwrites_code?}}
   validate :validate_entry_exists
+  after_save :set_used_at
 
-  scope :recent, lambda { order('updated_at desc').limit(10) }
+  scope :recent, lambda { order('used_at desc').limit(10) }
 
   def to_s
     "#{"#{code} " if code.present?}#{name.present? ? name : "*#{summary}"}"
@@ -32,6 +33,10 @@ class Pattern::Deal < ActiveRecord::Base
 
   def overwrites_code?
     overwrites_code.to_i == 1 || overwrites_code == true
+  end
+
+  def use
+    self.class.update_all({:used_at => current_time_from_proper_timezone}, "id = #{id}") unless new_record?
   end
 
   def assignable_attributes
@@ -100,6 +105,10 @@ class Pattern::Deal < ActiveRecord::Base
 
 
   private
+
+  def set_used_at
+    update_all({:used_at => updated_at}, "id = #{id}")
+  end
 
   def avoid_empty_code
     self.code = nil if code.blank?
