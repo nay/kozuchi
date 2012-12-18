@@ -17,8 +17,7 @@ class Entry::Base < ActiveRecord::Base
 
   belongs_to :user # to_s で使う
 
-
-  validates_presence_of :amount, :account_id
+  validates :amount, :account_id, :presence => true
   
   before_validation :error_if_account_is_is_chanegd # 最初にやる
   validate :validate_account_id_is_users
