@@ -39,8 +39,15 @@ class SettlementsController < ApplicationController
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
   def target_deals
     raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date] && params[:settlement]
-    @start_date = to_date(params[:start_date])
-    @end_date = to_date(params[:end_date])
+
+    begin
+      @start_date = to_date(params[:start_date])
+      @end_date = to_date(params[:end_date])
+    rescue InvalidDateError => e
+      render :text => e.message
+      return
+    end
+
     @settlement.account = @user.accounts.find(params[:settlement][:account_id])
     # 勘定、精算期間を保存する
     self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある

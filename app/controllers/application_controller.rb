@@ -273,7 +273,11 @@ class ApplicationController < ActionController::Base
   #TODO: どこかにありそうなきがするが・・・
   def to_date(hash)
     raise "no hash" unless hash
-    Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
+    begin
+      Date.new(hash[:year].to_i, hash[:month].to_i, hash[:day].to_i)
+    rescue
+      raise InvalidDateError, "「#{hash[:year]}/#{hash[:month]}/#{hash[:day]}」は不正な日付です。"
+    end
   end
 
   # ユーザーオブジェクトを@userに取得する。なければnilが入る。
