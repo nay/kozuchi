@@ -199,6 +199,21 @@ class Deal::General < Deal::Base
     entry
   end
 
+  def modify_errors_for_simple_form
+    if complex?
+      modify_errors_for_complex_form # ないはずだがその場合は変える
+      return
+    end
+    
+    # 金額のエラーは借方表現だけにして、日本語は金額に (国際化まかせ)
+    if errors[:"debtor_entries.amount"].present?
+      errors.delete(:"creditor_entries.amount")
+    elsif errors[:"creditor_entries.amount"].present?
+      errors[:"debtor_entries.amount"] = errors[:"creditor_entries.amount"]
+      errors.delete(:"creditor_entries.amount")
+    end
+  end
+
   private
 
   def remote_condition(remote_user_id, remote_ex_deal_id)
@@ -304,8 +319,11 @@ class Deal::General < Deal::Base
 
   def validate_entries
     # amount 合計が 0 でなければならない
-    sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
-    errors.add(:base, "借方、貸方が同額ではありません。") unless sum == 0
+    # entries 系にエラーがある場合はチェックしない
+    if !debtor_entries.detect{|e| !e.valid?} && !creditor_entries.detect{|e| !e.valid?} && debtor_entries.present? && creditor_entries.present?
+      sum = debtor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i} + creditor_entries.not_marked.inject(0) {|r, e| r += e.amount.to_i}
+      errors.add(:base, "借方、貸方が同額ではありません。") unless sum == 0
+    end
 
     errors.add(:base, "借方の記入が必要です。") if debtor_entries.empty?
     errors.add(:base, "貸方の記入が必要です。") if creditor_entries.empty?

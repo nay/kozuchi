@@ -16,10 +16,6 @@ class Entry::General < Entry::Base
     @parter_account_name ||= deal.partner_account_name_of(self)
   end
 
-  def reversed_amount=(ra)
-    self.amount = ra.blank? ? ra : Entry::Base.parse_amount(ra).to_i * -1
-  end
-
   # 精算から呼ぶ。リンクするはずのentryが正しくリンクするようにする。
   def ensure_linking(receiver)
     unless linked_account_entry

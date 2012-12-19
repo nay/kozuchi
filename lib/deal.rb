@@ -19,7 +19,6 @@ module Deal
   def self.included(base)
     base.accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
     base.before_validation :copy_deal_info_to_entries, :set_creditor_to_entries, :set_unified_summary
-    base.after_validation :modify_errors
     base.before_save :adjust_entry_line_numbers
 
     base.class_eval do
@@ -182,9 +181,8 @@ module Deal
     self
   end
 
-  private
-
-  def modify_errors
+  # どのようにエラーを補正すればいいかはどのI/Fから使うかによるため明示的に呼ぶ仕様とする
+  def modify_errors_for_complex_form
     debtor_entries.each_with_index do |e, i|
       e.errors.each do |attr, message|
         errors.add(:base, "借方(#{i+1})：" + e.errors.full_message(attr, message))
@@ -198,6 +196,8 @@ module Deal
       end
     end
   end
+
+  private
 
   # Entryのline_numberを調整する
   def adjust_entry_line_numbers

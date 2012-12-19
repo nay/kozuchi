@@ -108,10 +108,13 @@ ja:
         summary: "概要"  #g
         confirmed: "確認済み"  #g
         creditor_entries: "債権のエントリ"  #g
-        debtor_entries: "債務者のエ​​ントリ"  #g
+#        debtor_entries: "債務者のエ​​ントリ"  #g
         user: "ユーザー"  #g
         readonly_entries: "読み取り専用のエントリ"  #g
         entries: "エントリ"  #g
+
+      deal/general/debtor_entries:
+        amount: "金額"
 
       entry/balance:
         amount: "量"  #g

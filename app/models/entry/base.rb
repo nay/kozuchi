@@ -70,10 +70,6 @@ class Entry::Base < ActiveRecord::Base
     self[:balance] = self.class.parse_amount(a)
   end
 
-  def reversed_amount
-    self.amount.blank? ? self.amount : self.amount.to_i * -1
-  end
-
   def to_s
     "Entry:#{self.id}:#{object_id}(#{user ? user.login : user_id} : #{deal_id} : #{account ? account.name : account_id} : #{amount} : #{!!marked_for_destruction?})"
   end
