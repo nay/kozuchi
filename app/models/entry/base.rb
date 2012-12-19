@@ -24,8 +24,9 @@ class Entry::Base < ActiveRecord::Base
   validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
   # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
-  before_save :check_amount_exists, :copy_deal_attributes
-  after_save :update_balance #, #:request_linking
+  before_save :copy_deal_attributes
+  # check_amount_exists は 派生クラスの before_create (before_saveよりおそい) より後に行う必要があるため after_save で
+  after_save :check_amount_exists, :update_balance #, #:request_linking
 
   after_destroy :update_balance #, :request_unlinking
 
