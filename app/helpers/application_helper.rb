@@ -142,10 +142,10 @@ EOF
       <td class="date" #{style}>#{format_date entry.date}</td>
       <td class="number" #{style}>#{entry.daily_seq}</td>
       <td class="summary" #{style}>#{entry.summary}</td>
+      <td class="account_deals_link">#{link_to '→', monthly_account_deals_path(:account_id => entry.account_id, :year => entry.date.year, :month => entry.date.month, :anchor => entry.id)}</td>
       <td class="account" #{style}>#{entry.mate_account_name}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount.abs) if entry.amount < 0}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount) if entry.amount >= 0}</td>
-      <td class="account_deals_link">#{link_to '→', monthly_account_deals_path(:account_id => entry.account_id, :year => entry.date.year, :month => entry.date.month, :anchor => entry.id)}</td>
 EOS
     s.html_safe
   end
@@ -154,10 +154,10 @@ EOS
       <th class="date">年月日</th>
       <th> </th>
       <th class="summary">摘要</th>
+      <th> </th>
       <th class="account"></th>
       <th class="amount">出金</th>
       <th>入金</th>
-      <th> </th>
 EOS
     s.html_safe
   end

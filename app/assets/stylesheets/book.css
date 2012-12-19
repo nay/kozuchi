@@ -259,24 +259,6 @@ ul {
   white-space: nowrap;
 }
 
-.icon_to_deal {
-  width: 16px;
-  text-align :center;
-  white-space: nowrap;
-}
-.icon_to_deal a {
-  text-decoration: none;
-  display: block;
-}
-
-td.account_deals_link {
-  width: 16px;
-  text-align: center;
-}
-td.account_deals_link a {
-  text-decoration: none;
-}
-
 input.readonly {
   background-color: floralwhite;
 }

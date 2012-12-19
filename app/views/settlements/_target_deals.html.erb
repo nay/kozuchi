@@ -7,12 +7,7 @@
   <table class="book">
     <tr>
       <th style="width: 3em;">登録</th>
-      <th class="date">年月日</th>
-      <th> </th>
-      <th class="summary">摘要</th>
-      <th class="account"></th>
-      <th>出金</th><th>入金</th>
-      <th> </th>
+      <%= display_account_entry_header %>
     </tr>
     <% for entry in @entries %>
       <% selected = @selected_deals.include?(entry.deal) %>

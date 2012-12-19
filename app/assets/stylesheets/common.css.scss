@@ -244,3 +244,31 @@ div.inline_guide {
   font-size: 11px;
   text-align: center;
 }
+
+td.account_deals_link {
+  width: 18px;
+  background-color: #black;
+  text-align: center;
+
+  a {
+    color: #00a960;
+    font-weight: bold;
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}
+
+td.icon_to_deal {
+  width: 18px;
+  background-color: #black;
+  text-align: center;
+
+  a {
+    color: #26499d;
+    font-weight: bold;
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}
