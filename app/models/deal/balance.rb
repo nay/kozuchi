@@ -5,8 +5,9 @@
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Deal::Balance < Deal::Base
 
-  before_create :set_requirements_to_entry
-  before_update :rebuild_entry, :set_requirements_to_entry
+  before_validation :set_user_id_to_entry
+  before_create :set_date_and_daily_seq_to_entry
+  before_update :rebuild_entry
   before_destroy :cache_account_id # entry より上にないといけない（entryが削除される前に実行する必要がある）
   
   has_one   :entry, :class_name => "Entry::Balance",
@@ -70,12 +71,15 @@ class Deal::Balance < Deal::Base
     entry.destroy
     build_entry
     entry.attributes = entry_attributes
-    # 残りは set_requirements_to_entry が入れる
   end
 
-  def set_requirements_to_entry
+  # 検証で利用するため user_id は先に必要となる
+  def set_user_id_to_entry
     raise "no user_id" unless user_id
     entry.user_id = user_id
+  end
+
+  def set_date_and_daily_seq_to_entry
     raise "no date" unless date
     entry.date = date
     raise "no daily_seq" unless daily_seq

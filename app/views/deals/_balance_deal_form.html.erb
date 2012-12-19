@@ -1,3 +1,5 @@
+<%= @deal.user_id %>,
+<%= @deal.build_entry; @deal.entry.user_id %>
 <%= deal_form '残高', :url => balance_deals_path do |f| %>
   <%= render :partial => 'balance_deal_form_contents', :locals => {:f => f} %>
 <% end %>
