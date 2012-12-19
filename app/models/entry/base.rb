@@ -131,7 +131,7 @@ class Entry::Base < ActiveRecord::Base
       return true
     end
     # user_id がnilのときは別のエラーになるのでここで比較しない
-    errors.add(:account_id, "が不正です。#{user_id}, #{account.user_id}") if !user_id.nil? && account.user_id.to_i != user_id.to_i
+    errors.add(:account_id, "が不正です。") if !user_id.nil? && account.user_id.to_i != user_id.to_i
   end
 
   def copy_deal_attributes
