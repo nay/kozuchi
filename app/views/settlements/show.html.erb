@@ -55,9 +55,9 @@
     <tr>
       <td colspan="7">
       <% unless @settlement.kind_of?(SubmittedSettlement)%>
-        <%= link_to '立替経費精算依頼書', print_form_settlement_path(:id => @settlement), :popup => true %>
+        <%= link_to '立替経費精算依頼書', print_form_settlement_path(:id => @settlement), 'data-popup' => true %>
         |
-        <%= link_to 'csv', print_form_settlement_path(:id => @settlement, :format => 'csv'), :popup => true %>
+        <%= link_to 'csv', print_form_settlement_path(:id => @settlement, :format => 'csv'), 'data-popup' => true %>
 	    |
 		<% if @settlement.result_entry %>
 	    <% if @settlement.submitted_settlement_id.blank? && @settlement.account.destination_account %>

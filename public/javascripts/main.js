@@ -5,6 +5,11 @@ jQuery(document).ready(function($){
     window.location.href = $(this).attr('link')
   })
 
+  $('a[data-popup]').live('click', function(e) {
+      window.open(this.href);
+      e.preventDefault();
+   });
+
 });
 
 function unifySummary() {
