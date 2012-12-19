@@ -86,13 +86,13 @@ ja:
         account: "アカウント"  #g
 
       deal/balance:
-        date: "日付"  #g
-        daily_seq: "毎日の配列"  #g
+        date: "日付"
         summary: "概要"  #g
         confirmed: "確認済み"  #g
-        user: "ユーザー"  #g
-        readonly_entries: "読み取り専用のエントリ"  #g
-        entries: "エントリ"  #g
+
+      deal/balance/entry:
+        balance: "残高"
+        account_id: "口座"
 
       deal/base:
         date: "日付"  #g

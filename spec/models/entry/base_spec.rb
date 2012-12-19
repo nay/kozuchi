@@ -25,11 +25,6 @@ describe Entry::Base do
       new_account_entry(:amount => "10,000").amount.to_i.should == 10000
     end
   end
-  describe "balance=" do
-    it "コンマ入りの数字が正規化されて代入される" do
-      new_account_entry(:balance => "10,500").balance.to_i.should == 10500
-    end
-  end
 
   describe "attributes=" do
     it "user_idは一括指定できない" do

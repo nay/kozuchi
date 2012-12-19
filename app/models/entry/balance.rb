@@ -7,6 +7,12 @@ class Entry::Balance < Entry::Base
 
   scope :without_initial, :conditions => {:initial_balance => false}
 
+  validates :balance, :presence => true, :numericality => {:only_integer => true, :allow_blank => true}
+
+  def balance=(a)
+    self[:balance] = self.class.parse_amount(a)
+  end
+
   def summary
     initial_balance? ? '残高確認（初回）' : '残高確認'
   end

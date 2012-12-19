@@ -25,7 +25,7 @@ CREATE TABLE `account_entries` (
   KEY `index_account_entries_on_user_id` (`user_id`),
   KEY `index_account_entries_on_settlement_id` (`settlement_id`),
   KEY `index_account_entries_on_result_settlement_id` (`result_settlement_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=215 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `account_link_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -88,7 +88,7 @@ CREATE TABLE `deals` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_deals_on_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `entry_patterns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

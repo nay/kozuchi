@@ -8,6 +8,7 @@ class Entry::General < Entry::Base
 
   include ::Entry
 
+  validates :amount, :presence => true
   before_destroy :assert_no_settlement
 
   attr_writer :partner_account_name # 相手勘定名

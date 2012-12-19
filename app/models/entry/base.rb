@@ -19,12 +19,12 @@ class Entry::Base < ActiveRecord::Base
 
   
   before_validation :error_if_account_is_is_chanegd # 最初にやる
-  validates :amount, :account_id, :presence => true
+  validates :account_id, :presence => true
   validate :validate_account_id_is_users
   validates :line_number, :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => MAX_LINE_NUMBER }
   # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
-  before_save :copy_deal_attributes
+  before_save :check_amount_exists, :copy_deal_attributes
   after_save :update_balance #, #:request_linking
 
   after_destroy :update_balance #, :request_unlinking
@@ -65,9 +65,6 @@ class Entry::Base < ActiveRecord::Base
 
   def amount=(a)
     self[:amount] = self.class.parse_amount(a)
-  end
-  def balance=(a)
-    self[:balance] = self.class.parse_amount(a)
   end
 
   def to_s
@@ -116,6 +113,11 @@ class Entry::Base < ActiveRecord::Base
   end
 
   private
+  
+  def check_amount_exists
+    # Entry::General では検証で防ぐ。Entry::Balanceの場合は検証を突破して自動で入れるため、ここでチェックする
+    raise "no amount in #{inspect}" if amount.blank?
+  end
 
   def error_if_account_is_is_chanegd
     raise "account_id must not be changed!" if !new_record? && changed.include?('account_id')

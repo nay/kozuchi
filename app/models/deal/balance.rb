@@ -1,35 +1,34 @@
 # -*- encoding : utf-8 -*-
 # 残高確認記入行クラス
-# TODO: 登録、更新の処理の統一
 
 # * 登録時は、account_id, balanceをセットしてsaveする。
 # * 参照時は、account_id, balanceで既存のAccountEntryのデータにアクセスできる。
 class Deal::Balance < Deal::Base
 
+  before_update :rebuild_entry
   before_destroy :cache_account_id # entries より上にないといけない（entriesが削除される前に実行する必要がある）
-  has_many   :entries, :class_name => "Entry::Balance",
+  has_one   :entry, :class_name => "Entry::Balance",
              :foreign_key => 'deal_id',
              :dependent => :destroy,
-             :order => "amount" do
-    def build(attributes = {})
-      record = super
-      record.user_id = proxy_association.owner.user_id
-      record.date = proxy_association.owner.date
-      record.daily_seq = proxy_association.owner.daily_seq
-      record
-    end
-  end
+             :autosave => true
 
   attr_writer :account_id, :balance
   validates_presence_of :account_id
   validates_presence_of :balance, :message => '残高を入力してください。'
-  before_create :build_entry
-  before_update :update_entry
+  before_create :set_requirements_to_entry
+  before_update :set_requirements_to_entry
   after_save :reset_attributes, :update_initial_balance
   after_destroy :update_initial_balance
 
-  def summary
-    entry.try(:summary)
+  delegate :account_id=, :account_id, :account, :balance=, :balance, :balance_before_type_cast, :amount, :summary, :to => :prepared_entry
+
+  def build_entry
+    super
+    # あれば入れる。登録前にも入れる
+    entry.user_id = user_id
+    entry.date = date
+    entry.daily_seq = daily_seq
+    entry
   end
 
   def summary_unified?
@@ -54,31 +53,6 @@ class Deal::Balance < Deal::Base
     raise "no entry" unless entry
     entry.initial_balance?
   end
-
-  # 関連にするとDealとincludeが揃わなくなるので関連にしない
-  def entry
-    entries.first
-  end
-  
-  def account_id
-    @account_id ||= (entry ? entry.account_id : nil)
-    @account_id
-  end
-  
-  def balance
-    @balance ||= (entry ? entry.balance : nil)
-    @balance
-  end
-  
-  def amount
-    entry ? entry.amount : nil
-  end
-
-  def account
-    return entry.account if entry && entry.account
-    Account::Base.find(self.account_id)
-  end
-
   
   # amount（最初の残高以外は不明金として扱われる）を再計算して更新
   # 自分が「最初の残高」なら、最初の残高を考慮しない残高計算をする
@@ -98,28 +72,39 @@ class Deal::Balance < Deal::Base
 
   private
 
+  def prepared_entry
+    build_entry unless entry
+    entry
+  end
+
   def reset_attributes
-    @balance = nil
-    @account_id = nil
+#    @balance = nil
+#    @account_id = nil
     # should be got from entry if required
   end
 
-  # before_create
-  def build_entry
-    raise "no user_id" unless self.user_id
-    e = entries.build(:balance => self.balance, :account_id => self.account_id)
-    e.amount = calc_amount
-    e
+  # 更新時は、entryが変更されていたら必ず一度削除して作り直す
+  def rebuild_entry
+    return unless entry.changed?
+    entry_attributes = entry.attributes.slice('account_id', 'balance')
+    entry.destroy
+    build_entry
+    entry.attributes = entry_attributes
+    # 残りは set_requirements_to_entry が入れる
   end
 
+  def set_requirements_to_entry
+    raise "no user_id" unless user_id
+    entry.user_id = user_id
+    raise "no date" unless date
+    entry.date = date
+    raise "no daily_seq" unless daily_seq
+    entry.daily_seq = daily_seq
 
-  # before_update
-  def update_entry
-    entries.clear
-    build_entry.save! # TODO: :auto_saveオプションに移行？
+    entry.amount = calc_amount
   end
 
-
+  # TODO: entryへ移動
   def calc_amount
     current_initial_balance = Entry::Base.find_by_account_id_and_initial_balance(self.account_id, true, :include => :deal)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
