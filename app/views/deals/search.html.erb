@@ -17,7 +17,7 @@
   <% for e in d.entries -%>
   <tr>
   	  <% if e == d.entries.first -%>
-  	  <td class="date" rowspan="<%=d.entries.size%>"><%= d.date %></td>
+    <td class="date" rowspan="<%=d.entries.size%>"><%= l d.date %></td>
 	  <td class="summary" rowspan="<%=d.entries.size%>"><%= d.summary %></td>
 	  <td rowspan="<%=d.entries.size%>" style="text-align:center;" class="icon_to_deal"><%= icon_to_deal_in_monthly d %></td>
 	  <% end -%>

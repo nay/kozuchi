@@ -129,7 +129,7 @@ class DealsController < ApplicationController
   def search
     raise InvalidParameterError if params[:keyword].blank?
     @keywords = params[:keyword].split(' ')
-    @deals = current_user.deals.including(@keywords)
+    @deals = current_user.deals.time_ordering.including(@keywords)
     @as_action = :index
   end
 
