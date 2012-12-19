@@ -1,7 +1,3 @@
-@charset "utf-8";
-
-/* dark blue : #041A61 */
-
 * {
     margin:0;
     padding:0;
@@ -231,4 +227,20 @@ a.singleLoginButton {
 a.returnToOriginal {
     background-color: #884444;
     border: 2px outset #884444;
+}
+div.side_box {
+  border: 1px solid #D3D3D8;
+
+  h4 {
+    font-size: 11px;
+    text-align: center;
+    border: none;
+    background-color: #EFEFEF;
+    margin: 0;
+  }
+}
+div.inline_guide {
+  color:#888888;
+  font-size: 11px;
+  text-align: center;
 }
