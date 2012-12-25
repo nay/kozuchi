@@ -98,10 +98,10 @@ Calendar.prototype = {
     for (var i = 0; i < 12; i++) {
       yearClass = (current.year % 2) ? 'odd_year' : 'even_year'
       if (this.selectedMonth.equals(current)) {
-        str += "<td class='selected_month'><div class='" + yearClass + "'>"
+        str += "<td class='selected_month' id='month_" + current.year + "_" + current.month + "'><div class='" + yearClass + "'>"
       }
       else {
-        str += "<td class='selectable_month'>"
+        str += "<td class='selectable_month' id='month_" + current.year + "_" + current.month + "'>"
         str += "<div class='" + yearClass + "'>"
         str += "<a href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
       }

@@ -11,13 +11,13 @@ describe AssetsController, :js => true do
   let(:target_date) {Date.today >> 1}
   before do
     Deal::Base.destroy_all
-    click_link '家計簿'
+    find('#header_menu').click_link '家計簿'
     click_link '資産表'
   end
 
   describe "カレンダー（翌月）のクリック" do
     before do
-      click_link("#{target_date.month}月")
+      find("#month_#{target_date.year}_#{target_date.month}").click_link("#{target_date.month}月")
     end
     it do
       page.should have_content("#{target_date.year}年#{target_date.month}月末日の資産表")
