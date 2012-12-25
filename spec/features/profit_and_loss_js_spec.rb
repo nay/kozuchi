@@ -13,7 +13,7 @@ describe ProfitAndLossController, :js => true do
   let(:target_date) {Date.today >> 1}
   before do
     Deal::Base.destroy_all
-    click_link '家計簿'
+    find('#header_menu').click_link '家計簿'
     click_link '収支表'
   end
 

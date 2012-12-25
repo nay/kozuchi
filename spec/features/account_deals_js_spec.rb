@@ -12,7 +12,7 @@ describe AccountDealsController, :js => true do
 
   before do
     Deal::Base.destroy_all
-    click_link '家計簿'
+    find('#header_menu').click_link '家計簿'
     click_link '口座別出納'
   end
 

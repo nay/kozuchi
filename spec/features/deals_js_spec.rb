@@ -19,7 +19,7 @@ describe DealsController, :js => true do
     let(:target_month) {(Date.today << 1).month}
     before do
       # 前月にしておいて
-      click_link '家計簿'
+      find('#header_menu').click_link '家計簿'
       click_link "#{target_month}月"
 
       # クリック
@@ -36,7 +36,7 @@ describe DealsController, :js => true do
   describe "カレンダー（翌月）のクリック" do
     let(:target_month) {(Date.today >> 1).month}
     before do
-      click_link '家計簿'
+      find('#header_menu').click_link '家計簿'
       click_link "#{target_month}月"
     end
 
@@ -47,7 +47,7 @@ describe DealsController, :js => true do
 
   describe "カレンダー（翌年）のクリック" do
     before do
-      click_link '家計簿'
+      find('#header_menu').click_link '家計簿'
       find("#next_year").click
     end
 
@@ -58,7 +58,7 @@ describe DealsController, :js => true do
 
   describe "カレンダー（前年）のクリック" do
     before do
-      click_link '家計簿'
+      find('#header_menu').click_link '家計簿'
       find("#prev_year").click
     end
 
@@ -70,7 +70,7 @@ describe DealsController, :js => true do
   describe "日ナビゲーターのクリック" do
     let(:target_month) {(Date.today << 1).month} # 前月
     before do
-      click_link '家計簿'
+      find('#header_menu').click_link '家計簿'
       click_link "#{target_month}月"
       # 3日をクリック
       date = Date.new((Date.today << 1).year, target_month, 3)
