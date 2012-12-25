@@ -1,17 +1,14 @@
 language: ruby
 rvm:
-  - "1.9.3"
+  - 1.9.3
 
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - cp config/database.yml.sample config/database.yml
-  - rake db:drop
-  - rake db:create
-  - rake db:migrate
 
-task :travis do
-  system("export DISPLAY=:99.0 && bundle exec rake spec")
-    raise "spec failed!" unless $?.exitstatus == 0
-  end
-end
+script:
+  - bundle exec rake db:drop
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+  - bundle exec rake spec
