@@ -1,6 +1,11 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 #require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+# TODO: travis 調査のため仮に
+RSpec.configure do |config|
+  config.use_transactional_fixtures = true
+end
+
 
 describe "Account::Asset" do
   fixtures :users, :accounts
