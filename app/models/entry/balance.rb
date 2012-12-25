@@ -24,6 +24,10 @@ class Entry::Balance < Entry::Base
     initial_balance? ? '' : '不明金'
   end
 
+  def reversed_amount
+    self.amount.blank? ? self.amount : self.amount.to_i * -1
+  end
+
   private
 
   def set_amount
