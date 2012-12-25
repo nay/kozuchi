@@ -24,4 +24,5 @@ describe AssetsController, :js => true do
     end
   end
 
+  self.use_transactional_fixtures = true
 end
