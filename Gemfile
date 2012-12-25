@@ -13,6 +13,7 @@ gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs'
 gem 'dynamic_form'
 gem 'therubyracer'
+gem 'libv8', '3.11.8.3'
 
 group :assets do
   gem 'sass-rails'
