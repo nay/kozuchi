@@ -95,7 +95,7 @@ describe AccountDealsController, :js => true do
           click_button '記入'
         end
         it "一覧に表示される" do
-          page.should have_content('追加しました。')
+          flash_notice.should have_content('追加しました。')
           page.should have_content('おろした')
         end
       end
