@@ -97,7 +97,7 @@ describe DealsController, :js => true do
       end
 
       it do
-        page.should have_content('追加しました。')
+        flash_notice.should have_content('追加しました。')
         page.should have_content('朝食のおにぎり')
       end
 
@@ -198,7 +198,7 @@ describe DealsController, :js => true do
         end
         
         it "明細が一覧に表示される" do
-          page.should have_content '追加しました。'
+          flash_notice.should have_content('追加しました。')
           page.should have_content '買い物'
           page.should have_content '1,000'
           page.should have_content '800'
@@ -235,7 +235,7 @@ describe DealsController, :js => true do
         end
 
         it "一覧に表示される" do
-          page.should have_content("追加しました。")
+          flash_notice.should have_content("追加しました。")
           page.should have_content("残高確認")
           page.should have_content("5,030")
         end
@@ -294,7 +294,7 @@ describe DealsController, :js => true do
         end
 
         it "一覧に表示される" do
-          page.should have_content("更新しました。")
+          flash_notice.should have_content("更新しました。")
           page.should have_content("2012/07/11")
           page.should have_content('冷やし中華')
           page.should have_content('920')
@@ -342,7 +342,7 @@ describe DealsController, :js => true do
         end
 
         it "変更内容が一覧に表示される" do
-          page.should have_content "更新しました。"
+          flash_notice.should have_content "更新しました。"
           page.should have_content '銀行'
           page.should have_content '1,200'
           page.should have_content '900'
@@ -361,7 +361,7 @@ describe DealsController, :js => true do
         end
 
         it "変更内容が一覧に表示される" do
-          page.should have_content "更新しました。"
+          flash_notice.should have_content "更新しました。"
           page.should have_content '銀行'
           page.should have_content '1,200'
           page.should have_content '900'
@@ -391,7 +391,7 @@ describe DealsController, :js => true do
           click_button '変更'
         end
         it "一覧に表示される" do
-          page.should have_content("更新しました。")
+          flash_notice.should have_content("更新しました。")
           page.should have_content('2,080')
         end
       end
@@ -408,7 +408,7 @@ describe DealsController, :js => true do
         page.driver.browser.switch_to.alert.accept
       end
       it do
-        page.should have_content("削除しました。")
+        flash_notice.should have_content("削除しました。")
       end
     end
 
@@ -421,7 +421,7 @@ describe DealsController, :js => true do
       end
 
       it do
-        page.should have_content("削除しました。")
+        flash_notice.should have_content("削除しました。")
       end
 
     end
@@ -434,7 +434,7 @@ describe DealsController, :js => true do
         page.driver.browser.switch_to.alert.accept
       end
       it do
-        page.should have_content("削除しました。")
+        flash_notice.should have_content("削除しました。")
       end
     end
 
