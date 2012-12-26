@@ -1,11 +1,8 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-RSpec.configure do |config|
-  config.use_transactional_fixtures = false
-end
-
 describe DealsController, :js => true do
+  self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 

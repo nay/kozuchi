@@ -2,6 +2,7 @@
 require 'spec_helper'
 
 describe "Account::Asset" do
+  self.use_transactional_fixtures = true
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
   
@@ -105,6 +106,7 @@ describe "Account::Asset" do
     end
     describe "4/1に400円の食費を払い、4/2に残高3000円を記入した場合" do
       before do
+        raise "deal exists! #{Deal::Base.first.readonly_entries.inspect}" if Deal::Base.first
         create_deal :taro_cache, :taro_food, 400, 4, 1
         create_balance :taro_cache, 3000, 4, 2
       end

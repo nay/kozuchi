@@ -24,5 +24,8 @@ describe AssetsController, :js => true do
     end
   end
 
-  self.use_transactional_fixtures = true
+  after(:each) do
+    raise "not cleaned" if Deal::Base.first
+  end
+
 end
