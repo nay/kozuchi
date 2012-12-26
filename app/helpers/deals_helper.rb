@@ -97,7 +97,9 @@ EOS
   end
 
   def deal_tab(caption, url, current_caption, html_options = {})
-    content_tag :div, :class => (current_caption == true || current_caption == caption) ? "selectedtab" : "tab" do
+    css_class = (current_caption == true || current_caption == caption) ? "selectedtab" : "tab"
+    css_class += " " + html_options[:class] if html_options[:class].present?
+    content_tag :div, :class => css_class do
       if current_caption == true || current_caption == caption
         caption
       else

@@ -22,7 +22,7 @@ class Deal::Base < ActiveRecord::Base
   scope :time_ordering, lambda{ order("date, daily_seq") }
 
   def human_name
-    "記入 #{date}-#{daily_seq}"
+    "記入 #{I18n.l(date)}-#{daily_seq}"
   end
 
   # 高速化のため、Castを経ないでDateを文字列として得られるメソッドを用意

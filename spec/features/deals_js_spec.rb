@@ -251,7 +251,7 @@ describe DealsController, :js => true do
         click_link '変更'
       end
       it "変更タブが表示される" do
-        page.should have_content("変更(2012-07-10-1)")
+        tab_window.should have_content("変更(2012-07-10-1)")
         find("input#deal_summary").value.should == "ラーメン"
       end
 
@@ -279,13 +279,14 @@ describe DealsController, :js => true do
 
       describe "タブを表示できる" do
         it "変更タブが表示される" do
-          page.should have_content("変更(2012-07-10-1)")
+          tab_window.should have_content("変更(2012-07-10-1)")
           find("input#deal_summary").value.should == "ラーメン"
         end
       end
 
       describe "実行できる" do
         before do
+          find("#date_day[value='10']")
           fill_in 'date_day', :with => '11'
           fill_in 'deal_summary', :with => '冷やし中華'
           fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
@@ -295,7 +296,7 @@ describe DealsController, :js => true do
 
         it "一覧に表示される" do
           flash_notice.should have_content("更新しました。")
-          page.should have_content("2012/07/11")
+          flash_notice.should have_content("2012/07/11")
           page.should have_content('冷やし中華')
           page.should have_content('920')
           page.should have_content('クレジットカードＸ')
@@ -312,7 +313,7 @@ describe DealsController, :js => true do
 
       describe "タブを表示できる" do
         it "タブが表示される" do
-          page.should have_content("変更(2012-07-07-1)")
+          tab_window.should have_content("変更(2012-07-07-1)")
           find("input#deal_creditor_entries_attributes_0_reversed_amount").value.should == '1000'
           find("input#deal_debtor_entries_attributes_0_amount").value.should == '800'
           find("input#deal_debtor_entries_attributes_1_amount").value.should == '200'
@@ -380,7 +381,7 @@ describe DealsController, :js => true do
       
       describe "タブを表示できる" do
         it "タブが表示される" do
-          page.should have_content("変更(2012-07-20-1)")
+          tab_window.should have_content("変更(2012-07-20-1)")
           find("input#deal_balance").value.should == '2000'
         end
       end
