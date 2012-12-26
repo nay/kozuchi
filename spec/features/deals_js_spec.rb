@@ -16,11 +16,11 @@ describe DealsController, :js => true do
   include_context "太郎 logged in"
 
   describe "今日エリアのクリック" do
-    let(:target_month) {(Date.today << 1).month}
+    let(:target_date) {Date.today << 1}
     before do
       # 前月にしておいて
       find('#header_menu').click_link '家計簿'
-      click_link "#{target_month}月"
+      find("#month_#{target_date.year}_#{target_date.month}").click_link "#{target_date.month}月"
 
       # クリック
       find("#user_and_today").click
@@ -34,14 +34,14 @@ describe DealsController, :js => true do
   end
 
   describe "カレンダー（翌月）のクリック" do
-    let(:target_month) {(Date.today >> 1).month}
+    let(:target_date) {Date.today >> 1}
     before do
       find('#header_menu').click_link '家計簿'
-      click_link "#{target_month}月"
+      find("#month_#{target_date.year}_#{target_date.month}").click_link "#{target_date.month}月"
     end
 
     it "カレンダーの選択月が翌月に変わる" do
-      find("td.selected_month").text.should == "#{target_month}月"
+      find("td.selected_month").text.should == "#{target_date.month}月"
     end
   end
 
@@ -68,12 +68,12 @@ describe DealsController, :js => true do
   end
 
   describe "日ナビゲーターのクリック" do
-    let(:target_month) {(Date.today << 1).month} # 前月
+    let(:target_date) {Date.today << 1} # 前月
     before do
       find('#header_menu').click_link '家計簿'
-      click_link "#{target_month}月"
+      find("#month_#{target_date.year}_#{target_date.month}").click_link "#{target_date.month}月"
       # 3日をクリック
-      date = Date.new((Date.today << 1).year, target_month, 3)
+      date = Date.new((Date.today << 1).year, target_date.month, 3)
       click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
     end
 
