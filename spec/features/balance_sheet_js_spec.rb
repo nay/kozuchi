@@ -19,7 +19,7 @@ describe BalanceSheetController, :js => true do
 
   describe "カレンダー（翌月）のクリック" do
     before do
-      click_link("#{target_date.month}月")
+      find("#month_#{target_date.year}_#{target_date.month}").click_link("#{target_date.month}月")
     end
     it do
       page.should have_content("#{target_date.year}年#{target_date.month}月末日の貸借対照表")
