@@ -7,6 +7,10 @@ describe "Account::Asset" do
   set_fixture_class  :accounts => Account::Base
   
   before do
+    Deal::Base.destroy_all
+    Entry::Base.destroy_all
+    Pattern::Deal.destroy_all
+    Pattern::Entry.destroy_all
     @user = users(:taro)
     @capital_fund = @user.assets.create!(:name => "資本金", :asset_kind => "capital_fund")
     @credit_card = @user.assets.create!(:name => "クレジットカード", :asset_kind => "credit_card")
@@ -16,6 +20,7 @@ describe "Account::Asset" do
     let(:account) { accounts(:taro_cache) }
     context "DealにもDealPatternにも使われていないとき" do
       it "削除できる" do
+        raise "used!" if Entry::Base.find_by_account_id(account.id) || Pattern::Entry.find_by_account_id(account.id)
         expect{ account.destroy }.not_to raise_error
       end
     end

@@ -4,6 +4,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe AccountLinkRequest do
   fixtures :users, :accounts, :account_links, :account_link_requests
   set_fixture_class  :accounts => Account::Base
+
+  before do
+    Deal::Base.destroy_all
+    Entry::Base.destroy_all
+    Pattern::Deal.destroy_all
+    Pattern::Entry.destroy_all
+  end
+
   describe "create" do
     before do
       # TODO: ほんとはだめな種類だけど

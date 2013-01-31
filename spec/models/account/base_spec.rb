@@ -8,6 +8,13 @@ describe "Account::Base" do
 
   include EntrySpecHelper
 
+  before do
+    Deal::Base.destroy_all
+    Entry::Base.destroy_all
+    Pattern::Deal.destroy_all
+    Pattern::Entry.destroy_all
+  end
+
   describe "destroy" do
     before do
       @user = users(:taro)
