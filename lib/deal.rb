@@ -20,6 +20,7 @@ module Deal
     base.accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
     base.before_validation :copy_deal_info_to_entries, :set_creditor_to_entries, :set_unified_summary
     base.before_save :adjust_entry_line_numbers
+    base.before_update :destroy_marked_entries
 
     base.class_eval do
       # 単一記入では creditor に金額が指定されないことへの調整。
@@ -198,6 +199,19 @@ module Deal
   end
 
   private
+
+  # Rails を 3.2.6 から 3.2.11 にあげたら、
+  # nested attributes の autosave で削除よりさきにentry登録がはしって
+  # index重複エラーになったので、
+  # その回避として明示的に先に削除する
+  def destroy_marked_entries
+    while e = debtor_entries.detect{|e| e.marked_for_destruction?} do
+      debtor_entries.delete(e)
+    end
+    while e = creditor_entries.detect{|e| e.marked_for_destruction?} do
+      creditor_entries.delete(e)
+    end
+  end
 
   # Entryのline_numberを調整する
   def adjust_entry_line_numbers

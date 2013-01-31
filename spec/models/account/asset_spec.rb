@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe "Account::Asset" do
+describe "Account::Asset", :no_deals_and_patterns do
   self.use_transactional_fixtures = true
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
@@ -16,6 +16,7 @@ describe "Account::Asset" do
     let(:account) { accounts(:taro_cache) }
     context "DealにもDealPatternにも使われていないとき" do
       it "削除できる" do
+        raise "used!" if Entry::Base.find_by_account_id(account.id) || Pattern::Entry.find_by_account_id(account.id)
         expect{ account.destroy }.not_to raise_error
       end
     end
