@@ -1,16 +1,9 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe User do
+describe User, :no_deals_and_patterns do
   fixtures :users, :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions
   set_fixture_class  :accounts => Account::Base, :friend_requests => Friend::Request, :friend_permissions => Friend::Permission
-
-  before do
-    Deal::Base.destroy_all
-    Entry::Base.destroy_all
-    Pattern::Deal.destroy_all
-    Pattern::Entry.destroy_all
-  end
 
   describe "destroy" do
     before do

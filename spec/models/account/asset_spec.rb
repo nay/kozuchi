@@ -1,16 +1,12 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe "Account::Asset" do
+describe "Account::Asset", :no_deals_and_patterns do
   self.use_transactional_fixtures = true
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
   
   before do
-    Deal::Base.destroy_all
-    Entry::Base.destroy_all
-    Pattern::Deal.destroy_all
-    Pattern::Entry.destroy_all
     @user = users(:taro)
     @capital_fund = @user.assets.create!(:name => "資本金", :asset_kind => "capital_fund")
     @credit_card = @user.assets.create!(:name => "クレジットカード", :asset_kind => "credit_card")
