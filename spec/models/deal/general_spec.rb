@@ -207,6 +207,8 @@ describe Deal::General do
       @deal.reload
       @deal.creditor_entries.size.should == 2
       @deal.debtor_entries.size.should == 1
+      # 古いentryがnullifyでのこっていないこと
+      Entry::Base.find_by_deal_id(nil).should be_nil
     end
     it "借り方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
@@ -227,7 +229,8 @@ describe Deal::General do
       @deal.reload
       @deal.creditor_entries.size.should == 1
       @deal.debtor_entries.size.should == 2
-      
+      # 古いentryがnullifyでのこっていないこと
+      Entry::Base.find_by_deal_id(nil).should be_nil
     end
     context "日付を変更したとき" do
       before do

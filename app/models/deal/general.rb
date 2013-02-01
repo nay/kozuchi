@@ -5,8 +5,8 @@ class Deal::General < Deal::Base
   before_destroy :cache_previous_receivers  # dependent destroy より先に
 
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
-    e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => "line_number", :include => :account, :autosave => true
-    e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => "line_number", :include => :account, :autosave => true
+    e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => "line_number", :include => :account, :autosave => true, :dependent => :destroy
+    e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => "line_number", :include => :account, :autosave => true, :dependent => :destroy
     e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
 
