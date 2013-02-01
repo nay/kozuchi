@@ -30,6 +30,7 @@ class AccountEntries
         pure_balance += e.amount unless e.initial_balance?
       else
         # 確定のときだけ残高に反映
+        raise "no deal in entry #{e.id} (deal_id : #{e.deal_id}" unless e.deal
         pure_balance += e.amount if e.deal.confirmed?
         # TODO: account_entry側の仕事にしたいかな
         e.partner_account_name = e.deal.partner_account_name_of(e) # 効率上自分で入れておく
