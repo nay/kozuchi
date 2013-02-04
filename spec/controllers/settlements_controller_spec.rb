@@ -33,15 +33,31 @@ describe SettlementsController do
   end
 
   describe "index" do
-    it "精算データがない時、成功する" do
-      raise "there are settlements!" unless @current_user.settlements.empty?
-      get 'index'
-      response.should be_success
+    context "引数にaccount_idがないとき" do
+      let(:account_id) {users(:taro).assets.credit.first.id}
+      it "精算データがない時、リダイレクトされる" do
+        raise "there are settlements!" unless @current_user.settlements.empty?
+        get 'index'
+        response.should redirect_to(account_settlements_path(account_id))
+      end
+      it "精算データがある時、リダイレクトされる" do
+        create_taro_settlement
+        get 'index'
+        response.should redirect_to(account_settlements_path(account_id))
+      end
     end
-    it "精算データがある時、成功する" do
-      create_taro_settlement
-      get 'index'
-      response.should be_success
+    context "引数にaccount_idがあるとき" do
+      let(:account_id) {:taro_card.to_id}
+      it "精算データがない時、成功する" do
+        raise "there are settlements!" unless @current_user.settlements.empty?
+        get 'index', :account_id => account_id
+        response.should be_success
+      end
+      it "精算データがある時、成功する" do
+        create_taro_settlement
+        get 'index', :account_id => account_id
+        response.should be_success
+      end
     end
   end
 
