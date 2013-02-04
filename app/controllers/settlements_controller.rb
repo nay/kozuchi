@@ -81,11 +81,21 @@ class SettlementsController < ApplicationController
   end
   
   def index
-    @settlements = Settlement.find(:all, :include => {:result_entry => :deal }, :conditions => ["settlements.user_id = ?", @user.id], :order => 'deals.date, settlements.id')
-    if @settlements.empty?
-      render :action => 'no_settlement'
+    # account_id が指定されていない場合はredirectする
+    if !params[:account_id]
+      account= if current_account && @credit_accounts.detect{|a| a == current_account}
+        current_account
+      else
+        @credit_accounts.first
+      end
+      redirect_to account_settlements_path(:account_id => account.id)
       return
     end
+    @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
+    raise InvalidParameterError unless @account
+    self.current_account = @account
+
+    @settlements = @user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
   end
   
   # 1件を削除する
@@ -100,7 +110,8 @@ class SettlementsController < ApplicationController
     end
     redirect_to :action => 'index'
   end
-  
+
+  # TODO: 例外にしたいが、目にしがちな画面なので、エラーページをきれいにしてからのほうがいいかも
   def show
     unless @settlement
       render :action => 'no_settlement'

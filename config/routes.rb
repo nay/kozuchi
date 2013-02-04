@@ -147,6 +147,7 @@ Kozuchi::Application.routes.draw do
   # SettlementsController
   controller :settlements do
     get 'settlements/new/target_deals', :as => :new_settlement_target_deals, :action => :target_deals
+    get 'settlements/accounts/:account_id', :as => :account_settlements, :action => :index
     resources :settlements, :only => [:index, :show, :new, :create, :destroy] do
       member do
         get 'print_form'

@@ -33,6 +33,9 @@ class Settlement < ActiveRecord::Base
   before_destroy :check_submitted
   after_destroy :destroy_reuslt_deal
 
+  # result_entryのひもづけにacocunt_entriesというテーブル名が使われる想定
+  scope :on, lambda{|account| where(["account_entries.account_id = ?", account.id])}
+
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
   end
