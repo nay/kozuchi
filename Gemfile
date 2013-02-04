@@ -12,8 +12,8 @@ gem 'jpmobile'
 gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs'
 gem 'dynamic_form'
-gem 'therubyracer'
-gem 'libv8', '3.11.8.3'
+gem 'therubyracer', '0.11.1'
+gem 'libv8', '~> 3.11.8.7'
 
 group :assets do
   gem 'sass-rails'
