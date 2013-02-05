@@ -214,7 +214,7 @@ EOS
     end
     return '' unless user && user.preferences
     bgcolor = user.preferences.color
-    return '' unless bgcolor;
+    return '' unless bgcolor.present?;
     style_content = "background-color: #{bgcolor};"
     return ('style="'+h(style_content)+'"').html_safe
   end
