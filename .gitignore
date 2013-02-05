@@ -1,7 +1,7 @@
 tmp
 log
 .*~log
-doc/*
+doc/app/*
 config/database.yml
 config/mongrel_cluster.yml
 db/schema.rb
