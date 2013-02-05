@@ -82,20 +82,26 @@ class SettlementsController < ApplicationController
   
   def index
     # account_id が指定されていない場合はredirectする
-    if !params[:account_id]
-      account= if current_account && @credit_accounts.detect{|a| a == current_account}
-        current_account
+    case params[:account_id]
+    when nil
+      account_id = if current_account && @credit_accounts.detect{|a| a == current_account}
+        current_account.id
       else
-        @credit_accounts.first
+        'all'
       end
-      redirect_to account_settlements_path(:account_id => account.id)
+      redirect_to account_settlements_path(:account_id => account_id)
       return
+    when 'all'
+      self.current_account = nil
+    else
+      @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
+      raise InvalidParameterError unless @account
+      self.current_account = @account
     end
-    @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
-    raise InvalidParameterError unless @account
-    self.current_account = @account
 
-    @settlements = @user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+    @settlements = @user.settlements
+    @settlements = @settlements.on(@account) if @account
+    @settlements = @settlements.includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
   end
   
   # 1件を削除する

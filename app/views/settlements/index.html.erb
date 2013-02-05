@@ -4,7 +4,7 @@
     <% end %>
     <%= form_tag settlements_path, :method => :get, :id => 'account_form' do %>
     <div id="account_options">
-      <%= select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s) %>
+      <%= select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s) %>
     </div>
     <% end %>
 

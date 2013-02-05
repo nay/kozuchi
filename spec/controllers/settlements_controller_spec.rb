@@ -34,16 +34,15 @@ describe SettlementsController do
 
   describe "index" do
     context "引数にaccount_idがないとき" do
-      let(:account_id) {users(:taro).assets.credit.first.id}
       it "精算データがない時、リダイレクトされる" do
         raise "there are settlements!" unless @current_user.settlements.empty?
         get 'index'
-        response.should redirect_to(account_settlements_path(account_id))
+        response.should redirect_to(account_settlements_path('all'))
       end
       it "精算データがある時、リダイレクトされる" do
         create_taro_settlement
         get 'index'
-        response.should redirect_to(account_settlements_path(account_id))
+        response.should redirect_to(account_settlements_path('all'))
       end
     end
     context "引数にaccount_idがあるとき" do
