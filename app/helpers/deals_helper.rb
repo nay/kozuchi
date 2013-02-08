@@ -90,9 +90,7 @@ EOS
        d.html_safe
       end
     end
-    text << content_tag(:div, capture(&block), :id => "deal_forms") do
-      capture(&block)
-    end
+    text << content_tag(:div, capture(&block), :id => "deal_forms")
     text.html_safe
   end
 
