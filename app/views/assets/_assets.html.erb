@@ -14,7 +14,7 @@
         <th>正の資産</th><th></th><th class="amount">期末残高</th>
       </tr>
       <% @assets.plus.each do |account| %>
-        <%= book_line :name => account.name, :percentage => account.percentage, :amount => account.balance %>
+        <%= book_line :account => account, :percentage => account.percentage, :amount => account.balance %>
      <% end %>
    </table>
    <table class="book">
@@ -35,7 +35,7 @@
         <th>負の資産</th><th></th><th class="amount">期末残高</th>
       </tr>
       <% @assets.minus.each do |account| %>
-        <%= book_line :name => account.name, :percentage => account.percentage, :amount => account.balance %>
+        <%= book_line :account => account, :percentage => account.percentage, :amount => account.balance %>
       <% end %>
     </table>
     <table class="book">

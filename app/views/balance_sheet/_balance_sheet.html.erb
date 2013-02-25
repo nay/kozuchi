@@ -5,7 +5,7 @@
 	<table class="book">
 	  <tr><th colspan="2">資産</th></tr>
 	  <% @assets.plus.each do |account| %>
-	    <%= book_line(:name => account.name, :amount => account.balance) %>
+	    <%= book_line(:account => account, :amount => account.balance) %>
 	  <% end %>
 	</table>
   </div>
@@ -14,7 +14,7 @@
     <table class="book">
       <tr><th colspan="2">負債</th></tr>
       <% @assets.minus.each do |account| %>
-        <%= book_line(:name => account.name, :amount => account.balance * -1)%>
+        <%= book_line(:account => account, :amount => account.balance * -1)%>
 	  <% end %>
     </table>
     <table class="book">
@@ -25,7 +25,7 @@
       <table class="book">
         <tr><th colspan="2">資本</th></tr>
         <% @assets.capital_fund.each do |account| %>
-          <%= book_line(:name => account.name, :amount => account.balance * -1) %>
+          <%= book_line(:account => account, :amount => account.balance * -1) %>
         <% end %>
 	    <%= book_line(:name => "利益剰余金", :amount => @assets.profit)%>
       </table>
