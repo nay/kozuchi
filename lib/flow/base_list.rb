@@ -3,7 +3,7 @@ class Flow::BaseList < Array
 
   def new_flow(account, previous)
     self.class.element_class.new(
-      account.name,
+      account,
       (account.respond_to?(:unknown) ? account.unknown : account.flow),
       account.respond_to?(:unknown),
       self,
@@ -11,7 +11,7 @@ class Flow::BaseList < Array
   end
   def new_zero_flow(previous)
     self.class.element_class.new(
-      previous.name,
+      previous,
       0,
       previous.respond_to?(:unknown),
       self,

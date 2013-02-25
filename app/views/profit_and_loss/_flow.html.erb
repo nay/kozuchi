@@ -1,6 +1,6 @@
 <% previous ||= false %>
-<tr>
-          <td><%= h flow.name %></td>
+<tr class="flow">
+          <td><%= link_to flow.name, monthly_account_deals_path(:account_id => flow.account.id, :year => @year.to_s, :month => @month.to_s), :class => 'account' %></td>
           <td class="percentage"><%=  "#{flow.percentage}%" if flow.percentage %></td>
           <td class="amount"><%= number_with_delimiter(flow.flow)%></td>
           <% if previous %>

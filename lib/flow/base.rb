@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
 class Flow::Base
-  attr_reader :list
-  def initialize(account_name, flow, unknown, list, previous_flow)
+  attr_reader :list, :account
+  def initialize(account, flow, unknown, list, previous_flow)
+    @account = account
     @list = list
-    @account_name = account_name
+    @account_name = account.name
     @flow = flow
     @previous_flow = previous_flow
     @unknown = unknown
