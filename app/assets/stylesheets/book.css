@@ -461,3 +461,7 @@ p.deprecated {
   border: 1px solid #000000;
   cursor: pointer;
 }
+
+table.book a.account {
+  color: #041A61;
+}
