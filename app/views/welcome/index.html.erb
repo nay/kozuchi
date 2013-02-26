@@ -3,6 +3,7 @@
   <%= stylesheet_link_tag 'welcome' %>
 <% end -%>
 
+<div id="welcome">
 <div id="side">
 
   <% if current_user -%>
@@ -55,4 +56,6 @@
   <div id="features">
     <%= render(:partial => 'shared/features') %>
   </div>
+</div>
+
 </div>
