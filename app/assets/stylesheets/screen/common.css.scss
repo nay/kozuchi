@@ -3,6 +3,18 @@
     padding:0;
 }
 
+/* ユーザー登録、welcomeでのみ使っている */
+#title {
+	margin-bottom: 1em;
+
+  h1 {
+    text-align: center;
+    font-size: 160%;
+    border-bottom: 4px double #041A61;
+  }
+}
+
+
 #page {
     background-color: #fffff9;
     margin-left: 8px;
@@ -181,8 +193,8 @@ table.simple_form .operation {
 }
 
 h1.mobile_title {
-    text-align: center;
-    fon-size: 120%;
+  text-align: center;
+  font-size: 120%;
 }
 
 /* line form style */

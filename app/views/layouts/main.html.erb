@@ -9,11 +9,9 @@
     <title>
       <%= title %> - <%= sub_title %> 
     </title>
-    <%= stylesheet_link_tag 'common' %>
+    <%= stylesheet_link_tag 'application' %>
     <%= stylesheet_link_tag 'all_media', :media => :all %>
-    <%= stylesheet_link_tag 'book' %>
     <%= stylesheet_link_tag 'print', :media => :print %>
-    <%#  stylesheet_link_tag 'daily_booking' %>
     <%= javascript_include_tag :application %>
     <%= javascript_include_tag '/javascripts/jquery-1.8.3.min' %>
     <%= render :partial => "shared/google_analytics" %>

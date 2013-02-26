@@ -1,11 +1,3 @@
-/*
- *= require_self
- *= require calendar
- *= require day_navigator
- *= require deal_patterns
- *= require settings
-*/
-
 /* ============== 共通情報　=============== */
 
 /* 上下の margin に関する汎用部品 */
@@ -23,9 +15,10 @@
 .clickable_text {
   border: 1px outset gold;
   background-color: lightyellow;
-}
-.clickable_text .deal_pattern {
-  background-color: #ffeddb;
+
+  .deal_pattern {
+    background-color: #ffeddb;
+  }
 }
 
 #user_and_today {
@@ -34,13 +27,6 @@
   font-weight: bold;
   padding: 4px;
   cursor: pointer;
-}
-
-/* 線で囲んだエリア */
-#sidebar .side_menu {
-  border: 0;
-  background-color: #FFDDBC;
-  padding: 4px;
 }
 
 /* フォーム地 */
@@ -74,8 +60,6 @@ input.number, #datebox input, #deal_amount, #deal_balance {
   ime-mode:active;
 }
 
-
-
 .window {
   border: 1px dashed darkgoldenrod;
   margin-bottom: 16px;
@@ -90,14 +74,46 @@ input.number, #datebox input, #deal_amount, #deal_balance {
 .book {
   background-color: #EFEFEF;
   border: 1px solid #d3d3d8;
-/*  width:100%; */ /* all_media で指定 */
-/*  width: 18em; */
+
+  /* 更新行ハイライト */
+  .updated_line td {
+    background-color: pink;
+  }
+
+  td, tbody tr td {
+    padding: 2px;
+    background-color: white;
+  }
+
+  td.date, td.number {
+    vertical-align: top;
+  }
+
+  .timestamps {
+    font-size: 9px;
+    width: 180px;
+    text-align: left;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px;
+    background-color: #FFFFCC;
+    color: #000000;
+    border: 1px solid #FFDDBC;
+    display: none;
+  }
+
 }
 
 .book_header {
   background-color: #EFEFEF;
   border: 1px solid #d3d3d8;
-  /* width:100%; */ /* all_media で指定 */
+
+  th, tbody tr th {
+    padding: 2px;
+    background-color: #efefef;
+    text-align: center;
+  }
 }
 
 .scroll_box {
@@ -108,35 +124,6 @@ input.number, #datebox input, #deal_amount, #deal_balance {
   border-bottom: 1px solid darkgoldenrod;
 }
 
-/* 更新行ハイライト */
-.book .updated_line td {
-  background-color: pink;
-}
-.book td, .book tbody tr td {
-  padding: 2px;
-  background-color: white;
-}
-.book td.date, .book td.number {
-  vertical-align: top;
-}
-.book .timestamps {
-  font-size: 9px;
-  width: 180px;
-  text-align: left;
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 4px;
-  background-color: #FFFFCC;
-  color: #000000;
-  border: 1px solid #FFDDBC;
-  display: none;
-}
-.book_header th, .book_header tbody tr th {
-  padding: 2px;
-  background-color: #efefef;
-  text-align: center;
-}
 th.scroll_space {
   width: 0.6em;
 }
@@ -285,20 +272,26 @@ a.small_button, .action a {
   clear: both;
   float: left;
   width: 13%;
-}
 
-.side_menu, .side_menu_current {
-  white-space: nowrap;
-  margin: 8px 0px;
-  overflow: hidden;
-  border: 0;
-  padding: 4px;
-  font-weight: bold;
-}
+  .side_menu {
+    border: 0;
+    background-color: #FFDDBC;
+    padding: 4px;
+  }
 
-.side_menu_current {
-  background-color: #ffb7db;
-  color: black;
+  .side_menu, .side_menu_current {
+    white-space: nowrap;
+    margin: 8px 0px;
+    overflow: hidden;
+    border: 0;
+    padding: 4px;
+    font-weight: bold;
+  }
+
+  .side_menu_current {
+    background-color: #ffb7db;
+    color: black;
+  }
 }
 
 /* -------- contents -------*/
@@ -306,13 +299,15 @@ a.small_button, .action a {
   float:right;
   width: 86%;
   padding-left: 4px;
+
+  .title {
+    font-size: 120%;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
 }
 
-#contents .title {
-  font-size: 120%;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
 
 /*　------ 入力欄  ------- */
 
@@ -336,11 +331,6 @@ a.small_button, .action a {
 /* ================ 機能別 =================== */
 
 /* ------ 口座別出納：口座選択欄 --------*/
-#account_options {
-}
-#account_options select {
-}
-
 
 /* 利益・損益のレポートエリア */
 .result {
@@ -362,92 +352,64 @@ a.small_button, .action a {
 }
 
 
-.table_first {
-}
-
-
 /* ==== 貸借対照表 ==== */
 table.balance_sheet {
   width: 100%;
-}
-table.balance_sheet tr td {
-  width: 50%;
-  vertical-align: top;
-}
-table.balance_sheet table.details {
-  width: 100%;
-  background-color: darkgoldenrod;
-}
-table.balance_sheet table.details th {
-  background-color: goldenrod;
-}
-table.balance_sheet table.details td {
-  background-color: white;
+
+  tr td {
+    width: 50%;
+    vertical-align: top;
+  }
+
+  table.details {
+    width: 100%;
+    background-color: darkgoldenrod;
+  }
+
+  table.details th {
+    background-color: goldenrod;
+  }
+
+  table.details td {
+    background-color: white;
+  }
+
 }
 
-
-/* ==== ヘルプ用　======= */
-div.description {
-  border: 2px dotted darkgoldenrod;
-  background-color: white;
-  text-align: left;
-  padding: 0.8em 1.2em;
-}
-
-.description p {
-  margin-left: 1em;
-}
-
-div.paragraph {
-  padding-left: 2em;
-  margin: 1em;
-}
-
-h3 {
-  color: darkgoldenrod;
-}
-
-h4 {
-  margin: 0.5em 0.2em;
-  border-bottom: 1px dotted goldenrod;
-}
-
-p.example {
-  padding: 0.2em 0;
-  font-style: italic;
-  color: green;
-  font-weight: bold;
-}
-
-p.deprecated {
-  padding: 0.2em 0;
-  color: red;
-}
 
 #money_counting {
   padding: 4px;
   border: 1px solid #ffee88;
   background-color: #ffffdd;
+
+  .field {
+    text-align: right;
+    width: 150px;
+    margin: 0 16px;
+    float: left;
+
+    input {
+      text-align: right;
+    }
+  }
+
 }
-#money_counting .field {
-  text-align: right;
-  width: 150px;
-  margin: 0 16px;
-  float: left;
+
+#deal_forms {
+  .entry div {
+    float: left;
+  }
+
+  .errorExplanation {
+    border: 1px solid orange;
+    padding: 4px;
+  }
+
+  .errorExplanation h2 {
+    font-size: 100%;
+  }
 }
-#money_counting .field input {
-  text-align: right;
-}
-#deal_forms .entry div {
-  float: left;
-}
-#deal_forms .errorExplanation {
-  border: 1px solid orange;
-  padding: 4px;
-}
-#deal_forms .errorExplanation h2 {
-  font-size: 100%;
-}
+
 /* 精算 */
 .book tbody tr.disabled td {
   background-color: #dddddd;

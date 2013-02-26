@@ -1,9 +1,0 @@
-/* title for general pages */
-#title h1 {
-	text-align: center;
-	font-size: 160%;
-	border-bottom: 4px double #041A61;
-}
-#title {
-	margin-bottom: 1em;
-}
