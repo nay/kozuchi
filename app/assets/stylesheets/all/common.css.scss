@@ -1,0 +1,109 @@
+.book_header {
+  width: 100%;
+}
+
+.book {
+  width: 100%;
+}
+
+.table_block {
+  clear: both;
+
+  .left {
+    width: 49.5%;
+    float: left;
+  }
+
+  .right {
+    width: 49.5%;
+    float: right;
+  }
+}
+
+td.number, td.amount, .percentage {
+  text-align:right;
+}
+
+td.percentage {
+  width: 3em;
+}
+
+td.amount, th.amount {
+  width: 70px;
+}
+
+td.previous_month {
+  color: #999999;
+}
+
+td.date, th.date {
+  width: 100px;
+}
+
+td.number, th.number {
+  width: 20px;
+}
+
+td.account, th.account {
+  width: 130px;
+}
+td.account .sub_account_names {
+  font-size: 80%;
+  color: #004080;
+}
+td.account .sub_account_name {
+  padding-left: 8px;
+}
+
+a.arrow {
+  text-decoration: none;
+}
+
+/* new design */
+table.listing {
+  margin-left: 24px;
+  border: 2px solid #FFDDBC;
+  background-color: #FFF2E5;
+  margin-bottom: 12px;
+
+  th, td {
+    padding: 8px;
+  }
+
+  .timestamp {
+    font-size: small;
+  }
+}
+.userName {
+  color: #301000;
+  font-weight: bold;
+  font-size: 110%;
+}
+th.amount {
+  text-align: center;
+}
+.amount {
+  text-align: right;
+}
+.resultAmount {
+  font-size: 150%;
+}
+table.simple {
+  margin-top: 10px;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+  }
+
+  th, td {
+    padding: 2px 0;
+  }
+
+  .firstSummary {
+    border-top: 1px solid #888888;
+  }
+  .book td {
+    border: 1px solid #888888;
+  }
+}

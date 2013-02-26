@@ -2,7 +2,7 @@
 <% if @deals.empty? %>
   <p>記入なし</p>
 <% else %>
-  <table class="simple"style="width: 100%;">
+  <table class="simple" style="width: 100%;">
   <% for deal in @deals %>
     <tr><td colspan="2"><%= h deal.summary %></td></tr>
     <tr>
