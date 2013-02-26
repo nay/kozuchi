@@ -1,6 +1,7 @@
 tmp
 log
 .*~log
+public/assets/*
 doc/app/*
 config/database.yml
 config/mongrel_cluster.yml
