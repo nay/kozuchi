@@ -37,15 +37,6 @@
   cursor: pointer;
 }
 
-/* 線で囲んだエリア */
-#sidebar {
-  .side_menu {
-    border: 0;
-    background-color: #FFDDBC;
-    padding: 4px;
-  }
-}
-
 /* フォーム地 */
 .tabsheet, .form_box {
   border: 2px solid #ffffb2;
@@ -289,20 +280,26 @@ a.small_button, .action a {
   clear: both;
   float: left;
   width: 13%;
-}
 
-.side_menu, .side_menu_current {
-  white-space: nowrap;
-  margin: 8px 0px;
-  overflow: hidden;
-  border: 0;
-  padding: 4px;
-  font-weight: bold;
-}
+  .side_menu {
+    border: 0;
+    background-color: #FFDDBC;
+    padding: 4px;
+  }
 
-.side_menu_current {
-  background-color: #ffb7db;
-  color: black;
+  .side_menu, .side_menu_current {
+    white-space: nowrap;
+    margin: 8px 0px;
+    overflow: hidden;
+    border: 0;
+    padding: 4px;
+    font-weight: bold;
+  }
+
+  .side_menu_current {
+    background-color: #ffb7db;
+    color: black;
+  }
 }
 
 /* -------- contents -------*/
