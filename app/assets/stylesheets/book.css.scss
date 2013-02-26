@@ -388,39 +388,6 @@ table.balance_sheet {
 }
 
 
-/* ==== ヘルプ用　======= */
-div.description {
-  border: 2px dotted darkgoldenrod;
-  background-color: white;
-  text-align: left;
-  padding: 0.8em 1.2em;
-
-  p {
-    margin-left: 1em;
-  }
-
-  h3 {
-    color: darkgoldenrod;
-  }
-
-  h4 {
-    margin: 0.5em 0.2em;
-    border-bottom: 1px dotted goldenrod;
-  }
-
-  div.paragraph {
-    padding-left: 2em;
-    margin: 1em;
-  }
-
-  p.example {
-    padding: 0.2em 0;
-    font-style: italic;
-    color: green;
-    font-weight: bold;
-  }
-}
-
 #money_counting {
   padding: 4px;
   border: 1px solid #ffee88;
