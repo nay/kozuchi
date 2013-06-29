@@ -22,7 +22,7 @@
       <% if !@deal.new_record? %>
         <%
           # TODO: きれいにする
-          func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :complete => "location.hash = '#{@deal.id}';location.hash = 'top';")
+          func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :before => "location.hash = 'nowhere';location.hash = 'top';")
         %>
         <%= link_to '複数記入にする', '#', :onClick => func %>
       <% end %>

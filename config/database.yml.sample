@@ -17,8 +17,9 @@ development:
   username: root
   encoding: utf8
   password:
-  socket: /var/run/mysqld/mysqld.sock # for TravisCI
+  # socket: /tmp/mysql.sock
   # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
+  socket: /var/run/mysqld/mysqld.sock # for TravisCI
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
@@ -29,8 +30,9 @@ test:
   username: root
   encoding: utf8
   password:
-  socket: /var/run/mysqld/mysqld.sock # for TravisCI
+  # socket: /tmp/mysql.sock
   # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
+  socket: /var/run/mysqld/mysqld.sock # for TravisCI
 
 production:
   adapter: mysql2
@@ -38,5 +40,7 @@ production:
   username: root
   encoding: utf8
   password:
-  socket: /opt/local/var/run/mysql5/mysqld.sock
+  # socket: /tmp/mysql.sock
+  # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
+  socket: /var/run/mysqld/mysqld.sock # for TravisCI
 
