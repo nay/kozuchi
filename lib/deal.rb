@@ -228,7 +228,7 @@ module Deal
 
       # line_number に重複がある（代入漏れなどで）場合はループ前提が崩れるため先にエラーにする
       raise "Duplicated line number in debtor entries. #{debtor_entries.inspect}" if debtors.map(&:line_number).uniq.size != debtors.size
-      raise "Duplicated line number in creditor entries. #{debtor_entries.inspect}" if creditors.map(&:line_number).uniq.size != creditors.size
+      raise "Duplicated line number in creditor entries. #{creditor_entries.inspect}" if creditors.map(&:line_number).uniq.size != creditors.size
 
       while((!debtors.empty? || !creditors.empty?) && line_number <= Entry::Base::MAX_LINE_NUMBER)
         exists = false
