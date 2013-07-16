@@ -76,11 +76,11 @@ describe Deal::General do
     end
 
     it "同じ口座間での移動が検証を通る" do
-      deal = new_deal(3, 1, :taro_food, :taro_food, 300)
+      deal = new_simple_deal(3, 1, :taro_food, :taro_food, 300)
       deal.valid?.should be_true
     end
     it "金額が0ではいけないこと" do
-      deal = new_deal(3, 1, :taro_food, :taro_cache, 0)
+      deal = new_simple_deal(3, 1, :taro_food, :taro_cache, 0)
       deal.valid?
       deal.valid?.should be_false
     end
@@ -132,7 +132,7 @@ describe Deal::General do
     end
 
     it "同じ口座間での移動記入が作成できること" do
-      deal = new_deal(3, 1, :taro_food, :taro_food, 300)
+      deal = new_simple_deal(3, 1, :taro_food, :taro_food, 300)
       deal.save.should be_true
       d = deal.debtor_entries.first
       d.account_id.should == Fixtures.identify(:taro_food)
@@ -145,7 +145,7 @@ describe Deal::General do
 
     describe "連携なし" do
       before do
-        @deal = new_deal(6, 1, @cache, @bank, 3500)
+        @deal = new_simple_deal(6, 1, @cache, @bank, 3500)
       end
 
       it "成功する" do
@@ -178,7 +178,7 @@ describe Deal::General do
   describe "update" do
     let!(:old_time_stamp) {Time.zone.now - 10000}
     let!(:deal) do
-      d = new_deal(6, 1, @cache, @bank, 3500)
+      d = new_simple_deal(6, 1, @cache, @bank, 3500)
       d.save!
       d.class.update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp], "id = #{d.id}")
       d.reload

@@ -42,6 +42,7 @@ end
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :development, :test do
+  gem 'selenium-webdriver'
   gem 'i18n_generators'
   gem "rspec-rails"
   gem "capybara"

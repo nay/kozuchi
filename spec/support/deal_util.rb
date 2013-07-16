@@ -14,7 +14,7 @@ def to_account_id(value)
 end
 
 # 単純明細記入の作成
-def new_deal(month, day, from, to, amount, year = 2008)
+def new_simple_deal(month, day, from, to, amount, year = 2008)
   d = Deal::General.new(:summary => "#{month}/#{day}の買い物",
     :debtor_entries_attributes => [:account_id => to_account_id(to), :amount => amount],
     :creditor_entries_attributes => [:account_id => to_account_id(from), :amount => amount * -1],
@@ -26,6 +26,7 @@ end
 
 # 複数明細記入の作成
 # debtors {account_id => amout, account_id => amount} のように記述
+# [account_id, amount]の配列でも可
 def new_complex_deal(month, day, debtors, creditors, options = {})
   summary = options[:summary] || "#{month}/#{day}の記入"
   date = Date.new(options[:year] || 2010, month, day)
