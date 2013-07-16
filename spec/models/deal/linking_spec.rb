@@ -203,6 +203,20 @@ describe "Deal Linking" do
 
     end
 
+    describe "同じユーザーの同じ口座への記入が複数ある複数明細" do
+      let(:deal) do
+        # taro_hanako から taro_food へ ×２
+        new_complex_deal(7, 15, [[:taro_food, 500], [:taro_food, 800]], [[:taro_hanako, -500], [:taro_hanako, -800]])
+      end
+
+      describe "valid?" do
+        it { deal.valid?.should be_true }
+      end
+
+      describe "save" do
+        it { deal.save.should be_true }
+      end
+    end
 
   end
 

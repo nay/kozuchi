@@ -95,8 +95,10 @@ module User::AccountLinking
     # 対応する entry をまず記入し、残りを生成する
     debtor_entries_attributes = []
     debtor_amount = 0
+    debtor_line_number = -1
     creditor_entries_attributes = []
     creditor_amount = 0
+    creditor_line_number = -1
     used_accounts = []
     ex_entries_hash.each do |e|
       account = accounts.find(e[:ex_account_id])
@@ -104,10 +106,10 @@ module User::AccountLinking
       amount = e[:amount] * -1
       attrs = {:account_id => account.id, :amount => amount, :linked_ex_entry_id => e[:id], :linked_ex_deal_id => sender_ex_deal_id, :linked_user_id => sender_id, :linked_ex_entry_confirmed => true}
       if amount < 0
-        creditor_entries_attributes << attrs
+        creditor_entries_attributes << attrs.merge(:line_number => creditor_line_number += 1)
         creditor_amount += amount
       else
-        debtor_entries_attributes << attrs
+        debtor_entries_attributes << attrs.merge(:line_number => debtor_line_number += 1)
         debtor_amount += amount
       end
     end
@@ -116,9 +118,9 @@ module User::AccountLinking
     raise "could not find safe partner account. " unless partner_account
 
     if diff < 0
-      creditor_entries_attributes << {:account_id => partner_account.id, :amount => diff}
+      creditor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => creditor_line_number += 1}
     elsif diff > 0
-      debtor_entries_attributes << {:account_id => partner_account.id, :amount => diff}
+      debtor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => debtor_line_number += 1}
     end
     # 0 ならなにもしない
     
