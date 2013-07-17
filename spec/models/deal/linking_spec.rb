@@ -7,9 +7,11 @@ describe "Deal Linking" do
   fixtures :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions, :users
   set_fixture_class  :accounts => Account::Base, :deals => Deal::Base
 
+  let(:taro) { users(:taro) }
+  let(:hanako) { users(:hanako) }
   before do
-    @taro = users(:taro)
-    @hanako = users(:hanako)
+    @taro = taro # TODO: @taro は削除したい
+    @hanako = hanako # TODO: @hanako は削除したい
     @home = users(:home)
     raise "@taroと@hanakoは友達" unless @taro.friend?(@hanako) && @hanako.friend?(@taro)
     raise "@taroと@homeは友達" unless @taro.friend?(@home) && @home.friend?(@taro)
@@ -117,6 +119,67 @@ describe "Deal Linking" do
       home_income_from_two_entry.linked_ex_deal_id.should == @taro_deal.id
       home_income_from_two_entry.linked_user_id.should == @taro.id
       home_income_from_two_entry.linked_ex_entry_confirmed.should be_true
+    end
+
+    context "サマリー分割モードで記入された連携Entryを１つ含む複数明細" do
+      let(:deal) {
+        new_complex_deal(7, 15, [[:taro_food, 800, 'ラーメン'], [:taro_food, 500, '菓子']], [[:taro_hanako, -800, '[太郎]ラーメン'], [:taro_hanako, -500, '[太郎]菓子']])
+      }
+
+      describe "valid?" do
+        it { deal.valid?.should be_true }
+      end
+
+      describe "save (create)" do
+        it "登録が成功し、正しいサマリーが連携記入に含まれる" do
+          deal.save.should be_true
+          linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+          linked_deal.should_not be_nil
+          # 花子側の借方に連携が入る
+          linked_deal.debtor_entries.map(&:summary).should == ['[太郎]ラーメン', '[太郎]菓子']
+        end
+      end
+
+      describe "save (update)" do
+        before do
+          deal.save!
+        end
+
+        context "一度保存して連携取引ができたあと、splitモードのまま、一部のサマリーを変えたとき" do
+          before do
+            deal.attributes = {
+              :debtor_entries_attributes => deal.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary}},
+              :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary == '[太郎]ラーメン' ? '[太郎]味噌ラーメン' : e.summary}}
+            }
+          end
+          it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+            deal.save.should be_true
+            linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+            linked_deal.should_not be_nil
+            # 花子側の借方に連携が入る
+            linked_deal.debtor_entries.map(&:summary).should == ['[太郎]味噌ラーメン', '[太郎]菓子']
+          end
+        end
+
+        context "一度保存して連携取引ができたあと、unifyモードにしてサマリーを変えたとき" do
+          before do
+            deal.attributes = {
+              :summary_mode => 'unify',
+              :summary => 'ラーメンと菓子',
+              :debtor_entries_attributes => deal.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number}},
+              :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number}}
+            }
+          end
+          it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+            deal.save.should be_true
+            linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+            linked_deal.should_not be_nil
+            # 花子側の借方に連携が入る
+            linked_deal.debtor_entries.map(&:summary).should == ['ラーメンと菓子', 'ラーメンと菓子']
+            linked_deal.summary_unified?.should be_true
+          end
+        end
+      end
     end
 
     describe "両面取引" do
