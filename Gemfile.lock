@@ -92,7 +92,7 @@ GEM
     mime-types (1.23)
     mini_portile (0.5.1)
     multi_json (1.7.7)
-    mysql2 (0.3.11)
+    mysql2 (0.3.12)
     net-http-digest_auth (1.2.1)
     net-http-persistent (2.8)
     nokogiri (1.6.0)
