@@ -74,7 +74,7 @@ GEM
       mechanize
       rails (>= 3.0.0)
     journey (1.0.4)
-    jpmobile (3.0.7)
+    jpmobile (4.0.0)
     json (1.7.7)
     libv8 (3.11.8.13)
     mail (2.4.4)
