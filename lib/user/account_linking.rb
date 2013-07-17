@@ -55,24 +55,33 @@ module User::AccountLinking
 
   # このユーザー側に連携取引を作成する。すでにあれば更新する
   # proxy なら deal の中を分解して接続する
-  def link_deal_for(sender_id, sender_ex_deal_id, ex_entries_hash, summary, date)
+  def link_deal_for(sender_id, sender_ex_deal_id, ex_entries_hash, summary_mode, summary, date)
     # すでにこの取引に紐づいたものがあるなら取得
     linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
     if linked_deal
       # 対応する entry を取り出す
       linked_entries = linked_deal.linked_entries(sender_id, sender_ex_deal_id).sort{|a, b| a[:id] <=> b[:id] }
       # 金額や口座構成の変更があったかを検出する。
+      ex_entries_hash_without_summary = ex_entries_hash.map{|h| h.except(:summary)}
       supposed_hash = linked_entries.map{|e| {:id => e.linked_ex_entry_id, :ex_account_id => e.account_id, :amount => e.amount * -1 }}.sort{|a, b| a[:id] <=> b[:id] }
-      if supposed_hash == ex_entries_hash
+      if supposed_hash == ex_entries_hash_without_summary
         # 変更がなければ相手方を確定する
         linked_deal.confirm_linked_entries(sender_id, sender_ex_deal_id)
         # 未確認の場合、summary, date を更新する
         unless linked_deal.confirmed?
-          linked_deal.summary = summary # 使わないが念のためあわせておく
-          linked_deal.summary_mode = 'unify'
           linked_deal.date = date
           Deal::General.update_all(["date = ?", date], "id = #{linked_deal.id}")
-          Entry::General.update_all(["summary = ?", summary], "deal_id = #{linked_deal.id}")
+          linked_deal.summary_mode = summary_mode
+          if summary_mode == 'unify'
+            linked_deal.summary = summary # 使わないが念のためあわせておく
+            Entry::General.update_all(["summary = ?", summary], "deal_id = #{linked_deal.id}")
+          else
+            linked_entries.each do |e|
+              ex_e = ex_entries_hash.detect{|h| h[:id] == e.linked_ex_entry_id }
+              e.summary = ex_e[:summary]
+              Entry::General.update_all(["summary = ?", ex_e[:summary]], "id = #{e.id}")
+            end
+          end
         end
 
         linked_entries = {}
@@ -87,7 +96,7 @@ module User::AccountLinking
       end
     end
     # なければ作成
-    linked_deal ||= general_deals.build(:summary => summary, :summary_mode => 'unify', :confirmed => false, :date => date)
+    linked_deal ||= general_deals.build(:summary => summary_mode == 'unify' ? summary : nil, :summary_mode => summary_mode, :confirmed => false, :date => date)
 
     linked_deal.for_linking = true
 
@@ -104,7 +113,7 @@ module User::AccountLinking
       account = accounts.find(e[:ex_account_id])
       used_accounts << account
       amount = e[:amount] * -1
-      attrs = {:account_id => account.id, :amount => amount, :linked_ex_entry_id => e[:id], :linked_ex_deal_id => sender_ex_deal_id, :linked_user_id => sender_id, :linked_ex_entry_confirmed => true}
+      attrs = {:account_id => account.id, :amount => amount, :summary => summary_mode == 'unify' ? nil : e[:summary], :linked_ex_entry_id => e[:id], :linked_ex_deal_id => sender_ex_deal_id, :linked_user_id => sender_id, :linked_ex_entry_confirmed => true}
       if amount < 0
         creditor_entries_attributes << attrs.merge(:line_number => creditor_line_number += 1)
         creditor_amount += amount

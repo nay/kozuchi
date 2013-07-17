@@ -27,13 +27,21 @@ end
 # 複数明細記入の作成
 # debtors {account_id => amout, account_id => amount} のように記述
 # [account_id, amount]の配列でも可
+# 配列の場合のみ、3つめにサマリーを分割モードで指定できる
 def new_complex_deal(month, day, debtors, creditors, options = {})
-  summary = options[:summary] || "#{month}/#{day}の記入"
+  if debtors.kind_of?(Array) && debtors.any?{|a| a[2].present? } || creditors.kind_of?(Array) && creditors.any?{|a| a[2].present? }
+    summary_mode = 'split'
+    summary = nil
+  else
+    summary_mode = 'unify'
+    summary = options[:summary] || "#{month}/#{day}の記入"
+  end
+
   date = Date.new(options[:year] || 2010, month, day)
 
-  deal = Deal::General.new(:summary => summary, :summary_mode => 'unify', :date => date,
-    :debtor_entries_attributes => debtors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}.each_with_index{|e, i| e[:line_number] = i},
-    :creditor_entries_attributes => creditors.map{|key, value| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value}}.each_with_index{|e, i| e[:line_number] = i}
+  deal = Deal::General.new(:summary => summary, :summary_mode => summary_mode, :date => date,
+    :debtor_entries_attributes => debtors.map{|key, value, s| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value, :summary => (summary_mode == 'unify' ? nil : s)}}.each_with_index{|e, i| e[:line_number] = i},
+    :creditor_entries_attributes => creditors.map{|key, value, s| {:account_id => (key.kind_of?(Symbol) ? Fixtures.identify(key) : key), :amount => value, :summary => (summary_mode == 'unify' ? nil : s)}}.each_with_index{|e, i| e[:line_number] = i}
   )
 
   key = debtors.respond_to?(:keys) ? debtors.keys.first : debtors.first.first

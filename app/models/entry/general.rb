@@ -22,7 +22,7 @@ class Entry::General < Entry::Base
     unless linked_account_entry
       # 自分側からリンクがきれてるのに相手に残っている場合は異常ケース。いったん相手とunlinkする
       receiver.unlink_deal_for(user_id, deal_id) if receiver.linked_deal_for(user_id, deal_id)
-      linked_entries = receiver.link_deal_for(user_id, deal_id, deal.entries_hash_for(receiver.id), deal.summary, date)
+      linked_entries = receiver.link_deal_for(user_id, deal_id, deal.entries_hash_for(receiver.id), deal.summary_mode, deal.summary, date)
       for entry_id, ex_info in linked_entries
         Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
       end

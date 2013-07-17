@@ -185,10 +185,11 @@ class Deal::General < Deal::Base
 
   # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
   # 口座情報は、こちらで想定している相手口座情報を入れる
+  # モードに関わらず、Entryごとのサマリーも含む
   def entries_hash_for(remote_user_id)
     related_entries(remote_user_id).map do |e|
       ex_account_id = e.account.link.try(:target_ex_account_id) || e.account.link_requests.detect{|lr| lr.sender_id == remote_user_id}.sender_ex_account_id
-      {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount}
+      {:id => e.id, :ex_account_id => ex_account_id, :amount => e.amount, :summary => e.summary}
     end
   end
 
@@ -267,7 +268,7 @@ class Deal::General < Deal::Base
     updated.each do |receiver_id|
       receiver = User.find(receiver_id)
       # このユーザーに関連する entry 情報（id, 口座, 金額のハッシュ）を送る
-      linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary, date)
+      linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary_mode, summary, date)
 #      next unless linked_entries # false なら、こちらの変更は不要
       for entry_id, ex_info in linked_entries
         Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
