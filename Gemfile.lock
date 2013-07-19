@@ -51,7 +51,7 @@ GEM
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.4.0)
+    coffee-script-source (1.6.3)
     daemon_controller (1.1.4)
     diff-lcs (1.2.4)
     domain_name (0.5.12)
