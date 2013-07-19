@@ -143,7 +143,7 @@ GEM
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
     rubyzip (0.9.9)
-    sass (3.2.7)
+    sass (3.2.6)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -196,6 +196,7 @@ DEPENDENCIES
   prototype-rails!
   rails (= 3.2.12)
   rspec-rails
+  sass (= 3.2.6)
   sass-rails
   selenium-webdriver
   therubyracer (= 0.11.1)
