@@ -15,6 +15,7 @@ gem 'dynamic_form'
 gem 'therubyracer', '0.11.1'
 gem 'libv8', '~> 3.11.8.7'
 gem 'passenger'
+gem 'rb-readline', '~> 0.4.2'
 
 group :assets do
   gem 'sass-rails'
