@@ -17,6 +17,7 @@ class Settings::SingleLoginsController < ApplicationController
       flash[:notice] = "#{ERB::Util.h(@single_login.login)}さんへのシングルログイン設定を追加しました。"
       redirect_to settings_single_logins_path
     else
+      current_user.reload # reset single_logins
       render :action => 'index'
     end
   end
