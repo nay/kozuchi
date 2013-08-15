@@ -61,7 +61,7 @@
                 <% end %>
               <% end %>
               <!-- summary -->
-              <%= content_tag :td, account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
+              <%= content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
               <!-- account -->
               <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
                 <td class="account">
