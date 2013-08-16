@@ -3,33 +3,53 @@
 taro_to_hanako:
   user_id: <%= Fixtures.identify(:hanako) %>
   sender_id: <%= Fixtures.identify(:taro) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 taro_to_home:
   user_id: <%= Fixtures.identify(:home) %>
   sender_id: <%= Fixtures.identify(:taro) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 # hanako's
 hanako_to_taro:
   user_id: <%= Fixtures.identify(:taro) %>
   sender_id: <%= Fixtures.identify(:hanako) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 hanako_to_home:
   user_id: <%= Fixtures.identify(:home) %>
   sender_id: <%= Fixtures.identify(:hanako) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 # home's
 home_to_taro:
   user_id: <%= Fixtures.identify(:taro) %>
   sender_id: <%= Fixtures.identify(:home) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 home_to_hanako:
   user_id: <%= Fixtures.identify(:hanako) %>
   sender_id: <%= Fixtures.identify(:home) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 # Others
 account_link_test_user_sended_from_target_user:
   user_id: <%= Fixtures.identify(:account_link_test_user) %>
   sender_id: <%= Fixtures.identify(:account_link_test_target_user) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 account_link_test_target_user_sended_from_user:
   user_id: <%= Fixtures.identify(:account_link_test_target_user) %>
   sender_id: <%= Fixtures.identify(:account_link_test_user) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 account_entry_test_taro_to_hanako:
   user_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
   sender_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>
 account_entry_test_hanako_to_taro:
   user_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
   sender_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
+  created_at: <%= DateTime.now %>
+  updated_at: <%= DateTime.now %>

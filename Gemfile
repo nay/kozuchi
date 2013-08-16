@@ -17,6 +17,7 @@ gem 'libv8', '~> 3.11.8.7'
 gem 'passenger'
 gem 'rb-readline', '~> 0.4.2'
 
+gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗する
 group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
@@ -43,6 +44,7 @@ end
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :development, :test do
+  gem 'selenium-webdriver'
   gem 'i18n_generators'
   gem "rspec-rails"
   gem "capybara"
