@@ -50,8 +50,6 @@
         <td class="icon_to_deal"><%= icon_to_deal_in_monthly(target_entry.year, target_entry.month, target_entry.deal_id) %></td>
       </tr>
     <% end %>
-    <% #target_entries の合計がプラスであるときに出す %>
-    <% if @settlement.target_sum > 0 %>
     <tr>
       <td colspan="8">
       <% unless @settlement.kind_of?(SubmittedSettlement)%>
@@ -60,14 +58,13 @@
         <%= link_to 'csv', print_form_settlement_path(:id => @settlement, :format => 'csv'), 'data-popup' => true %>
 	    |
 		<% if @settlement.result_entry %>
-	    <% if @settlement.submitted_settlement_id.blank? && @settlement.account.destination_account %>
-	      <%= button_to "この精算を#{@settlement.account.destination_account.user_login}さんに提出済にする", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"} %>
-	    <% end %>
+	      <% if @settlement.submitted_settlement_id.blank? && @settlement.account.destination_account %>
+	        <%= button_to "この精算を#{@settlement.account.destination_account.user_login}さんに提出済にする", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"} %>
+	      <% end %>
 		<% end %>
       <% end %>
       </td>
     </tr>
-    <% end %>
   </table>
 
   <h3>精算結果</h3>
