@@ -136,6 +136,24 @@ describe DealsController, :js => true do
       end
     end
 
+    describe "通常明細のパターン指定(id)" do
+      let!(:pattern) { FactoryGirl.create(:deal_pattern,
+          :code => '',
+          :name => '',
+          :debtor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_food), :amount => 800}],
+          :creditor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_cache), :amount => -800}]
+          ) }
+      before do
+        visit "/deals" # 今月へ。日付は入っているはず
+        click_link "*昼食" # パターンを指定
+      end
+      it "パターン登録した内容が入る" do
+        sleep 1
+        page.find("#deal_debtor_entries_attributes_0_amount").value.should == '800'
+        page.find("#deal_summary").value.should == '昼食'
+      end
+    end
+
     describe "複数明細" do
       before do
         visit "/deals"

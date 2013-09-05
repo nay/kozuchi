@@ -136,7 +136,7 @@ module Deal
   end
 
   def summary_unified?
-    summary_mode != 'split' && readonly_entries.map(&:summary).find_all{|s| !s.blank?}.uniq.size == 1
+    summary_mode != 'split' && active_entries.map(&:summary).find_all{|s| !s.blank?}.uniq.size == 1
   end
 
   def summary=(s)
@@ -144,7 +144,11 @@ module Deal
   end
 
   def summary
-    @unified_summary || readonly_entries.detect{|e| e.summary.present?}.try(:summary) || ''
+    @unified_summary || active_entries.detect{|e| e.summary.present?}.try(:summary) || ''
+  end
+
+  def active_entries
+    changed? ? (debtor_entries + creditor_entries) : readonly_entries
   end
 
   def reload
