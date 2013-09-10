@@ -9,7 +9,7 @@ gem 'mysql2'
 
 gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
-gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
+# gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs'
 gem 'dynamic_form'
 gem 'therubyracer', '0.11.1'
@@ -51,4 +51,4 @@ group :development, :test do
   gem "capybara"
   gem "factory_girl_rails", "~> 4.0"
 end
-gem "pry-rails", :group => "development"
+#gem "pry-rails", :group => "development"

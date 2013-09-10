@@ -94,16 +94,13 @@ EOS
     text.html_safe
   end
 
-  def deal_tab(caption, url, current_caption, html_options = {})
+  def deal_tab(caption, url, current_caption, link_html_options = {})
     css_class = (current_caption == true || current_caption == caption) ? "selectedtab" : "tab"
-    css_class += " " + html_options[:class] if html_options[:class].present?
     content_tag :div, :class => css_class do
       if current_caption == true || current_caption == caption
         caption
       else
-        # TODO: きれいにする
-        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}") + "; return false;"
-        link_to caption, '#', {:onClick => func}.merge(html_options)
+        link_to caption, url, {class: [:deal_tab]}.merge(link_html_options)
       end
     end
   end
