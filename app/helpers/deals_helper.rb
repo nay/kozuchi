@@ -94,14 +94,12 @@ EOS
     text.html_safe
   end
 
+  # 記入モード切り替えのタブ(div)を出力する
+  # link_html_options に :class が渡されることは想定していない
   def deal_tab(caption, url, current_caption, link_html_options = {})
-    css_class = (current_caption == true || current_caption == caption) ? "selectedtab" : "tab"
-    content_tag :div, :class => css_class do
-      if current_caption == true || current_caption == caption
-        caption
-      else
-        link_to caption, url, {class: [:deal_tab]}.merge(link_html_options)
-      end
+    selected = current_caption == true || current_caption == caption
+    content_tag :div, :class => selected ? "selectedtab" : "tab" do
+      link_to_unless selected, caption, url, {class: [:deal_tab]}.merge(link_html_options)
     end
   end
 
