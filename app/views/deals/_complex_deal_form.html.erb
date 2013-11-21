@@ -1,8 +1,7 @@
 <% @deal.modify_errors_for_complex_form %>
 <%= deal_form '明細(複数)',
               :url => complex_deals_path,
-              :html => {:id => 'deal_form',
-                        data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
+              :html => {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
   <%= render :partial => 'complex_deal_form_contents', :locals => {:f => f} %>
 <% end %>
 <%= error_messages_for :deal %>
