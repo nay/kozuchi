@@ -1,4 +1,4 @@
-<%= deal_form '残高', :url => account_balance_deals_path do |f| %>
+<%= deal_form '残高', :url => account_balance_deals_path, html: {data: {result_url: monthly_account_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
   <%= f.hidden_field :account_id, :value => @account.id %>
   <%= render :partial => '/shared/money_counting' %>
   <label>残高:</label><%= f.text_field :balance, :size => "8", :tabindex => "11"%>円

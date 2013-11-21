@@ -1,4 +1,4 @@
-<%= deal_form '入金', :url => account_debtor_general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}" do |f| %>
+<%= deal_form '入金', :url => account_debtor_general_deals_path, :before => "if ($('date_day').value == '') {alert('日付を入れてください。');return false;}if ($('deal_debtor_entries_attributes_0_amount').value == '') {alert('金額を入力してください。');return false;}", html: {data: {result_url: monthly_account_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
   <div>
     <%= f.text_field :summary, :size => "40", :tabindex => '10' %>
     <%= f.hidden_field :summary_mode, :value => 'unify' %>
