@@ -51,14 +51,20 @@
   }
   function onGeneralDealSelectedFromComplex(summary, amount, minus_account_id, plus_account_id, id, type) {
     if($('notice')){ $('notice').hide();}
-    <%= remote_function :update => "deal_forms", :with => "type == 'deal' ? 'load=' + id : 'pattern_id=' + id", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+
+    jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', type == 'deal' ? 'load=' + id : 'pattern_id=' + id, function() {
+      displaySuggestionsForComplex()
+    })
   }
   function fillForComplexDeal(id, type) {
     if($('notice')){ $('notice').hide();}
-    <%= remote_function :update => "deal_forms", :with => "type == 'deal' ? 'load=' + id : 'pattern_id=' + id", :url => {:action => 'new_complex_deal', :controller => 'deals'}, :method => :get, :complete => 'displaySuggestionsForComplex();' %>;
+
+    jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', type == 'deal' ? 'load=' + id : 'pattern_id=' + id, function() {
+      displaySuggestionsForComplex();
+    })
   }
   function displaySuggestionsForComplex() {
-    <%= remote_function :update => 'patterns', :with => "'keyword=' + encodeURIComponent($('deal_summary').value)", :method => :get, :url => deal_suggestions_path(:from => 'complex_deal') %>;
+    jQuery('#patterns').load('<%= deal_suggestions_path(:from => 'complex_deal') %>', 'keyword=' + encodeURIComponent($('deal_summary').value))
   }
 <% end %>
 
