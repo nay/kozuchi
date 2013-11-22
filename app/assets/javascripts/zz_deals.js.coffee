@@ -41,8 +41,9 @@ jQuery(document).ready ($)->
   )
 
   # a.edit_click
-  $('a.edit_deal').click ->
+  $(document).on('click', 'a.edit_deal', ->
     location.hash = 'top'
     $('#deal_editor').load(@href)
     return false
+  )
 

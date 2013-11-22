@@ -20,11 +20,7 @@
       <br />
       <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>&nbsp;
       <% if !@deal.new_record? %>
-        <%
-          # TODO: きれいにする
-          func = remote_function(:update => 'deal_editor', :url => {:action => 'edit', :id => @deal.id, :complex => true}, :method => :get, :before => "location.hash = 'nowhere';location.hash = 'top';")
-        %>
-        <%= link_to '複数記入にする', '#', :onClick => func %>
+        <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal' %>
       <% end %>
       <div style="clear:left;"></div>
     </div>
