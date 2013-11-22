@@ -1,5 +1,5 @@
 <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal}  %>
-  <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', '#', :onClick => remote_function(:update => @deal.new_record? ? 'deal_forms' : 'deal_editor', :url => deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), :submit => 'deal_form') %></div>
+  <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', '#', :onClick => remote_function(:update => 'deal_forms', :url => deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), :submit => 'deal_form') %></div>
   <div>
       <%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "999", :class => 'button' %>
       <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>

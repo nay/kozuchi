@@ -51,7 +51,7 @@ class DealsController < ApplicationController
     if @deal.new_record?
       render RENDER_OPTIONS_PROC.call(:complex_deal)
     else
-      render :partial => 'edit'
+      render :partial => 'edit_form'
     end
   end
 
