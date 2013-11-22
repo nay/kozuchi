@@ -47,3 +47,9 @@ jQuery(document).ready ($)->
     return false
   )
 
+  # a.add_entry_fields
+  $(document).on('click', 'a.add_entry_fields', ->
+    $('#deal_forms').load(@href, $(@).closest('form').serializeArray())
+    return false
+  )
+
