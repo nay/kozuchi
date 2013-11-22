@@ -107,12 +107,8 @@ EOS
     text = "<div id='tabwindow'>"
     text << render(:partial => 'deal_tabs', :locals => {:deal => @deal, :current_caption => current_caption})
     text << "<div id='tabsheet' class='tabsheet'>"
-    merged_before = "$('deal_year').value = $('date_year').value; $('deal_month').value = $('date_month').value; $('deal_day').value = $('date_day').value;"
-    merged_before << options.delete(:before) if options[:before]
     html_options = options.delete(:html) || {}
-    # TODO: きれいにする
-    script = remote_function(options.merge(:before => merged_before, :submit => 'deal_form')) + "; return false;"
-    text << form_for(@deal, :as => :deal, :url => options[:url], :html => {:id => 'deal_form', :onSubmit => script}.merge(html_options)) do |f|
+    text << form_for(@deal, :as => :deal, :url => options[:url], :html => {:id => 'deal_form'}.merge(html_options)) do |f|
       h = f.hidden_field(:year)
       h << f.hidden_field(:month)
       h << f.hidden_field(:day)

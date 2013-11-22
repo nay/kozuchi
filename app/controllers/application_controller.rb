@@ -23,8 +23,9 @@ class ApplicationController < ActionController::Base
     render_options_proc = options[:render_options_proc]
     redirect_options_proc = options[:redirect_options_proc]
     ajax = options[:ajax]
-    raise "render_options_proc is required to do ajax" if ajax && (!render_options_proc || !redirect_options_proc)
-    raise "redirect_options_proc is required" unless redirect_options_proc
+
+    raise "render_options_proc is required to do ajax" if ajax && !render_options_proc
+    raise "redirect_options_proc is required for non-ajax" if !ajax && !redirect_options_proc
 
     args.each do |deal_type|
       render_options = render_options_proc ? render_options_proc.call(deal_type) : {}
@@ -91,9 +92,13 @@ class ApplicationController < ActionController::Base
           write_target_date(@deal.date)
 #          flash[:day] = @deal.date.day
           if ajax
-            render :update do |page|
-              page.redirect_to redirect_options_proc.call(@deal)
-            end
+            render json: {
+                id: @deal.id,
+                year: @deal.date.year,
+                month: @deal.date.month,
+                day: @deal.date.day,
+                error_view: false
+            }
           else
             redirect_to redirect_options_proc.call(@deal)
           end
@@ -102,9 +107,13 @@ class ApplicationController < ActionController::Base
             @deal.fill_complex_entries(size)
           end
           if ajax
-            render :update do |page|
-              page[:deal_forms].replace_html render_options
-            end
+            render json: {
+                id: @deal.id,
+                year: @deal.date.year,
+                month: @deal.date.month,
+                day: @deal.date.day,
+                error_view: render_to_string(render_options)
+                }
           else
             if render_options.blank?
               render :action => "new_#{deal_type}"

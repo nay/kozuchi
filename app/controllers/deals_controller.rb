@@ -65,16 +65,27 @@ class DealsController < ApplicationController
       flash[:notice] = "#{@deal.human_name} を更新しました。" # TODO: 他コントーラとDRYに
       flash[:"#{controller_name}_deal_type"] = deal_type
       flash[:day] = @deal.date.day
-      render :update do |page|
-        page.redirect_to REDIRECT_OPTIONS_PROC.call(@deal)
-      end
+      render json: {
+          id: @deal.id,
+          year: @deal.date.year,
+          month: @deal.date.month,
+          day: @deal.date.day,
+          error_view: false
+      }
     else
       unless @deal.simple?
         @deal.fill_complex_entries(entries_size)
       end
-      render :update do |page|
-        page[:deal_editor].replace_html :partial => 'edit'
-      end
+      render json: {
+          id: @deal.id,
+          year: @deal.date.year,
+          month: @deal.date.month,
+          day: @deal.date.day,
+          error_view: render_to_string(partial: 'edit_form')
+      }
+      #render :update do |page|
+      #  page[:deal_editor].replace_html :partial => 'edit'
+      #end
     end
   end
 
