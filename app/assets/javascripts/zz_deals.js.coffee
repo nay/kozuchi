@@ -10,6 +10,7 @@ jQuery(document).ready ($)->
     return false
   )
 
+  # deal_form
   $(document).on('submit', '#deal_form', ->
     # 日付のチェック
     if $('#date_day').val() == '' || $('#date_month').val() == '' || $('#date_year').val() == ''
@@ -38,3 +39,10 @@ jQuery(document).ready ($)->
     , 'JSON')
     return false # 通常の Form 動作は行わない
   )
+
+  # a.edit_click
+  $('a.edit_deal').click ->
+    location.hash = 'top'
+    $('#deal_editor').load(@href)
+    return false
+
