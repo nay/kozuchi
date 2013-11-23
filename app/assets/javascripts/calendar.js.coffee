@@ -103,10 +103,10 @@ class @Calendar
     str += "</tr>"
     str += "</table>"
 
-    $("calendar").innerHTML = str
+    jQuery("#calendar").get(0).innerHTML = str
 
-    $("calendar_year").value = @selectedMonth.year
-    $("calendar_month").value = @selectedMonth.month
+    jQuery("#calendar_year").val(@selectedMonth.year)
+    jQuery("#calendar_month").val(@selectedMonth.month)
 
     if call && @callback
       @callback.call()
