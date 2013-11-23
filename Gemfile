@@ -10,7 +10,7 @@ gem 'mysql2'
 gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
 # gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
-gem 'html5jp_graphs'
+gem 'html5jp_graphs', '~> 0.0.2'
 gem 'dynamic_form'
 gem 'therubyracer', '0.11.1'
 gem 'libv8', '~> 3.11.8.7'

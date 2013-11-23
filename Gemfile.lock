@@ -180,7 +180,7 @@ DEPENDENCIES
   coffee-rails
   dynamic_form
   factory_girl_rails (~> 4.0)
-  html5jp_graphs
+  html5jp_graphs (~> 0.0.2)
   httpclient
   i18n_generators
   jpmobile
