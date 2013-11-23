@@ -42,7 +42,7 @@ class Month
     return @months == month.months
 
 # Calendar
-class Calendar
+class @Calendar
   constructor: (callback) ->
     @selectedMonth = null
     @startMonth = null
@@ -66,22 +66,28 @@ class Calendar
     colspan = 12
     if current.month >= 2
       colspan = 12 - (current.month - 1)
-    yearClass = (current.year % 2) ? 'odd_year' : 'even_year'
+    yearClass = if current.year % 2 then 'odd_year' else 'even_year'
 
     str = "<table>"
     str += "<tr>"
-    str += "<td rowspan='2' id='prev_year' onClick='calendar.selectMonth("+ (this.selectedMonth.year - 1) +"," + @selectedMonth.month+", true);'>&lt;&lt;</td>"
+    str += "<td rowspan='2' id='prev_year' onClick='calendar.selectMonth("
+    str += @selectedMonth.year - 1
+    str += "," + @selectedMonth.month + ", true);'>&lt;&lt;</td>"
     str += "<td class='year " + yearClass + "' colspan='" + colspan + "'>" + current.year + "</td>"
     if colspan < 12
       nextYear = current.year + 1
-      yearClass = (nextYear % 2) ? 'odd_year' : 'even_year'
+      yearClass = if nextYear % 2 then 'odd_year' else 'even_year'
       secondColspan = 12 - colspan
-      str += "<td class='year " + yearClass + "' colspan='" + secondColspan +"'>" + nextYear + "</td>"
-    str += "<td rowspan='2' id='next_year' onClick='calendar.selectMonth("+ (@selectedMonth.year + 1) +"," + @selectedMonth.month+", true);'>&gt;&gt;</td>"
+      str += "<td class='year " + yearClass + "' colspan='"
+      str += secondColspan
+      str += "'>" + nextYear + "</td>"
+    str += "<td rowspan='2' id='next_year' onClick='calendar.selectMonth("
+    str += @selectedMonth.year + 1
+    str += "," + @selectedMonth.month+", true);'>&gt;&gt;</td>"
     str += "</tr>"
     str += "<tr>"
-    for i in [0..12]
-      yearClass = (current.year % 2) ? 'odd_year' : 'even_year'
+    for i in [0..11]
+      yearClass = if current.year % 2  then 'odd_year' else 'even_year'
       if @selectedMonth.equals(current)
         str += "<td class='selected_month' id='month_" + current.year + "_" + current.month + "'><div class='" + yearClass + "'>"
       else
@@ -104,3 +110,4 @@ class Calendar
 
     if call && @callback
       @callback.call()
+
