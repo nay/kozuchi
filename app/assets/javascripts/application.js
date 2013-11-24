@@ -2,4 +2,5 @@
 // This file is automatically included by javascript_include_tag :defaults
 //= require prototype
 //= require effects
+//= require html5jp_graphs
 //= require_tree .

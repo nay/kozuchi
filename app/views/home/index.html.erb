@@ -1,6 +1,3 @@
-<% content_for :head do -%>
-  <%= javascript_include_tag '/javascripts/excanvas', '/javascripts/excanvas-compressed', '/javascripts/line' %>
-<% end -%>
 <%= render :partial => 'shared/information' %>
   <div>
   <p style="padding: 1em;"><%= h @user.login%>さん、ようこそWeb家計簿「小槌」へ！ → <%= link_to'家計簿を記入する', deals_path %></p>
