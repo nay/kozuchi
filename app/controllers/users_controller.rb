@@ -11,6 +11,7 @@ class UsersController < ApplicationController
   # render new.rhtml
   def new
     @title = "ユーザー登録"
+    @personal_info_policy_setting = PersonalInfoPolicySetting.new
   end
 
   def create
@@ -124,5 +125,4 @@ class UsersController < ApplicationController
       redirect_back_or_default('/')
     end
   end
-
 end

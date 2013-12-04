@@ -1,16 +1,20 @@
-<div id="side">
-	<div class="box">
-	  <h2>ようこそ小槌へ！</h2>
-		<% if defined?(SKIP_MAIL) && SKIP_MAIL -%>
-		<p>必要事項を入力してユーザー登録ボタンを押せば登録が完了します。</p>
-    <% else -%>
-	  <p>必要事項を入力してユーザー登録ボタンを押すと、確認メールが送られます。メールの案内に従ってユーザー登録を完了してください。</p>
+<div id="main">
+<div class="box">
+  <h2>ようこそ小槌へ！</h2>
+  <% if @personal_info_policy_setting.show %>
+    <p>下記の「<%= @personal_info_policy_setting.title %>」についてご同意の上、</p>
+  <% end %>
+  <% if defined?(SKIP_MAIL) && SKIP_MAIL -%>
+   <p>必要事項を入力してユーザー登録ボタンを押せば登録が完了します。</p>
+  <% else -%>
+    <p>必要事項を入力してユーザー登録ボタンを押すと、確認メールが送られます。メールの案内に従ってユーザー登録を完了してください。</p>
     <p><span class="strong">利用可能なEメールアドレス</span>をご指定いただかないとユーザー登録が完了しませんのでご注意ください。</p>
-    <% end -%>
-	</div>
+  <% end -%>
 </div>
 
-<div id="main">
+<% if @personal_info_policy_setting.show %>
+  <%= render :partial => @personal_info_policy_setting.partial_filename %>
+<% end %>
 <%= error_messages_for :user %>
 <%= form_for :user, :url => signup_post_path, :html => {:id => 'signupForm'} do |f| -%>
 <table class="simple_form">
@@ -18,7 +22,13 @@
   <tr><th><label for="email">Email</label></th><td><%= f.text_field :email %></td></tr>
   <tr><th><label for="password">パスワード</label></th><td><%= f.password_field :password %></td></tr>
   <tr><th><label for="password_confirmation">パスワード（確認）</label></th><td><%= f.password_field :password_confirmation %></td></tr>
-  <tr><td colspan="2" class="operation"><%= submit_tag 'ユーザー登録' %></td></tr>
+  <tr><td colspan="2" class="operation">
+  <% if @personal_info_policy_setting.show %>
+    <%= submit_tag '同意してユーザー登録' %>
+  <% else %>
+    <%= submit_tag 'ユーザー登録' %>
+  <% end %>
+  </td></tr>
 </table>
 <% end %>
 </div>
