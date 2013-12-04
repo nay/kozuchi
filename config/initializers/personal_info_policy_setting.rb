@@ -1,12 +1,10 @@
 class PersonalInfoPolicySetting
-  SETTING = YAML.load_file("#{Rails.root}/config/personal_info_policy.yml")
-  
-  attr_accessor :show, :title, :partial_filename
+  attr_accessor :show, :title, :partial_name
 
   def initialize
-    @show = SETTING["show"]
-    @title = SETTING["title"]
-    @partial_filename = SETTING["partial_filename"]
+    @show  = PERSONAL_INFO_POLICY_SHOW
+    @title = PERSONAL_INFO_POLICY_TITLE
+    @partial_name = PERSONAL_INFO_POLICY_PARTIAL_NAME
   end
 end
 

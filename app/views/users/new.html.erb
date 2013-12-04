@@ -2,7 +2,7 @@
   <div class="box">
     <h2>ようこそ小槌へ！</h2>
     <% if @personal_info_policy_setting.show %>
-      <p>下記の「<%= @personal_info_policy_setting.title %>」についてご同意の上、</p>
+      <p>下記の「<%= @personal_info_policy_setting.title %>」にご同意の上、</p>
     <% end %>
     <% if defined?(SKIP_MAIL) && SKIP_MAIL -%>
      <p>必要事項を入力してユーザー登録ボタンを押せば登録が完了します。</p>
@@ -13,7 +13,7 @@
   </div>
 
   <% if @personal_info_policy_setting.show %>
-    <%= render :partial => @personal_info_policy_setting.partial_filename %>
+    <%= render :partial => @personal_info_policy_setting.partial_name %>
   <% end %>
 
   <%= error_messages_for :user %>

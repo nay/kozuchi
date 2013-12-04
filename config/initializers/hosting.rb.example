@@ -17,3 +17,8 @@ KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
 
 # Remove # if you don't want to display news.
 # DISPLAY_NEWS = false
+
+# Personal information policy settings
+PERSONAL_INFO_POLICY_SHOW         = false
+PERSONAL_INFO_POLICY_PARTIAL_NAME = "shared/personal_info_policy"
+PERSONAL_INFO_POLICY_TITLE        = "個人情報の取扱いについて"
