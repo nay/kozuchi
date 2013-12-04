@@ -11,6 +11,7 @@ class UsersController < ApplicationController
   # render new.rhtml
   def new
     @title = "ユーザー登録"
+    @personal_info_policy_setting = PersonalInfoPolicySetting.new
   end
 
   def create
@@ -23,6 +24,7 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.save
     if !@user.errors.empty?
+      @personal_info_policy_setting = PersonalInfoPolicySetting.new
       render :action => 'new'
     elsif defined?(SKIP_MAIL) && SKIP_MAIL
       do_activate(@user.activation_code)
@@ -124,5 +126,4 @@ class UsersController < ApplicationController
       redirect_back_or_default('/')
     end
   end
-
 end
