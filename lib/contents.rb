@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Contents
-  TIMEOUT_SCONDS = 20
   def self.included(base)
-    attr_accessor :host, :path, :port, :cache_expire_days, :cache_key, :body
+    attr_accessor :host, :path, :port, :cache_expire_days, :cache_key, :body, :timeout_seconds
   end
 
   def get
@@ -11,7 +10,7 @@ module Contents
       query = Hash[URI.decode_www_form(uri.query || "")]
       uri.query = URI.encode_www_form(query)
       client = HTTPClient.new
-      resource = timeout(TIMEOUT_SCONDS) do
+      resource = timeout(timeout_seconds) do
         client.get(uri, follow_redirect: true)
       end
       Kozuchi.send("#{cache_key}_updated_on=", Date.today)
