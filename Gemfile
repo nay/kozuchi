@@ -16,6 +16,7 @@ gem 'therubyracer', '0.11.1'
 gem 'libv8', '~> 3.11.8.7'
 gem 'passenger'
 gem 'rb-readline', '~> 0.4.2'
+gem 'httpclient'
 
 gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗する
 group :assets do
