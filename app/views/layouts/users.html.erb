@@ -3,7 +3,8 @@
   <%= head_tag do -%>
   	<title>[小槌] <%= @title %></title>
   <% end -%>
-  
+ <%= yield :css %>
+
   <%= body_tag do -%>
     <div id="title">
       <div style="float:right; "><%= link_to(image_tag("izumo_kozuchi.png", :size => "48x48", :align => 'middle', :border => 0, :alt => "トップページ"), root_path, :style => "display:block;")%></div>

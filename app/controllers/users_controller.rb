@@ -12,12 +12,14 @@ class UsersController < ApplicationController
   def new
     @title = "ユーザー登録"
     @personal_info_policy_setting = PersonalInfoPolicySetting.new
+    expire_fragment(action: 'new',  action_suffix: 'personal_info_policy') if @personal_info_policy_setting.expired?
+    @personal_info_policy_setting.get_body! unless fragment_exist?(action: 'new', action_suffix: 'personal_info_policy')
   end
 
   def create
     @title = "ユーザー登録"
     cookies.delete :auth_token
-    # protects against session fixation attacks, wreaks havoc with 
+    # protects against session fixation attacks, wreaks havoc with
     # request forgery protection.
     # uncomment at your own risk
     # reset_session

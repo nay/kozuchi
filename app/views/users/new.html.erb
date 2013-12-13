@@ -1,3 +1,17 @@
+<% content_for :css do %>
+  <style>
+  #aboutPrivacy
+    {
+      height:200px;
+      line-height:3em;
+      overflow:scroll;
+      padding:5px;
+      color:#714d03;
+      margin-bottom:10px;
+      border: solid 2px #e6e6e6;
+    }
+  </style>
+<% end %>
 <div id="main">
   <div class="box">
     <h2>ようこそ小槌へ！</h2>
@@ -12,8 +26,12 @@
     <% end -%>
   </div>
 
-  <% if @personal_info_policy_setting.show %>
-    <%= render :partial => @personal_info_policy_setting.partial_name %>
+  <% if @personal_info_policy_setting.body %>
+    <div id="aboutPrivacy">
+      <% cache action: 'new', action_suffix: 'personal_info_policy' do -%>
+        <%= raw @personal_info_policy_setting.body %>
+      <% end %>
+    </div>
   <% end %>
 
   <%= error_messages_for :user %>
