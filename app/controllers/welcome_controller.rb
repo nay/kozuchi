@@ -11,6 +11,7 @@ class WelcomeController < ApplicationController
       # キャッシュがなければニュースを取ってくる。エラー時はnilが入るのでテンプレート側でキャッシュするかどうかを制御する。
       @news = fragment_exist?(:action_suffix => 'news') ? true : News.get
     end
+    @privacy_policy_setting = PrivacyPolicySetting.new
   end
     
 end

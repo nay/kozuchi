@@ -23,6 +23,9 @@
          <div class="error"><%= flash[:error] %></div>
          <div><%= submit_tag "ログイン", :id => 'loginButton', :onclick => "if ($F('login')=='') {alert('ログインIDを入力してください。'); return false;}if ($F('password')=='') {alert('パスワードを入力してください。'); return false;}" %></div>
          <div><%= link_to 'ユーザー登録', signup_path %>  <%= link_to 'パスワードを忘れたとき', forgot_password_path %></div>
+         <% if @privacy_policy_setting.show %>
+           <div><%= link_to 'プライバシーポリシー', privacy_policy_path %> </div>
+         <% end  %>
 
       <% end -%>
     </div>
