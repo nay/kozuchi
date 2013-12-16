@@ -26,9 +26,9 @@
     <% end -%>
   </div>
 
-  <% if @personal_info_policy_setting.body %>
+  <% if @personal_info_policy_setting.show %>
     <div id="aboutPrivacy">
-      <% cache action: 'new', action_suffix: 'personal_info_policy' do -%>
+      <% cache action_suffix: 'personal_info_policy' do -%>
         <%= raw @personal_info_policy_setting.body %>
       <% end %>
     </div>
