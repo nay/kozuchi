@@ -24,7 +24,7 @@ module Contents
 
   def expired?
     return true unless cache_expire_days
-    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on")  + (cache_expire_days - 1 ).days < Date.today
+    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on") + (cache_expire_days - 1 ).days < Date.today
   end
 
   def get_body!
