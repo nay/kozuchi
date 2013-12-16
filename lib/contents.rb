@@ -15,7 +15,7 @@ module Contents
       end
       Kozuchi.send("#{cache_key}_updated_on=", Date.today)
       resource
-    rescue StandardError, TimeoutErro=> e
+    rescue StandardError, TimeoutError => e
       Rails.logger.error "Could not get #{self.class.name}."
       Rails.logger.error e
       nil
@@ -28,6 +28,6 @@ module Contents
   end
 
   def get_body!
-    self.body = get.try(:body)
+    @body = get.try(:body)
   end
 end
