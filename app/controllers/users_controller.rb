@@ -129,6 +129,7 @@ class UsersController < ApplicationController
 
   def set_personal_info_policy_setting_with_cache
     @personal_info_policy_setting = PersonalInfoPolicySetting.new
+    return unless @personal_info_policy_setting.show
     expire_fragment(action_suffix: 'personal_info_policy') if @personal_info_policy_setting.expired?
     @personal_info_policy_setting.get_body! unless fragment_exist?(action_suffix: 'personal_info_policy')
   end

@@ -1,5 +1,5 @@
 class PersonalInfoPolicySetting
-  attr_accessor :title, :show
+  attr_accessor :title
   include Contents
 
   def initialize
