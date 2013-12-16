@@ -222,6 +222,7 @@ Kozuchi::Application.routes.draw do
   match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
   match '/singe_login' => 'sessions#update', :as => :single_login, :via => :put
   match '/activate/:activation_code' => 'users#activate', :as => :activate
+  match '/privacy_policy' => 'users#privacy_policy', :as => :privacy_policy, :via => :get
 
   # 互換性のため
   match '/user/home' => 'users#activate_login_engine', :as => :activate_login_engine

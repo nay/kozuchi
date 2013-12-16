@@ -101,7 +101,18 @@ class UsersController < ApplicationController
     end
     render :action => 'edit'
   end
-  
+
+  def privacy_policy
+    @privacy_policy_setting = PrivacyPolicySetting.new
+    unless @privacy_policy_setting.show
+      redirect_to '/404'
+      return
+    end
+
+    expire_fragment(action_suffix: 'privacy_policy') if @privacy_policy_setting.expired?
+    @privacy_policy_setting.get_body! unless fragment_exist?(action_suffix: 'privacy_policy')
+  end
+
   private
   def password_token_required
     raise InvalidParameterError if params[:password_token].blank?
