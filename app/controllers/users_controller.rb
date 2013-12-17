@@ -11,20 +11,20 @@ class UsersController < ApplicationController
   # render new.rhtml
   def new
     @title = "ユーザー登録"
-    @personal_info_policy_setting = PersonalInfoPolicySetting.new
+    set_personal_info_policy_setting_with_cache
   end
 
   def create
     @title = "ユーザー登録"
     cookies.delete :auth_token
-    # protects against session fixation attacks, wreaks havoc with 
+    # protects against session fixation attacks, wreaks havoc with
     # request forgery protection.
     # uncomment at your own risk
     # reset_session
     @user = User.new(params[:user])
     @user.save
     if !@user.errors.empty?
-      @personal_info_policy_setting = PersonalInfoPolicySetting.new
+      set_personal_info_policy_setting_with_cache
       render :action => 'new'
     elsif defined?(SKIP_MAIL) && SKIP_MAIL
       do_activate(@user.activation_code)
@@ -125,5 +125,12 @@ class UsersController < ApplicationController
     else
       redirect_back_or_default('/')
     end
+  end
+
+  def set_personal_info_policy_setting_with_cache
+    @personal_info_policy_setting = PersonalInfoPolicySetting.new
+    return unless @personal_info_policy_setting.show
+    expire_fragment(action_suffix: 'personal_info_policy') if @personal_info_policy_setting.expired?
+    @personal_info_policy_setting.get_body! unless fragment_exist?(action_suffix: 'personal_info_policy')
   end
 end

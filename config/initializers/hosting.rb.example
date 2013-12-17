@@ -21,6 +21,9 @@ KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
 # DISPLAY_NEWS = false
 
 # Personal information policy settings
-PERSONAL_INFO_POLICY_SHOW         = false
-PERSONAL_INFO_POLICY_PARTIAL_NAME = "shared/personal_info_policy"
-PERSONAL_INFO_POLICY_TITLE        = "個人情報の取扱いについて"
+PERSONAL_INFO_POLICY_SHOW    = false
+PERSONAL_INFO_POLICY_HOST    = "http://localhost:3000"
+PERSONAL_INFO_POLICY_PATH    = "/personalinfomationpolicy"
+PERSONAL_INFO_POLICY_TITLE   = "個人情報の取扱いについて"
+PERSONAL_INFO_POLICY_CACHE_EXPIRE_DAYS = 1
+PERSONAL_INFO_POLICY_TIMEOUT_SECONDS = 20
