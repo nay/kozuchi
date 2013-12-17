@@ -13,7 +13,7 @@
   </style>
 <% end %>
 <div id="main">
-  <% if @privacy_policy_setting.body %>
+  <% if @privacy_policy_setting.show %>
     <div id="aboutPrivacyPolicy">
       <% cache action_suffix: 'privacy_policy' do -%>
         <%= raw @privacy_policy_setting.body %>
