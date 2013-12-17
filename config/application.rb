@@ -71,6 +71,6 @@ module Kozuchi
     config.jpmobile.form_accept_charset_conversion = true
   end
   class << self
-    attr_accessor :news_updated_on, :personal_info_policy_updated_on
+    attr_accessor :news_updated_on, :personal_info_policy_updated_on, :privacy_policy_updated_on
   end
 end

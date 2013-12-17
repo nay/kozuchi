@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Contents
   def self.included(base)
-    attr_accessor :show, :host, :path, :port, :cache_expire_days, :cache_key, :body, :timeout_seconds
+    attr_accessor :show, :host, :path, :cache_expire_days, :cache_key, :body, :timeout_seconds
   end
 
   def get
@@ -24,7 +24,7 @@ module Contents
 
   def expired?
     return true unless cache_expire_days
-    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on")  + (cache_expire_days - 1 ).days < Date.today
+    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on") + (cache_expire_days - 1 ).days < Date.today
   end
 
   def get_body!

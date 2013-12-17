@@ -1,0 +1,23 @@
+<% content_for :css do %>
+  <style>
+  #aboutPrivacyPolicy
+    {
+      line-height:3em;
+      padding:5px;
+      color:#714d03;
+      margin-bottom:10px;
+      margin-left:30px;
+      width: 880px;
+      border: 4px;
+    }
+  </style>
+<% end %>
+<div id="main">
+  <% if @privacy_policy_setting.body %>
+    <div id="aboutPrivacyPolicy">
+      <% cache action_suffix: 'privacy_policy' do -%>
+        <%= raw @privacy_policy_setting.body %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
