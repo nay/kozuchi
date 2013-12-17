@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Contents
   def self.included(base)
-    attr_accessor :show, :host, :path, :port, :cache_expire_days, :cache_key, :body, :timeout_seconds
+    attr_accessor :show, :host, :path, :cache_expire_days, :cache_key, :body, :timeout_seconds
   end
 
   def get
