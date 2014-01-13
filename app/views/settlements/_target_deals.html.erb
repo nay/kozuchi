@@ -4,6 +4,11 @@
 <div><%= format_date(@start_date)%>から <%= format_date(@end_date)%>の <%= @settlement.account.name %> の未精算取引 は 全<%= @deals.size %>件あります。</div>
 <% unless @entries.empty? %>
 <div>
+  <% # TODO: jQuery移行後 きれいに分離する。click の fire が面倒だったので自前で onClick 相当を呼んでる %>
+  <div>
+    <%= link_to 'すべて選択', '#', onclick: "$$('table.book input[type=checkbox]').each(function(checkbox, index){ if(!checkbox.checked) { checkbox.checked = true; settlement.toggle(checkbox, parseInt(checkbox.getAttribute('data-amount'), 10))} }); return false", class: ['button', 'selectAll'] %>
+    &nbsp;
+    <%= link_to 'すべて解除', '#', onClick: "$$('table.book input[type=checkbox]').each(function(checkbox, index){ if(checkbox.checked) { checkbox.checked = false; settlement.toggle(checkbox, parseInt(checkbox.getAttribute('data-amount'), 10))} }); return false", class: ['button', 'clearAll'] %></div>
   <table class="book">
     <tr>
       <th style="width: 3em;">登録</th>
@@ -14,7 +19,7 @@
       <% style = selected ? "" : "style=\"background-color: #dddddd;\""%>
       <tr>
         <td <%= style%>>
-          <%= check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})")%>
+          <%= check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})", data: {amount: entry.amount})%>
         </td>
         <%= display_account_entry entry, style%>
       </tr>
