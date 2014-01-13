@@ -128,7 +128,7 @@ option {
 }
 
 /* ------ ボタン ---------- */
-button, input.button, td.button input {
+button, input.button, td.button input, a.button {
     white-space: nowrap;
     text-decoration: none;
     border: 4px outset #FFDDBC;
