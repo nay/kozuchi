@@ -72,6 +72,7 @@
           戻し
         <% end -%>
       </th>
+      <th class="settlement"></th>
       <th class="amount">
         <% if bookkeeping_style? || @account.kind_of?(Account::Asset) -%>
           残高
@@ -89,6 +90,7 @@
         <td class="date"> </td>
         <td class="number"> </td>
         <td>期首残高</td>
+        <td class="settlement"></td>
         <td class="amount"><%= number_with_delimiter(@account_entries.balance_start) %></td>
         <td class="icon_to_deal"></td>
       </tr>
@@ -129,6 +131,11 @@
         <td class="account"><%= entry.partner_account_name %></td>
         <td class="amount"><%= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance? %></td>
         <td class="amount"><%= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance? %></td>
+        <td class="settlement jump">
+          <% if entry.any_settlement_id %>
+              <div><%= link_to '精算', settlement_path(:id => entry.any_settlement_id) %></div>
+          <% end %>
+        </td>
         <td class="amount"><%= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*' %></td>
         <td class="icon_to_deal"><%= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id %></td>
       <% end %>
@@ -140,6 +147,7 @@
         <td class="date"> </td>
         <td class="number"> </td>
         <td >期末残高</td>
+        <td class="settlement"></td>
         <td class="amount"><%= number_with_delimiter(@account_entries.balance_end) %></td>
         <td class="icon_to_deal"></td>
       </tr>
@@ -150,6 +158,7 @@
         <td class="date"> </td>
         <td class="number"> </td>
         <td >期末合計</td>
+        <td class="settlement"></td>
         <td class="amount"><%= number_with_delimiter(@account_entries.pure_balance_end) %></td>
         <td class="icon_to_deal"></td>
     </tr>
