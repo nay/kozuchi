@@ -71,11 +71,8 @@
                   <% if account_entry.linked_ex_entry_id %>
                     <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>>連携</span>
                   <% end %>
-                  <% if account_entry.settlement_id %>
-                    <div><%= link_to '精算', settlement_path(:id => account_entry.settlement_id) %></div>
-                  <% end %>
-                  <% if account_entry.result_settlement_id %>
-                    <div><%= link_to '精算', settlement_path(:id => account_entry.result_settlement_id) %></div>
+                  <% if account_entry.any_settlement_id %>
+                      <div><%= link_to '精算', settlement_path(:id => account_entry.any_settlement_id) %></div>
                   <% end %>
                 </td>
               <% else %>

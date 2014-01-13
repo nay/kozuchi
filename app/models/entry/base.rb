@@ -49,6 +49,10 @@ class Entry::Base < ActiveRecord::Base
 
   belongs_to :linked_user, :class_name => 'User', :foreign_key => 'linked_user_id'
 
+  def any_settlement_id
+    settlement_id || result_settlement_id
+  end
+
   # TODO: Dealのconfirmed?が変わったときにEntryのセーブ系コールバックが呼ばれないと残高がおかしくなるため、強制的に更新させる
   # Entryにもconfirmed?を持たせるようにして、Dirtyを効率的に使うようにしたい
   def changed_for_autosave?
