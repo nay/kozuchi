@@ -1,54 +1,6 @@
 <%= javascript_tag do %>
-  var Settlement = Class.create();
-  Settlement.prototype = {
-    initialize: function() {
-      this.creditorSum = 0;
-      this.debtorSum = 0;
-    },
-    toggle: function(checkbox, amount) {
-      if (checkbox.checked) {
-        if (amount < 0) {
-          this.debtorSum -= amount;
-        } else {
-          this.creditorSum += amount;
-        }
-        Element.removeClassName(checkbox.parentNode.parentNode, 'disabled')
-      } else {
-        if (amount < 0) {
-          this.debtorSum += amount;
-        } else {
-          this.creditorSum -= amount;
-        }
-        Element.addClassName(checkbox.parentNode.parentNode, 'disabled')
-      }
-      $('debtor_sum').innerHTML = numToFormattedString(this.debtorSum);
-      $('creditor_sum').innerHTML = numToFormattedString(this.creditorSum);
-
-      if (this.debtorSum > this.creditorSum) {
-        $('target_description').innerHTML = 'に';
-        $('result').innerHTML = ' から ' + numToFormattedString(this.debtorSum - this.creditorSum) + '円 を入金する。';
-      } else {
-        $('target_description').innerHTML = 'から';
-        $('result').innerHTML = ' に ' + numToFormattedString(this.creditorSum - this.debtorSum) + '円 が入金される。';
-      }
-    }
-  }
   var settlement = new Settlement;
 
-  function numToFormattedString(num) {
-    var str = num.toString();
-    var result = '';
-    var count = 0;
-    for(var i = str.length-1; i>=0; i--) {
-      result = str.charAt(i) + result;
-      if(str.charAt(i) == '-' || i == 0) {break;}
-      count += 1;
-      if ((count % 3) == 0) {
-       result = ',' + result;
-      }
-    }
-    return result;
-  }
 <% end %>
 <%= form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do %>
 <div id="select_credit_account">
