@@ -14,12 +14,6 @@
     <%= stylesheet_link_tag 'print', :media => :print %>
     <%= javascript_include_tag :application %>
     <%= render :partial => "shared/google_analytics" %>
-    <%= javascript_tag do %>
-      jQuery.noConflict()
-    <% end %>
-    <%= javascript_include_tag '/javascripts/jquery.ba-hashchange.min' %>
-    <%= javascript_include_tag '/javascripts/jquery.observe_field' %>
-    <%= javascript_include_tag '/javascripts/main' %>
     <%= yield :head %>
   </head>
   <body>

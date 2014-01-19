@@ -1,5 +1,5 @@
 <% if @patterns && !@patterns.empty? -%>
-  <%= javascript_tag "$('patterns').style.display = 'block';"%>
+  <%= javascript_tag "$('#patterns').css('display', 'block');"%>
   <div style="background-color:white;">
     <table>
     <% for pattern in @patterns %>

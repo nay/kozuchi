@@ -23,8 +23,8 @@ jQuery(document).ready ($)->
     $('#deal_day').val($('#date_day').val())
 
     # 金額のチェック
-    $amounts = $('input.amount')
-    if $amounts.size() > 0 && $.grep($amounts.get(), (amount, index)-> $(amount).val() != '').size() == 0
+    amounts = $('input.amount')
+    if amounts.size() > 0 && $.grep(amounts.get(), (amount, index)-> $(amount).val() != '').length == 0
       alert('金額を入力してください。')
       return false
 
