@@ -101,9 +101,9 @@
       </div>
       <% if @target_month && !@date%>
         <%= javascript_tag do %>
-          $('deal_year').value = '<%=@target_month.year%>'
-          $('deal_month').value = '<%=@target_month.month%>'
-          $('deal_day').value = '<%=@target_month.day if @target_month.day%>'
+          $('#deal_year').val('<%=@target_month.year%>')
+          $('#deal_month').val('<%=@target_month.month%>')
+          $('#deal_day').val('<%=@target_month.day if @target_month.day%>')
         <% end %>
       <% end %>
       <% if @updated_deal%>
