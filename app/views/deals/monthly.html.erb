@@ -8,7 +8,7 @@
   <%= form_tag(search_deals_path, :method => :get) do -%>
     <%= text_field_tag :keyword, "", :size => 14 %>
     <br />
-    <%= submit_tag '明細を検索', :class => 'button', :onClick => "if($('keyword').value == '') {alert('キーワードを入力してください。'); return false;}" %>
+    <%= submit_tag '明細を検索', :class => 'button', :onClick => "if($('#keyword').val() == '') {alert('キーワードを入力してください。'); return false;}" %>
   <% end -%>
 </div>
 <%= render(:partial => "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path}) %>
