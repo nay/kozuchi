@@ -5,7 +5,7 @@
 <%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
   <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
   <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
-  <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), 'javascript: splitSummary()' %>
+  <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', class: :split_summary %>
   <div id="patterns"></div>
 <% end %>
 
@@ -32,7 +32,7 @@
           <%= e.hidden_field :line_number, :value => line_number += 1, :class => 'pattern_field' %>
           <%= e.text_field :summary, :class => 'entry_summary pattern_field', :style => "width: 260px; margin-bottom: 0px; #{deal.summary_unified? ? 'display:none;' : ''}", :tabindex => tab_index += 1 %>
           <% if first_entry %>
-            <%= link_to image_tag('minus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), 'javascript: unifySummary()', :class => 'entry_summary', :style => deal.summary_unified? ? "display:none;" : nil %>
+            <%= link_to image_tag('minus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', :class => [:entry_summary, :unify_summary], :style => deal.summary_unified? ? "display:none;" : nil %>
             <% first_entry = false %>
           <% end %>
           <%= tag(:br, :class => 'entry_summary', :style => deal.summary_unified? ? "display:none;" : nil) %>

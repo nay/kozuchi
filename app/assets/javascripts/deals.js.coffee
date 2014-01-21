@@ -52,3 +52,17 @@ $ ->
     $('#deal_forms').load(@href, $(@).closest('form').serializeArray())
     return false
   )
+
+  $(document).on('click', 'a.split_summary', ->
+    $('#deal_summary_frame').hide()
+    $('.entry_summary').show()
+    $('#deal_summary_mode, #deal_pattern_summary_mode').val('split')
+    false
+  )
+
+  $(document).on('click', 'a.unify_summary', ->
+    $('.entry_summary').hide()
+    $('#deal_summary_frame').show()
+    $('#deal_summary_mode, #deal_pattern_summary_mode').val('unify')
+    false
+  )
