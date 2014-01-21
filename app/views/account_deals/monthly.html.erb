@@ -160,24 +160,3 @@
 </div>
 
 </div>
-<%= javascript_tag do %>
-  jQuery(document).ready(function($) {
-    // if hash is set, add class (works only when loaded)
-    if (location.hash.match(/^#[0-9]+$/)) {
-      $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
-    }
-    $(window).hashchange(function() {
-      $("tr").removeClass("updated_line")
-      if (location.hash.match(/^#[0-9]+$/)) {
-        $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
-      }
-    })
-
-    $('td.number').mouseover(function() {
-      $('.timestamps', this).show()
-    })
-    $('td.number').mouseout(function() {
-      $('.timestamps', this).hide()
-    })
-  })
-<% end %>

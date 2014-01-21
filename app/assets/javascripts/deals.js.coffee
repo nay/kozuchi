@@ -10,6 +10,15 @@ class MoneyCounter
         amount += parseInt(v) * @amounts[i]
     $('#deal_balance').val(amount)
 
+# 更新された行のスタイリング
+
+addClassToUpdatedline = ->
+  if location.hash.match(/^#[0-9]+$/)
+    $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+
+clearUpdateLine = ->
+  $("tr").removeClass("updated_line")
+
 $ ->
   # hide notice
   hideNotice = ->
@@ -90,3 +99,17 @@ $ ->
     $('#date_day').val(day) if (day)
     return false
   )
+
+  addClassToUpdatedline()
+
+  $(window).hashchange ->
+    clearUpdateLine()
+    addClassToUpdatedline()
+
+  # 登録日時などの表示
+
+  $(document).on('mouseover', 'td.number', -> $('.timestamps', this).show())
+
+  $(document).on('mouseout', 'td.number', -> $('.timestamps', this).hide())
+
+

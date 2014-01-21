@@ -112,15 +112,6 @@
         <% end %>
       <% end %>
       <%= javascript_tag do %>
-        jQuery(document).ready(function($) {
-          $('td.number').mouseover(function() {
-            $('.timestamps', this).show()
-          })
-          $('td.number').mouseout(function() {
-            $('.timestamps', this).hide()
-          })
-        })
-
         function focus_line(deal_id) {
           alert('focus_line');
           var selector = new Selector("tr[class='updated_line']");
