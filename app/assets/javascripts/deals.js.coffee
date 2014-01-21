@@ -1,4 +1,4 @@
-jQuery(document).ready ($)->
+$ ->
   # hide notice
   hideNotice = ->
     $('#notice').hide()
@@ -52,4 +52,3 @@ jQuery(document).ready ($)->
     $('#deal_forms').load(@href, $(@).closest('form').serializeArray())
     return false
   )
-
