@@ -37,8 +37,7 @@ numToFormattedString = (num) ->
       result = ',' + result
   result
 
-jQuery(document).ready ($)->
-
+$ ->
   refreshTargets = ->
     $('#target_deals').load($('#target_deals_form').data('url'), $('#target_deals_form').serialize())
 
