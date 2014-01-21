@@ -77,17 +77,7 @@ module DealsHelper
         d << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
         d << ' '
         d << content_tag(:a, '月末', :class => 'end_of_month_button')
-        end_of_month_script =  <<EOS
-        jQuery(document).ready(function($){
-          $('a.end_of_month_button').click(function() {
-            var day = endOfMonth($('#date_year').val(), $('#date_month').val())
-            if (day) $('#date_day').val(day)
-            return false
-          })
-        })
-EOS
-       d << javascript_tag(end_of_month_script)
-       d.html_safe
+        d.html_safe
       end
     end
     text << content_tag(:div, capture(&block), :id => "deal_forms")

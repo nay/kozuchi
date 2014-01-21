@@ -84,3 +84,9 @@ $ ->
     moneyCounter.count()
     return false
   )
+
+  $(document).on('click', 'a.end_of_month_button', ->
+    day = endOfMonth($('#date_year').val(), $('#date_month').val())
+    $('#date_day').val(day) if (day)
+    return false
+  )
