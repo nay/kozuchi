@@ -14,7 +14,13 @@ class MoneyCounter
 
 addClassToUpdatedline = ->
   if location.hash.match(/^#[0-9]+$/)
-    $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
+    updatedTr = $("tr:has(a[name='" + location.hash.replace('#', '') + "'])")
+    updatedTr.addClass("updated_line")
+    # 複数行がまとめられている場合のため
+
+    while (nextTr = updatedTr.next("tr:not(:has(td.date))")).size() > 0
+      nextTr.addClass("updated_line")
+      updatedTr = nextTr
 
 clearUpdateLine = ->
   $("tr").removeClass("updated_line")

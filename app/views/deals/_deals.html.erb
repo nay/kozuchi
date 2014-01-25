@@ -111,16 +111,5 @@
           location.hash = "<%=@updated_deal.id%>";
         <% end %>
       <% end %>
-      <%= javascript_tag do %>
-        function focus_line(deal_id) {
-          alert('focus_line');
-          var selector = new Selector("tr[class='updated_line']");
-          var elements = selector.findElements(document);
-          
-//          var elements = $$("tr[class='updated_line']");
-          alert(elements.length);
-//          elements.each(function(elem) { alert(elem.innerHTML); });
-        }
-      <% end %>
-      
+
       
