@@ -1,16 +1,3 @@
 <%= deal_editor 1, @deal.date.year, @deal.date.month, @deal.date.day do %>
-  <%= deal_form nil, :url => deal_path(:id => @deal.id), :method => :put, :html => {:id => 'deal_form'} do |f| %>
-    <% case @deal when Deal::General %>
-      <% if params[:complex] != 'true' && @deal.simple? %>
-        <% @deal.modify_errors_for_simple_form %>
-        <%= render :partial => 'general_deal_form_contents', :locals => {:f => f} %>
-      <% else %>
-        <% @deal.modify_errors_for_complex_form %>
-        <%= render :partial => 'complex_deal_form_contents', :locals => {:f => f} %>
-      <% end %>
-    <% when Deal::Balance %>
-      <%= render :partial => 'balance_deal_form_contents', :locals => {:f => f} %>
-    <% end %>
-  <% end %>
-  <%= error_messages_for :deal %>
+  <%= render partial: 'deals/edit_form' %>
 <% end %>

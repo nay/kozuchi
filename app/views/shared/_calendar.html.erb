@@ -10,7 +10,7 @@
 
     <% 
         submit_url = send(url_method, url_params.merge({:year => '_YEAR_', :month => '_MONTH_'}))
-        callback_script = "var url = $('month_submit_form').action; url = url.replace('_YEAR_', $('calendar_year').value); url = url.replace('_MONTH_', $('calendar_month').value); $('month_submit_form').action = url; $('month_submit_form').submit();"
+        callback_script = "var url = $('#month_submit_form').attr('action'); url = url.replace('_YEAR_', $('#calendar_year').val()); url = url.replace('_MONTH_', $('#calendar_month').val()); $('#month_submit_form').attr('action', url); $('#month_submit_form').get(0).submit();"
      %>
     <%= form_tag do %>
       <% if calendar %>

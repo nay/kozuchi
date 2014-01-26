@@ -1,67 +1,18 @@
 <%= javascript_tag do %>
-  var Settlement = Class.create();
-  Settlement.prototype = {
-    initialize: function() {
-      this.creditorSum = 0;
-      this.debtorSum = 0;
-    },
-    toggle: function(checkbox, amount) {
-      if (checkbox.checked) {
-        if (amount < 0) {
-          this.debtorSum -= amount;
-        } else {
-          this.creditorSum += amount;
-        }
-        Element.removeClassName(checkbox.parentNode.parentNode, 'disabled')
-      } else {
-        if (amount < 0) {
-          this.debtorSum += amount;
-        } else {
-          this.creditorSum -= amount;
-        }
-        Element.addClassName(checkbox.parentNode.parentNode, 'disabled')
-      }
-      $('debtor_sum').innerHTML = numToFormattedString(this.debtorSum);
-      $('creditor_sum').innerHTML = numToFormattedString(this.creditorSum);
-
-      if (this.debtorSum > this.creditorSum) {
-        $('target_description').innerHTML = 'に';
-        $('result').innerHTML = ' から ' + numToFormattedString(this.debtorSum - this.creditorSum) + '円 を入金する。';
-      } else {
-        $('target_description').innerHTML = 'から';
-        $('result').innerHTML = ' に ' + numToFormattedString(this.creditorSum - this.debtorSum) + '円 が入金される。';
-      }
-    }
-  }
   var settlement = new Settlement;
 
-  function numToFormattedString(num) {
-    var str = num.toString();
-    var result = '';
-    var count = 0;
-    for(var i = str.length-1; i>=0; i--) {
-      result = str.charAt(i) + result;
-      if(str.charAt(i) == '-' || i == 0) {break;}
-      count += 1;
-      if ((count % 3) == 0) {
-       result = ',' + result;
-      }
-    }
-    return result;
-  }
 <% end %>
-<% change_condition = remote_function(:update => 'target_deals', :url => {:action => 'target_deals', :clear_selection => true}, :with => 'Form.serialize(\'target_deals_form\')', :method => :get) %>
-<%= form_tag settlements_path, :id => 'target_deals_form' do %>
+<%= form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do %>
 <div id="select_credit_account">
   <table>
     <tr>
       <th>口座</th>
-      <td><%= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, :onChange => change_condition %></td>
+      <td><%= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'refresh_targets' %></td>
     </tr>
     <tr>
       <th>期間</th>
       <td>
-        <div><%= select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)%> ～ <%= select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true) %> <button onClick="<%= change_condition%>;return false;">表示内容を更新</button></div>
+        <div><%= select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)%> ～ <%= select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true) %> <button class="refresh_targets">表示内容を更新</button></div>
       </td>
     </tr>
   </table>

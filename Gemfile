@@ -9,15 +9,15 @@ gem 'mysql2'
 
 gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
-gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
-gem 'html5jp_graphs'
+# gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
+gem 'html5jp_graphs', '~> 0.0.3'
 gem 'dynamic_form'
 gem 'therubyracer', '0.11.1'
 gem 'libv8', '~> 3.11.8.7'
 gem 'passenger'
 gem 'rb-readline', '~> 0.4.2'
 gem 'httpclient'
-
+gem 'jquery-rails'
 gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗する
 group :assets do
   gem 'sass-rails'
@@ -51,4 +51,4 @@ group :development, :test do
   gem "capybara"
   gem "factory_girl_rails", "~> 4.0"
 end
-gem "pry-rails", :group => "development"
+#gem "pry-rails", :group => "development"

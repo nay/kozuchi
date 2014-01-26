@@ -16,7 +16,7 @@ module DealsHelper
       raise "3 parameters required" unless args.size == 3
       args
     end
-    link_to '→', monthly_deals_path(:year => year, :month => month, :updated_deal_id => deal_id, :anchor => deal_id.to_s)
+    link_to '→', monthly_deals_path(:year => year, :month => month, :anchor => deal_id.to_s)
   end
 
   def write_hiddens_and_get_simple_deal_procs(f, options = {})
@@ -77,34 +77,19 @@ module DealsHelper
         d << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
         d << ' '
         d << content_tag(:a, '月末', :class => 'end_of_month_button')
-        end_of_month_script =  <<EOS
-        jQuery(document).ready(function($){
-          $('a.end_of_month_button').click(function() {
-            var day = endOfMonth($('#date_year').val(), $('#date_month').val())
-            if (day) $('#date_day').val(day)
-            return false
-          })
-        })
-EOS
-       d << javascript_tag(end_of_month_script)
-       d.html_safe
+        d.html_safe
       end
     end
     text << content_tag(:div, capture(&block), :id => "deal_forms")
     text.html_safe
   end
 
-  def deal_tab(caption, url, current_caption, html_options = {})
-    css_class = (current_caption == true || current_caption == caption) ? "selectedtab" : "tab"
-    css_class += " " + html_options[:class] if html_options[:class].present?
-    content_tag :div, :class => css_class do
-      if current_caption == true || current_caption == caption
-        caption
-      else
-        # TODO: きれいにする
-        func = remote_function(:update => 'deal_forms', :url => url, :method => :get, :before => "if($('notice')){ $('notice').hide();}") + "; return false;"
-        link_to caption, '#', {:onClick => func}.merge(html_options)
-      end
+  # 記入モード切り替えのタブ(div)を出力する
+  # link_html_options に :class が渡されることは想定していない
+  def deal_tab(caption, url, current_caption, link_html_options = {})
+    selected = current_caption == true || current_caption == caption
+    content_tag :div, :class => selected ? "selectedtab" : "tab" do
+      link_to_unless selected, caption, url, {class: [:deal_tab]}.merge(link_html_options)
     end
   end
 
@@ -112,12 +97,8 @@ EOS
     text = "<div id='tabwindow'>"
     text << render(:partial => 'deal_tabs', :locals => {:deal => @deal, :current_caption => current_caption})
     text << "<div id='tabsheet' class='tabsheet'>"
-    merged_before = "$('deal_year').value = $('date_year').value; $('deal_month').value = $('date_month').value; $('deal_day').value = $('date_day').value;"
-    merged_before << options.delete(:before) if options[:before]
     html_options = options.delete(:html) || {}
-    # TODO: きれいにする
-    script = remote_function(options.merge(:before => merged_before, :submit => 'deal_form')) + "; return false;"
-    text << form_for(@deal, :as => :deal, :url => options[:url], :html => {:id => 'deal_form', :onSubmit => script}.merge(html_options)) do |f|
+    text << form_for(@deal, :as => :deal, :url => options[:url], :html => {:id => 'deal_form'}.merge(html_options)) do |f|
       h = f.hidden_field(:year)
       h << f.hidden_field(:month)
       h << f.hidden_field(:day)

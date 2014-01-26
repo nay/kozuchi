@@ -1,6 +1,3 @@
-<% content_for :head do %>
-  <%= javascript_include_tag '/javascripts/excanvas', '/javascripts/excanvas-compressed', '/javascripts/circle' %>
-<% end %>
 <%= render(:partial => "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_profit_and_loss_path}) %>
 
 <div id="book">

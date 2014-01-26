@@ -17,22 +17,14 @@
 
   <%= javascript_tag <<-END
   function onGeneralDealSelectedFromGeneral(summary, amount, minus_account_id, plus_account_id) {
-  $('deal_debtor_entries_attributes_0_amount').value = amount;
-  selectList('deal_creditor_entries_attributes_0_account_id', minus_account_id);
-  selectList('deal_debtor_entries_attributes_0_account_id', plus_account_id);
-  $('deal_summary').value = summary;
+  $('#deal_debtor_entries_attributes_0_amount').val(amount);
+  selectList('#deal_creditor_entries_attributes_0_account_id', minus_account_id);
+  selectList('#deal_debtor_entries_attributes_0_account_id', plus_account_id);
+  $('#deal_summary').val(summary);
   }
 
   function selectList(name, value) {
-    if (!$(name) || !$(name).options) {
-      return;
-    }
-    for (i = 0; i < $(name).options.length; i++) {
-      if ($(name).options[i].value == value) {
-        $(name).options.selectedIndex = i;
-        return;
-      }
-     }
+    $(name).val(value)
   }
   END
   %>
@@ -124,7 +116,8 @@
         <!-- number -->
         <td class="number">
           <%= render 'shared/deal_note', :deal => entry.deal %>
-          <%= content_tag :a, entry.deal.daily_seq, :name => entry.id %>
+          <%= content_tag :a, entry.deal.daily_seq, :name => entry.deal_id %>
+          <%= content_tag :a, '', :name =>"e#{entry.id}" %>
         </td>
         <!-- summary -->
         <td><%= entry.summary %></td>
@@ -168,24 +161,3 @@
 </div>
 
 </div>
-<%= javascript_tag do %>
-  jQuery(document).ready(function($) {
-    // if hash is set, add class (works only when loaded)
-    if (location.hash.match(/^#[0-9]+$/)) {
-      $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
-    }
-    $(window).hashchange(function() {
-      $("tr").removeClass("updated_line")
-      if (location.hash.match(/^#[0-9]+$/)) {
-        $("tr:has(a[name='" + location.hash.replace('#', '') + "'])").addClass("updated_line")
-      }
-    })
-
-    $('td.number').mouseover(function() {
-      $('.timestamps', this).show()
-    })
-    $('td.number').mouseout(function() {
-      $('.timestamps', this).hide()
-    })
-  })
-<% end %>
