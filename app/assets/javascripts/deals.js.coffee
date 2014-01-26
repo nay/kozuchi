@@ -13,7 +13,7 @@ class MoneyCounter
 # 更新された行のスタイリング
 
 addClassToUpdatedline = ->
-  if location.hash.match(/^#[0-9]+$/)
+  if location.hash.match(/^#e?[0-9]+$/)
     updatedTr = $("tr:has(a[name='" + location.hash.replace('#', '') + "'])")
     updatedTr.addClass("updated_line")
     # 複数行がまとめられている場合のため
@@ -61,8 +61,12 @@ $ ->
         $('#deal_forms').empty()
         $('#deal_forms').append(result.error_view)
       else
-        result_url = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
-        location.href = result_url + "?updated_deal_id=" + result.id
+        result_url = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month) + "#" + result.id
+        oldLocationPathname = location.pathname
+        location.href = result_url
+        # ハッシュしか変わっていないと見なされるとリロードされないので強制リロード
+        if oldLocationPathname == location.pathname
+          location.reload()
     , 'JSON')
     return false # 通常の Form 動作は行わない
   )

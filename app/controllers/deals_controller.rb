@@ -15,7 +15,7 @@ class DealsController < ApplicationController
   }
 
   REDIRECT_OPTIONS_PROC = lambda{|deal|
-    {:action => :monthly, :year => deal.date.year.to_s, :month => deal.date.month.to_s, :updated_deal_id => deal.id}
+    {:action => :monthly, :year => deal.date.year.to_s, :month => deal.date.month.to_s, :anchor => deal.id.to_s}
   }
   deal_actions_for :general_deal, :complex_deal, :balance_deal,
     :ajax => true,
@@ -104,8 +104,6 @@ class DealsController < ApplicationController
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
 
-    @updated_deal = params[:updated_deal_id] ? @user.deals.find(params[:updated_deal_id]) : nil
-
     @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
 
     start_date = Date.new(@year.to_i, @month.to_i, 1)
@@ -113,11 +111,12 @@ class DealsController < ApplicationController
     @deals = current_user.deals.in_a_time_between(start_date, end_date).all(:include => :readonly_entries,
                   :order => "date, daily_seq")
 
-    # 登録用
-    if @updated_deal && @updated_deal.kind_of?(Deal::Balance)
+    # フォーム用
+    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
+    case flash[:"#{controller_name}_deal_type"]
+    when 'balance_deal'
       @deal = Deal::Balance.new
-      @deal.account_id = @updated_deal.account_id
-      flash.now[:"#{controller_name}_deal_type"] = 'balance_deal'
+      # TODO: 口座
     else
       @deal = Deal::General.new
       @deal.build_simple_entries

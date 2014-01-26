@@ -116,7 +116,8 @@
         <!-- number -->
         <td class="number">
           <%= render 'shared/deal_note', :deal => entry.deal %>
-          <%= content_tag :a, entry.deal.daily_seq, :name => entry.id %>
+          <%= content_tag :a, entry.deal.daily_seq, :name => entry.deal_id %>
+          <%= content_tag :a, '', :name =>"e#{entry.id}" %>
         </td>
         <!-- summary -->
         <td><%= entry.summary %></td>
