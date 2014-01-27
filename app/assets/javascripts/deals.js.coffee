@@ -62,11 +62,9 @@ $ ->
         $('#deal_forms').append(result.error_view)
       else
         result_url = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month) + "#" + result.id
-        oldLocationPathname = location.pathname
         location.href = result_url
-        # ハッシュしか変わっていないと見なされるとリロードされないので強制リロード
-        if oldLocationPathname == location.pathname
-          location.reload()
+        # ハッシュがついたURLを渡すとリロードされないようなので強制リロード
+        location.reload()
     , 'JSON')
     return false # 通常の Form 動作は行わない
   )
