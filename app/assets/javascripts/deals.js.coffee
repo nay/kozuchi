@@ -61,8 +61,16 @@ $ ->
         $('#deal_forms').empty()
         $('#deal_forms').append(result.error_view)
       else
-        result_url = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month) + "#" + result.id
-        location.assign(result_url)
+        resultUrl = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        resultUrlWithHash = resultUrl + "#" + result.id
+        prevUrl = location.pathname
+        prevSearch = location.search
+        if prevSearch && prevSearch != ""
+          prevUrl += "?" + prevSearch
+        location.assign(resultUrlWithHash)
+        # NOTE: assign しても location.pathname などが古いケースがあるため、resultUrlベースで用意して比較している
+        if resultUrl == prevUrl
+          location.reload()
     , 'JSON')
     return false # 通常の Form 動作は行わない
   )
