@@ -5,8 +5,8 @@
 Kozuchi is a home-accounting web application. ('家計簿' in Japanese.)
 It supports Japanese only.
 
-NOTICE: Rails3 Version is under working.
-If you need stable version, use Kozuchi in rails2 branch with Ruby 1.8.7.
+Master works in Rails 3 and Ruby >= 1.9.
+* You can use rails2 branch with Ruby 1.8.7 though its features are pretty old.
 
 == How to set up
 * Create your config/database.yml from examples, such as database.mysql.yml
