@@ -7,7 +7,9 @@ class Deal::Base < ActiveRecord::Base
   belongs_to :user
 
   # 実験的に読み出し専用の共通的なentryを設定
-  has_many :readonly_entries, :include => :account, :class_name => "Entry::Base", :foreign_key => 'deal_id', :order => 'creditor, line_number', :readonly => true
+  has_many :readonly_entries, -> { order(:creditor, :line_number).includes(:account).readonly },
+           class_name: "Entry::Base",
+           foreign_key: 'deal_id'
 
   attr_writer :insert_before
   attr_accessor :old_date

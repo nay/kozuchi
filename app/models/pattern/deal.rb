@@ -4,12 +4,16 @@ class Pattern::Deal < ActiveRecord::Base
 
   belongs_to :user, :foreign_key => "user_id"
   with_options :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
-    e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => :line_number, :dependent => :destroy
-    e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => :line_number, :dependent => :destroy
+    e.has_many :debtor_entries, -> { where(creditor: false).order(:line_number) },
+               dependent: :destroy
+    e.has_many :creditor_entries, -> { where(creditor: true).order(:line_number) },
+               dependent: :destroy
   end
   include ::Deal
   # 読み出し専用の共通的なentry
-  has_many :readonly_entries, :include => :account, :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :order => 'line_number, creditor', :readonly => true
+  has_many :readonly_entries, -> { includes(:account).order(:line_number, :creditor).readonly },
+           class_name: "Pattern::Entry",
+           foreign_key: 'deal_pattern_id'
 
   attr_accessor :overwrites_code
 #  attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes, :overwrites_code

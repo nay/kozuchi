@@ -10,7 +10,7 @@ class Account::Base < ActiveRecord::Base
   has_many :entries, :class_name => "Entry::Base", :foreign_key => "account_id"
   has_many :balances, :class_name => "Entry::Balance", :foreign_key => "account_id"
 
-  has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
+  has_many :deals,  ->{ order(:date, :daily_seq) }, through: :entries
 
   # この勘定の残高記入を日時のはやいほうからsaveしなおしていくことで、残高計算を正しくする
   # ツールとして利用する

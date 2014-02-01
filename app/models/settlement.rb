@@ -4,11 +4,9 @@ class Settlement < ActiveRecord::Base
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'
 
   has_many :target_entries,
-           :class_name => 'Entry::General',
-           :foreign_key => 'settlement_id',
-           :order => 'deals.date, deals.daily_seq',
-           :include => :deal#,
-#           :dependent => :nullify
+           -> { order('deals.date, deals.daily_seq').includes(:deal) },
+           class_name: 'Entry::General',
+           foreign_key: 'settlement_id'
 
   # TODO: Rails 3.2.6 nullify時のSQLでORDERがあるのにjoinされない問題の回避のため
   has_many :nullify_target_entries,
@@ -17,9 +15,9 @@ class Settlement < ActiveRecord::Base
            :dependent => :nullify
 
   has_one  :result_entry,
-           :class_name => 'Entry::General',
-           :foreign_key => 'result_settlement_id',
-           :include => :deal
+           -> { includes(:deal) },
+           class_name: 'Entry::General',
+           foreign_key: 'result_settlement_id'
 
   belongs_to :submitted_settlement
   

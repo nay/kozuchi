@@ -3,7 +3,10 @@
 module Account::Linking
 
   def self.included(base)
-    base.has_many :link_requests, :class_name => "AccountLinkRequest", :foreign_key => "account_id", :include => :sender, :dependent => :destroy
+    base.has_many :link_requests, -> { includes(:sender) },
+                  class_name: "AccountLinkRequest",
+                  foreign_key: "account_id",
+                  dependent: :destroy
     base.has_one :link, :class_name => "AccountLink", :foreign_key => "account_id", :dependent => :destroy
   end
 

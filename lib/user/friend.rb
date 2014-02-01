@@ -1,9 +1,15 @@
 # -*- encoding : utf-8 -*-
 module User::Friend
   def self.included(base)
-    base.has_many :friend_requests, :class_name => "Friend::Request", :dependent => :destroy, :include => :sender
-    base.has_many :friend_acceptances, :class_name => "Friend::Acceptance", :dependent => :destroy, :include => :target
-    base.has_many :friend_rejections, :class_name => "Friend::Rejection", :dependent => :destroy, :include => :target
+    base.has_many :friend_requests, -> { includes(:sender) },
+                  class_name: "Friend::Request",
+                  dependent: :destroy
+    base.has_many :friend_acceptances, -> { includes(:target) },
+                  class_name: "Friend::Acceptance",
+                  dependent: :destroy
+    base.has_many :friend_rejections, -> { includes(:target) },
+                  class_name: "Friend::Rejection",
+                  dependent: :destroy
   end
 
   # 相手と双方向のフレンドか調べる

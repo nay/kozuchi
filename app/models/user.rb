@@ -11,21 +11,25 @@ class User < ActiveRecord::Base
   has_many  :single_logins, :dependent => :destroy
   has_many  :settlements, :dependent => :destroy
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
-  has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
-  has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
-  has_many  :assets, :class_name => "Account::Asset", :order => "sort_key" do
+  has_many  :incomes, -> { order(:sort_key) },
+            class_name: 'Account::Income'
+  has_many  :expenses, -> { order(:sort_key) },
+            class_name: 'Account::Expense'
+  has_many  :assets, -> { order(:sort_key) },
+            class_name: "Account::Asset" do
     def credit
       credit_asset_kinds = asset_kinds{|attributes| attributes[:credit]}.map{|k| k.to_s}
       categorized_as(*credit_asset_kinds)
     end
   end
-  has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
+  has_many  :flow_accounts, -> { where("asset_kind is null").order(:sort_key) },
+            class_name: "Account::Base"
 
   has_many :deal_patterns, :class_name => "Pattern::Deal"
 
   ACCOUNTS_OPTIONS_ASC = ['Account::Asset', 'Account::Income', 'Account::Expense']
   ACCOUNTS_OPTIONS_DESC = ['Account::Expense', 'Account::Asset', 'Account::Income']
-  has_many  :accounts, :class_name => 'Account::Base', :order => 'accounts.sort_key' do
+  has_many  :accounts, -> { order(:sort_key) }, :class_name => 'Account::Base' do
 
     def grouped_options(is_asc = true)
       grouped = group_by{|a| a.class}.map{|key, value| [key, value.map{|a| [a.name, a.id]}]}
