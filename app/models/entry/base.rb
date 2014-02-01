@@ -33,7 +33,7 @@ class Entry::Base < ActiveRecord::Base
   attr_accessor :account_to_be_connected, :another_entry_account, :pure_balance
   attr_accessor :skip_linking # 要請されて作る場合、リンクしにいくのは不要なので
   attr_reader :new_plus_link
-  attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
+#  attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
 
   attr_writer :skip_unlinking
 

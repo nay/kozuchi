@@ -2,7 +2,7 @@
 class SingleLogin < ActiveRecord::Base
   belongs_to :user
   attr_accessor :password
-  attr_protected :user_id, :crypted_password
+#  attr_protected :user_id, :crypted_password
 
   validates_presence_of :login, :password
   validate :validate_account

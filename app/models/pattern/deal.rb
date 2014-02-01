@@ -12,7 +12,7 @@ class Pattern::Deal < ActiveRecord::Base
   has_many :readonly_entries, :include => :account, :class_name => "Pattern::Entry", :foreign_key => 'deal_pattern_id', :order => 'line_number, creditor', :readonly => true
 
   attr_accessor :overwrites_code
-  attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes, :overwrites_code
+#  attr_accessible :code, :name, :summary_mode, :summary, :debtor_entries_attributes, :creditor_entries_attributes, :overwrites_code
 
   before_validation :set_user_id_to_entries, :avoid_empty_code
   # 検証なしの場合も保証したいため以下は before_save で重複して実行する

@@ -4,7 +4,7 @@ class Friend::Permission < ActiveRecord::Base
   belongs_to :user
   belongs_to :target, :class_name => "User", :foreign_key => "target_id"
 
-  attr_protected :user_id
+#  attr_protected :user_id
   
   before_create :destroy_others
   after_save :error_if_repeating

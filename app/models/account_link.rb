@@ -10,7 +10,7 @@ class AccountLink < ActiveRecord::Base
   before_update {raise "Not Supported"}
   after_destroy :destroy_target_request
 
-  attr_protected :user_id
+#  attr_protected :user_id
 
   validates_presence_of :target_ex_account_id, :user_id, :target_user_id
   # TODO: target_ex_account_idを最後にもっていくと検証実行で変な不具合ぽい失敗が発生する(Rails2.1)
