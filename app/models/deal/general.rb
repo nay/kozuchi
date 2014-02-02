@@ -118,6 +118,9 @@ class Deal::General < Deal::Base
         find_by_sql("select account_entries.summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where deals.user_id = #{user_id} and deals.type='General' and account_entries.summary like '#{summary_key}%' group by account_entries.summary limit #{limit}")
       end
       return [] if results.size == 0
+
+      scope = Deal::General
+
       conditions = ""
       for r in results
         conditions += " or " unless conditions.empty?
@@ -125,14 +128,14 @@ class Deal::General < Deal::Base
       end
       conditions = "deals.user_id = #{user_id} and (#{conditions})"
 
-      options = if account_id
-        conditions << " and account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
-        {:conditions => conditions, :joins => "inner join account_entries on deals.id = account_entries.deal_id"}
-      else
-        {:conditions => conditions}
+      scope = scope.where(conditions).order("deals.created_at desc")
+
+      if account_id
+        scope = scope.joins("inner join account_entries on deals.id = account_entries.deal_id"
+        ).where("account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0")
       end
-      options[:order] = "deals.created_at desc"
-      return Deal::General.find(:all, options)
+
+      return scope
     rescue => e
       return []
     end

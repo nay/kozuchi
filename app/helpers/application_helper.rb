@@ -165,7 +165,7 @@ EOS
 
   # optgroup を使わずに口座を選ばせるリストを表示する
   def select_account(object, method, asset_kinds, with_asset_type = true, options = {}, html_options = {})
-    accounts = current_user.assets.find(:all, :conditions => ["asset_kind in (?)", asset_kinds.map{|k| k.to_s}], :order => "sort_key")
+    accounts = current_user.assets.where("asset_kind in (?)", asset_kinds.map{|k| k.to_s}).order(:sort_key)
     select(object, method, accounts.collect{|a| [with_asset_type ?  a.name_with_asset_type : a.name, a.id] }, options, html_options)
   end
 

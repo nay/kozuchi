@@ -97,14 +97,12 @@ class Deal::Base < ActiveRecord::Base
   end
 
   def self.get_for_month(user_id, datebox)
-    Deal::Base.find(:all,
-                  :conditions => [
-                    "deals.user_id = ? and date >= ? and date < ?",
+    Deal::Base.where("deals.user_id = ? and date >= ? and date < ?",
                     user_id,
                     datebox.start_inclusive,
-                    datebox.end_exclusive],
-                  :include => :readonly_entries,
-                  :order => "date, daily_seq")
+                    datebox.end_exclusive
+    ).includes(:readonly_entries
+    ).order(:date, :daily_seq)
   end
 
   # start_date から end_dateまでの、accounts に関連するデータを取得する。
@@ -113,16 +111,14 @@ class Deal::Base < ActiveRecord::Base
     raise "no start_date" unless start_date
     raise "no end" unless end_date
     raise "no accounts" unless accounts
-    Deal::Base.find(:all,
-                 :select => "distinct dl.*",
-                  :conditions => ["dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
-                    user_id,
-                    accounts.map{|a| a.id},
-                    start_date,
-                    end_date +1 ],
-                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
-                  :order => "dl.date, dl.daily_seq"
-    )
+    Deal::Base.select("distinct dl.*"
+    ).where("dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
+            user_id,
+            accounts.map{|a| a.id},
+            start_date,
+            end_date +1
+    ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
+    ).order("dl.date, dl.daily_seq")
   end
   
   def self.exists?(user_id, date)

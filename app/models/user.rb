@@ -53,11 +53,11 @@ class User < ActiveRecord::Base
     # 指定した日の最初における指定した口座の残高をAccountモデルの一覧として得る
     def balances(date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as balance",
-          :include => nil,
-          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true],
-          :group => 'accounts.id'
-        ).each{|a| a.balance = a.balance.to_i}
+        select("accounts.*, sum(account_entries.amount) as balance"
+        ).includes(nil
+        ).where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true
+        ).group('accounts.id'
+        ).each{|a| a.balance = a.balance.to_i }
       end
     end
     
@@ -89,10 +89,10 @@ class User < ActiveRecord::Base
     # 記入のない口座は取得されない。
     def flows(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as flow",
-          :include => nil,
-          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
-          :group => 'accounts.id'
+        select("accounts.*, sum(account_entries.amount) as flow"
+        ).includes(nil
+        ).where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
+        ).group('accounts.id'
         ).each{|a| a.flow = a.flow.to_i}
       end
     end
@@ -101,11 +101,11 @@ class User < ActiveRecord::Base
     # 不明金勘定の視点から、正負は逆にする。つまり、支出の不明金はプラスで出る。
     def unknowns(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as unknown",
-          :include => nil,
-          :conditions => ["deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
-          :group => 'accounts.id'
-        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1}
+        select("accounts.*, sum(account_entries.amount) as unknown"
+        ).includes(nil
+        ).where("deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
+        ).group('accounts.id'
+        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
       end
     end
   

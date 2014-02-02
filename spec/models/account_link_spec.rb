@@ -7,7 +7,7 @@ describe AccountLink do
 
   before do
     # 前提条件
-    raise "前提条件エラー" unless User.find(:all, :conditions => "id in(3, 5)").empty?
+    raise "前提条件エラー" unless User.where("id in(3, 5)").empty?
   end
   describe "attributes=" do
     it "user_idは一括指定できない" do
