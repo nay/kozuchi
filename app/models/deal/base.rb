@@ -19,9 +19,9 @@ class Deal::Base < ActiveRecord::Base
   before_save :touch_if_not_changed
   validates_presence_of :date
   
-  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
-  scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
-  scope :time_ordering, lambda{ order("date, daily_seq") }
+  scope :in_a_time_between, ->(from, to) { where("deals.date >= ? and deals.date <= ?", from, to) }
+  scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
+  scope :time_ordering, -> { order(:date, :daily_seq) }
 
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"

@@ -5,7 +5,7 @@ class Entry::Balance < Entry::Base
              :foreign_key => 'deal_id'
 
 
-  scope :without_initial, :conditions => {:initial_balance => false}
+  scope :without_initial, -> { where(initial_balance: false) }
 
   validates :balance, :presence => true, :numericality => {:only_integer => true, :allow_blank => true}
 

@@ -25,14 +25,12 @@ class Pattern::Deal < ActiveRecord::Base
   validate :validate_entry_exists
   after_save :set_used_at
 
-  scope :recent, lambda { order('used_at desc') }
-  scope :contains, lambda{|keyword| select("DISTINCT deal_patterns.*").joins("inner join entry_patterns on entry_patterns.deal_pattern_id = deal_patterns.id").where("deal_patterns.code LIKE ? OR deal_patterns.name LIKE ? OR entry_patterns.summary LIKE ?", "#{keyword}%", "#{keyword}%", "#{keyword}%")}
+  scope :recent, -> { order(used_at: :desc) }
+  scope :contains, ->(keyword) { select("DISTINCT deal_patterns.*").joins("inner join entry_patterns on entry_patterns.deal_pattern_id = deal_patterns.id").where("deal_patterns.code LIKE ? OR deal_patterns.name LIKE ? OR entry_patterns.summary LIKE ?", "#{keyword}%", "#{keyword}%", "#{keyword}%") }
 
-  scope :with_account, lambda{|account_id, debtor|
-   {
-# entry_patterns との join はされている想定
-     :conditions => ["entry_patterns.account_id = ? and entry_patterns.creditor = ?", account_id, !debtor]
-   }
+  scope :with_account, ->(account_id, debtor) {
+    # entry_patterns との join はされている想定
+    where("entry_patterns.account_id = ? and entry_patterns.creditor = ?", account_id, !debtor)
   }
 
   def to_s

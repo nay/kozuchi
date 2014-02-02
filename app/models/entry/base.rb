@@ -37,13 +37,13 @@ class Entry::Base < ActiveRecord::Base
 
   attr_writer :skip_unlinking
 
-  scope :confirmed, :conditions => {:confirmed => true}
-  scope :date_from, Proc.new{|d| {:conditions => ["date >= ?", d]}} # TODO: 名前バッティングで from → date_from にした
-  scope :before, Proc.new{|d| {:conditions => ["date < ?", d]}}
-  scope :ordered, :order => "date, daily_seq"
-  scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
-  scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
-  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["account_entries.date >= ? and account_entries.date <= ?", from, to]}}
+  scope :confirmed, -> { where(confirmed: true) }
+  scope :date_from, ->(d) { where("date >= ?", d) } # TODO: 名前バッティングで from → date_from にした
+  scope :before, ->(d) { where("date < ?", d) }
+  scope :ordered, -> { order(:date, :daily_seq) }
+  scope :of, ->(account_id) { where(account_id: account_id) }
+  scope :after, ->(e) { where("date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq) }
+  scope :in_a_time_between, ->(from, to) { where("account_entries.date >= ? and account_entries.date <= ?", from, to) }
 
   delegate :year, :month, :day, :to => :date
 
