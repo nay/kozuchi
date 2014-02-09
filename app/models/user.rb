@@ -118,7 +118,7 @@ class User < ActiveRecord::Base
     
     private
     def with_joined_scope(conditions, &block)
-      with_scope :find => {:conditions => conditions, :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id"} do
+      where(conditions).joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id").scoping do
         yield
       end
     end
