@@ -180,7 +180,7 @@ describe Deal::General do
     let!(:deal) do
       d = new_simple_deal(6, 1, @cache, @bank, 3500)
       d.save!
-      d.class.update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp], "id = #{d.id}")
+      d.class.where(id: d.id).update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp])
       d.reload
       d
     end

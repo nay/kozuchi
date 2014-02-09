@@ -70,16 +70,16 @@ module User::AccountLinking
         # 未確認の場合、summary, date を更新する
         unless linked_deal.confirmed?
           linked_deal.date = date
-          Deal::General.update_all(["date = ?", date], "id = #{linked_deal.id}")
+          Deal::General.where(id: linked_deal.id).update_all(["date = ?", date])
           linked_deal.summary_mode = summary_mode
           if summary_mode == 'unify'
             linked_deal.summary = summary # 使わないが念のためあわせておく
-            Entry::General.update_all(["summary = ?", summary], "deal_id = #{linked_deal.id}")
+            Entry::General.where(deal_id: linked_deal.id).update_all(["summary = ?", summary])
           else
             linked_entries.each do |e|
               ex_e = ex_entries_hash.detect{|h| h[:id] == e.linked_ex_entry_id }
               e.summary = ex_e[:summary]
-              Entry::General.update_all(["summary = ?", ex_e[:summary]], "id = #{e.id}")
+              Entry::General.where(id: e.id).update_all(["summary = ?", ex_e[:summary]])
             end
           end
         end

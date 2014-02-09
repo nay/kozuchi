@@ -114,7 +114,7 @@ class Entry::Base < ActiveRecord::Base
 
   def update_links_without_callback
     raise "new_record!" if new_record?
-    Entry::Base.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
+    Entry::Base.where(id: id).update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}")
   end
 
   private

@@ -53,7 +53,7 @@ class Deal::Balance < Deal::Base
   # これを順々にやれば残高不正は修正できると思われる
   def update_amount
     amount = entry.balance.to_i - balance_before(entry.initial_balance?)
-    Entry::Base.update_all("amount = #{amount}", ["id = ?", entry.id])
+    Entry::Base.where(id: entry.id).update_all("amount = #{amount}")
     entry.amount = amount
   end
 
@@ -100,8 +100,8 @@ class Deal::Balance < Deal::Base
     return if initial_balance_entry.initial_balance?
 
     # マークがついていない＝状態が変わったので修正する
-    Entry::Base.update_all(["initial_balance = ?", false], ["account_id = ?", account_id])
-    Entry::Base.update_all(["initial_balance = ?", true], ["id = ?", initial_balance_entry.id])
+    Entry::Base.where(account_id: account_id).update_all(["initial_balance = ?", false])
+    Entry::Base.where(id: initial_balance_entry.id).update_all(["initial_balance = ?", true])
     # オブジェクトがあるときはオブジェクトの状態も変えておく
     entry.initial_balance = true if entry && entry.id == initial_balance_entry.id
   end

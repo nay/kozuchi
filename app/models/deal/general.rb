@@ -177,15 +177,13 @@ class Deal::General < Deal::Base
 
   # 指定した連携を切る
   def unlink_entries(remote_user_id, remote_ex_deal_id)
-    Entry::General.update_all(
-      ["linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = ?", false],
-      remote_condition(remote_user_id, remote_ex_deal_id))
+    Entry::General.where(remote_condition(remote_user_id, remote_ex_deal_id)).update_all(
+      ["linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = ?", false])
   end
 
   def confirm_linked_entries(remote_user_id, remote_ex_deal_id)
-    Entry::General.update_all(
-      ["linked_ex_entry_confirmed = ?", true],
-      remote_condition(remote_user_id, remote_ex_deal_id))
+    Entry::General.where(remote_condition(remote_user_id, remote_ex_deal_id)).update_all(
+      ["linked_ex_entry_confirmed = ?", true])
   end
 
   # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
@@ -276,7 +274,7 @@ class Deal::General < Deal::Base
       linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary_mode, summary, date)
 #      next unless linked_entries # false なら、こちらの変更は不要
       for entry_id, ex_info in linked_entries
-        Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
+        Entry::Base.where(id: entry_id).update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}")
         changed_self = true
       end
     end

@@ -55,7 +55,7 @@ class Pattern::Deal < ActiveRecord::Base
   end
 
   def use
-    self.class.update_all({:used_at => current_time_from_proper_timezone}, "id = #{id}") unless new_record?
+    self.class.where(id: id).update_all({:used_at => current_time_from_proper_timezone}) unless new_record?
   end
 
   def assignable_attributes
@@ -126,7 +126,7 @@ class Pattern::Deal < ActiveRecord::Base
   private
 
   def set_used_at
-    self.class.update_all({:used_at => updated_at}, "id = #{id}")
+    self.class.where(id: id).update_all({:used_at => updated_at})
   end
 
   def avoid_empty_code

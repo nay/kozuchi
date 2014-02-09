@@ -16,7 +16,7 @@ class Preferences < ActiveRecord::Base
   def capital_to_credit
     unless self.business_use?
       # 資本金タイプの口座はすべて債権タイプに変更する
-      Account::Base.update_all("asset_kind = 'credit'", "asset_kind = 'capital_fund'")
+      Account::Base.where(asset_kind: 'capital_fund').update_all("asset_kind = 'credit'")
     end
   end
   
