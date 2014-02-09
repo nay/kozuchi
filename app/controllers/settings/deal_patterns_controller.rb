@@ -8,7 +8,7 @@ class Settings::DealPatternsController < ApplicationController
   before_filter :find_or_build_deal_pattern, :only => [:create_entry]
 
   def index
-    @deal_patterns = current_user.deal_patterns.order('updated_at desc').all # TODO: paginate
+    @deal_patterns = current_user.deal_patterns.order('updated_at desc') # TODO: paginate
   end
   
   # :pattern_code が指定されていたら対応する内容を画面上にコピーする
