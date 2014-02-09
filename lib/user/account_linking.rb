@@ -155,7 +155,8 @@ module User::AccountLinking
   end
 
   def linked_deal_for(remote_user_id, remote_ex_deal_id)
-    general_deals.first(:include => :readonly_entries, :conditions => ["account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id])
+    general_deals.includes(:readonly_entries).
+        where("account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id).first
   end
 
   # こちらから一方的に連携している相手からの確認を受け取る
