@@ -20,6 +20,7 @@ class ExportSweeper < ActionController::Caching::Sweeper
 
   private
   def expire(record)
+    return unless controller
     user_id = record.kind_of?(User) ? record.id : record.user_id
     expire_fragment(key(:xml, user_id))
     expire_fragment(key(:csv, user_id))
