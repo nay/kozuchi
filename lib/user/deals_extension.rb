@@ -31,7 +31,7 @@ module User::DealsExtension
     ).where("et.account_id in (?) and dl.date >= ? and dl.date < ?",
                                   accounts.map{|a| a.id},
                                   start_date,
-                                  end_date +1
+                                  end_date + 1
     ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
     ).order("dl.date, dl.daily_seq")
   end
