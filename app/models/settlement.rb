@@ -153,7 +153,7 @@ class Settlement < ActiveRecord::Base
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in deal_ids
       # 複数明細の場合などに、２つ以上あることもあり得る
-      entries = Entry::General.includes(:deal).where("deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id)
+      entries = Entry::General.includes(:deal).references(:deal).where("deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id)
       next if entries.empty?
       entries.each do |entry|
         target_entries << entry
