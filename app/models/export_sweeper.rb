@@ -7,7 +7,7 @@ class ExportSweeper < ActionController::Caching::Sweeper
   end
 
   def key(format, user_id)
-    self.class.key(format, user_id, request ? request.host_with_port : "no_host")
+    self.class.key(format, user_id, (controller && request) ? request.host_with_port : "no_host")
   end
 
   def after_save(record)
