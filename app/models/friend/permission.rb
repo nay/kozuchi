@@ -11,7 +11,7 @@ class Friend::Permission < ActiveRecord::Base
 
   private
   def destroy_others
-    Friend::Permission.find_all_by_user_id_and_target_id(self.user_id, self.target_id).each{|p| p.destroy}
+    Friend::Permission.where(user_id: user_id, target_id: target_id).each{|p| p.destroy }
   end
   def error_if_repeating
     raise "user_id must be different from target_id" if self.user_id == self.target_id

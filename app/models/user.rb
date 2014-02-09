@@ -387,11 +387,11 @@ class User < ActiveRecord::Base
 
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
-    Deal::Base.find_all_by_user_id(self.id).each{|d| d.destroy }
+    Deal::Base.where(user_id: id).each{|d| d.destroy }
   end
   def destroy_accounts
     # アカウントを削除する場合の口座削除処理。dependentだと順序が思うようでないので自前でやる
-    Account::Base.find_all_by_user_id(self.id).each{|a| a.destroy}
+    Account::Base.where(user_id: id).each{|a| a.destroy}
   end
 
   

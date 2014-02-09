@@ -27,9 +27,9 @@ describe AccountLinkRequest, :no_deals_and_patterns do
       @user = users(:taro)
     end
     it "senderのUserが削除されたら対応するレコードが削除されること" do
-      raise "前提エラー: 太郎をsenderとするAccountLinkRequestがない" if AccountLinkRequest.find_all_by_sender_id(@user.id).empty?
+      raise "前提エラー: 太郎をsenderとするAccountLinkRequestがない" if AccountLinkRequest.where(sender_id: @user.id).empty?
       @user.destroy
-      AccountLinkRequest.find_all_by_sender_id(@user.id).should be_empty
+      AccountLinkRequest.where(sender_id: @user.id).should be_empty
     end
 
   end

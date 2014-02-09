@@ -11,7 +11,7 @@ describe User, :no_deals_and_patterns do
     end
     describe "Dealがないとき" do
       it "成功する" do
-        raise "前提エラー：Dealがある" unless Deal::General.find_all_by_user_id(@user.id).empty?
+        raise "前提エラー：Dealがある" unless Deal::General.where(user_id: @user.id).empty?
         @user.destroy
         User.find_by(id: @user.id).should be_nil
       end

@@ -13,9 +13,9 @@ describe "Account::Base", :no_deals_and_patterns do
       @user = users(:taro)
     end
     it "Userを削除したらAccountも削除されること" do
-      raise "前提エラー：taroに口座があること" if Account::Base.find_all_by_user_id(@user.id).empty?
+      raise "前提エラー：taroに口座があること" if Account::Base.where(user_id: @user.id).empty?
       @user.destroy
-      Account::Base.find_all_by_user_id(@user.id).should be_empty
+      Account::Base.where(user_id: @user.id).should be_empty
     end
     it "使われていなければ消せること" do
       account = accounts(:taro_cache)
