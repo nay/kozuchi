@@ -155,11 +155,11 @@ class Account::Base < ActiveRecord::Base
   include Account::Linking
 
   def self.get(user_id, account_id)
-    return Account::Base.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])
+    return Account::Base.where("user_id = ? and id = ?", user_id, account_id).first
   end
   
   def self.get_by_name(user_id, name)
-    return Account::Base.find(:first, :conditions => ["user_id = ? and name = ?", user_id, name])
+    return Account::Base.where("user_id = ? and name = ?", user_id, name).first
   end
 
   def to_s

@@ -93,7 +93,7 @@ class Deal::Base < ActiveRecord::Base
   end
   
   def self.get(deal_id, user_id)
-    return Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
+    return Deal::Base.where("id = ? and user_id = ?", deal_id, user_id).first
   end
 
   def self.get_for_month(user_id, datebox)
@@ -116,20 +116,19 @@ class Deal::Base < ActiveRecord::Base
             user_id,
             accounts.map{|a| a.id},
             start_date,
-            end_date +1
+            end_date + 1
     ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
     ).order("dl.date, dl.daily_seq")
   end
   
   def self.exists?(user_id, date)
-    !Deal::Base.find(:first,
-                 :select => "dl.id",
-                  :conditions => ["dl.user_id = ? and dl.date >= ? and dl.date < ?",
-                    user_id,
-                    date,
-                    date +1 ],
-                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id"
-    ).nil?
+    Deal::Base.select("dl.id"
+    ).where("dl.user_id = ? and dl.date >= ? and dl.date < ?",
+            user_id,
+            date,
+            date + 1
+    ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
+    ).exists?
   end
 
   def confirm!

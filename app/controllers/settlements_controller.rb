@@ -156,12 +156,13 @@ class SettlementsController < ApplicationController
       return false
     end
   end
-  
+
+  # TODO: 名前をかえて関連つかってDRYにしたい
   def load_settlement
     unless params[:id]
-      @settlement = Settlement.find(:first, :conditions => ["settlements.user_id = ?", @user.id], :order => "settlements.created_at")
+      @settlement = Settlement.where("settlements.user_id = ?", @user.id).order("settlements.created_at").first
     else
-      @settlement = Settlement.find(:first, :conditions => ["settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]])
+      @settlement = Settlement.where("settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]).first
     end
   end
   
