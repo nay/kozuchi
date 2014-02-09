@@ -108,8 +108,7 @@ class DealsController < ApplicationController
 
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
-    @deals = current_user.deals.in_a_time_between(start_date, end_date).all(:include => :readonly_entries,
-                  :order => "date, daily_seq")
+    @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
 
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
