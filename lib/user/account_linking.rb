@@ -168,7 +168,7 @@ module User::AccountLinking
 
 
   def account_with_entry_id(entry_id)
-    account = entries.find_by_id(entry_id).try(:account)
+    account = entries.find_by(id: entry_id).try(:account)
     if account && block_given?
       yield account
     else
@@ -177,7 +177,7 @@ module User::AccountLinking
   end
 
   def find_account_id_by_name(name)
-    a = accounts.find_by_name(name)
+    a = accounts.find_by(name: name)
     a ? a.id : nil
   end
 end

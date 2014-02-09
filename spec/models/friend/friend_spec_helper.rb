@@ -16,9 +16,9 @@ def new_request(user_id, sender_id)
 end
 
 def find_request(user_id, sender_id)
-  Friend::Request.find_by_user_id_and_sender_id(user_id, sender_id)
+  Friend::Request.find_by(user_id: user_id, sender_id: sender_id)
 end
 
 def find_acceptance(user_id, target_id)
-  Friend::Acceptance.find_by_user_id_and_target_id(user_id, target_id)
+  Friend::Acceptance.find_by(user_id: user_id, target_id: target_id)
 end

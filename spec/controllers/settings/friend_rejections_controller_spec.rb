@@ -7,7 +7,7 @@ describe Settings::FriendRejectionsController do
 
   before do
     login_as :taro
-    @current_user.friend_acceptances.find_by_target_id(:hanako.to_id).destroy
+    @current_user.friend_acceptances.find_by(target_id: :hanako.to_id).destroy
   end
 
   response_should_be_redirected_without_login {post :create, :target_login => 'hanako'}
@@ -16,7 +16,7 @@ describe Settings::FriendRejectionsController do
     it "成功する" do
       post :create, :target_login => 'hanako'
       response.should redirect_to(settings_friends_path)
-      @current_user.friend_rejections.find_by_target_id(:hanako.to_id).should_not be_nil
+      @current_user.friend_rejections.find_by(target_id: :hanako.to_id).should_not be_nil
       flash[:errors].should be_nil
     end
   end
@@ -26,7 +26,7 @@ describe Settings::FriendRejectionsController do
       @current_user.friend_rejections.create!(:target_id => :hanako.to_id)
       delete :destroy, :target_login => 'hanako'
       response.should redirect_to(settings_friends_path)
-      @current_user.friend_rejections.find_by_target_id(:hanako.to_id).should be_nil
+      @current_user.friend_rejections.find_by(target_id: :hanako.to_id).should be_nil
       flash[:errors].should be_nil
     end
   end

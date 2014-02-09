@@ -190,7 +190,7 @@ describe Pattern::Deal do
           deal_pattern.id.should == existing.id
           deal_pattern.debtor_entries.size.should == 2
           deal_pattern.creditor_entries.size.should == 1
-          Pattern::Deal.find_by_id(old_id).should be_nil
+          Pattern::Deal.find_by(id: old_id).should be_nil
         end
       end
     end

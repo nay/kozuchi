@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
       self.current_user = original_user
       self.original_user = nil
     else
-      single_login = current_user.single_logins.find_by_login(params[:login])
+      single_login = current_user.single_logins.find_by(login: params[:login])
       raise IllegalStateError unless single_login
       if !single_login.active?
         flash[:errors] = ["#{single_login.login}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
@@ -44,7 +44,7 @@ class SessionsController < ApplicationController
         return
       end
       self.original_user ||= self.current_user
-      self.current_user = User.find_by_login(single_login.login) # TODO: きれいに
+      self.current_user = User.find_by(login: single_login.login) # TODO: きれいに
     end
 
     # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。

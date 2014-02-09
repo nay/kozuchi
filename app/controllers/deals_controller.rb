@@ -28,14 +28,14 @@ class DealsController < ApplicationController
   def edit
     load = nil
     if params[:pattern_code].present?
-      load =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load =  current_user.deal_patterns.find_by(code: params[:pattern_code])
       # コードが見つからないときはクライアント側で特別に処理するので目印を返す
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal.load(load) if load
     @deal.fill_complex_entries if load || @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)

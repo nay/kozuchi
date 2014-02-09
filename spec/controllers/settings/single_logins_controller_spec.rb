@@ -23,13 +23,13 @@ describe Settings::SingleLoginsController do
       post :create, :single_login => {:login => 'hanako', :password => 'hanako'}
       response.should redirect_to(settings_single_logins_path)
       flash[:errors].should be_nil
-      @current_user.single_logins.find_by_login('hanako').should_not be_nil
+      @current_user.single_logins.find_by(login: 'hanako').should_not be_nil
     end
     it "パスワードが違うと成功しない" do
       post :create, :single_login => {:login => 'hanako', :password => 'hanako2'}
       response.should be_success
       assigns(:single_login).errors.should_not be_empty
-      @current_user.single_logins.find_by_login('hanako').should be_nil
+      @current_user.single_logins.find_by(login: 'hanako').should be_nil
     end
   end
 

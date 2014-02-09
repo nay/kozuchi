@@ -31,7 +31,7 @@ class Entry::Balance < Entry::Base
   private
 
   def set_amount
-    current_initial_balance = self.class.find_by_account_id_and_initial_balance(account_id, true, :include => :deal)
+    current_initial_balance = self.class.includes(:deal).find_by(account_id: account_id ,initial_balance: true)
     this_will_be_initial = !current_initial_balance || current_initial_balance.deal.date > self.date || (current_initial_balance.deal.date == self.date && current_initial_balance.deal.daily_seq > self.daily_seq)
     self.amount = balance - balance_before(this_will_be_initial)
   end

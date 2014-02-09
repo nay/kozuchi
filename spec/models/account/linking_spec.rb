@@ -41,7 +41,7 @@ describe "Account with Account::Linking" do
         # リンクは変わっていない
         @home_test.link.target_account.should == @taro_test
         # link request は増えている
-        @home_test.link_requests.find_by_sender_id_and_sender_ex_account_id(@hanako.id, @hanako_test.id).should_not be_nil
+        @home_test.link_requests.find_by(sender_id: @hanako.id, sender_ex_account_id: @hanako_test.id).should_not be_nil
         # 花子からのリンクはできている
         @hanako_test.link.target_account.should == @home_test
       end
@@ -62,8 +62,8 @@ describe "Account with Account::Linking" do
         @taro_test.link.target_account.should == @home_test2
         @home_test2.link.target_account.should == @taro_test
         @home_test.link.target_account.should == @taro_test
-        @taro_test.link_requests.find_by_sender_id_and_sender_ex_account_id(@home.id, @home_test.id).should_not be_nil
-        @home_test.link_requests.find_by_sender_id_and_sender_ex_account_id(@taro.id, @taro_test.id).should be_nil
+        @taro_test.link_requests.find_by(sender_id: @home.id, sender_ex_account_id: @home_test.id).should_not be_nil
+        @home_test.link_requests.find_by(sender_id: @taro.id, sender_ex_account_id: @taro_test.id).should be_nil
       end
     end
   end

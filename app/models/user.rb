@@ -140,7 +140,7 @@ class User < ActiveRecord::Base
 
   # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
   def account_by_name(account_name)
-    accounts.find_by_name(account_name)
+    accounts.find_by(name: account_name)
 
 #    AccountProxy.new(account_id)
   end

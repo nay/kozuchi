@@ -41,18 +41,18 @@ class ApplicationController < ActionController::Base
       when /complex/
         define_method "new_#{deal_type}" do
           @deal = current_user.general_deals.build
-          load = params[:load].present? ? current_user.general_deals.find_by_id(params[:load]) : nil
+          load = params[:load].present? ? current_user.general_deals.find_by(id: params[:load]) : nil
           pattern = nil
           if !load
             if params[:pattern_code].present?
-              pattern =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+              pattern =  current_user.deal_patterns.find_by(code: params[:pattern_code])
               # コードが見つからないときはクライアント側で特別に処理するので目印を返す
               unless pattern
                 render :text => 'Code not found'
                 return
               end
             end
-            pattern ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by_id(params[:pattern_id]) : nil
+            pattern ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by(id: params[:pattern_id]) : nil
             pattern.use if pattern
             load ||= pattern
           end
@@ -141,7 +141,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def original_user
-    @original_user ||= User.find_by_id(session[:original_user_id]) if session[:original_user_id]
+    @original_user ||= User.find_by(id: session[:original_user_id]) if session[:original_user_id]
     @original_user
   end
 
@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
 
   # 関心のある勘定を取得する
   def current_account
-    @current_account ||= current_user.accounts.find_by_id(session[:account_id]) if session[:account_id]
+    @current_account ||= current_user.accounts.find_by(id: session[:account_id]) if session[:account_id]
     @current_account
   end
 

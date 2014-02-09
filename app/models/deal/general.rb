@@ -314,7 +314,7 @@ class Deal::General < Deal::Base
   # 連携状態の削除を要求
   def request_unlinkings
     @previous_receiver_ids.each do |receiver_id|
-      receiver = User.find_by_id(receiver_id)
+      receiver = User.find_by(id: receiver_id)
       receiver.unlink_deal_for(user_id, id) if receiver # ユーザー削除の場合にはないケースもある
     end
   end

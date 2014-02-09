@@ -105,7 +105,7 @@ class Entry::Base < ActiveRecord::Base
   # リンクされたaccount_entry を返す
   # TODO: 廃止する
   def linked_account_entry
-    linked_ex_entry_id ? Entry::Base.find_by_id(linked_ex_entry_id) : nil
+    linked_ex_entry_id ? Entry::Base.find_by(id: linked_ex_entry_id) : nil
   end
 
   def after_confirmed

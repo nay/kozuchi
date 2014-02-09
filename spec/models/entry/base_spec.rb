@@ -152,7 +152,7 @@ describe Entry::Base do
     end
     it "linked_ex_entry_idを指定した新規登録なら連携記入がされないこと" do
       @entry.save!
-      Entry::Base.find_by_linked_ex_entry_id(@entry.id).should be_nil
+      Entry::Base.find_by(linked_ex_entry_id: @entry.id).should be_nil
     end
     
   end

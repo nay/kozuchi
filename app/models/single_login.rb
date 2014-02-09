@@ -9,7 +9,7 @@ class SingleLogin < ActiveRecord::Base
 
   def active?
     return false if crypted_password.blank? || login.blank?
-    target_user = User.find_by_login(login)
+    target_user = User.find_by(login: login)
     return false unless target_user
     target_user.crypted_password == crypted_password
   end
@@ -17,7 +17,7 @@ class SingleLogin < ActiveRecord::Base
   private
   def validate_account
     return if login.blank? || password.blank?
-    target_user = User.find_by_login(login)
+    target_user = User.find_by(login: login)
     if target_user
       if target_user == self.user
         errors.add(:base, "自分のアカウントへのシングルログイン設定は登録できません。")

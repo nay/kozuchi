@@ -73,7 +73,7 @@ class Pattern::Deal < ActiveRecord::Base
       old_id = new_record? ? nil : id
       prepare_overwrite
       if (result = super) && old_id && old_id != id
-        old = self.class.find_by_id(old_id)
+        old = self.class.find_by(id: old_id)
         old.destroy if old
       end
       return result
@@ -86,7 +86,7 @@ class Pattern::Deal < ActiveRecord::Base
       prepare_overwrite
       result = super
       if old_id && old_id != id
-        old = self.class.find_by_id(old_id)
+        old = self.class.find_by(id: old_id)
         old.destroy if old
       end
       return result
@@ -100,7 +100,7 @@ class Pattern::Deal < ActiveRecord::Base
     return false if code.blank? # 強制でnil にする前に通ると思われるためblank?で判定する
 
     # 対応するcodeを持つ既存レコードを取得
-    target = self.class.find_by_code(code)
+    target = self.class.find_by(code: code)
     return false unless target # 対象が存在しなければ無視（通常の create or update）
 
     # 自分がそのレコードであればなにもしない（普通に更新する）

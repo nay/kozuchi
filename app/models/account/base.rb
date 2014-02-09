@@ -247,7 +247,7 @@ class Account::Base < ActiveRecord::Base
   # 使われていないことを確認する。
   def assert_not_used
     # 使われていたら消せない
-    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if !new_record? && (Entry::Base.find_by_account_id(id) || Pattern::Entry.find_by_account_id(id))
+    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if !new_record? && (Entry::Base.find_by(account_id: id) || Pattern::Entry.find_by(account_id: id))
   end
 
 end

@@ -23,7 +23,7 @@ describe Friend::Rejection do
 
       new_rejection(@user.id, @target.id).save!
 
-      Friend::Acceptance.find_by_user_id_and_target_id(@user.id, @target.id).should be_nil
+      Friend::Acceptance.find_by(user_id: @user.id, target_id: @target.id).should be_nil
       # 相手側のRequestはAcceptanceを削除した時についでに削除される
     end
     it "Rejectionが存在する場合は検証エラー" do

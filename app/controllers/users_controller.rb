@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     @title = "パスワードを忘れたとき"
     raise InvalidParameterError if params[:email].blank?
     
-    user =  User.find_by_email(params[:email])
+    user =  User.find_by(email: params[:email])
     unless user
       flash[:error] = "該当するユーザーは登録されていません。"
       render :action => 'forgot_password'
@@ -117,7 +117,7 @@ class UsersController < ApplicationController
   def password_token_required
     raise InvalidParameterError if params[:password_token].blank?
 
-    @user = User.find_by_password_token(params[:password_token])
+    @user = User.find_by(password_token: params[:password_token])
     if !@user || !@user.password_token?
       flash[:error] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
       redirect_to forgot_password_path
@@ -128,7 +128,7 @@ class UsersController < ApplicationController
   
   
   def do_activate(activation_code)
-    self.current_user = activation_code.blank? ? false : User.find_by_activation_code(activation_code)
+    self.current_user = activation_code.blank? ? false : User.find_by(activation_code: activation_code)
     if logged_in? && !current_user.active?
       current_user.activate
       flash[:notice] = "登録が完了しました。"

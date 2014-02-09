@@ -85,7 +85,7 @@ describe AccountLink do
       end
       it "成功して、相手側にaccount_link_requestが作られる" do
         @link.save.should be_true
-        r = AccountLinkRequest.find_by_sender_id(@user.id)
+        r = AccountLinkRequest.find_by(sender_id: @user.id)
         r.should_not be_nil
         r.account_id.should == @target_user_account_for_user.id
         r.sender_ex_account_id.should == @user_account_for_target_user.id

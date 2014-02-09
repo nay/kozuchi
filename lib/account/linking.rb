@@ -43,7 +43,7 @@ module Account::Linking
   # 要請されて、この口座のあるシステムの指定されたEntryと紐づくEntryおよびDealを作成/更新する
   def update_link_to(linked_ex_entry_id, linked_ex_deal_id, linked_user_id, linked_entry_amount, linked_entry_summary, linked_entry_date, linked_ex_entry_confirmed)
     # すでに紐づいたAccountEntryが存在する場合
-    my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
+    my_entry = entries.find_by(linked_ex_entry_id: linked_ex_entry_id, linked_user_id: linked_user_id)
     # 存在し、確認済で金額が同じ（正負逆の同額）なら変更不要
     # 確認状態の変更は別途処理が走る
     if my_entry
@@ -58,7 +58,7 @@ module Account::Linking
         my_entry = nil
       end
     else
-      mate_entry = user.entries.find_by_linked_ex_deal_id_and_linked_user_id(linked_ex_deal_id, linked_user_id)
+      mate_entry = user.entries.find_by(linked_ex_deal_id: linked_ex_deal_id, linked_user_id: linked_user_id)
       if mate_entry
         # まだlinked_ex_entry_idが入っていなくても、今回リクエストのあった相手側のDealとすでに紐付いているAccountEntryがあれば、それの相手が求める勘定となる
         # entry数が2でないものはデータ不正
@@ -102,7 +102,7 @@ module Account::Linking
   end
 
   def unlink_to(linked_ex_entry_id, linked_user_id)
-    my_entry = entries.find_by_linked_ex_entry_id_and_linked_user_id(linked_ex_entry_id, linked_user_id)
+    my_entry = entries.find_by(linked_ex_entry_id: linked_ex_entry_id, linked_user_id: linked_user_id)
     my_entry.unlink if my_entry
   end
 

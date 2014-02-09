@@ -24,7 +24,7 @@ describe Settings::IncomesController do
     share_examples_for 'current_userのincomeが登録される' do
       it "current_userのincomeが登録される" do
         response.should redirect_to(settings_incomes_path)
-        income = @current_user.incomes.find_by_name('追加')
+        income = @current_user.incomes.find_by(name: '追加')
         income.should_not be_nil
         income.sort_key.should == 77
         flash[:errors].should be_nil
@@ -62,7 +62,7 @@ describe Settings::IncomesController do
       @current_values[:taro_salary.to_id.to_s][:name] = "きゅうりょう"
       put :update_all, :account => @current_values
       response.should redirect_to(settings_incomes_path)
-      income = @current_user.incomes.find_by_name('きゅうりょう')
+      income = @current_user.incomes.find_by(name: 'きゅうりょう')
       income.should_not be_nil
       flash[:errors].should be_nil
     end
@@ -70,7 +70,7 @@ describe Settings::IncomesController do
       @current_values[:taro_salary.to_id.to_s][:name] = ""
       put :update_all, :account => @current_values
       response.should be_success
-      @current_user.incomes.find_by_name('給料').should_not be_nil
+      @current_user.incomes.find_by(name: '給料').should_not be_nil
       assigns(:accounts).any?{|a| !a.errors.empty?}.should be_true
     end
     it "他人の口座の情報を混ぜると例外" do
@@ -83,7 +83,7 @@ describe Settings::IncomesController do
     it "成功する" do
       delete :destroy, :id => :taro_salary.to_id
       response.should redirect_to(settings_incomes_path)
-      Account::Base.find_by_id(:taro_salary.to_id).should be_nil
+      Account::Base.find_by(id: :taro_salary.to_id).should be_nil
       flash[:errors].should be_nil
     end
     it "他人の口座を指定できない" do
@@ -97,7 +97,7 @@ describe Settings::IncomesController do
       delete :destroy, :id => :taro_salary.to_id
       response.should redirect_to(settings_incomes_path)
       flash[:errors].should_not be_nil
-      @current_user.incomes.find_by_id(:taro_salary.to_id).should_not be_nil
+      @current_user.incomes.find_by(id: :taro_salary.to_id).should_not be_nil
     end
   end
 

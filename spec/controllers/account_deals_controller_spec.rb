@@ -29,7 +29,7 @@ describe AccountDealsController do
           :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
+      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 7), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -56,7 +56,7 @@ describe AccountDealsController do
           :creditor_entries_attributes => [{:account_id => :taro_bank.to_id}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
+      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 7), :order => 'created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -79,7 +79,7 @@ describe AccountDealsController do
         :date => {:year => '2010', :month => '7', :day => '7'}
       }
       response.should be_success
-      deal = @current_user.balance_deals.find_by_date(Date.new(2010, 7, 7))
+      deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
       deal.should_not be_nil
       deal.balance.should == 3000
     end

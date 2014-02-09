@@ -79,7 +79,7 @@ describe SettlementsController do
         }, :result_date => {:year => '2010', :month => '6', :day => '30'}
 
       response.should redirect_to(settlements_path)
-      @current_user.settlements.find_by_name('テスト精算2010-5').should_not be_nil
+      @current_user.settlements.find_by(name: 'テスト精算2010-5').should_not be_nil
     end
   end
 
@@ -142,7 +142,7 @@ describe SettlementsController do
       response.should redirect_to(settlements_path)
     end
     it "実際に削除されている" do
-      Settlement.find_by_id(@settlement.id).should be_nil
+      Settlement.find_by(id: @settlement.id).should be_nil
     end
   end
 

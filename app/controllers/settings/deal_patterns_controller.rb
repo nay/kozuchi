@@ -17,13 +17,13 @@ class Settings::DealPatternsController < ApplicationController
   def show
     load = nil
     if params[:pattern_code].present?
-      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load = current_user.deal_patterns.find_by(code: params[:pattern_code])
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
@@ -37,13 +37,13 @@ class Settings::DealPatternsController < ApplicationController
   def new
     load = nil
     if params[:pattern_code].present?
-      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load = current_user.deal_patterns.find_by(code: params[:pattern_code])
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal_pattern = current_user.deal_patterns.build
     @deal_pattern.load(load) if load
@@ -89,7 +89,7 @@ class Settings::DealPatternsController < ApplicationController
   def code
     scope = current_user.deal_patterns
     scope = scope.where(["deal_patterns.id != ?", params[:except]]) if params[:except].present?
-    if pattern_deal = scope.find_by_code(params[:code])
+    if pattern_deal = scope.find_by(code: params[:code])
       render :text => pattern_deal.code
     else
       render :text => '' # :nothing => true だと半角スペースが入って返されてしまうので

@@ -38,7 +38,7 @@ describe DealsController do
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
+      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 7)).order('created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -63,7 +63,7 @@ describe DealsController do
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 9), :order => 'created_at desc')
+      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 9)).order('created_at desc')
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 2
@@ -86,7 +86,7 @@ describe DealsController do
         :date => {:year => '2010', :month => '7', :day => '7'}
       }
       response.should be_success
-      deal = @current_user.balance_deals.find_by_date(Date.new(2010, 7, 7))
+      deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
       deal.should_not be_nil
       deal.balance.should == 3000
     end
@@ -109,7 +109,7 @@ describe DealsController do
     it "成功する" do
       delete :destroy, :id => @deal.id
       response.should redirect_to(monthly_deals_path(:year => '2010', :month => '7'))
-      Deal::Base.find_by_id(@deal.id).should be_nil
+      Deal::Base.find_by(id: @deal.id).should be_nil
     end
   end
 
