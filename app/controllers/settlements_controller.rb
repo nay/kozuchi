@@ -65,7 +65,6 @@ class SettlementsController < ApplicationController
   def create
     @settlement = current_user.settlements.new(params[:settlement])
     @settlement.result_date = to_date(params[:result_date])
-    
     if @settlement.save
       # 覚えた精算期間を消す
       self.settlement_start_date = nil
