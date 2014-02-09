@@ -181,18 +181,12 @@ class Account::Base < ActiveRecord::Base
 #    p entries.find(:all,
 #      :joins => "inner join deals on entries.deal_id = deals.id",
 #      :conditions => conditions).inspect
-    entries.sum(:amount,
-      :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => conditions
-      ) || 0      
+    entries.joins("inner join deals on account_entries.deal_id = deals.id").where(conditions).sum(:amount) || 0
   end
 
   # 指定した期間の支出合計額（不明金を換算しない）を得る
   def raw_sum_in(start_date, end_date)
-    Entry::Base.sum(:amount,
-      :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => ["account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date]
-    ) || 0
+    Entry::Base.joins("inner join deals on deals.id = account_entries.deal_id").where("account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date).sum(:amount) || 0
   end
 
   # 口座の初期設定を行う

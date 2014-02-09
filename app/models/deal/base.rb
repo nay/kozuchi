@@ -168,13 +168,10 @@ class Deal::Base < ActiveRecord::Base
 
     # 挿入先が指定されていなければ新規
     else
-      max = Deal::Base.maximum(:daily_seq,
-        :conditions => ["user_id = ? and date = ?",
-          self.user_id,
-          self.date]
-     ) || 0
+      max = Deal::Base.where(["user_id = ? and date = ?",
+                              self.user_id,
+                              self.date]).maximum(:daily_seq) || 0
       self.daily_seq = 1 + max
-
     end
     
   end

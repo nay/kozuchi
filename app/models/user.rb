@@ -44,9 +44,7 @@ class User < ActiveRecord::Base
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
-          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
-        ).to_i
+        where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true).sum("account_entries.amount").to_i
       end
     end
     
@@ -78,9 +76,7 @@ class User < ActiveRecord::Base
     # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
     def flow_sum(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
-          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true]
-        ).to_i
+        where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true).sum("account_entries.amount").to_i
       end
     end
     
