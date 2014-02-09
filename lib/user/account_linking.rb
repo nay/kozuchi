@@ -27,7 +27,7 @@ module User::AccountLinking
   # 依頼を受けて、特定勘定から連携されているという受け取り側の状態を作成する
   def create_link_request(target_account_id, sender_id, sender_ex_account_id)
     target_account = accounts.find(target_account_id)
-    link_request = target_account.link_requests.find_or_create_by_account_id_and_sender_id_and_sender_ex_account_id(target_account_id, sender_id, sender_ex_account_id)
+    link_request = target_account.link_requests.find_or_create_by(account_id: target_account_id, sender_id: sender_id, sender_ex_account_id: sender_ex_account_id)
     raise "could not save link_request. #{link_request.errors.full_messages.join(' ')}" if link_request.new_record?
     true
   end
