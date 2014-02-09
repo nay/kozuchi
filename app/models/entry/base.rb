@@ -163,7 +163,7 @@ class Entry::Base < ActiveRecord::Base
 
   # 直後の残高記入のamountを再計算する
   def update_balance
-    next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.first(:include => :deal)
+    next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.includes(:deal).first
     return unless next_balance_entry
     next_balance_entry.deal.update_amount # TODO: 効率
   end
