@@ -155,7 +155,7 @@ module User::AccountLinking
   end
 
   def linked_deal_for(remote_user_id, remote_ex_deal_id)
-    general_deals.includes(:readonly_entries).
+    general_deals.includes(:readonly_entries).references(:readonly_entries).
         where("account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id).first
   end
 
