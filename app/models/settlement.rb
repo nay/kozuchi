@@ -154,9 +154,12 @@ class Settlement < ActiveRecord::Base
     # 対象取引を追加していく
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in deal_ids
-      entry = Entry::General.find(:first, :include => :deal, :conditions => ["deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id])
-      next unless entry
-      target_entries << entry
+      # 複数明細の場合などに、２つ以上あることもあり得る
+      entries = Entry::General.includes(:deal).where("deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id)
+      next if entries.empty?
+      entries.each do |entry|
+        target_entries << entry
+      end
     end
   end
 
