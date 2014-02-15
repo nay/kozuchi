@@ -30,14 +30,14 @@ module GraphHelper
   private
   def render_javascript_pie id, data
     s = javascript_tag <<-EOS
-Event.observe(window, 'load', function () {
+$ (function() {
 	var cg = new html5jp.graph.circle("#{id}");
 	if( ! cg ) { return; }
 	var items = [
         #{ to_items( data ) }
 	];
 	cg.draw(items);
-}, false);
+})
     EOS
     s << %Q(<div><canvas width="400" height="200" id="#{id}"></canvas></div>).html_safe
     s
