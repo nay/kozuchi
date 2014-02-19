@@ -84,7 +84,7 @@ class ApplicationController < ActionController::Base
       # create_xxx
       define_method "create_#{deal_type}" do
         size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
-        @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(params[:deal])
+        @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
 
         if @deal.save
           flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
@@ -152,6 +152,11 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+  # TODO: deal系の機能とともにconcernsにでも出したい
+  def deal_params
+    params.require(:deal).permit(:year, :month, :day, :summary, :summary_mode, debtor_entries_attributes: [:amount, :account_id, :summary], creditor_entries_attributes: [:amount, :account_id, :summary])
+  end
 
   # 関心のある勘定を覚えておく
   def current_account=(account)
