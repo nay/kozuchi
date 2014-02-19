@@ -12,7 +12,7 @@ class Settings::SingleLoginsController < ApplicationController
   end
 
   def create
-    @single_login = current_user.single_logins.build(params[:single_login])
+    @single_login = current_user.single_logins.build(single_login_params)
     if @single_login.save
       flash[:notice] = "#{ERB::Util.h(@single_login.login)}さんへのシングルログイン設定を追加しました。"
       redirect_to settings_single_logins_path
@@ -29,6 +29,9 @@ class Settings::SingleLoginsController < ApplicationController
   end
 
   private
+  def single_login_params
+    params.require(:single_login).permit(:login, :password)
+  end
   def find_single_login
     @single_login = current_user.single_logins.find(params[:id])
   end
