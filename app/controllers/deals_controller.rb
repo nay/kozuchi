@@ -46,7 +46,7 @@ class DealsController < ApplicationController
   # @deal を作り直して書き直す
   def create_entry
     entries_size = params[:deal][:debtor_entries_attributes].size
-    @deal.attributes = params[:deal]
+    @deal.attributes = deal_params
     @deal.fill_complex_entries(entries_size+1)
     if @deal.new_record?
       render RENDER_OPTIONS_PROC.call(:complex_deal)
@@ -56,7 +56,7 @@ class DealsController < ApplicationController
   end
 
   def update
-    @deal.attributes = params[:deal]
+    @deal.attributes = deal_params
     @deal.confirmed = true
     entries_size = params[:deal][:debtor_entries_attributes].try(:size)
 

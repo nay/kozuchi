@@ -31,14 +31,14 @@ describe DealsController do
       # 貸し方の金額ははいらない
       post :create_general_deal,
         :deal => {
-          :date => {:year => '2010', :month => '7', :day => '7'},
+          :year => '2010', :month => '7', :day => '7',
           :summary => 'test',
           :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 7)).order('created_at desc')
+      deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -56,14 +56,14 @@ describe DealsController do
     it "成功する" do
       post :create_complex_deal,
         :deal => {
-          :date => {:year => '2010', :month => '7', :day => '9'},
+          :year => '2010', :month => '7', :day => '9',
           :summary => 'test_complex',
           :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by(date: Date.new(2010, 7, 9)).order('created_at desc')
+      deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 2
@@ -83,7 +83,7 @@ describe DealsController do
       post :create_balance_deal, :account_id => :taro_cache.to_id, :deal => {
         :balance => 3000,
         :account_id => :taro_cache.to_id,
-        :date => {:year => '2010', :month => '7', :day => '7'}
+        :year => '2010', :month => '7', :day => '7'
       }
       response.should be_success
       deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
@@ -141,7 +141,7 @@ describe DealsController do
     end
     it "成功する" do
       put :update, :id => @deal.id, :deal => {
-          :date => {:year => '2010', :month => '7', :day => '9'},
+          :year => '2010', :month => '7', :day => '9',
           :summary => 'changed like test_complex',
           :summary_mode => 'unify',
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
@@ -159,7 +159,7 @@ describe DealsController do
     context "新しいDealに対して" do
       it "成功する" do
         post :create_entry, :id => 'new', :deal => {
-          :date => {:year => '2010', :month => '7', :day => '9'},
+          :year => '2010', :month => '7', :day => '9',
           :summary => 'changed like test_complex',
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
@@ -174,7 +174,7 @@ describe DealsController do
       end
       it "成功する" do
         post :create_entry, :id => @deal.id, :deal => {
-          :date => {:year => '2010', :month => '7', :day => '9'},
+          :year => '2010', :month => '7', :day => '9',
           :summary => 'changed like test_complex',
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
@@ -189,7 +189,7 @@ describe DealsController do
   def create_deal(attributes = {})
     deal = @current_user.general_deals.build({:summary => 'in created_deal',
       :summary_mode => 'unify',
-      :date => {:year => '2010', :month => '7', :day => '8'},
+      :year => '2010', :month => '7', :day => '8',
       :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 500}],
       :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -500}]}.merge(attributes))
     deal.save!
