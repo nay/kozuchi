@@ -43,6 +43,7 @@ describe Settlement do
     context "結果の連携だけがきれたentryの含まれた精算で" do
       before do
         users(:hanako).deals.
+            select("deals.*"). # avoid readonly
             joins("inner join account_entries on account_entries.deal_id = deals.id").
             where("account_entries.summary = ?", 'テスト精算2010-5').first.destroy
       end
