@@ -31,12 +31,12 @@ describe MobileDealsController do
       # creditor は金額は入っていかない
       post :create_general_deal, :deal => {
         :summary => 'from mobile',
-        :date => {:year => '2010', :month => '8', :day => '14'},
+        :year => '2010', :month => '8', :day => '14',
         :debtor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => 300}},
         :creditor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id}}
       }
       response.should redirect_to(new_mobile_general_deal_path)
-      deal = @current_user.deals.find_by(date: Date.new(2010, 8, 14)).order('created_at desc')
+      deal = @current_user.deals.where(date: Date.new(2010, 8, 14)).order(created_at: :desc).first
       deal.should_not be_nil
       deal.date.should == Date.new(2010, 8, 14)
     end
