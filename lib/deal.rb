@@ -27,7 +27,6 @@ module Deal
       # 変更時のentryの同定に金額を使うため、nested_attributesによる代入前に、金額を推測して補完したい。
       # また、携帯対応のためJavaScript前提（金額補完をクライアントサーバだけで完成する）にしたくない。
       def assign_attributes(deal_attributes = {})
-
         return super unless deal_attributes && deal_attributes[:debtor_entries_attributes] && deal_attributes[:creditor_entries_attributes]
 
         debtor_attributes = deal_attributes[:debtor_entries_attributes]
@@ -49,7 +48,7 @@ module Deal
 
         super
       end
-
+      alias_method :attributes=, :assign_attributes # NOTE: Rails 4.0.2 これをやらないとattributes=が古いままとなる
 
       [:debtor, :creditor].each do |side|
         define_method :"#{side}_entries_attributes_with_account_care=" do |attributes|

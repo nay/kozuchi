@@ -73,7 +73,7 @@ Kozuchi::Application.routes.draw do
     end
     # :sub_resources => {:entries => {:only => [:create]}}
     # postだけにしたいが構造上 put のフォームの中から呼ばれて面倒なので
-    match 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries, :via => [:post, :put]
+    match 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries, :via => [:post, :put, :patch]
 
     ['general', 'balance', 'complex'].each do |t|
       post "#{t}_deals", :action => "create_#{t}_deal", :as => :"#{t}_deals"
