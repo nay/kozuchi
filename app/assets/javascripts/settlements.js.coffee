@@ -47,12 +47,13 @@ $ ->
     refreshTargets()
     return false
 
-  $('#target_deals a.selectAll').click ->
+  $('#target_deals').on('click', 'a.selectAll', (e)->
     $('table.book input[type=checkbox]').each ->
       $(@).click() if !@checked
-    false
-
-  $('#target_deals a.clearAll').click ->
+    e.preventDefault()
+  )
+  $('#target_deals').on('click', 'a.clearAll', (e)->
     $('table.book input[type=checkbox]').each ->
       $(@).click() if @checked
-    false
+    e.preventDefault()
+  )
