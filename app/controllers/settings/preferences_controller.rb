@@ -11,7 +11,7 @@ class Settings::PreferencesController < ApplicationController
   end
   
   def update
-    @preferences.attributes = params[:preferences]
+    @preferences.attributes = preferences_params
     if @preferences.save
       flash_notice("更新しました。")
       redirect_to :action => 'show'
@@ -22,6 +22,10 @@ class Settings::PreferencesController < ApplicationController
   end
 
   private
+  def preferences_params
+    params.require(:preferences).permit(:color, :deals_scroll_height, :business_use, :bookkeeping_style)
+  end
+
   def find_preferences
     @preferences = current_user.preferences
     raise IllegalStateError, "No preference for user #{current_user.id}" unless @preferences
