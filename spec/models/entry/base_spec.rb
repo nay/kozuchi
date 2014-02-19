@@ -26,31 +26,6 @@ describe Entry::Base do
     end
   end
 
-  describe "attributes=" do
-    it "user_idは一括指定できない" do
-      expect{Entry::General.new(:user_id => 3)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    it "deal_idは一括指定できない" do
-      expect{Entry::General.new(:deal_id => 7)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    it "account_idは一括指定できる" do
-      Entry::General.new(:account_id => 5).account_id.should == 5
-    end
-    it "dateは一括指定できない" do
-      expect{Entry::General.new(:date => Date.today)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    it "daily_seqは一括指定できない" do
-      expect{Entry::General.new(:daily_seq => 3)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    it "settlement_idは一括指定できない" do
-      expect{Entry::General.new(:settlement_id => 10)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    it "result_settlement_idは一括指定できない" do
-      expect{Entry::General.new(:result_settlement_id => 10)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-    # TODO: linked_系
-  end
-
   describe "validate" do
     it "amountが指定されていないと検証エラー" do
       new_account_entry(:amount => nil).valid?.should be_false

@@ -9,11 +9,6 @@ describe AccountLink do
     # 前提条件
     raise "前提条件エラー" unless User.where("id in(3, 5)").empty?
   end
-  describe "attributes=" do
-    it "user_idは一括指定できない" do
-      expect{AccountLink.new(:user_id => 3)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-  end
   describe "validate" do
     before do
       # 適当な数値

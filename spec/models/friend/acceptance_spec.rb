@@ -11,12 +11,6 @@ describe Friend::Acceptance do
     @target2 = users(:friend_permission_test_target_user2)
   end
 
-  describe "attributes=" do
-    it "user_idは一括で指定できない" do
-      expect{Friend::Acceptance.new(:user_id => @user.id)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
-  end
-
   describe "create" do
     it "user_idとtarget_idが同じものを登録しようとすると例外が発生する" do
       lambda{new_rejection(@user.id, @user.id).save}.should raise_error(RuntimeError)
