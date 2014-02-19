@@ -30,11 +30,17 @@ class Settings::PartnerAccountsController < ApplicationController
   
   #更新
   def update
-    @account.attributes = params[:account].slice(:partner_account_id)
+    @account.attributes = account_params
     @account.save!
     
     flash_notice("#{@account.name_with_asset_type}の受け皿口座を更新しました。")
     redirect_to settings_partner_accounts_path
+  end
+
+  private
+
+  def account_params
+    params.require(:account).permit(:partner_account_id)
   end
 
   
