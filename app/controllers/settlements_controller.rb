@@ -63,7 +63,7 @@ class SettlementsController < ApplicationController
   end
 
   def create
-    @settlement = current_user.settlements.new(params[:settlement])
+    @settlement = current_user.settlements.new(settlement_params)
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
       # 覚えた精算期間を消す
@@ -167,6 +167,13 @@ class SettlementsController < ApplicationController
   end
   
   private
+  def settlement_params
+    result = params.require(:settlement).permit(:account_id, :name, :description, :result_partner_account_id)
+    # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
+    result[:deal_ids] = params[:settlement][:deal_ids].permit!
+    result
+  end
+
   def load_deals
     @entries = Entry::General.includes(:deal => {:entries => :account}).where("deals.user_id = ? and account_entries.account_id = ? and deals.date >= ? and deals.date <= ? and account_entries.settlement_id is null and account_entries.result_settlement_id is null and account_entries.balance is null", @user.id, @settlement.account.id, @start_date, @end_date).order("deals.date, deals.daily_seq")
     @deals = @entries.map{|e| e.deal}
