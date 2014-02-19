@@ -17,7 +17,7 @@ class Settings::AssetsController < ApplicationController
 
   # 新しい勘定を作成する。
   def create
-    @account = current_user.assets.build(params[:account])
+    @account = current_user.assets.build(account_params)
     if @account.save
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_assets_path
@@ -32,7 +32,8 @@ class Settings::AssetsController < ApplicationController
     raise InvalidParameterError unless params[:account]
     @accounts = []
     all_saved = true
-    for id, attributes in params[:account] do
+    params[:account].keys.each do |id| # NOTE: Rails 4.0.2 key, value ととると value が普通のハッシュになってしまう(strong parameters が効かない)
+      attributes = params[:account][id].permit(:name, :asset_kind, :sort_key)
       account = current_user.assets.find(id)
       all_saved = false unless account.update_attributes(attributes)
       @accounts << account
@@ -66,6 +67,10 @@ class Settings::AssetsController < ApplicationController
   end
   
   private
+  def account_params
+    params.require(:account).permit(:name, :asset_kind, :sort_key)
+  end
+
   def find_account
     @account = current_user.assets.find(params[:id])
   end

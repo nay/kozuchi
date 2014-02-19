@@ -82,7 +82,7 @@ module ApplicationHelper
       end
     end
     messages << "</div>"
-    messages
+    messages.html_safe
   end
 
   def html_tag(&block)
