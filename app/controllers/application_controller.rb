@@ -155,7 +155,8 @@ class ApplicationController < ActionController::Base
 
   # TODO: deal系の機能とともにconcernsにでも出したい
   def deal_params
-    params.require(:deal).permit(:year, :month, :day, :summary, :summary_mode, debtor_entries_attributes: [:amount, :account_id, :summary], creditor_entries_attributes: [:amount, :account_id, :summary])
+    # TODO: 直下のaccount_id, balance は残高専用だがいったんmixして定義する
+    params.require(:deal).permit(:year, :month, :day, :summary, :summary_mode, :account_id, :balance, debtor_entries_attributes: [:amount, :account_id, :summary], creditor_entries_attributes: [:amount, :account_id, :summary])
   end
 
   # 関心のある勘定を覚えておく
