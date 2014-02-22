@@ -21,7 +21,7 @@ class UsersController < ApplicationController
     # request forgery protection.
     # uncomment at your own risk
     # reset_session
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @user.save
     if !@user.errors.empty?
       set_personal_info_policy_setting_with_cache
@@ -114,6 +114,10 @@ class UsersController < ApplicationController
   end
 
   private
+  def user_params
+    params.require(:user).permit(:login, :email, :password, :password_confirmation)
+  end
+
   def password_token_required
     raise InvalidParameterError if params[:password_token].blank?
 

@@ -37,10 +37,10 @@
   <%= error_messages_for :user %>
   <%= form_for :user, :url => signup_post_path, :html => {:id => 'signupForm'} do |f| -%>
     <table class="simple_form">
-      <tr><th><label for="login">ログインID</label></th><td><%= f.text_field :login %></td></tr>
-      <tr><th><label for="email">Email</label></th><td><%= f.text_field :email %></td></tr>
-      <tr><th><label for="password">パスワード</label></th><td><%= f.password_field :password %></td></tr>
-      <tr><th><label for="password_confirmation">パスワード（確認）</label></th><td><%= f.password_field :password_confirmation %></td></tr>
+      <tr><th><%= f.label :login, "ログインID" %></th><td><%= f.text_field :login %></td></tr>
+      <tr><th><%= f.label :email, "Email" %></th><td><%= f.text_field :email %></td></tr>
+      <tr><th><%= f.label :password, "パスワード" %></th><td><%= f.password_field :password %></td></tr>
+      <tr><th><%= f.label :password_confirmation, "パスワード（確認）" %></label></th><td><%= f.password_field :password_confirmation %></td></tr>
       <tr><td colspan="2" class="operation">
       <% if @personal_info_policy_setting.show %>
         <%= submit_tag '同意してユーザー登録' %>
