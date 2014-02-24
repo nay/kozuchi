@@ -3,6 +3,7 @@ common_general:
   login: common_general
 taro:
   login: taro
+  email: "taro@kozuchi.net"
   salt: test
   crypted_password: <%= User.encrypt('taro', 'test') %>
   activated_at: "2009-04-01 10:00:00"
