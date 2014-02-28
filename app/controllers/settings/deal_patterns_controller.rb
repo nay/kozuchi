@@ -53,7 +53,7 @@ class Settings::DealPatternsController < ApplicationController
   end
 
   def create
-    @deal_pattern = current_user.deal_patterns.build(params[:deal_pattern])
+    @deal_pattern = current_user.deal_patterns.build(deal_pattern_params)
     if @deal_pattern.save
       redirect_to settings_deal_patterns_path, :notice => message_on_create(@deal_pattern)
     else
@@ -63,7 +63,7 @@ class Settings::DealPatternsController < ApplicationController
   end
 
   def update
-    @deal_pattern.attributes = params[:deal_pattern]
+    @deal_pattern.attributes = deal_pattern_params
     if @deal_pattern.save
       redirect_to settings_deal_patterns_path, :notice => message_on_update(@deal_pattern)
     else
@@ -98,6 +98,11 @@ class Settings::DealPatternsController < ApplicationController
 
 
   private
+
+  def deal_pattern_params
+    # TODO: deal_params と似通っている
+    params.require(:deal_pattern).permit(:code, :overwrites_code, :name, :summary, :summary_mode, debtor_entries_attributes: [:amount, :reversed_amount, :account_id, :summary, :line_number], creditor_entries_attributes: [:amount, :reversed_amount, :account_id, :summary, :line_number])
+  end
 
   def find_deal_pattern
     @deal_pattern = current_user.deal_patterns.find(params[:id])
