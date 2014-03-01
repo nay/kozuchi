@@ -6,6 +6,7 @@ before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - cp config/database.yml.sample config/database.yml
+  - cp config/initializers/hosting.rb.example config/initializers/hosting.rb
 
 script:
   - bundle exec rake db:drop
