@@ -62,3 +62,4 @@ class ActionController::TestRequest
   end
   alias_method_chain :session_options, :session_key
 end
+

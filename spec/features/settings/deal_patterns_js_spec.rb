@@ -43,6 +43,21 @@ describe "記入パターン", js: true do
 
       it { expect(page.all(:xpath, "//input[contains(@class, 'amount')][contains(@name, 'deal_pattern[debtor_entries_attributes]')]").size).to eq 6 }
     end
+
+    # TODO: DRY （更新側と）
+    describe "パターン呼び出し" do
+      let!(:deal_pattern) { FactoryGirl.create(:deal_pattern) }
+
+      before do
+        fill_in "パターン呼出", with: "001\n" # NOTE: Driver の実装により、続けてリターンを押したのと同じになるのを期待している
+      end
+
+      it {
+        expect(page.find('#deal_pattern_code').value).to eq "" # コードは埋められない
+        expect(page.find('#deal_pattern_name').value).to eq "" # 名前は埋められない
+        expect(page.find('#deal_pattern_debtor_entries_attributes_0_amount').value).to eq deal_pattern.debtor_entries.first.amount.to_s
+      }
+    end
   end
 
   describe "更新" do
@@ -74,6 +89,8 @@ describe "記入パターン", js: true do
 
       it { expect(page.all(:xpath, "//input[contains(@class, 'amount')][contains(@name, 'deal_pattern[debtor_entries_attributes]')]").size).to eq 6 }
     end
-  end
 
+    # TODO: パターン呼び出し 不具合があるのか、この状態から片面だけのパターンを呼び出すとうまくいかない
+
+  end
 end
