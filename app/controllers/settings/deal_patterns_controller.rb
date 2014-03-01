@@ -80,7 +80,7 @@ class Settings::DealPatternsController < ApplicationController
   # 記入欄を増やす
   def create_entry
     entries_size = params[:deal_pattern][:debtor_entries_attributes].size
-    @deal_pattern.attributes = params[:deal_pattern]
+    @deal_pattern.attributes = deal_pattern_params
     @deal_pattern.fill_complex_entries(entries_size+1)
     render :partial => 'form'
   end

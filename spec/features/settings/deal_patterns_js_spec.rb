@@ -35,6 +35,14 @@ describe "記入パターン", js: true do
         # TODO: 入れたとおりの内容が入っていることの確認
       end
     end
+
+    describe "記入欄を増やす" do
+      before do
+        click_link "記入欄を増やす"
+      end
+
+      it { expect(page.all(:xpath, "//input[contains(@class, 'amount')][contains(@name, 'deal_pattern[debtor_entries_attributes]')]").size).to eq 6 }
+    end
   end
 
   describe "更新" do
@@ -57,6 +65,14 @@ describe "記入パターン", js: true do
       end
       it { expect(flash_notice).to have_content "記入パターン「002 サラリー」を更新しました。" }
       # TODO: 変更したとおりの内容が入っていることの確認
+    end
+
+    describe "記入欄を増やす" do
+      before do
+        click_link "記入欄を増やす"
+      end
+
+      it { expect(page.all(:xpath, "//input[contains(@class, 'amount')][contains(@name, 'deal_pattern[debtor_entries_attributes]')]").size).to eq 6 }
     end
   end
 

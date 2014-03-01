@@ -44,7 +44,7 @@ Kozuchi::Application.routes.draw do
     # 記入パターン
     controller :deal_patterns do
       resources :deal_patterns, :path => 'deals/patterns'
-      match 'deals/patterns/:id/entries', :action => 'create_entry', :as => :deal_pattern_entries, :via => [:post, :put]
+      match 'deals/patterns/:id/entries', :action => 'create_entry', :as => :deal_pattern_entries, :via => [:post, :patch]
       get 'deals/patterns/codes/:code', :action => 'code', :as => :deal_pattern_codes
     end
 
@@ -73,7 +73,7 @@ Kozuchi::Application.routes.draw do
     end
     # :sub_resources => {:entries => {:only => [:create]}}
     # postだけにしたいが構造上 put のフォームの中から呼ばれて面倒なので
-    match 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries, :via => [:post, :put, :patch]
+    match 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries, :via => [:post, :patch]
 
     ['general', 'balance', 'complex'].each do |t|
       post "#{t}_deals", :action => "create_#{t}_deal", :as => :"#{t}_deals"
