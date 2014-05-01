@@ -94,12 +94,12 @@ class UsersController < ApplicationController
   
   def update
     @user = self.current_user
-    if @user.update_attributes_with_password(params[:user], params[:password], params[:password_confirmation])
+    if @user.update_attributes_with_password(user_params, params[:password], params[:password_confirmation])
       flash[:notice] = "プロフィールを変更しました。"
       redirect_to edit_user_path
       return
     end
-    render :action => 'edit'
+    render action: 'edit', layout: 'main'
   end
 
   def privacy_policy
