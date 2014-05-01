@@ -20,7 +20,7 @@ ja:
       pattern/deal: "記入パターン"
       preferences: "設定"  #g
       settlement: "決済"  #g
-      single_login: "単一のログイン"  #g
+      single_login: "シングルログイン"
       submitted_settlement: "提出された決済"  #g
       user: "ユーザー"  #g
 
@@ -220,9 +220,8 @@ ja:
         account: "アカウント"  #g
 
       single_login:
-        login: "ログイン"  #g
-        crypted_password: "暗号化されたパスワード"  #g
-        user: "ユーザー"  #g
+        login: "ログインID"
+        password: "パスワード"
 
       submitted_settlement:
         name: "名"  #g
