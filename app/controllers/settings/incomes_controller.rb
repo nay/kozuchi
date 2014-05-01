@@ -15,7 +15,7 @@ class Settings::IncomesController < ApplicationController
 
   # 新しい勘定を作成する。
   def create
-    @account = current_user.incomes.build(params[:account])
+    @account = current_user.incomes.build(account_params)
     if @account.save
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_incomes_path
@@ -29,7 +29,8 @@ class Settings::IncomesController < ApplicationController
     raise InvalidParameterError unless params[:account]
     @accounts = []
     all_saved = true
-    for id, attributes in params[:account] do
+    params[:account].keys.each do |id|
+      attributes = params[:account][id].permit(:name, :sort_key) # TODO: account_params との共通化、似たコントローラでの共通化
       account = current_user.incomes.find(id)
       all_saved = false unless account.update_attributes(attributes)
       @accounts << account
@@ -56,6 +57,11 @@ class Settings::IncomesController < ApplicationController
   end
 
   private
+  def account_params
+    params.require(:account).permit(:name, :sort_key)
+  end
+
+
   def find_account
     @account = current_user.incomes.find(params[:id])
   end

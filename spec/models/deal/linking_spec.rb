@@ -65,7 +65,7 @@ describe "Deal Linking" do
       taro_partner_entry.linked_ex_entry_confirmed.should be_false
 
       # 花子側に連携した取引が記入される
-      hanako_deal = @hanako.general_deals.find_by_id(taro_linked_entry.linked_ex_deal_id)
+      hanako_deal = @hanako.general_deals.find_by(id: taro_linked_entry.linked_ex_deal_id)
       hanako_deal.should_not be_nil
       hanako_deal.should_not be_confirmed
       hanako_deal.date.should == @taro_deal.date
@@ -234,8 +234,8 @@ describe "Deal Linking" do
       it "作成できる" do
         @home_deal.valid?
         lambda{@home_deal.save!}.should_not raise_error
-        home_taro_entry = @home_deal.creditor_entries.find_by_account_id(@home_taro.id)
-        home_hanako_entry = @home_deal.creditor_entries.find_by_account_id(@home_hanako.id)
+        home_taro_entry = @home_deal.creditor_entries.find_by(account_id: @home_taro.id)
+        home_hanako_entry = @home_deal.creditor_entries.find_by(account_id: @home_hanako.id)
         @taro_deal = @taro.linked_deal_for(@home.id, @home_deal.id)
         @taro_deal.should_not be_nil
         @hanako_deal = @hanako.linked_deal_for(@home.id, @home_deal.id)
@@ -342,7 +342,7 @@ describe "Deal Linking" do
             :debtor_entries_attributes => {'1' => {:account_id => @taro_hanako.id, :amount => 320}}
           }
           @taro_deal.save!
-          Deal::General.find_by_id(@hanako_deal.id).should be_nil
+          Deal::General.find_by(id: @hanako_deal.id).should be_nil
           @hanako.linked_deal_for(@taro.id, @taro_deal.id).should_not be_nil
         end
 
@@ -427,7 +427,7 @@ describe "Deal Linking" do
       end
       it "連携したDealの片方を消したら確認してない相手のdealも消される" do
         @taro_deal.destroy
-        Deal::General.find_by_id(@hanako_deal.id).should be_nil
+        Deal::General.find_by(id: @hanako_deal.id).should be_nil
       end
       it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
         @hanako_deal.confirm!

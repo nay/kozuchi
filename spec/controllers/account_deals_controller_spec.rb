@@ -22,14 +22,14 @@ describe AccountDealsController do
       # cacheからの 出金
       post :create_creditor_general_deal, :account_id => :taro_cache.to_id,
         :deal => {
-          :date => {:year => '2010', :month => '7', :day => '7'},
+          :year => '2010', :month => '7', :day => '7',
           :summary => 'test',
           :summary_mode => 'unify',
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_food.to_id, :amount => 1000}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
+      deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -49,14 +49,14 @@ describe AccountDealsController do
       # cacheへの入金
       post :create_debtor_general_deal, :account_id => :taro_cache.to_id,
         :deal => {
-          :date => {:year => '2010', :month => '7', :day => '7'},
+          :year => '2010', :month => '7', :day => '7',
           :summary => 'test',
           :summary_mode => 'unify',
           :debtor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => 1000}],
           :creditor_entries_attributes => [{:account_id => :taro_bank.to_id}]
         }
       response.should be_success
-      deal = @current_user.general_deals.find_by_date(Date.new(2010, 7, 7), :order => 'created_at desc')
+      deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       deal.should_not be_nil
       deal.debtor_entries.size.should == 1
       deal.creditor_entries.size.should == 1
@@ -76,10 +76,10 @@ describe AccountDealsController do
     it "成功する" do
       post :create_balance_deal, :account_id => :taro_cache.to_id, :deal => {:balance => 3000,
         :account_id => :taro_cache.to_id,
-        :date => {:year => '2010', :month => '7', :day => '7'}
+        :year => '2010', :month => '7', :day => '7'
       }
       response.should be_success
-      deal = @current_user.balance_deals.find_by_date(Date.new(2010, 7, 7))
+      deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
       deal.should_not be_nil
       deal.balance.should == 3000
     end

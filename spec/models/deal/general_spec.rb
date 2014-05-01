@@ -180,7 +180,7 @@ describe Deal::General do
     let!(:deal) do
       d = new_simple_deal(6, 1, @cache, @bank, 3500)
       d.save!
-      d.class.update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp], "id = #{d.id}")
+      d.class.where(id: d.id).update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp])
       d.reload
       d
     end
@@ -208,7 +208,7 @@ describe Deal::General do
       @deal.creditor_entries.size.should == 2
       @deal.debtor_entries.size.should == 1
       # 古いentryがnullifyでのこっていないこと
-      Entry::Base.find_by_deal_id(nil).should be_nil
+      Entry::Base.find_by(deal_id: nil).should be_nil
     end
     it "借り方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
@@ -230,7 +230,7 @@ describe Deal::General do
       @deal.creditor_entries.size.should == 1
       @deal.debtor_entries.size.should == 2
       # 古いentryがnullifyでのこっていないこと
-      Entry::Base.find_by_deal_id(nil).should be_nil
+      Entry::Base.find_by(deal_id: nil).should be_nil
     end
     context "日付を変更したとき" do
       before do

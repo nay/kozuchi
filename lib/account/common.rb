@@ -8,7 +8,7 @@ module Account::Common
     {:ex_id => self.id, :name => self.name, :name_with_user => self.name_with_user, :base_type => self.base_type}
   end
   def destroy_link_request(sender_id, sender_ex_account_id)
-    link_request = link_requests.find_by_sender_id_and_sender_ex_account_id(sender_id, sender_ex_account_id)
+    link_request = link_requests.find_by(sender_id: sender_id, sender_ex_account_id: sender_ex_account_id)
     link_requests.delete(link_request) if link_request
   end
 #  def create_link_request(sender_id, sender_ex_account_id)

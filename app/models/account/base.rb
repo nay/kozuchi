@@ -10,7 +10,7 @@ class Account::Base < ActiveRecord::Base
   has_many :entries, :class_name => "Entry::Base", :foreign_key => "account_id"
   has_many :balances, :class_name => "Entry::Balance", :foreign_key => "account_id"
 
-  has_many :deals, :through => :entries, :order => "deals.date, deals.daily_seq"
+  has_many :deals,  ->{ order(:date, :daily_seq) }, through: :entries
 
   # この勘定の残高記入を日時のはやいほうからsaveしなおしていくことで、残高計算を正しくする
   # ツールとして利用する
@@ -155,11 +155,11 @@ class Account::Base < ActiveRecord::Base
   include Account::Linking
 
   def self.get(user_id, account_id)
-    return Account::Base.find(:first, :conditions => ["user_id = ? and id = ?", user_id, account_id])
+    return Account::Base.where("user_id = ? and id = ?", user_id, account_id).first
   end
   
   def self.get_by_name(user_id, name)
-    return Account::Base.find(:first, :conditions => ["user_id = ? and name = ?", user_id, name])
+    return Account::Base.where("user_id = ? and name = ?", user_id, name).first
   end
 
   def to_s
@@ -181,18 +181,12 @@ class Account::Base < ActiveRecord::Base
 #    p entries.find(:all,
 #      :joins => "inner join deals on entries.deal_id = deals.id",
 #      :conditions => conditions).inspect
-    entries.sum(:amount,
-      :joins => "inner join deals on account_entries.deal_id = deals.id",
-      :conditions => conditions
-      ) || 0      
+    entries.joins("inner join deals on account_entries.deal_id = deals.id").where(conditions).sum(:amount) || 0
   end
 
   # 指定した期間の支出合計額（不明金を換算しない）を得る
   def raw_sum_in(start_date, end_date)
-    Entry::Base.sum(:amount,
-      :joins => "inner join deals on deals.id = account_entries.deal_id",
-      :conditions => ["account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date]
-    ) || 0
+    Entry::Base.joins("inner join deals on deals.id = account_entries.deal_id").where("account_id = ? and deals.date >= ? and deals.date < ?", self.id, start_date, end_date).sum(:amount) || 0
   end
 
   # 口座の初期設定を行う
@@ -247,7 +241,7 @@ class Account::Base < ActiveRecord::Base
   # 使われていないことを確認する。
   def assert_not_used
     # 使われていたら消せない
-    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if !new_record? && (Entry::Base.find_by_account_id(id) || Pattern::Entry.find_by_account_id(id))
+    raise Account::Base::UsedAccountException.new(self.class.type_name, name) if !new_record? && (Entry::Base.find_by(account_id: id) || Pattern::Entry.find_by(account_id: id))
   end
 
 end

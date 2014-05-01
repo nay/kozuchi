@@ -34,3 +34,6 @@ PRIVACY_POLICY_HOST    = "http://localhost:3000"
 PRIVACY_POLICY_PATH    = "/privacypolicy"
 PRIVACY_POLICY_CACHE_EXPIRE_DAYS = 1
 PRIVACY_POLICY_TIMEOUT_SECONDS = 20
+
+# Used as Kozuchi::Application.config.secret_key_base. Please change the value below.
+KOZUCHI_SECRET_KEY_BASE = 'dcbe6f1a5ce2be8a9bc6b3a5b254c238de397e7b3fd46905e2918d76293aa357b41727af05353f3f408db808134c37d8022f47a4c09d78468fbeace68993bc9d'

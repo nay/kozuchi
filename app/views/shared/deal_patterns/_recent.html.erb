@@ -1,4 +1,4 @@
-<% recent_deal_patterns = current_user.deal_patterns.includes(:readonly_entries).recent.limit(10).all %>
+<% recent_deal_patterns = current_user.deal_patterns.includes(:readonly_entries).recent.limit(10) %>
 <% unless recent_deal_patterns.empty? %>
   <!-- recent deal patterns -->
   <div id="recent_deal_patterns" class="side_box">

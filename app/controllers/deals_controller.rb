@@ -28,14 +28,14 @@ class DealsController < ApplicationController
   def edit
     load = nil
     if params[:pattern_code].present?
-      load =  current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load =  current_user.deal_patterns.find_by(code: params[:pattern_code])
       # コードが見つからないときはクライアント側で特別に処理するので目印を返す
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal.load(load) if load
     @deal.fill_complex_entries if load || @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
@@ -46,7 +46,7 @@ class DealsController < ApplicationController
   # @deal を作り直して書き直す
   def create_entry
     entries_size = params[:deal][:debtor_entries_attributes].size
-    @deal.attributes = params[:deal]
+    @deal.attributes = deal_params
     @deal.fill_complex_entries(entries_size+1)
     if @deal.new_record?
       render RENDER_OPTIONS_PROC.call(:complex_deal)
@@ -56,7 +56,7 @@ class DealsController < ApplicationController
   end
 
   def update
-    @deal.attributes = params[:deal]
+    @deal.attributes = deal_params
     @deal.confirmed = true
     entries_size = params[:deal][:debtor_entries_attributes].try(:size)
 
@@ -108,8 +108,7 @@ class DealsController < ApplicationController
 
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
-    @deals = current_user.deals.in_a_time_between(start_date, end_date).all(:include => :readonly_entries,
-                  :order => "date, daily_seq")
+    @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
 
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
@@ -139,7 +138,7 @@ class DealsController < ApplicationController
   def search
     raise InvalidParameterError if params[:keyword].blank?
     @keywords = params[:keyword].split(' ')
-    @deals = current_user.deals.time_ordering.including(@keywords)
+    @deals = current_user.deals.time_ordering.including(@keywords).uniq # NOTE: Rails4.0.2 関連はじまりだとuniqがスコープにならずここで発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう
     @as_action = :index
   end
 

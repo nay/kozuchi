@@ -24,7 +24,7 @@ class Entry::General < Entry::Base
       receiver.unlink_deal_for(user_id, deal_id) if receiver.linked_deal_for(user_id, deal_id)
       linked_entries = receiver.link_deal_for(user_id, deal_id, deal.entries_hash_for(receiver.id), deal.summary_mode, deal.summary, date)
       for entry_id, ex_info in linked_entries
-        Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
+        Entry::Base.where(id: entry_id).update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}")
       end
       reload
       raise "no linked_ex_entrt_id" unless linked_account_entry

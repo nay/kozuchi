@@ -5,9 +5,14 @@ class Deal::General < Deal::Base
   before_destroy :cache_previous_receivers  # dependent destroy より先に
 
   with_options :class_name => "Entry::General", :foreign_key => 'deal_id', :extend =>  ::Deal::EntriesAssociationExtension do |e|
-    e.has_many :debtor_entries, :conditions => {:creditor => false}, :order => "line_number", :include => :account, :autosave => true, :dependent => :destroy
-    e.has_many :creditor_entries, :conditions => {:creditor => true}, :order => "line_number", :include => :account, :autosave => true, :dependent => :destroy
-    e.has_many :entries, :order => "amount", :dependent => :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
+    e.has_many :debtor_entries, -> { where(creditor: false).order(:line_number).includes(:account) },
+               autosave: true,
+               dependent: :destroy
+    e.has_many :creditor_entries, -> { where(creditor: true).order(:line_number).includes(:account) },
+               autosave: true,
+               dependent: :destroy
+    e.has_many :entries, -> { order(:amount) },
+               dependent: :destroy # TODO: いずれなくして base の readonly_entries を名前変更？
   end
 
   include ::Deal
@@ -88,21 +93,18 @@ class Deal::General < Deal::Base
   end
 
   # 後の検索効率のため、idで妥協する
-  scope :recent_summaries, lambda{|keyword|
-    {:select => "account_entries.summary, max(deals.id) as id",
-      :joins => "inner join account_entries on account_entries.deal_id = deals.id",
-    :group => "account_entries.summary",
-    :conditions => ["account_entries.summary like ?", "#{keyword}%"],
-    :order => "deals.id desc",
-    :limit => 5
-    }
+  scope :recent_summaries, ->(keyword) {
+    select("account_entries.summary, max(deals.id) as id"
+    ).joins("inner join account_entries on account_entries.deal_id = deals.id"
+    ).group("account_entries.summary"
+    ).where("account_entries.summary like ?", "#{keyword}%"
+    ).order("deals.id desc"
+    ).limit(5)
   }
 
-  scope :with_account, lambda{|account_id, debtor|
-   {
-# account_entries との join はされている想定
-     :conditions => ["account_entries.account_id = ? and account_entries.creditor = ?", account_id, !debtor]
-   }
+  scope :with_account, ->(account_id, debtor) {
+    # account_entries との join はされている想定
+    where("account_entries.account_id = ? and account_entries.creditor = ?", account_id, !debtor)
   }
 
   # summary の前方一致で検索する
@@ -116,6 +118,9 @@ class Deal::General < Deal::Base
         find_by_sql("select account_entries.summary as summary, max(deals.created_at) as created_at from deals inner join account_entries on deals.id = account_entries.deal_id where deals.user_id = #{user_id} and deals.type='General' and account_entries.summary like '#{summary_key}%' group by account_entries.summary limit #{limit}")
       end
       return [] if results.size == 0
+
+      scope = Deal::General
+
       conditions = ""
       for r in results
         conditions += " or " unless conditions.empty?
@@ -123,14 +128,14 @@ class Deal::General < Deal::Base
       end
       conditions = "deals.user_id = #{user_id} and (#{conditions})"
 
-      options = if account_id
-        conditions << " and account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0"
-        {:conditions => conditions, :joins => "inner join account_entries on deals.id = account_entries.deal_id"}
-      else
-        {:conditions => conditions}
+      scope = scope.where(conditions).order("deals.created_at desc")
+
+      if account_id
+        scope = scope.joins("inner join account_entries on deals.id = account_entries.deal_id"
+        ).where("account_entries.account_id = #{account_id} and account_entries.amount #{debtor ? '>' : '<'} 0")
       end
-      options[:order] = "deals.created_at desc"
-      return Deal::General.find(:all, options)
+
+      return scope
     rescue => e
       return []
     end
@@ -172,15 +177,13 @@ class Deal::General < Deal::Base
 
   # 指定した連携を切る
   def unlink_entries(remote_user_id, remote_ex_deal_id)
-    Entry::General.update_all(
-      ["linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = ?", false],
-      remote_condition(remote_user_id, remote_ex_deal_id))
+    Entry::General.where(remote_condition(remote_user_id, remote_ex_deal_id)).update_all(
+      ["linked_ex_entry_id = null, linked_ex_deal_id = null, linked_user_id = null, linked_ex_entry_confirmed = ?", false])
   end
 
   def confirm_linked_entries(remote_user_id, remote_ex_deal_id)
-    Entry::General.update_all(
-      ["linked_ex_entry_confirmed = ?", true],
-      remote_condition(remote_user_id, remote_ex_deal_id))
+    Entry::General.where(remote_condition(remote_user_id, remote_ex_deal_id)).update_all(
+      ["linked_ex_entry_confirmed = ?", true])
   end
 
   # 指定された他ユーザーに関係する entry を抽出してハッシュで返す
@@ -271,7 +274,7 @@ class Deal::General < Deal::Base
       linked_entries = receiver.link_deal_for(user_id, id, entries_hash_for(receiver_id), summary_mode, summary, date)
 #      next unless linked_entries # false なら、こちらの変更は不要
       for entry_id, ex_info in linked_entries
-        Entry::Base.update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}",  "id = #{entry_id}")
+        Entry::Base.where(id: entry_id).update_all("linked_ex_entry_id = #{ex_info[:entry_id]}, linked_ex_deal_id = #{ex_info[:deal_id]}, linked_user_id = #{receiver.id}")
         changed_self = true
       end
     end
@@ -309,7 +312,7 @@ class Deal::General < Deal::Base
   # 連携状態の削除を要求
   def request_unlinkings
     @previous_receiver_ids.each do |receiver_id|
-      receiver = User.find_by_id(receiver_id)
+      receiver = User.find_by(id: receiver_id)
       receiver.unlink_deal_for(user_id, id) if receiver # ユーザー削除の場合にはないケースもある
     end
   end

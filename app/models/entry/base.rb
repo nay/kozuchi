@@ -33,17 +33,17 @@ class Entry::Base < ActiveRecord::Base
   attr_accessor :account_to_be_connected, :another_entry_account, :pure_balance
   attr_accessor :skip_linking # 要請されて作る場合、リンクしにいくのは不要なので
   attr_reader :new_plus_link
-  attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
+#  attr_protected :user_id, :deal_id, :date, :daily_seq, :settlement_id, :result_settlement_id
 
   attr_writer :skip_unlinking
 
-  scope :confirmed, :conditions => {:confirmed => true}
-  scope :date_from, Proc.new{|d| {:conditions => ["date >= ?", d]}} # TODO: 名前バッティングで from → date_from にした
-  scope :before, Proc.new{|d| {:conditions => ["date < ?", d]}}
-  scope :ordered, :order => "date, daily_seq"
-  scope :of, Proc.new{|account_id| {:conditions => {:account_id => account_id}}}
-  scope :after, Proc.new{|e| {:conditions => ["date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq]} }
-  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["account_entries.date >= ? and account_entries.date <= ?", from, to]}}
+  scope :confirmed, -> { where(confirmed: true) }
+  scope :date_from, ->(d) { where("date >= ?", d) } # TODO: 名前バッティングで from → date_from にした
+  scope :before, ->(d) { where("date < ?", d) }
+  scope :ordered, -> { order(:date, :daily_seq) }
+  scope :of, ->(account_id) { where(account_id: account_id) }
+  scope :after, ->(e) { where("date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq) }
+  scope :in_a_time_between, ->(from, to) { where("account_entries.date >= ? and account_entries.date <= ?", from, to) }
 
   delegate :year, :month, :day, :to => :date
 
@@ -105,7 +105,7 @@ class Entry::Base < ActiveRecord::Base
   # リンクされたaccount_entry を返す
   # TODO: 廃止する
   def linked_account_entry
-    linked_ex_entry_id ? Entry::Base.find_by_id(linked_ex_entry_id) : nil
+    linked_ex_entry_id ? Entry::Base.find_by(id: linked_ex_entry_id) : nil
   end
 
   def after_confirmed
@@ -114,7 +114,7 @@ class Entry::Base < ActiveRecord::Base
 
   def update_links_without_callback
     raise "new_record!" if new_record?
-    Entry::Base.update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}", ["id = ?", self.id])
+    Entry::Base.where(id: id).update_all("linked_ex_entry_id = #{linked_ex_entry_id}, linked_ex_deal_id = #{linked_ex_deal_id}, linked_user_id = #{linked_user_id}")
   end
 
   private
@@ -163,7 +163,7 @@ class Entry::Base < ActiveRecord::Base
 
   # 直後の残高記入のamountを再計算する
   def update_balance
-    next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.first(:include => :deal)
+    next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.includes(:deal).first
     return unless next_balance_entry
     next_balance_entry.deal.update_amount # TODO: 効率
   end

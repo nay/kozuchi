@@ -22,9 +22,9 @@ class Settings::AccountLinksController < ApplicationController
   # すでにある場合は更新する
   def create
     begin
-      target_user = User.find_by_login(params[:linked_user_login])
+      target_user = User.find_by(login: params[:linked_user_login])
       raise PossibleError, "フレンドの口座名を指定してください" if params[:linked_account_name].blank?
-      target_account = target_user ? target_user.accounts.find_by_name(params[:linked_account_name]) : nil
+      target_account = target_user ? target_user.accounts.find_by(name: params[:linked_account_name]) : nil
       # とれてなければset_link内でエラーとなる
       @account.set_link(target_user, target_account, params[:require_reverse] == "1")
       flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しました。"

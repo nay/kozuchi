@@ -25,13 +25,13 @@ describe Settings::AccountLinkRequestsController do
       it "AccountLinkRequestを削除できる" do
         delete :destroy, :id => @target_id, :account_id => @target_account_id
         response.should redirect_to(settings_account_links_path)
-        AccountLinkRequest.find_by_id(@target_id).should be_nil
+        AccountLinkRequest.find_by(id: @target_id).should be_nil
         flash[:errors].should be_nil
       end
     end
     context "目的のAccountLinkRequestがないとき" do
       before do
-        violated '前提エラー' if AccountLinkRequest.find_by_id(99) || Account::Base.find_by_id(99)
+        violated '前提エラー' if AccountLinkRequest.find_by(id: 99) || Account::Base.find_by(id: 99)
       end
       it "ActiveRecord::RecordNotFoundを投げる" do
         lambda{delete :destroy, :id => 99, :account_id => 99}.should raise_error(ActiveRecord::RecordNotFound)

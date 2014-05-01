@@ -27,7 +27,7 @@ module User::AccountLinking
   # 依頼を受けて、特定勘定から連携されているという受け取り側の状態を作成する
   def create_link_request(target_account_id, sender_id, sender_ex_account_id)
     target_account = accounts.find(target_account_id)
-    link_request = target_account.link_requests.find_or_create_by_account_id_and_sender_id_and_sender_ex_account_id(target_account_id, sender_id, sender_ex_account_id)
+    link_request = target_account.link_requests.find_or_create_by(account_id: target_account_id, sender_id: sender_id, sender_ex_account_id: sender_ex_account_id)
     raise "could not save link_request. #{link_request.errors.full_messages.join(' ')}" if link_request.new_record?
     true
   end
@@ -70,16 +70,16 @@ module User::AccountLinking
         # 未確認の場合、summary, date を更新する
         unless linked_deal.confirmed?
           linked_deal.date = date
-          Deal::General.update_all(["date = ?", date], "id = #{linked_deal.id}")
+          Deal::General.where(id: linked_deal.id).update_all(["date = ?", date])
           linked_deal.summary_mode = summary_mode
           if summary_mode == 'unify'
             linked_deal.summary = summary # 使わないが念のためあわせておく
-            Entry::General.update_all(["summary = ?", summary], "deal_id = #{linked_deal.id}")
+            Entry::General.where(deal_id: linked_deal.id).update_all(["summary = ?", summary])
           else
             linked_entries.each do |e|
               ex_e = ex_entries_hash.detect{|h| h[:id] == e.linked_ex_entry_id }
               e.summary = ex_e[:summary]
-              Entry::General.update_all(["summary = ?", ex_e[:summary]], "id = #{e.id}")
+              Entry::General.where(id: e.id).update_all(["summary = ?", ex_e[:summary]])
             end
           end
         end
@@ -155,7 +155,8 @@ module User::AccountLinking
   end
 
   def linked_deal_for(remote_user_id, remote_ex_deal_id)
-    general_deals.first(:include => :readonly_entries, :conditions => ["account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id])
+    general_deals.includes(:readonly_entries).references(:readonly_entries).
+        where("account_entries.linked_user_id = ? and account_entries.linked_ex_deal_id = ?", remote_user_id, remote_ex_deal_id).first
   end
 
   # こちらから一方的に連携している相手からの確認を受け取る
@@ -168,7 +169,7 @@ module User::AccountLinking
 
 
   def account_with_entry_id(entry_id)
-    account = entries.find_by_id(entry_id).try(:account)
+    account = entries.find_by(id: entry_id).try(:account)
     if account && block_given?
       yield account
     else
@@ -177,7 +178,7 @@ module User::AccountLinking
   end
 
   def find_account_id_by_name(name)
-    a = accounts.find_by_name(name)
+    a = accounts.find_by(name: name)
     a ? a.id : nil
   end
 end

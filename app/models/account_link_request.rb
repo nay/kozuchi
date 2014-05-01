@@ -21,7 +21,7 @@ class AccountLinkRequest < ActiveRecord::Base
     raise "no account_id" if self.account_id.blank?
     raise "no account for id #{self.account_id}" unless self.account
     self.user_id = account.user_id
-    self.class.update_all("user_id = #{account.user_id}", ["id = ?", self.id])
+    self.class.where(id: self.id).update_all("user_id = #{account.user_id}")
   end
 
 end

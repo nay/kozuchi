@@ -39,15 +39,15 @@ module LoginEngine
     module ClassMethods
     
       def authenticate(login, pass)
-        u = find(:first, :conditions => ["login = ? AND verified = 1 AND deleted = 0", login])
+        u = where("login = ? AND verified = 1 AND deleted = 0", login).first
         return nil if u.nil?
-        find(:first, :conditions => ["login = ? AND salted_password = ? AND verified = 1", login, AuthenticatedUser.salted_password(u.salt, AuthenticatedUser.hashed(pass))])
+        where("login = ? AND salted_password = ? AND verified = 1", login, AuthenticatedUser.salted_password(u.salt, AuthenticatedUser.hashed(pass))).first
       end
 
       def authenticate_by_token(id, token)
         # Allow logins for deleted accounts, but only via this method (and
         # not the regular authenticate call)
-        u = find(:first, :conditions => ["#{User.primary_key} = ? AND security_token = ?", id, token])
+        u = where("#{User.primary_key} = ? AND security_token = ?", id, token).first
         return nil if u.nil? or u.token_expired?
         return nil if false == u.update_expiry
         u

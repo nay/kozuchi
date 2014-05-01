@@ -15,7 +15,7 @@ class Account::Asset < Account::Base
 
   scope :categorized_as, ->(*kinds) {
     raise "You must specify at least one kind for Account::Asset.categorized_as" if kinds.empty?
-    {:conditions => ["accounts.asset_kind in (?)", kinds]}
+    where("accounts.asset_kind in (?)", kinds)
   }
 
   def capital_fund?

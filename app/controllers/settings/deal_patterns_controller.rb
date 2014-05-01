@@ -8,7 +8,7 @@ class Settings::DealPatternsController < ApplicationController
   before_filter :find_or_build_deal_pattern, :only => [:create_entry]
 
   def index
-    @deal_patterns = current_user.deal_patterns.order('updated_at desc').all # TODO: paginate
+    @deal_patterns = current_user.deal_patterns.order('updated_at desc') # TODO: paginate
   end
   
   # :pattern_code が指定されていたら対応する内容を画面上にコピーする
@@ -17,13 +17,13 @@ class Settings::DealPatternsController < ApplicationController
   def show
     load = nil
     if params[:pattern_code].present?
-      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load = current_user.deal_patterns.find_by(code: params[:pattern_code])
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
@@ -37,13 +37,13 @@ class Settings::DealPatternsController < ApplicationController
   def new
     load = nil
     if params[:pattern_code].present?
-      load = current_user.deal_patterns.find_by_code(params[:pattern_code])
+      load = current_user.deal_patterns.find_by(code: params[:pattern_code])
       unless load
         render :text => 'Code not found'
         return
       end
     elsif params[:pattern_id].present?
-      load = current_user.deal_patterns.find_by_id(params[:pattern_id])
+      load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal_pattern = current_user.deal_patterns.build
     @deal_pattern.load(load) if load
@@ -53,7 +53,7 @@ class Settings::DealPatternsController < ApplicationController
   end
 
   def create
-    @deal_pattern = current_user.deal_patterns.build(params[:deal_pattern])
+    @deal_pattern = current_user.deal_patterns.build(deal_pattern_params)
     if @deal_pattern.save
       redirect_to settings_deal_patterns_path, :notice => message_on_create(@deal_pattern)
     else
@@ -63,7 +63,7 @@ class Settings::DealPatternsController < ApplicationController
   end
 
   def update
-    @deal_pattern.attributes = params[:deal_pattern]
+    @deal_pattern.attributes = deal_pattern_params
     if @deal_pattern.save
       redirect_to settings_deal_patterns_path, :notice => message_on_update(@deal_pattern)
     else
@@ -80,7 +80,7 @@ class Settings::DealPatternsController < ApplicationController
   # 記入欄を増やす
   def create_entry
     entries_size = params[:deal_pattern][:debtor_entries_attributes].size
-    @deal_pattern.attributes = params[:deal_pattern]
+    @deal_pattern.attributes = deal_pattern_params
     @deal_pattern.fill_complex_entries(entries_size+1)
     render :partial => 'form'
   end
@@ -89,7 +89,7 @@ class Settings::DealPatternsController < ApplicationController
   def code
     scope = current_user.deal_patterns
     scope = scope.where(["deal_patterns.id != ?", params[:except]]) if params[:except].present?
-    if pattern_deal = scope.find_by_code(params[:code])
+    if pattern_deal = scope.find_by(code: params[:code])
       render :text => pattern_deal.code
     else
       render :text => '' # :nothing => true だと半角スペースが入って返されてしまうので
@@ -98,6 +98,11 @@ class Settings::DealPatternsController < ApplicationController
 
 
   private
+
+  def deal_pattern_params
+    # TODO: deal_params と似通っている
+    params.require(:deal_pattern).permit(:code, :overwrites_code, :name, :summary, :summary_mode, debtor_entries_attributes: [:amount, :reversed_amount, :account_id, :summary, :line_number], creditor_entries_attributes: [:amount, :reversed_amount, :account_id, :summary, :line_number])
+  end
 
   def find_deal_pattern
     @deal_pattern = current_user.deal_patterns.find(params[:id])

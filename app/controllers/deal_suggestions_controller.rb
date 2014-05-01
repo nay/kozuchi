@@ -6,7 +6,7 @@ class DealSuggestionsController < ApplicationController
     flash.keep
 
     account = if params[:account_id]
-      current_user.accounts.find_by_id(params[:account_id])
+      current_user.accounts.find_by(id: params[:account_id])
     else
       nil
     end
@@ -20,7 +20,7 @@ class DealSuggestionsController < ApplicationController
       if account
         recent_summaries = recent_summaries.with_account(account.id, params[:debtor] == 'true')
       end
-      deals = Deal::General.find(recent_summaries.map(&:id), :order => "id desc")
+      deals = Deal::General.order(id: :desc).find(recent_summaries.map(&:id))
 
       patterns = current_user.deal_patterns.contains(summary_key).recent.limit(5)
       patterns = patterns.with_account(account.id, params[:debtor] == 'true') if account

@@ -47,7 +47,7 @@
             <input type='text' disabled='true' class='readonly' value='<%= e.object.account.name %>' tabindex='#{tabindex}' />
             <%= e.hidden_field(:account_id, :value => e.object.account.id, :class => 'pattern_field') %>
           <% else %>
-            <%= e.select :account_id, grouped_options_for_select(current_user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1), :class => 'pattern_field' %>
+            <%= e.select :account_id, grouped_options_for_select(current_user.accounts.grouped_options(entry_types.first == :creditor_entries), e.object.try(:account_id), prompt: ''), {}, :tabindex => (tab_index += 1), :class => 'pattern_field' %>
           <% end %>
           </div>
           <div style="clear:left;"></div>
@@ -83,7 +83,7 @@
             <input type='text' disabled='true' class='readonly' value='<%= e.object.account.name %>' tabindex='#{tabindex}' />
             <%= e.hidden_field(:account_id, :value => e.object.account.id, :class => 'pattern_field') %>
           <% else %>
-            <%= e.select :account_id, grouped_options_for_select(current_user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), ''), {}, :tabindex => (tab_index += 1), :class => 'pattern_field' %>
+            <%= e.select :account_id, grouped_options_for_select(current_user.accounts.grouped_options(entry_types.last == :creditor_entries), e.object.try(:account_id), prompt: ''), {}, :tabindex => (tab_index += 1), :class => 'pattern_field' %>
           <% end %>
           </div>
           <div style="clear:left;"></div>

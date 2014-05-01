@@ -1,4 +1,3 @@
-<% i = Iconv.new('SHIFT_JIS', 'UTF-8') %>
 <% for entry in @settlement.target_entries %>
-<%= entry.deal.date %>,<%= i.iconv entry.deal.summary%>,<%= i.iconv entry.mate_account_name %>,<%= entry.amount%>
+<%= entry.deal.date %>,<%= entry.deal.summary.try(:encode, "CP932") %>,<%= entry.mate_account_name.try(:encode, "CP932") %>,<%= entry.amount.try(:encode, "CP932") %>
 <% end %>

@@ -7,7 +7,9 @@ class Deal::Base < ActiveRecord::Base
   belongs_to :user
 
   # 実験的に読み出し専用の共通的なentryを設定
-  has_many :readonly_entries, :include => :account, :class_name => "Entry::Base", :foreign_key => 'deal_id', :order => 'creditor, line_number', :readonly => true
+  has_many :readonly_entries, -> { order(:creditor, :line_number).includes(:account).readonly },
+           class_name: "Entry::Base",
+           foreign_key: 'deal_id'
 
   attr_writer :insert_before
   attr_accessor :old_date
@@ -17,9 +19,9 @@ class Deal::Base < ActiveRecord::Base
   before_save :touch_if_not_changed
   validates_presence_of :date
   
-  scope :in_a_time_between, Proc.new{|from, to| {:conditions => ["deals.date >= ? and deals.date <= ?", from, to]}}
-  scope :created_on, Proc.new{|date| {:conditions => ["created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time], :order => "created_at desc"}}
-  scope :time_ordering, lambda{ order("date, daily_seq") }
+  scope :in_a_time_between, ->(from, to) { where("deals.date >= ? and deals.date <= ?", from, to) }
+  scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
+  scope :time_ordering, -> { order(:date, :daily_seq) }
 
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"
@@ -91,18 +93,16 @@ class Deal::Base < ActiveRecord::Base
   end
   
   def self.get(deal_id, user_id)
-    return Deal::Base.find(:first, :conditions => ["id = ? and user_id = ?", deal_id, user_id])
+    return Deal::Base.where("id = ? and user_id = ?", deal_id, user_id).first
   end
 
   def self.get_for_month(user_id, datebox)
-    Deal::Base.find(:all,
-                  :conditions => [
-                    "deals.user_id = ? and date >= ? and date < ?",
+    Deal::Base.where("deals.user_id = ? and date >= ? and date < ?",
                     user_id,
                     datebox.start_inclusive,
-                    datebox.end_exclusive],
-                  :include => :readonly_entries,
-                  :order => "date, daily_seq")
+                    datebox.end_exclusive
+    ).includes(:readonly_entries
+    ).order(:date, :daily_seq)
   end
 
   # start_date から end_dateまでの、accounts に関連するデータを取得する。
@@ -111,27 +111,24 @@ class Deal::Base < ActiveRecord::Base
     raise "no start_date" unless start_date
     raise "no end" unless end_date
     raise "no accounts" unless accounts
-    Deal::Base.find(:all,
-                 :select => "distinct dl.*",
-                  :conditions => ["dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
-                    user_id,
-                    accounts.map{|a| a.id},
-                    start_date,
-                    end_date +1 ],
-                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id",
-                  :order => "dl.date, dl.daily_seq"
-    )
+    Deal::Base.select("distinct dl.*"
+    ).where("dl.user_id = ? and et.account_id in (?) and dl.date >= ? and dl.date < ?",
+            user_id,
+            accounts.map{|a| a.id},
+            start_date,
+            end_date + 1
+    ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
+    ).order("dl.date, dl.daily_seq")
   end
   
   def self.exists?(user_id, date)
-    !Deal::Base.find(:first,
-                 :select => "dl.id",
-                  :conditions => ["dl.user_id = ? and dl.date >= ? and dl.date < ?",
-                    user_id,
-                    date,
-                    date +1 ],
-                  :joins => "as dl inner join account_entries as et on dl.id = et.deal_id"
-    ).nil?
+    Deal::Base.select("dl.id"
+    ).where("dl.user_id = ? and dl.date >= ? and dl.date < ?",
+            user_id,
+            date,
+            date + 1
+    ).joins("as dl inner join account_entries as et on dl.id = et.deal_id"
+    ).exists?
   end
 
   def confirm!
@@ -171,13 +168,10 @@ class Deal::Base < ActiveRecord::Base
 
     # 挿入先が指定されていなければ新規
     else
-      max = Deal::Base.maximum(:daily_seq,
-        :conditions => ["user_id = ? and date = ?",
-          self.user_id,
-          self.date]
-     ) || 0
+      max = Deal::Base.where(["user_id = ? and date = ?",
+                              self.user_id,
+                              self.date]).maximum(:daily_seq) || 0
       self.daily_seq = 1 + max
-
     end
     
   end

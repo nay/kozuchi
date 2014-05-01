@@ -29,7 +29,7 @@ class Settings::FriendAcceptancesController < ApplicationController
 
   def destroy
     raise ActiveRecord::RecordNotFound if !@target_user || @target_user == current_user
-    acceptance = current_user.friend_acceptances.find_by_target_id(@target_user.id)
+    acceptance = current_user.friend_acceptances.find_by(target_id: @target_user.id)
     acceptance.destroy if acceptance
     flash[:notice] = "#{ERB::Util.h @target_user.login}さんをフレンドから削除しました。"
     redirect_to settings_friends_path
@@ -37,6 +37,6 @@ class Settings::FriendAcceptancesController < ApplicationController
 
   private
   def find_target_user
-    @target_user = User.find_by_login(params[:target_login])
+    @target_user = User.find_by(login: params[:target_login])
   end
 end

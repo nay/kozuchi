@@ -4,11 +4,9 @@ class Settlement < ActiveRecord::Base
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'
 
   has_many :target_entries,
-           :class_name => 'Entry::General',
-           :foreign_key => 'settlement_id',
-           :order => 'deals.date, deals.daily_seq',
-           :include => :deal#,
-#           :dependent => :nullify
+           -> { order('deals.date, deals.daily_seq').includes(:deal) },
+           class_name: 'Entry::General',
+           foreign_key: 'settlement_id'
 
   # TODO: Rails 3.2.6 nullify時のSQLでORDERがあるのにjoinされない問題の回避のため
   has_many :nullify_target_entries,
@@ -17,9 +15,9 @@ class Settlement < ActiveRecord::Base
            :dependent => :nullify
 
   has_one  :result_entry,
-           :class_name => 'Entry::General',
-           :foreign_key => 'result_settlement_id',
-           :include => :deal
+           -> { includes(:deal) },
+           class_name: 'Entry::General',
+           foreign_key: 'result_settlement_id'
 
   belongs_to :submitted_settlement
   
@@ -34,7 +32,7 @@ class Settlement < ActiveRecord::Base
   after_destroy :destroy_reuslt_deal
 
   # result_entryのひもづけにacocunt_entriesというテーブル名が使われる想定
-  scope :on, lambda{|account| where(["account_entries.account_id = ?", account.id])}
+  scope :on, ->(account) { where("account_entries.account_id = ?", account.id) }
 
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
@@ -155,7 +153,7 @@ class Settlement < ActiveRecord::Base
     # TODO: 未確定などまずいやつは追加を禁止したい
     for deal_id in deal_ids
       # 複数明細の場合などに、２つ以上あることもあり得る
-      entries = Entry::General.includes(:deal).where("deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id)
+      entries = Entry::General.includes(:deal).references(:deal).where("deals.user_id = ? and deals.id = ? and account_id = ?", user_id, deal_id, account.id)
       next if entries.empty?
       entries.each do |entry|
         target_entries << entry

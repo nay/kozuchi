@@ -7,7 +7,7 @@ class Pattern::Entry < ActiveRecord::Base
              :foreign_key => 'account_id'
 
   include ::Entry
-  attr_accessible :account_id, :amount, :line_number, :summary, :reversed_amount
+#  attr_accessible :account_id, :amount, :line_number, :summary, :reversed_amount
 
   def assignable_attributes
     HashWithIndifferentAccess.new(attributes).slice(:id, :account_id, :amount, :line_number, :summary, :reversed_amount)

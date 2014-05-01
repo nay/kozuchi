@@ -11,21 +11,25 @@ class User < ActiveRecord::Base
   has_many  :single_logins, :dependent => :destroy
   has_many  :settlements, :dependent => :destroy
   has_one   :preferences, :class_name => "Preferences", :dependent => :destroy
-  has_many  :incomes, :class_name => 'Account::Income', :order => "sort_key"
-  has_many  :expenses, :class_name => 'Account::Expense', :order => "sort_key"
-  has_many  :assets, :class_name => "Account::Asset", :order => "sort_key" do
+  has_many  :incomes, -> { order(:sort_key) },
+            class_name: 'Account::Income'
+  has_many  :expenses, -> { order(:sort_key) },
+            class_name: 'Account::Expense'
+  has_many  :assets, -> { order(:sort_key) },
+            class_name: "Account::Asset" do
     def credit
       credit_asset_kinds = asset_kinds{|attributes| attributes[:credit]}.map{|k| k.to_s}
       categorized_as(*credit_asset_kinds)
     end
   end
-  has_many  :flow_accounts, :class_name => "Account::Base", :conditions => "asset_kind is null", :order => "sort_key"
+  has_many  :flow_accounts, -> { where("asset_kind is null").order(:sort_key) },
+            class_name: "Account::Base"
 
   has_many :deal_patterns, :class_name => "Pattern::Deal"
 
   ACCOUNTS_OPTIONS_ASC = ['Account::Asset', 'Account::Income', 'Account::Expense']
   ACCOUNTS_OPTIONS_DESC = ['Account::Expense', 'Account::Asset', 'Account::Income']
-  has_many  :accounts, :class_name => 'Account::Base', :order => 'accounts.sort_key' do
+  has_many  :accounts, -> { order(:sort_key) }, :class_name => 'Account::Base' do
 
     def grouped_options(is_asc = true)
       grouped = group_by{|a| a.class}.map{|key, value| [key, value.map{|a| [a.name, a.id]}]}
@@ -40,20 +44,18 @@ class User < ActiveRecord::Base
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
-          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true]
-        ).to_i
+        where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true).sum("account_entries.amount").to_i
       end
     end
     
     # 指定した日の最初における指定した口座の残高をAccountモデルの一覧として得る
     def balances(date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as balance",
-          :include => nil,
-          :conditions => ["(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true],
-          :group => 'accounts.id'
-        ).each{|a| a.balance = a.balance.to_i}
+        select("accounts.*, sum(account_entries.amount) as balance"
+        ).includes(nil
+        ).where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true
+        ).group('accounts.id'
+        ).each{|a| a.balance = a.balance.to_i }
       end
     end
     
@@ -74,9 +76,7 @@ class User < ActiveRecord::Base
     # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
     def flow_sum(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        sum("account_entries.amount",
-          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true]
-        ).to_i
+        where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true).sum("account_entries.amount").to_i
       end
     end
     
@@ -85,10 +85,10 @@ class User < ActiveRecord::Base
     # 記入のない口座は取得されない。
     def flows(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as flow",
-          :include => nil,
-          :conditions => ["deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
-          :group => 'accounts.id'
+        select("accounts.*, sum(account_entries.amount) as flow"
+        ).includes(nil
+        ).where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
+        ).group('accounts.id'
         ).each{|a| a.flow = a.flow.to_i}
       end
     end
@@ -97,11 +97,11 @@ class User < ActiveRecord::Base
     # 不明金勘定の視点から、正負は逆にする。つまり、支出の不明金はプラスで出る。
     def unknowns(start_date, end_date, conditions = nil)
       with_joined_scope(conditions) do
-        find(:all, :select => "accounts.*, sum(account_entries.amount) as unknown",
-          :include => nil,
-          :conditions => ["deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true],
-          :group => 'accounts.id'
-        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1}
+        select("accounts.*, sum(account_entries.amount) as unknown"
+        ).includes(nil
+        ).where("deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
+        ).group('accounts.id'
+        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
       end
     end
   
@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
     
     private
     def with_joined_scope(conditions, &block)
-      with_scope :find => {:conditions => conditions, :joins => "inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id"} do
+      where(conditions).joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id").scoping do
         yield
       end
     end
@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
 
   # ProxyUser共通で使えるAccountオブジェクトを取得。この時点ではまだ通信は発生しない
   def account_by_name(account_name)
-    accounts.find_by_name(account_name)
+    accounts.find_by(name: account_name)
 
 #    AccountProxy.new(account_id)
   end
@@ -164,9 +164,9 @@ class User < ActiveRecord::Base
     self.login
   end
   
-
+  # TODO: メソッド不要
   def self.find_by_login_id(login_id)
-    find(:first, :conditions => ["login = ? ", login_id])
+    find_by(login: login_id)
   end
   
   def deal_exists?(date)
@@ -196,7 +196,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   before_save :encrypt_password
   before_create :make_activation_code
-  attr_accessible :login, :email, :password, :password_confirmation
+#  attr_accessible :login, :email, :password, :password_confirmation
   after_destroy :destroy_deals, :destroy_accounts
 
   # Activates the user in the database.
@@ -214,7 +214,7 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(login, password)
-    u = find :first, :conditions => ['login = ? and activated_at IS NOT NULL', login] # need to get the salt
+    u = where('login = ? and activated_at IS NOT NULL', login).first # need to get the salt
     u && u.authenticated?(password) ? u.upgrade!(password) : nil
   end
 
@@ -383,11 +383,11 @@ class User < ActiveRecord::Base
 
   def destroy_deals
     # アカウントを削除する場合、口座が消せるようにするためにまずDealを消す
-    Deal::Base.find_all_by_user_id(self.id).each{|d| d.destroy }
+    Deal::Base.where(user_id: id).each{|d| d.destroy }
   end
   def destroy_accounts
     # アカウントを削除する場合の口座削除処理。dependentだと順序が思うようでないので自前でやる
-    Account::Base.find_all_by_user_id(self.id).each{|a| a.destroy}
+    Account::Base.where(user_id: id).each{|a| a.destroy}
   end
 
   

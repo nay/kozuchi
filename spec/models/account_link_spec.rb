@@ -7,12 +7,7 @@ describe AccountLink do
 
   before do
     # 前提条件
-    raise "前提条件エラー" unless User.find(:all, :conditions => "id in(3, 5)").empty?
-  end
-  describe "attributes=" do
-    it "user_idは一括指定できない" do
-      expect{AccountLink.new(:user_id => 3)}.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    end
+    raise "前提条件エラー" unless User.where("id in(3, 5)").empty?
   end
   describe "validate" do
     before do
@@ -85,7 +80,7 @@ describe AccountLink do
       end
       it "成功して、相手側にaccount_link_requestが作られる" do
         @link.save.should be_true
-        r = AccountLinkRequest.find_by_sender_id(@user.id)
+        r = AccountLinkRequest.find_by(sender_id: @user.id)
         r.should_not be_nil
         r.account_id.should == @target_user_account_for_user.id
         r.sender_ex_account_id.should == @user_account_for_target_user.id

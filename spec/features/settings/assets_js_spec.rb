@@ -21,7 +21,7 @@ describe Settings::AssetsController, :js => true do
 
     it "登録が成功する" do
       page.should have_content("VISAカード」を登録しました。")
-      account = current_user.accounts.find_by_name('VISAカード')
+      account = current_user.accounts.find_by(name: 'VISAカード')
       account.should_not be_nil
       page.should have_css("input#account_#{account.id}_name")
     end

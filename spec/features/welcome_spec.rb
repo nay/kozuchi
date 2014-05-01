@@ -58,7 +58,7 @@ describe WelcomeController do
 
         context "when News works fine" do
           before do
-            News.stub!(:get).and_return("ニュースです") # for speed up
+            News.stub(:get).and_return("ニュースです") # for speed up
             visit "/"
           end
           it_behaves_like "index for pc"
@@ -68,7 +68,7 @@ describe WelcomeController do
 
         context "when News occurs errors" do
           before do
-            News.stub!(:get).and_return(nil)
+            News.stub(:get).and_return(nil)
             visit "/"
           end
           it_behaves_like "index for pc"

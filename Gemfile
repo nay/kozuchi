@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.16'
+gem 'rails', '4.0.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -12,13 +12,15 @@ gem 'jpmobile'
 # gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'html5jp_graphs', '~> 0.0.3'
 gem 'dynamic_form'
-gem 'therubyracer', '0.11.1'
-gem 'libv8', '~> 3.11.8.7'
+gem 'therubyracer'
+gem 'libv8'
 gem 'passenger'
-gem 'rb-readline', '~> 0.4.2'
+gem 'rb-readline'
 gem 'httpclient'
 gem 'jquery-rails'
 gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗する
+gem 'rails-observers' # TODO: なくしたい
+gem 'activerecord-session_store'
 group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'

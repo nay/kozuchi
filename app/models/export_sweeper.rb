@@ -7,7 +7,7 @@ class ExportSweeper < ActionController::Caching::Sweeper
   end
 
   def key(format, user_id)
-    self.class.key(format, user_id, request ? request.host_with_port : "no_host")
+    self.class.key(format, user_id, (controller && request) ? request.host_with_port : "no_host")
   end
 
   def after_save(record)
@@ -20,6 +20,7 @@ class ExportSweeper < ActionController::Caching::Sweeper
 
   private
   def expire(record)
+    return unless controller
     user_id = record.kind_of?(User) ? record.id : record.user_id
     expire_fragment(key(:xml, user_id))
     expire_fragment(key(:csv, user_id))

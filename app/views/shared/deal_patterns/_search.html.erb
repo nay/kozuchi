@@ -1,5 +1,5 @@
     <div>
-      <div>パターン呼出：<%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 1100 %></div>
+      <div><%= label_tag :pattern_keyword, "パターン呼出" %>: <%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 1100 %></div>
       <div class="inline_guide">コードを指定してリターンを押してください</div>
     </div>
     <div id="pattern_search_result" style="width: 240px;" class="warning"></div>

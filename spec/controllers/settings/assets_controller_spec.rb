@@ -24,7 +24,7 @@ describe Settings::AssetsController do
     share_examples_for 'current_userのassetが登録される' do
       it "current_userのassetが登録される" do
         response.should redirect_to(settings_assets_path)
-        asset = @current_user.assets.find_by_name('追加')
+        asset = @current_user.assets.find_by(name: '追加')
         asset.should_not be_nil
         asset.asset_kind.should == 'cache'
         asset.sort_key.should == 77
@@ -64,7 +64,7 @@ describe Settings::AssetsController do
       @current_values[:taro_cache.to_id.to_s][:asset_kind] = 'credit'
       put :update_all, :account => @current_values
       response.should redirect_to(settings_assets_path)
-      asset = @current_user.assets.find_by_name('げんきん')
+      asset = @current_user.assets.find_by(name: 'げんきん')
       asset.should_not be_nil
       asset.asset_kind.should == 'credit'
       flash[:errors].should be_nil
@@ -73,7 +73,7 @@ describe Settings::AssetsController do
       @current_values[:taro_cache.to_id.to_s][:name] = ""
       put :update_all, :account => @current_values
       response.should be_success
-      @current_user.assets.find_by_name('現金').should_not be_nil
+      @current_user.assets.find_by(name: '現金').should_not be_nil
       assigns(:accounts).any?{|a| !a.errors.empty?}.should be_true
     end
     it "他人の口座の情報を混ぜると例外" do
@@ -86,7 +86,7 @@ describe Settings::AssetsController do
     it "成功する" do
       delete :destroy, :id => Fixtures.identify(:taro_cache)
       response.should redirect_to(settings_assets_path)
-      Account::Base.find_by_id(Fixtures.identify(:taro_cache)).should be_nil
+      Account::Base.find_by(id: Fixtures.identify(:taro_cache)).should be_nil
       flash[:errors].should be_nil
     end
     it "他人の口座を指定できない" do
@@ -100,7 +100,7 @@ describe Settings::AssetsController do
       delete :destroy, :id => :taro_cache.to_id
       response.should redirect_to(settings_assets_path)
       flash[:errors].should_not be_nil
-      @current_user.assets.find_by_id(:taro_cache.to_id).should_not be_nil
+      @current_user.assets.find_by(id: :taro_cache.to_id).should_not be_nil
     end
   end
 
