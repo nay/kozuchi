@@ -16,5 +16,14 @@
         = link_to image_tag("izumo_kozuchi.png", border: 0, width: 32, height: 32), root_path, id: :logo
         %h1 小槌
     #content
+      - if flash[:notice].present?
+        .alert.alert-success.alert-dismissable
+          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
+          = flash[:notice]
+      - if flash[:error].present?
+        .alert.alert-danger.alert-dismissable
+          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
+          = flash[:error]
+
       = yield
     = render partial: "shared/footer"

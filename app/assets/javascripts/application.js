@@ -4,3 +4,4 @@
 //= require jquery_ujs
 //= require html5jp_graphs
 //= require_tree .
+//= require bootstrap
