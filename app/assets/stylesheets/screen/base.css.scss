@@ -4,6 +4,7 @@
 
 header {
   background-color: $main_color;
+  margin-bottom: 16px;
 
   #logo {
     float: left;
@@ -15,6 +16,18 @@ header {
     font-size: 28px;
     line-height: 32px;
   }
+
+  #menu_bar {
+    background-color: $sub_dark_color;
+    color: #ffffff;
+    padding: 2px 16px;
+    h2 {
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+    }
+  }
+
 }
 
 #content {
@@ -32,6 +45,7 @@ footer {
   border-top: 1px solid $sub_color;
   background-color: $main_color;
   padding-left: 2em;
+  margin-top: 16px;
 }
 
 /* buttons */
