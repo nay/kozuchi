@@ -70,7 +70,7 @@ class @Calendar
 
     str = "<table>"
     str += "<tr>"
-    str += "<td rowspan='2' id='prev_year' onClick='calendar.selectMonth("
+    str += "<td rowspan='2' id='prev_year' class='year_nav' onClick='calendar.selectMonth("
     str += @selectedMonth.year - 1
     str += "," + @selectedMonth.month + ", true);'>&lt;&lt;</td>"
     str += "<td class='year " + yearClass + "' colspan='" + colspan + "'>" + current.year + "</td>"
@@ -81,7 +81,7 @@ class @Calendar
       str += "<td class='year " + yearClass + "' colspan='"
       str += secondColspan
       str += "'>" + nextYear + "</td>"
-    str += "<td rowspan='2' id='next_year' onClick='calendar.selectMonth("
+    str += "<td rowspan='2' id='next_year' class='year_nav' onClick='calendar.selectMonth("
     str += @selectedMonth.year + 1
     str += "," + @selectedMonth.month+", true);'>&gt;&gt;</td>"
     str += "</tr>"
@@ -89,9 +89,9 @@ class @Calendar
     for i in [0..11]
       yearClass = if current.year % 2  then 'odd_year' else 'even_year'
       if @selectedMonth.equals(current)
-        str += "<td class='selected_month' id='month_" + current.year + "_" + current.month + "'><div class='" + yearClass + "'>"
+        str += "<td class='selected_month month' id='month_" + current.year + "_" + current.month + "'><div class='" + yearClass + "'>"
       else
-        str += "<td class='selectable_month' id='month_" + current.year + "_" + current.month + "'>"
+        str += "<td class='selectable_month month' id='month_" + current.year + "_" + current.month + "'>"
         str += "<div class='" + yearClass + "'>"
         str += "<a href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
       str += current.month + "月"

@@ -1,13 +1,14 @@
 
 #day_navigator_frame
+  = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
   = render :partial => 'shared/day_navigator', :locals => {:data => @deals}
 
 #deal_pattern_frame
   = render :partial => 'shared/deal_patterns/recent'
 
-= render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
-
 #deals_frame
+  #month_and_today
+    = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
 
   - deal_type = flash[:"#{controller_name}_deal_type"]
   #deal_editor

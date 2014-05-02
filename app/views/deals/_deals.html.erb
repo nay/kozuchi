@@ -1,5 +1,3 @@
-      <!-- 通信欄-->
-      <%= render(:partial => "shared/information") %>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>
@@ -57,7 +55,7 @@
                 <!-- number -->
                 <%= content_tag :td, :class => 'number', :rowspan => size do %>
                   <%= render :partial => 'shared/deal_note', :locals => {:deal => deal} %>
-                  <%= content_tag(:a, deal.daily_seq, :name => deal.id) %>
+                  <%= content_tag(:span, deal.daily_seq, :id => deal.id) %>
                 <% end %>
               <% end %>
               <!-- summary -->

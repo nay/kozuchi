@@ -13,7 +13,7 @@ module ApplicationHelper
   end
 
   def day_anchor(date)
-    tag :a, :name => "day#{date.day}"
+    tag :span, :id => "day#{date.day}"
   end
 
   def bookkeeping_style?

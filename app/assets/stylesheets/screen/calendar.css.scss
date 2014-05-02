@@ -1,9 +1,10 @@
 /* Calendar Stylesheet */
+@import "variables";
 
 #calendar {
-  $even_color: #E8D8E8;
-  $odd_color: #FFDDBC;
-  $selected_color: #ffb7db;
+  $even_color: #f0ffb2; // #E8D8E8;
+  $odd_color: #fff0b2; // #FFDDBC;
+  $selected_color: $sub_color; // #ffb7db;
 
   * {
     color: black;
@@ -19,14 +20,22 @@
       div {
         padding: 0px 2px;
         text-align: right;
-        width: 48px;
+        width: 100%;
+        min-width: 48px;
       }
+    }
+    td.month {
+      width: 7%;
+    }
+    td.year_nav {
+      width: 2%;
     }
 
     /* year headers */
 
     td.year {
       text-align: center;
+      font-size: 12px;
     }
 
     td.even_year {
@@ -51,6 +60,7 @@
       div {
         border: 2px inset $selected_color;
         background-color: $selected_color;
+        color: #ffffff;
       }
     }
 

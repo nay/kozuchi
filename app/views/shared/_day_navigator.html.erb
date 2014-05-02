@@ -1,4 +1,7 @@
   <table id="day_navigator">
+    <tr>
+      <td class="year_month"><%= @year %>年<br><%= @month %>月</td>
+    </tr>
     <% date = Date.new(@year.to_i, @month.to_i, 1) %>
     <% while (date.month == @month.to_i) %>
       <% deal_exists = data.detect{|d| d.date == date}  %>
