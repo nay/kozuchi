@@ -7,6 +7,8 @@
     %meta{'http-equiv' => "content-style-type", content: "text/css" }
     = csrf_meta_tags
     = stylesheet_link_tag :application
+    = stylesheet_link_tag :all_media, media: :all
+    = stylesheet_link_tag :print, media: :print
     = javascript_include_tag :application
     = render partial: "shared/google_analytics"
     = yield :head
@@ -64,6 +66,10 @@
                       %li= link_to 'できること', :controller => '/help', :action => 'functions'
                       %li= link_to 'FAQ', :controller => '/help', :action => 'faq'
                   %li= link_to 'ログアウト', logout_path, :method => :delete
+                = form_tag search_deals_path, method: :get, class: %w(navbar-form navbar-left), role: :search do
+                  .form-group
+                    = text_field_tag :keyword, "", class: 'form-control', placeholder: 'キーワード'
+                    = submit_tag '検索', class: %w(btn btn-default), :onClick => "if($('#keyword').val() == '') {alert('キーワードを入力してください。'); return false;}"
     #content
       - if flash[:notice].present?
         .alert.alert-success.alert-dismissable
@@ -75,5 +81,5 @@
           = flash[:error]
 
       = yield
-    = render :partial => 'shared/single_logins'
+      = render :partial => 'shared/single_logins'
     = render partial: "shared/footer"

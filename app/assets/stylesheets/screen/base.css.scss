@@ -19,10 +19,16 @@ header {
 
 #content {
   background-color: $light_color;
-  padding: 0 4em;
+  padding: 0 3em;
+  font-size: 16px;
+}
+
+#singleLogins {
+  clear: both;
 }
 
 footer {
+  clear: both;
   border-top: 1px solid $sub_color;
   background-color: $main_color;
   padding-left: 2em;

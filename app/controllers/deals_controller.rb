@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class DealsController < ApplicationController
-  layout 'main'
   cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
   
   menu_group "家計簿"
