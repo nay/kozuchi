@@ -4,11 +4,11 @@
 
 header {
   background-color: $main_color;
-  padding-left: 2em;
 
   #logo {
     float: left;
   }
+
   h1 {
     margin: 0;
     padding: 0;
@@ -19,10 +19,11 @@ header {
 
 #content {
   background-color: $light_color;
-  padding: 1em 4em;
+  padding: 0 4em;
 }
 
 footer {
+  border-top: 1px solid $sub_color;
   background-color: $main_color;
   padding-left: 2em;
 }

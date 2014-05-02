@@ -1,0 +1,13 @@
+%div
+  %p= "#{@user.login}さん、ようこそWeb家計簿「小槌」へ！ → #{link_to'家計簿を記入する', deals_path }".html_safe
+- if @IE6
+  %p この画面はInternet Explorer6では正しく表示されません。Firefox、Internet Explorer7などのご利用をお奨めします。
+- else
+  %div
+    %div.box{:style=>"float:left; margin: 1em;"}
+      %h2 支出の状況
+      = render :partial => 'costs_summary'
+    %div.box{:style=>"float:left; margin: 1em;"}
+      %h2 あなたの資産
+      = render :partial => 'assets_summary'
+    %div{:style=>"clear:left;"}
