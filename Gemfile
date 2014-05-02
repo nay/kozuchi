@@ -11,6 +11,7 @@ gem 'nokogiri' # for jpmobile
 gem 'jpmobile'
 # gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'haml-rails'
+gem 'bootstrap-sass'
 gem 'html5jp_graphs', '~> 0.0.3'
 gem 'dynamic_form'
 gem 'therubyracer'

@@ -1,0 +1,63 @@
+@import "bootstrap";
+@import "variables";
+
+
+/* a color change */
+a {
+  color: $accent_color;
+}
+a:hover, a:focus {
+  color: $accent_dark_color;
+  text-decoration: underline; }
+a:focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px; }
+
+/* btn-primary color change */
+
+.btn-primary {
+  color: #ffffff;
+  background-color: $accent_color;
+  border-color: $accent_dark_color;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  color: #ffffff;
+  background-color: $accent_very_dark_color;
+  border-color: $accent_dark_color;
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  background-image: none;
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+  background-color: $accent_color;
+  border-color: $accent_dark_color;
+}
+
+.btn-primary .badge {
+  color: $accent_color;
+  background-color: #ffffff;
+}

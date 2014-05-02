@@ -1,5 +1,20 @@
-= html_tag do
-  = head_tag do
+!!!5
+%html
+  %head
+    %meta{charset: 'UTF-8'}
+    %meta{'http-equiv' => "Content-Script-Type", content: "text/javascript; charset=utf-8" }
+    %meta{name: "author", content: "Everyleaf Corporation" }
+    %meta{'http-equiv' => "content-style-type", content: "text/css" }
+    = csrf_meta_tags
+    = stylesheet_link_tag :application
+    = javascript_include_tag :application
+    = render partial: "shared/google_analytics"
     = yield :head
-  = body_tag do
-    = yield
+  %body
+    %header
+      .clearfix
+        = link_to image_tag("izumo_kozuchi.png", border: 0, width: 32, height: 32), root_path, id: :logo
+        %h1 小槌
+    #content
+      = yield
+    = render partial: "shared/footer"

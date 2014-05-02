@@ -1,48 +1,59 @@
+/* 新 */
+#overview {
+  float: left;
+  width: 70%;
+}
+#entrance {
+  float: left;
+  width: 30%;
+}
+
+/* 旧 */
 #welcome {
-  #login_form div {
-    text-align:center;
-  }
-
-  #news {
-    h2 {
-      font-size: 120%;
-      color: #fcbf7f;
-      text-align: center;
+    #login_form div {
+      text-align:center;
     }
+
+    #news {
+      h2 {
+        font-size: 120%;
+        color: #fcbf7f;
+        text-align: center;
+      }
+      h4 {
+        color: #041A61;
+      }
+      ul {
+        padding-left: 4em;
+      }
+    }
+
+    #main {
+      /* with side */
+      width: 60%;
+    }
+
+    #title {
+      margin-bottom: 0;
+      h1 {
+        border-bottom: none;
+      }
+    }
+
+    #features {
+      padding: 0.5em;
+
+      h2 {
+        font-size: 120%;
+      }
+      h4 {
+        margin: 0.5em 0;
+        border-bottom: 4px dotted #ffddbc;
+        width: 20em;
+      }
+    }
+
     h4 {
-      color: #041A61;
+      margin-top: 1em;
     }
-    ul {
-      padding-left: 4em;
-    }
-  }
-
-  #main {
-    /* with side */
-    width: 60%;
-  }
-
-  #title {
-	  margin-bottom: 0;
-    h1 {
-      border-bottom: none;
-    }
-  }
-
-  #features {
-    padding: 0.5em;
-
-    h2 {
-      font-size: 120%;
-    }
-    h4 {
-      margin: 0.5em 0;
-      border-bottom: 4px dotted #ffddbc;
-      width: 20em;
-    }
-  }
-
-  h4 {
-   margin-top: 1em;
-  }
 }
