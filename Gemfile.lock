@@ -60,6 +60,13 @@ GEM
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
     ffi (1.9.3)
+    haml (4.0.5)
+      tilt
+    haml-rails (0.4)
+      actionpack (>= 3.1, < 4.1)
+      activesupport (>= 3.1, < 4.1)
+      haml (>= 3.1, < 4.1)
+      railties (>= 3.1, < 4.1)
     hike (1.2.3)
     html5jp_graphs (0.0.3)
     http-cookie (1.0.2)
@@ -186,6 +193,7 @@ DEPENDENCIES
   coffee-rails
   dynamic_form
   factory_girl_rails (~> 4.0)
+  haml-rails
   html5jp_graphs (~> 0.0.3)
   httpclient
   i18n_generators
