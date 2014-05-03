@@ -5,7 +5,6 @@ class UsersController < ApplicationController
   menu "プロフィール", :only => [:edit, :update]
 
   before_filter :password_token_required, :only => [:edit_password, :update_password]
-#  layout 'login'
   cache_sweeper :export_sweeper, :only => [:destroy]
 
   # render new.rhtml
@@ -88,7 +87,6 @@ class UsersController < ApplicationController
   end
   
   def edit
-    render :layout => 'main'
     @user = self.current_user
   end
   
@@ -99,7 +97,7 @@ class UsersController < ApplicationController
       redirect_to edit_user_path
       return
     end
-    render action: 'edit', layout: 'main'
+    render action: 'edit'
   end
 
   def privacy_policy
