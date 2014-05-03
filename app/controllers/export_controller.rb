@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class ExportController < ApplicationController
-  layout 'main'
   menu_group "データ管理"
   menu "エクスポート"
   after_filter :cache_export, :only => [:whole]
