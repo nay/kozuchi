@@ -1,7 +1,6 @@
 <%= render :partial => "/settings/shared/new_flow_account_form",
    :locals => {:path => settings_incomes_path, :account_type_name => Account::Income.human_name} %>
 
-<%= render :partial => 'shared/information' %>
 <%= error_messages @account %>
 
 <div class="bottom_box">

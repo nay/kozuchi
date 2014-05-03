@@ -1,7 +1,6 @@
 <%= render :partial => "new_asset_form",
    :locals => {:path => settings_assets_path, :account_type_name => Account::Asset.human_name} %>
 
-<%= render :partial => 'shared/information' %>
 <%= error_messages @account %>
 
 <div class="bottom_box">

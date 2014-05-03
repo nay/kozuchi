@@ -4,7 +4,6 @@
 シングルログインが設定されると、ページ下部に、別のユーザーとしてログインするためのボタンが追加されます。
 </p>
 
-<%= render :partial => 'shared/information' %>
 <%= error_messages_for :single_login %>
 <div style="margin-bottom: 1em;">
   <%= form_for @single_login, :url => settings_single_logins_path do |f| %>
