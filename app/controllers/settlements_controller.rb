@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
-  layout 'main'
   cache_sweeper :export_sweeper
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
