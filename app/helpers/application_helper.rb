@@ -3,6 +3,12 @@ module ApplicationHelper
 
   include LoginEngine
 
+  def active_class_if(condition, classes = [])
+    classes << 'active' if condition
+    classes
+  end
+
+
   # 現在の機能によってシングルログインでアカウント移動時の移動先識別子を返す
   def single_login_destination
     if controller_name == 'deals' && action_name == 'monthly'
