@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class Settings::ExpensesController < ApplicationController
-  layout 'main'
   cache_sweeper :export_sweeper
   menu_group "設定"
   menu "費目"
