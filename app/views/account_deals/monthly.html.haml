@@ -1,0 +1,106 @@
+- if @account.kind_of?(Account::Asset) && @account.any_credit?
+  .navigation= link_to '新しい精算を作成する', new_settlement_path
+
+#day_navigator_frame
+  = render :partial => 'shared/day_navigator', :locals => {:data => @account_entries.entries}
+
+#deals_frame
+  = render(:partial => "shared/calendar", :object => 'account_options', :locals => {:year => @year, :month => @month, :url_method => :monthly_account_deals_path, :url_params => {:account_id => @account.id}})
+  - deal_type = flash[:"#{controller_name}_deal_type"]
+
+  = deal_editor 2, @year, @month, @day do
+    = render :partial => deal_type ? "new_#{deal_type}" : 'new_creditor_general_deal'
+
+  = render partial: 'monthly_js'
+
+  #monthly_contents
+    .title= "#{@account.name}の出納一覧（#{@year}年#{@month}月）"
+    %table.book_header
+      %tr
+        %th.date 日付
+        %th.number
+        %th 摘要
+        %th.account
+        %th.amount
+          - if bookkeeping_style?
+            借方
+          - elsif @account.kind_of?(Account::Asset)
+            入金
+          - elsif @account.kind_of?(Account::Income)
+            戻し
+          - else
+            支出
+        %th.amount
+          - if bookkeeping_style?
+            貸方
+          - elsif @account.kind_of?(Account::Asset)
+            出金
+          - elsif @account.kind_of?(Account::Income)
+            収入
+          - else
+            戻し
+        %th.settlement
+        %th.amount
+          - if bookkeeping_style? || @account.kind_of?(Account::Asset)
+            残高
+          - else
+            合計
+        %th.icon_to_deal
+    - if @account.kind_of?(Account::Asset)
+      %table.book
+        %tr
+          %td.date
+          %td.number
+          %td 期首残高
+          %td.settlement
+          %td.amount= number_with_delimiter(@account_entries.balance_start)
+          %td.icon_to_deal
+    %table.book
+      - date = Date.new(@year.to_i, @month.to_i, 1)
+      - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
+      - sign = @account.kind_of?(Account::Income) ? -1 : 1
+      - for entry in @account_entries.entries
+        = content_tag :tr, :class => entry.balance? ? 'balance_line' : (entry.deal.confirmed? ? nil : 'unconfirmed') do
+          %td.date
+            - while date <= entry.date
+              = day_anchor date
+              - date += 1
+            = l entry.date
+            - if @account_entries.entries.last == entry
+              - while date.month == entry.date.month
+                = day_anchor date
+                - date += 1
+            - unless entry.deal.confirmed?
+              %br
+              %span.system 未確定
+          %td.number
+            = render 'shared/deal_note', :deal => entry.deal
+            = content_tag :a, entry.deal.daily_seq, :name => entry.deal_id
+            = content_tag :a, '', :name =>"e#{entry.id}"
+          %td= entry.summary
+          %td.account= entry.partner_account_name
+          %td.amount= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance?
+          %td.amount= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance?
+          %td.settlement.jump
+            - if entry.any_settlement_id
+              %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
+          %td.amount= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
+          %td.icon_to_deal= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id
+    - if @account.kind_of?(Account::Asset)
+      %table.book
+        %tr
+          %td.date
+          %td.number
+          %td 期末残高
+          %td.settlement
+          %td.amount= number_with_delimiter(@account_entries.balance_end)
+          %td.icon_to_deal
+    - else
+      %table.book
+        %tr
+          %td.date
+          %td.number
+          %td 期末合計
+          %td.settlement
+          %td.amount= number_with_delimiter(@account_entries.pure_balance_end)
+          %td.icon_to_deal

@@ -1,0 +1,13 @@
+<%= javascript_tag <<-END
+    function onGeneralDealSelectedFromGeneral(summary, amount, minus_account_id, plus_account_id) {
+      $('#deal_debtor_entries_attributes_0_amount').val(amount);
+      selectList('#deal_creditor_entries_attributes_0_account_id', minus_account_id);
+      selectList('#deal_debtor_entries_attributes_0_account_id', plus_account_id);
+      $('#deal_summary').val(summary);
+      }
+
+      function selectList(name, value) {
+        $(name).val(value)
+      }
+    END
+%>

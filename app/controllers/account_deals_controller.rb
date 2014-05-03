@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class AccountDealsController < ApplicationController 
-  layout 'main'
   menu_group "家計簿"
   menu "口座別出納"
 
