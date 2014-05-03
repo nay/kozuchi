@@ -14,7 +14,7 @@ class MoneyCounter
 
 addClassToUpdatedline = ->
   if location.hash.match(/^#e?[0-9]+$/)
-    updatedTr = $("tr:has(a[name='" + location.hash.replace('#', '') + "'])")
+    updatedTr = $("tr:has(*[id='" + location.hash.replace('#', '') + "'])")
     updatedTr.addClass("updated_line")
     # 複数行がまとめられている場合のため
 

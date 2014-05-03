@@ -73,10 +73,9 @@
             - unless entry.deal.confirmed?
               %br
               %span.system 未確定
-          %td.number
+          %td.number{id: "e#{entry.id}"}
             = render 'shared/deal_note', :deal => entry.deal
-            = content_tag :a, entry.deal.daily_seq, :name => entry.deal_id
-            = content_tag :a, '', :name =>"e#{entry.id}"
+            %span{id: entry.deal_id}= entry.deal.daily_seq
           %td= entry.summary
           %td.account= entry.partner_account_name
           %td.amount= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance?
