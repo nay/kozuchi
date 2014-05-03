@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class Settings::DealPatternsController < ApplicationController
-  layout 'main'
   menu_group "設定"
   menu "記入パターン"
 
