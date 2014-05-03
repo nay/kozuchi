@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class Settings::AccountLinksController < ApplicationController
-  layout 'main'
   menu_group "連携"
   menu "取引連動"
 
