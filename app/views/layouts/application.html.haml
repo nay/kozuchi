@@ -18,7 +18,7 @@
       - if @menu.present?
         #menu_bar
           %h2= @menu
-    #content
+    #content.clearfix
       - if flash[:notice].present?
         .alert.alert-success.alert-dismissable
           %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;

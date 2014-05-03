@@ -409,6 +409,13 @@ table.balance_sheet {
   }
 }
 
+table.book, table.book_header {
+  border-collapse: separate;
+  border-spacing: 2px;
+  border-color: gray;
+  border: 0;
+}
+
 /* 精算 */
 .book tbody tr.disabled td {
   background-color: #dddddd;
