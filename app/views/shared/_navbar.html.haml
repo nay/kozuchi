@@ -1,0 +1,58 @@
+.navbar.navbar-default.navbar-static-top{role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      = link_to image_tag("izumo_kozuchi.png", border: 0, width: 32, height: 32), root_path, id: :logo, class: 'navbar-brand'
+    .navbar-header
+      .navbar-brand
+        %h1 小槌
+    .collapse.navbar-collapse
+      %ul.nav.navbar-nav
+        - unless current_user
+          %li{class: controller_name == 'welcome' ? 'active' : ''}= link_to 'トップ', home_path
+        - if current_user
+          %li{class: controller_name == 'home' ? 'active' : ''}= link_to 'ホーム', home_path
+          %li.dropdown
+            =link_to "家計簿<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+            %ul.dropdown-menu
+              %li= link_to '仕訳帳', deals_path
+              %li= link_to '口座別出納', account_deals_path
+              %li= link_to '収支表', profit_and_loss_path
+              %li= link_to '資産表', assets_path
+              %li= link_to '貸借対照表', balance_sheet_path
+              %li.divider{role: 'presentation'}
+              %li= link_to '口座', settings_assets_path
+              %li= link_to '費目', settings_expenses_path
+              %li= link_to '収入内訳', settings_incomes_path
+              %li= link_to '記入パターン', settings_deal_patterns_path
+              %li.divider{role: 'presentation'}
+              %li= link_to 'エクスポート', export_path
+
+          %li.dropdown
+            = link_to "精算<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+            %ul.dropdown-menu
+              %li= link_to '精算の作成', new_settlement_path
+              %li= link_to '精算一覧', settlements_path
+          %li.dropdown
+            = link_to "連携<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+            %ul.dropdown-menu
+              %li= link_to 'フレンド', settings_friends_path
+              %li= link_to '取引連動', settings_account_links_path
+              %li= link_to '受け皿', settings_partner_accounts_path
+              %li= link_to 'シングルログイン', settings_single_logins_path
+          %li.dropdown
+            = link_to "アカウント<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+            %ul.dropdown-menu
+              %li= link_to 'プロフィール', edit_user_path
+              %li= link_to 'カスタマイズ', settings_preferences_path
+        %li.dropdown{class: controller_name == 'help' ? 'active' : ''}
+          = link_to "ヘルプ<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+          %ul.dropdown-menu
+            %li= link_to '小槌の特徴', :controller => '/help', :action => 'index'
+            %li= link_to 'できること', :controller => '/help', :action => 'functions'
+            %li= link_to 'FAQ', :controller => '/help', :action => 'faq'
+        - if current_user
+          %li= link_to 'ログアウト', logout_path, :method => :delete
+          = form_tag search_deals_path, method: :get, class: %w(navbar-form navbar-left), role: :search do
+            .form-group
+              = text_field_tag :keyword, "", class: 'form-control', placeholder: 'キーワード'
+              = submit_tag '検索', class: %w(btn btn-default), :onClick => "if($('#keyword').val() == '') {alert('キーワードを入力してください。'); return false;}"
