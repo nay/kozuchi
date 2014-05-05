@@ -8,8 +8,7 @@
   = render :partial => 'shared/deal_patterns/recent'
 
 #deals_frame
-  #month_and_today
-    = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
+  = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
 
   - deal_type = flash[:"#{controller_name}_deal_type"]
   #deal_editor
