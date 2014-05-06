@@ -9,7 +9,7 @@
       -# = render :partial => 'shared/deal_patterns/recent'
 
   #deals_main
-    #deals_frame.for_monthly_deals
+    #deals_frame
       = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
 
       -# deal_type = flash[:"#{controller_name}_deal_type"]
