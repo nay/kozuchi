@@ -70,7 +70,7 @@ class @Calendar
 
     str = "<table>"
     str += "<tr>"
-    str += "<td rowspan='2' id='prev_year' class='year_nav' onClick='calendar.selectMonth("
+    str += "<td rowspan='2' id='prev_year' class='year_nav' onClick='document.calendar.selectMonth("
     str += @selectedMonth.year - 1
     str += "," + @selectedMonth.month + ", true);'>&lt;&lt;</td>"
     str += "<td class='year " + yearClass + "' colspan='" + colspan + "'>" + current.year + "</td>"
@@ -81,7 +81,7 @@ class @Calendar
       str += "<td class='year " + yearClass + "' colspan='"
       str += secondColspan
       str += "'>" + nextYear + "</td>"
-    str += "<td rowspan='2' id='next_year' class='year_nav' onClick='calendar.selectMonth("
+    str += "<td rowspan='2' id='next_year' class='year_nav' onClick='document.calendar.selectMonth("
     str += @selectedMonth.year + 1
     str += "," + @selectedMonth.month+", true);'>&gt;&gt;</td>"
     str += "</tr>"
@@ -93,7 +93,7 @@ class @Calendar
       else
         str += "<td class='selectable_month month' id='month_" + current.year + "_" + current.month + "'>"
         str += "<div class='" + yearClass + "'>"
-        str += "<a href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
+        str += "<a href='javascript:document.calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
       str += current.month + "月"
       if !@selectedMonth.equals(current)
         str += '</a>'
@@ -108,6 +108,11 @@ class @Calendar
     $("#calendar_year").val(@selectedMonth.year)
     $("#calendar_month").val(@selectedMonth.month)
 
-    if call && @callback
-      @callback.call()
+    # if call && @callback
+      # @callback.call()
+    if call
+      $('#calendar').trigger('change', @selectedMonth)
 
+$ ->
+  @calendar = new Calendar()
+  @calendar.selectMonth($('#calendar').data('initial-year'), $('#calendar').data('initial-month'), false)

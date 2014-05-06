@@ -8,7 +8,7 @@
   = link_to '記入する', new_deal_path, class: %w(btn btn-default)
   -# = render :partial => 'shared/deal_patterns/recent'
 
-#deals_frame
+#deals_frame.for_monthly_deals
   = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
 
   -# deal_type = flash[:"#{controller_name}_deal_type"]
