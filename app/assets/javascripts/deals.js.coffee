@@ -128,5 +128,6 @@ $ ->
 
   # 日ナビゲーション
 
-  $('#day_navigator td.day a').click ->
+  $('.for_deal_editor .day_navigator td.day a').click (event)->
     $('input#date_day').val($(@).attr('day'))
+    event.preventDefault()

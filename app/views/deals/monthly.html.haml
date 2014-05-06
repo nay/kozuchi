@@ -2,7 +2,7 @@
 
 #day_navigator_frame
   = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
-  = render :partial => 'shared/day_navigator', :locals => {:data => @deals}
+  = render :partial => 'shared/day_navigator', :locals => {:data => @deals, path_proc: ->(date){ "#day#{date.day}" }}
 
 #deal_pattern_frame
   = link_to '記入する', new_deal_path, class: %w(btn btn-default)

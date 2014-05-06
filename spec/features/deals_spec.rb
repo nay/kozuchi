@@ -19,7 +19,7 @@ describe DealsController do
         page.should have_css('input#deal_summary')
       end
       it "日ナビゲーターがある" do
-        page.should have_css('#day_navigator')
+        page.should have_css('.day_navigator')
       end
     end
 

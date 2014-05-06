@@ -1,4 +1,7 @@
-%table#day_navigator
+- # 日ナビゲーター
+- # path_proc - 日からのリンク先をブロックで渡す。なければ ""
+- path_proc ||= nil
+%table.day_navigator
   %tr
     %td.year_month
       = "#{@year}年#{@month}月"
@@ -8,6 +11,6 @@
       %tr
         %td.day
           %div{class: "cwday#{date.cwday}#{date == Date.today ? ' today' : ''}"}
-            = link_to l(date, :format => :day), "#day#{date.day}", :day => date.day
+            = link_to l(date, :format => :day), path_proc ? path_proc.call(date) : '#', :day => date.day
         %td= '*' if deal_exists
       - date += 1
