@@ -1,0 +1,13 @@
+%table#day_navigator
+  %tr
+    %td.year_month
+      = "#{@year}年#{@month}月"
+    - date = Date.new(@year.to_i, @month.to_i, 1)
+    - while date.month == @month.to_i
+      - deal_exists = data.detect{|d| d.date == date}
+      %tr
+        %td.day
+          %div{class: "cwday#{date.cwday}#{date == Date.today ? ' today' : ''}"}
+            = link_to l(date, :format => :day), "#day#{date.day}", :day => date.day
+        %td= '*' if deal_exists
+      - date += 1

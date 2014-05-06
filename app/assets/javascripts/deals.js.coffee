@@ -126,4 +126,7 @@ $ ->
 
   $(document).on('mouseout', 'td.number', -> $('.timestamps', this).hide())
 
+  # 日ナビゲーション
 
+  $('#day_navigator td.day a').click ->
+    $('input#date_day').val($(@).attr('day'))
