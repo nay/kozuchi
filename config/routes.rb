@@ -63,7 +63,7 @@ Kozuchi::Application.routes.draw do
 
   # DealsController
   controller :deals do
-    resources :deals, :only => [:index, :edit, :update, :destroy] do
+    resources :deals, :only => [:index, :edit, :update, :destroy, :new] do
       member do
         put 'confirm'
       end

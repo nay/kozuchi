@@ -21,6 +21,26 @@ class DealsController < ApplicationController
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
+  # 登録画面
+  def new
+    @year, @month, @day = read_target_date
+
+    start_date = Date.new(@year.to_i, @month.to_i, 1)
+    end_date = (start_date >> 1) - 1
+    @deals = current_user.deals.in_a_time_between(start_date, end_date).order(:date, :daily_seq).select(:date)
+
+    # フォーム用
+    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
+    case flash[:"#{controller_name}_deal_type"]
+    when 'balance_deal'
+      @deal = Deal::Balance.new
+    # TODO: 口座
+    else
+      @deal = Deal::General.new
+      @deal.build_simple_entries
+    end
+  end
+
   # 変更フォームを表示するAjaxアクション
   # :pattern_code が指定されていたら画面上はパターン内容をロードする（コードがなければ Code not found）
   # :pattern_id が指定されていたら（TODO: I/F未実装、候補選択でできる予定）それをロードするが、なければもとのまま
