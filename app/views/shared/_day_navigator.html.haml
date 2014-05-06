@@ -10,7 +10,7 @@
       - deal_exists = data.detect{|d| d.date == date}
       %tr
         %td.day
-          %div{class: "cwday#{date.cwday}#{date == Date.today ? ' today' : ''}"}
-            = link_to l(date, :format => :day), path_proc ? path_proc.call(date) : '#', :day => date.day
+          %div{class: "cwday#{date.cwday}#{date == Time.zone.today ? ' today' : ''}"}
+            = link_to l(date, :format => :day), path_proc ? path_proc.call(date) : '#', data: {day: date.day}
         %td= '*' if deal_exists
       - date += 1
