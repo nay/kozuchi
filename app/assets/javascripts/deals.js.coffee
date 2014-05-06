@@ -147,8 +147,19 @@ $ ->
   $('.for_deal_editor #calendar').change (event, month) ->
     $('input#date_year').val(month.year)
     $('input#date_month').val(month.month)
-    $('input#date_day').val('') # TODO: 今日のある月なら、今日を入れてもよい
+    today = new Date()
+    if today.getFullYear() == month.year && today.getMonth() + 1 == month.month
+      day = today.getDate()
+    else
+      day = ''
+    $('input#date_day').val(day)
     url = $('#day_navigator').data('url')
     url = url.replace('_YEAR_', month.year)
     url = url.replace('_MONTH_', month.month)
     $('#day_navigator_frame').load(url)
+
+  # 今日ボタン （登録フォーム）
+  $('.for_deal_editor #today').click (event) ->
+    today = new Date
+    document.calendar.selectMonth(today.getFullYear(), today.getMonth()+1, true)
+    event.preventDefault()
