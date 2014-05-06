@@ -128,9 +128,10 @@ $ ->
 
   # 日ナビゲーション
 
-  $('.for_deal_editor .day_navigator td.day a').click (event)->
+  $('.for_deal_editor').on('click', '#day_navigator td.day a', (event)->
     $('input#date_day').val($(@).data('day'))
     event.preventDefault()
+  )
 
   # カレンダー（月表示）
 
@@ -147,3 +148,7 @@ $ ->
     $('input#date_year').val(month.year)
     $('input#date_month').val(month.month)
     $('input#date_day').val('') # TODO: 今日のある月なら、今日を入れてもよい
+    url = $('#day_navigator').data('url')
+    url = url.replace('_YEAR_', month.year)
+    url = url.replace('_MONTH_', month.month)
+    $('#day_navigator_frame').load(url)

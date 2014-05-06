@@ -24,6 +24,7 @@ class DealsController < ApplicationController
 
   # 日ナビゲーター部品を返す (Ajax)
   def day_navigator
+    write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
     prepare_for_day_navigator
     render partial: 'shared/day_navigator'
