@@ -114,5 +114,6 @@ class @Calendar
       $('#calendar').trigger('change', @selectedMonth)
 
 $ ->
-  @calendar = new Calendar()
-  @calendar.selectMonth($('#calendar').data('initial-year'), $('#calendar').data('initial-month'), false)
+  if $('#calendar').length > 0
+    @calendar = new Calendar()
+    @calendar.selectMonth($('#calendar').data('initial-year'), $('#calendar').data('initial-month'), false)
