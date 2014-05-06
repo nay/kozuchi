@@ -7,7 +7,7 @@
       = "#{@year}年#{@month}月"
     - date = Date.new(@year.to_i, @month.to_i, 1)
     - while date.month == @month.to_i
-      - deal_exists = data.detect{|d| d.date == date}
+      - deal_exists = @deals.detect{|d| d.date == date}
       %tr
         %td.day
           %div{class: "cwday#{date.cwday}#{date == Time.zone.today ? ' today' : ''}"}

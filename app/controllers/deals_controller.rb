@@ -21,6 +21,14 @@ class DealsController < ApplicationController
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
+
+  # 日ナビゲーター部品を返す (Ajax)
+  def day_navigator
+    @year, @month, @day = read_target_date
+    prepare_for_day_navigator
+    render partial: 'shared/day_navigator'
+  end
+
   # 登録画面
   def new
     @year, @month, @day = read_target_date
@@ -170,6 +178,10 @@ class DealsController < ApplicationController
   end
 
   private
+
+  def prepare_for_day_navigator
+    @deals ||= current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+  end
 
   def find_deal
     @deal = current_user.deals.find(params[:id])
