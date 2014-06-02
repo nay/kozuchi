@@ -16,4 +16,9 @@
         = deal_editor 1, @year, @month, @day do
           = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
 
+      - if @created_deal
+        #monthly_contents
+          #book.bottom_box
+            = render :partial => "deals", locals: {deals: [@created_deal]}
+
   = render partial: 'monthly_js'

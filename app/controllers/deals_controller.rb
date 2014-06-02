@@ -21,7 +21,6 @@ class DealsController < ApplicationController
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
-
   # 日ナビゲーター部品を返す (Ajax)
   def day_navigator
     write_target_date(params[:year], params[:month])
@@ -34,6 +33,7 @@ class DealsController < ApplicationController
   def new
     @year, @month, @day = read_target_date
 
+    # 日ナビゲーター用
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
     @deals = current_user.deals.in_a_time_between(start_date, end_date).order(:date, :daily_seq).select(:date)
@@ -47,6 +47,11 @@ class DealsController < ApplicationController
     else
       @deal = Deal::General.new
       @deal.build_simple_entries
+    end
+
+    # 登録成功直後の場合は、登録されたばかりの記入の仕訳帳フォーマットでの表示を添える
+    if flash["created_deal_id"]
+      @created_deal = Deal::Base.find(flash["created_deal_id"])
     end
   end
 

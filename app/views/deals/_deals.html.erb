@@ -1,3 +1,7 @@
+<%
+   # TODO: @deals 以外を利用したいケースができたので、locals で deals があればそれを優先する
+   deals ||= nil
+%>
       <table class="book_header">
         <tr>
           <th class="date">日付</th>
@@ -17,7 +21,7 @@
       <div class="scroll_inner_box">
       <table class="book">
         <% date = Date.new(@year.to_i, @month.to_i, 1) %>
-        <% for deal in @deals %>
+        <% for deal in (deals || @deals) %>
           <% first = true %>
 
           <% for account_entry in deal.readonly_entries %>
@@ -109,5 +113,3 @@
           location.hash = "<%=@updated_deal.id%>";
         <% end %>
       <% end %>
-
-      
