@@ -20,14 +20,7 @@
       <% first = true %>
 
       <% for account_entry in deal.readonly_entries %>
-        <%
-          tr_class = if !deal.confirmed?
-            'unconfirmed'
-          else
-            nil
-          end
-        %>
-        <%= content_tag :tr, :class => tr_class do %>
+        <%= content_tag :tr, :class => (deal.confirmed? ? nil : 'unconfirmed') do %>
           <% size = deal.readonly_entries.size %>
           <% if first %>
             <!-- date -->
