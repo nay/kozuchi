@@ -14,12 +14,10 @@
     %th.action 変更
     %th.action 削除
   - for deal in deals
-    - first = true
-
     - for account_entry in deal.readonly_entries
       = content_tag :tr, :class => (deal.confirmed? ? nil : 'unconfirmed') do
         - size = deal.readonly_entries.size
-        - if first
+        - if deal.readonly_entries.first == account_entry
 
           - # date
           = content_tag :td, :class => 'date', :rowspan => size do
@@ -36,7 +34,7 @@
             = content_tag(:span, deal.daily_seq, :id => deal.id)
 
         - # summary
-        = content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first
+        = content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || deal.readonly_entries.first == account_entry
 
         - # account
         - if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id)
@@ -55,9 +53,8 @@
         %td.amount= number_with_delimiter(account_entry.amount) if account_entry.amount  > 0 && !account_entry.initial_balance?
         %td.amount= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance?
         %td.amount= number_with_delimiter(account_entry.balance)
-        - if first
+        - if deal.readonly_entries.first == account_entry
           %td.action{rowspan: deal.readonly_entries.size}= link_to '変更', {:action => 'edit', :id => deal.id}, class: 'edit_deal'
           %td.action{rowspan: deal.readonly_entries.size}
             - unless deal.settlement_attached?
               = link_to '削除', deal_path(:id => deal), :method => :delete, :data => {:confirm => "#{deal.human_name} を削除します。よろしいですか？"}
-      - first = false
