@@ -21,9 +21,7 @@
 
       <% for account_entry in deal.readonly_entries %>
         <%
-          tr_class = if (@updated_deal && deal.id == @updated_deal.id)
-            'updated_line'
-          elsif !deal.confirmed?
+          tr_class = if !deal.confirmed?
             'unconfirmed'
           else
             nil
@@ -99,10 +97,5 @@
       $('#deal_year').val('<%=@target_month.year%>')
       $('#deal_month').val('<%=@target_month.month%>')
       $('#deal_day').val('<%=@target_month.day if @target_month.day%>')
-    <% end %>
-  <% end %>
-  <% if @updated_deal%>
-    <%= javascript_tag do %>
-      location.hash = "<%=@updated_deal.id%>";
     <% end %>
   <% end %>
