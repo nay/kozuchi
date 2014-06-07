@@ -1,6 +1,6 @@
 <%= deal_form '残高',
               :url => balance_deals_path,
-              html: {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
+              html: {data: {result_url: @deal.new_record? ? new_deal_path() : monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| %>
   <%= render :partial => 'balance_deal_form_contents', :locals => {:f => f} %>
 <% end %>
 <%= error_messages_for :deal %>
