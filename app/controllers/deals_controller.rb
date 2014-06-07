@@ -141,6 +141,8 @@ class DealsController < ApplicationController
     end_date = (start_date >> 1) - 1
     @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
 
+    # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
+    Deal::Base.set_anchor_dates_to(@deals, @year, @month)
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
     case flash[:"#{controller_name}_deal_type"]
