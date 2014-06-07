@@ -49,10 +49,8 @@ class DealsController < ApplicationController
       @deal.build_simple_entries
     end
 
-    # 登録成功直後の場合は、登録されたばかりの記入の仕訳帳フォーマットでの表示を添える
-    if flash["created_deal_id"]
-      @created_deal = Deal::Base.find(flash["created_deal_id"])
-    end
+    # 最近登録/更新された記入を常に5件まで表示する
+    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(5)
   end
 
   # 変更フォームを表示するAjaxアクション

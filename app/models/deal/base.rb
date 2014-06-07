@@ -26,6 +26,7 @@ class Deal::Base < ActiveRecord::Base
   }
   scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
   scope :time_ordering, -> { order(:date, :daily_seq) }
+  scope :recently_updated_ordered, -> { order(updated_at: :desc) }
 
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"
