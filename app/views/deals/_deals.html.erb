@@ -2,107 +2,107 @@
    # TODO: @deals 以外を利用したいケースができたので、locals で deals があればそれを優先する
    deals ||= nil
 %>
-      <table class="book book_header">
-        <tr>
-          <th class="date">日付</th>
-          <th class="number"> </th>
-          <th>摘要</th>
-          <th class="account" colspan="2"> </th>
-          <th class="jump"></th>
-          <th class="amount"><%= bookkeeping_style? ? '借方' : '入金' %></th>
-          <th class="amount"><%= bookkeeping_style? ? '貸方' : '出金' %></th>
-          <th class="amount">残高</th>
-          <th class="action">変更</th>
-          <th class="action">削除</th>
-        </tr>
-        <% date = Date.new(@year.to_i, @month.to_i, 1) %>
-        <% for deal in (deals || @deals) %>
-          <% first = true %>
+  <table class="book book_header">
+    <tr>
+      <th class="date">日付</th>
+      <th class="number"> </th>
+      <th>摘要</th>
+      <th class="account" colspan="2"> </th>
+      <th class="jump"></th>
+      <th class="amount"><%= bookkeeping_style? ? '借方' : '入金' %></th>
+      <th class="amount"><%= bookkeeping_style? ? '貸方' : '出金' %></th>
+      <th class="amount">残高</th>
+      <th class="action">変更</th>
+      <th class="action">削除</th>
+    </tr>
+    <% date = Date.new(@year.to_i, @month.to_i, 1) %>
+    <% for deal in (deals || @deals) %>
+      <% first = true %>
 
-          <% for account_entry in deal.readonly_entries %>
-            <%
-              tr_class = if (@updated_deal && deal.id == @updated_deal.id)
-                'updated_line'
-              elsif !deal.confirmed?
-                'unconfirmed'
-              else
-                nil
-              end
-            %>
-            <%= content_tag :tr, :class => tr_class do %>
-              <% size = deal.readonly_entries.size %>
-              <% if first %>
-                <!-- date -->
-                <%= content_tag :td, :class => 'date', :rowspan => size do %>
-                  <% while date <= deal.date %>
-                    <%= day_anchor date %>
-                  <%
-                    date += 1
-                    end
-                  %>
-                  <%= l deal.date %>
-                  <% if @deals.last == deal %>
-                    <% while date.month == deal.date.month %>
-                      <%= day_anchor date %>
-                      <% date += 1 %>
-                    <% end %>
-                  <% end %>
-                  <% if !deal.confirmed? %>
-                    <br /><%= link_to '確認' , confirm_deal_path(:id => deal), :method => :put, :class => 'small_button', :alt => '確認状態にします。' %>
-                  <% end %>
-                <% end %>
-                <!-- number -->
-                <%= content_tag :td, :class => 'number', :rowspan => size do %>
-                  <%= render :partial => 'shared/deal_note', :locals => {:deal => deal} %>
-                  <%= content_tag(:span, deal.daily_seq, :id => deal.id) %>
+      <% for account_entry in deal.readonly_entries %>
+        <%
+          tr_class = if (@updated_deal && deal.id == @updated_deal.id)
+            'updated_line'
+          elsif !deal.confirmed?
+            'unconfirmed'
+          else
+            nil
+          end
+        %>
+        <%= content_tag :tr, :class => tr_class do %>
+          <% size = deal.readonly_entries.size %>
+          <% if first %>
+            <!-- date -->
+            <%= content_tag :td, :class => 'date', :rowspan => size do %>
+              <% while date <= deal.date %>
+                <%= day_anchor date %>
+              <%
+                date += 1
+                end
+              %>
+              <%= l deal.date %>
+              <% if @deals.last == deal %>
+                <% while date.month == deal.date.month %>
+                  <%= day_anchor date %>
+                  <% date += 1 %>
                 <% end %>
               <% end %>
-              <!-- summary -->
-              <%= content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
-              <!-- account -->
-              <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
-                <td class="account">
-                  <%= display_account_name(account_entry.account) %>
-                </td>
-                <td class="jump">
-                  <% if account_entry.linked_ex_entry_id %>
-                    <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>>連携</span>
-                  <% end %>
-                  <% if account_entry.any_settlement_id %>
-                      <div><%= link_to '精算', settlement_path(:id => account_entry.any_settlement_id) %></div>
-                  <% end %>
-                </td>
-              <% else %>
-                <td colspan="2">
-                  <%= h account_entry.account.name %>
-                </td>
+              <% if !deal.confirmed? %>
+                <br /><%= link_to '確認' , confirm_deal_path(:id => deal), :method => :put, :class => 'small_button', :alt => '確認状態にします。' %>
               <% end %>
-              <td class="account_deals_link"><%= link_to '→', monthly_account_deals_path(:account_id => account_entry.account.id, :year => @year, :month => @month, :anchor => "e#{account_entry.id}") %></td>
-              <td class="amount"><%= number_with_delimiter(account_entry.amount) if account_entry.amount  > 0 && !account_entry.initial_balance? %></td>
-              <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
-              <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
-              <% if first %>
-                <td rowspan="<%=deal.readonly_entries.size%>" class="action"><%= link_to '変更', {:action => 'edit', :id => deal.id}, class: 'edit_deal' %></td>
-                <td rowspan="<%=deal.readonly_entries.size%>" class="action">
-                  <% unless deal.settlement_attached? %>
-                    <%= link_to '削除', deal_path(:id => deal), :method => :delete, :data => {:confirm => "#{deal.human_name} を削除します。よろしいですか？"} %>
-                  <% end %>
-                </td>
-              <% end %>
-            <% end  %>
-            <% first = false %>
+            <% end %>
+            <!-- number -->
+            <%= content_tag :td, :class => 'number', :rowspan => size do %>
+              <%= render :partial => 'shared/deal_note', :locals => {:deal => deal} %>
+              <%= content_tag(:span, deal.daily_seq, :id => deal.id) %>
+            <% end %>
           <% end %>
-        <% end %>
-      </table>
-      <% if @target_month && !@date%>
-        <%= javascript_tag do %>
-          $('#deal_year').val('<%=@target_month.year%>')
-          $('#deal_month').val('<%=@target_month.month%>')
-          $('#deal_day').val('<%=@target_month.day if @target_month.day%>')
-        <% end %>
+          <!-- summary -->
+          <%= content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || first %>
+          <!-- account -->
+          <% if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id) %>
+            <td class="account">
+              <%= display_account_name(account_entry.account) %>
+            </td>
+            <td class="jump">
+              <% if account_entry.linked_ex_entry_id %>
+                <span <%="class='unconfirmed'" unless account_entry.linked_ex_entry_confirmed? %>>連携</span>
+              <% end %>
+              <% if account_entry.any_settlement_id %>
+                  <div><%= link_to '精算', settlement_path(:id => account_entry.any_settlement_id) %></div>
+              <% end %>
+            </td>
+          <% else %>
+            <td colspan="2">
+              <%= h account_entry.account.name %>
+            </td>
+          <% end %>
+          <td class="account_deals_link"><%= link_to '→', monthly_account_deals_path(:account_id => account_entry.account.id, :year => @year, :month => @month, :anchor => "e#{account_entry.id}") %></td>
+          <td class="amount"><%= number_with_delimiter(account_entry.amount) if account_entry.amount  > 0 && !account_entry.initial_balance? %></td>
+          <td class="amount"><%= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance? %></td>
+          <td class="amount"><%= number_with_delimiter(account_entry.balance)%> </td>
+          <% if first %>
+            <td rowspan="<%=deal.readonly_entries.size%>" class="action"><%= link_to '変更', {:action => 'edit', :id => deal.id}, class: 'edit_deal' %></td>
+            <td rowspan="<%=deal.readonly_entries.size%>" class="action">
+              <% unless deal.settlement_attached? %>
+                <%= link_to '削除', deal_path(:id => deal), :method => :delete, :data => {:confirm => "#{deal.human_name} を削除します。よろしいですか？"} %>
+              <% end %>
+            </td>
+          <% end %>
+        <% end  %>
+        <% first = false %>
       <% end %>
-      <% if @updated_deal%>
-        <%= javascript_tag do %>
-          location.hash = "<%=@updated_deal.id%>";
-        <% end %>
-      <% end %>
+    <% end %>
+  </table>
+  <% if @target_month && !@date%>
+    <%= javascript_tag do %>
+      $('#deal_year').val('<%=@target_month.year%>')
+      $('#deal_month').val('<%=@target_month.month%>')
+      $('#deal_day').val('<%=@target_month.day if @target_month.day%>')
+    <% end %>
+  <% end %>
+  <% if @updated_deal%>
+    <%= javascript_tag do %>
+      location.hash = "<%=@updated_deal.id%>";
+    <% end %>
+  <% end %>
