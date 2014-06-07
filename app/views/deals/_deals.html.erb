@@ -2,7 +2,7 @@
    # TODO: @deals 以外を利用したいケースができたので、locals で deals があればそれを優先する
    deals ||= nil
 %>
-      <table class="book_header">
+      <table class="book book_header">
         <tr>
           <th class="date">日付</th>
           <th class="number"> </th>
@@ -14,12 +14,7 @@
           <th class="amount">残高</th>
           <th class="action">変更</th>
           <th class="action">削除</th>
-          <th class="scroll_space"></th>
         </tr>
-      </table>
-      <div class="scroll_box" <%= "style='height:#{h @deals_scroll_height};'".html_safe if @deals_scroll_height && @deals_scroll_height != ''%>>
-      <div class="scroll_inner_box">
-      <table class="book">
         <% date = Date.new(@year.to_i, @month.to_i, 1) %>
         <% for deal in (deals || @deals) %>
           <% first = true %>
@@ -99,8 +94,6 @@
           <% end %>
         <% end %>
       </table>
-      </div>
-      </div>
       <% if @target_month && !@date%>
         <%= javascript_tag do %>
           $('#deal_year').val('<%=@target_month.year%>')
