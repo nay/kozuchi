@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user
+  helper_method :original_user, :bookkeeping_style?
   attr_writer :menu_group, :menu
   protected :'menu_group=', :'menu='
 
@@ -312,6 +312,11 @@ class ApplicationController < ActionController::Base
 
   def require_mobile
     raise UnexpectedUserAgentError unless request.mobile?
+  end
+
+  def bookkeeping_style?
+    return false unless current_user
+    current_user.preferences.bookkeeping_style?
   end
 
 end

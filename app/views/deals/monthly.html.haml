@@ -1,23 +1,25 @@
+.for_monthly_deals
+  #deals_left
+    = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
+    #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @deals, path_proc: ->(date){ "#day#{date.day}" }}
+
+  #deals_right
+    #deal_pattern_frame
+      = link_to '記入する', new_deal_path, class: %w(btn btn-default)
+      -# = render :partial => 'shared/deal_patterns/recent'
+
+  #deals_main
+    #deals_frame
+      = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
+
+      -# deal_type = flash[:"#{controller_name}_deal_type"]
+      -# #deal_editor
+      -#   = deal_editor 1, @year, @month, @day do
+      -#     = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
+
+      #monthly_contents
+        #book.bottom_box
+          = render :partial => "deals"
 
 
-#day_navigator_frame
-  = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
-  = render :partial => 'shared/day_navigator', :locals => {:data => @deals}
-
-#deal_pattern_frame
-  = render :partial => 'shared/deal_patterns/recent'
-
-#deals_frame
-  = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
-
-  - deal_type = flash[:"#{controller_name}_deal_type"]
-  #deal_editor
-    = deal_editor 1, @year, @month, @day do
-      = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
-
-  #monthly_contents
-    #book.bottom_box
-      = render :partial => "deals"
-
-
-= render partial: 'monthly_js'
+    = render partial: 'monthly_js'

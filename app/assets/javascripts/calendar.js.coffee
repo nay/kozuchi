@@ -52,12 +52,8 @@ class @Calendar
   selectMonth: (year, month, call) ->
     @selectedMonth = new Month(year, month)
 
-    if null == @startMonth
-      @startMonth = new Month(year, month)
-      @startMonth.subtract(@leftMargin)
-    else if (@selectedMonth.minus(@startMonth) < 0 || @selectedMonth.minus(@startMonth) >= 12)
-      @startMonth.set(@selectedMonth)
-      @startMonth.subtract(@leftMargin)
+    @startMonth = new Month(year, month)
+    @startMonth.subtract(@leftMargin)
 
     current = new Month(@startMonth.year, @startMonth.month)
 
@@ -70,9 +66,9 @@ class @Calendar
 
     str = "<table>"
     str += "<tr>"
-    str += "<td rowspan='2' id='prev_year' class='year_nav' onClick='calendar.selectMonth("
-    str += @selectedMonth.year - 1
-    str += "," + @selectedMonth.month + ", true);'>&lt;&lt;</td>"
+    str += "<td rowspan='2' id='prev_year' class='year_nav calendar_selector'" +
+      "' data-year='"  + (@selectedMonth.year - 1) +
+      "' data-month='" + @selectedMonth.month + "'>&lt;&lt;</td>"
     str += "<td class='year " + yearClass + "' colspan='" + colspan + "'>" + current.year + "</td>"
     if colspan < 12
       nextYear = current.year + 1
@@ -81,9 +77,9 @@ class @Calendar
       str += "<td class='year " + yearClass + "' colspan='"
       str += secondColspan
       str += "'>" + nextYear + "</td>"
-    str += "<td rowspan='2' id='next_year' class='year_nav' onClick='calendar.selectMonth("
-    str += @selectedMonth.year + 1
-    str += "," + @selectedMonth.month+", true);'>&gt;&gt;</td>"
+    str += "<td rowspan='2' id='next_year' class='year_nav calendar_selector'" +
+      "' data-year='"  + (@selectedMonth.year + 1) +
+      "' data-month='" + @selectedMonth.month + "'>&gt;&gt;</td>"
     str += "</tr>"
     str += "<tr>"
     for i in [0..11]
@@ -93,7 +89,7 @@ class @Calendar
       else
         str += "<td class='selectable_month month' id='month_" + current.year + "_" + current.month + "'>"
         str += "<div class='" + yearClass + "'>"
-        str += "<a href='javascript:calendar.selectMonth(" + current.year + "," + current.month + ", true);'>"
+        str += "<a class='calendar_selector' data-year='" + current.year + "' data-month='" + current.month + "'>"
       str += current.month + "月"
       if !@selectedMonth.equals(current)
         str += '</a>'
@@ -108,6 +104,16 @@ class @Calendar
     $("#calendar_year").val(@selectedMonth.year)
     $("#calendar_month").val(@selectedMonth.month)
 
-    if call && @callback
-      @callback.call()
+    # if call && @callback
+      # @callback.call()
+    if call
+      $('#calendar').trigger('change', @selectedMonth)
 
+$ ->
+  if $('#calendar').length > 0
+    @calendar = new Calendar()
+    @calendar.selectMonth($('#calendar').data('initial-year'), $('#calendar').data('initial-month'), false)
+
+  $(document).on('click', '#calendar .calendar_selector', ->
+    document.calendar.selectMonth($(@).data('year'), $(@).data('month'), true)
+  )

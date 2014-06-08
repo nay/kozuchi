@@ -1,6 +1,17 @@
-#deal_pattern_frame {
+#deals_left {
+  float: left;
+}
+#deals_main {
+  float:left;
+  width: 82%;
+}
+
+#deals_right {
   float:right;
   width: 12%;
+}
+
+#deal_pattern_frame {
   font-size: 14px;
 }
 #today {

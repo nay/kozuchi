@@ -21,6 +21,38 @@ class DealsController < ApplicationController
     :render_options_proc => RENDER_OPTIONS_PROC,
     :redirect_options_proc => REDIRECT_OPTIONS_PROC
 
+  # 日ナビゲーター部品を返す (Ajax)
+  def day_navigator
+    write_target_date(params[:year], params[:month])
+    @year, @month, @day = read_target_date
+    prepare_for_day_navigator
+    render partial: 'shared/day_navigator'
+  end
+
+  # 登録画面
+  def new
+    @year, @month, @day = read_target_date
+
+    # 日ナビゲーター用
+    start_date = Date.new(@year.to_i, @month.to_i, 1)
+    end_date = (start_date >> 1) - 1
+    @deals = current_user.deals.in_a_time_between(start_date, end_date).order(:date, :daily_seq).select(:date)
+
+    # フォーム用
+    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
+    case flash[:"#{controller_name}_deal_type"]
+    when 'balance_deal'
+      @deal = Deal::Balance.new
+    # TODO: 口座
+    else
+      @deal = Deal::General.new
+      @deal.build_simple_entries
+    end
+
+    # 最近登録/更新された記入を常に5件まで表示する
+    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(5)
+  end
+
   # 変更フォームを表示するAjaxアクション
   # :pattern_code が指定されていたら画面上はパターン内容をロードする（コードがなければ Code not found）
   # :pattern_id が指定されていたら（TODO: I/F未実装、候補選択でできる予定）それをロードするが、なければもとのまま
@@ -109,6 +141,8 @@ class DealsController < ApplicationController
     end_date = (start_date >> 1) - 1
     @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
 
+    # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
+    Deal::Base.set_anchor_dates_to(@deals, @year, @month)
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
     case flash[:"#{controller_name}_deal_type"]
@@ -150,6 +184,10 @@ class DealsController < ApplicationController
   end
 
   private
+
+  def prepare_for_day_navigator
+    @deals ||= current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+  end
 
   def find_deal
     @deal = current_user.deals.find(params[:id])

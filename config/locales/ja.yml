@@ -204,6 +204,3 @@ ja:
       full_messages:
         format: "%{attribute}%{message}"
 
-  terms:
-    user:
-      "%{name}さん"

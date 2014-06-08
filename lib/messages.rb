@@ -5,8 +5,11 @@ module Messages
 
   private
   
-  def term(key, *args)
-    I18n.t("terms.#{key}", *args)
+  def term(key, options = {})
+    options[:scope] = ['terms', bookkeeping_style? ? :bookkeeping : :kozuchi]
+    options[:default] = :"terms.#{key}"
+
+    t(key, options)
   end
 
   def message_on_create(obj)
