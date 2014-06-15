@@ -76,10 +76,14 @@ $ ->
   )
 
   # a.edit_click
-  $(document).on('click', 'a.edit_deal', ->
-    location.hash = 'top'
-    $('#deal_editor').load(@href)
-    return false
+  $(document).on('click', 'a.edit_deal', (event)->
+    $('.edit_deal_row').remove()
+    $tr = $(@).closest('tr')
+    while !$tr.hasClass('last_entry')
+      $tr = $tr.next()
+    $tr.after("<tr class='edit_deal_row'><td colspan='12'></td></tr>")
+    $(".edit_deal_row td").load(@href)
+    event.preventDefault()
   )
 
   # a.add_entry_fields

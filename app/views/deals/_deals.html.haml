@@ -15,7 +15,8 @@
     %th.action 削除
   - for deal in deals
     - for account_entry in deal.readonly_entries
-      = content_tag :tr, :class => (deal.confirmed? ? nil : 'unconfirmed') do
+      - tr_classes = [].tap{|a| a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if account_entry == deal.readonly_entries.last}
+      = content_tag :tr, :class => tr_classes.empty? ? nil : tr_classes do
         - size = deal.readonly_entries.size
         - if deal.readonly_entries.first == account_entry
 
