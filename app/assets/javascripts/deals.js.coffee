@@ -77,8 +77,10 @@ $ ->
 
   # a.edit_click
   $(document).on('click', 'a.edit_deal', (event)->
-    $('.edit_deal_row').remove()
     $tr = $(@).closest('tr')
+    if $tr.hasClass('edit_deal_row')
+      $tr = $tr.prev()
+    $('.edit_deal_row').remove()
     while !$tr.hasClass('last_entry')
       $tr = $tr.next()
     $tr.after("<tr class='edit_deal_row'><td colspan='12'></td></tr>")
