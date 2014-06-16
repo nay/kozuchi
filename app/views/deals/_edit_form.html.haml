@@ -1,0 +1,14 @@
+= deal_form nil, |
+              :url => deal_path(:id => @deal.id), |
+              :method => :put, |
+              :html => {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| |
+  - case @deal when Deal::General
+    - if params[:complex] != 'true' && @deal.simple?
+      - @deal.modify_errors_for_simple_form
+      = render :partial => 'general_deal_form_contents', :locals => {:f => f}
+    - else
+      - @deal.modify_errors_for_complex_form
+      = render :partial => 'complex_deal_form_contents', :locals => {:f => f}
+  - when Deal::Balance
+    = render :partial => 'balance_deal_form_contents', :locals => {:f => f}
+= error_messages_for :deal
