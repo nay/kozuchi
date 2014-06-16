@@ -1,7 +1,7 @@
-= deal_form nil, |
-              :url => deal_path(:id => @deal.id), |
-              :method => :put, |
-              :html => {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}} do |f| |
+= form_for @deal, :as => :deal, :url => deal_path(:id => @deal.id), :method => :put, :html => {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}, :id => 'deal_form'} do |f|
+  = f.hidden_field(:year)
+  = f.hidden_field(:month)
+  = f.hidden_field(:day)
   - case @deal when Deal::General
     - if params[:complex] != 'true' && @deal.simple?
       - @deal.modify_errors_for_simple_form

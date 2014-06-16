@@ -1,2 +1,4 @@
-= deal_editor 1, @deal.date.year, @deal.date.month, @deal.date.day do
-  = render partial: 'deals/edit_form'
+#edit_window
+  = deal_editor 1, @deal.date.year, @deal.date.month, @deal.date.day do
+    %div{style: "clear: left;"}
+      = render partial: 'deals/edit_form'

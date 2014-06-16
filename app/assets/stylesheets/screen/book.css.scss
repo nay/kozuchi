@@ -311,6 +311,19 @@ a.small_button, .action a {
 /*　------ 入力欄  ------- */
 
 /* 日付欄 */
+#edit_window {
+  background: #FFFFCC;
+  border: 2px solid #FFFFB2;
+
+  #datebox {
+    border: 0;
+  }
+
+  #deal_form {
+    padding: 4px;
+  }
+}
+
 #datebox {
   float: left;
   padding: 4px;
