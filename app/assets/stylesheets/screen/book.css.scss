@@ -1,5 +1,7 @@
 /* ============== 共通情報　=============== */
 
+$disabled_light_color: #dddddd;
+
 /* 上下の margin に関する汎用部品 */
 .top_box {
   margin-bottom: 8px;
@@ -29,7 +31,22 @@
   cursor: pointer;
 }
 
+a.disabled, a:hover.disabled, a:active.disabled, a:visited.disabled {
+  color: black;
+  text-decoration: none;
+  cursor: default;
+}
+
+
 /* フォーム地 */
+
+#new_deal_window.disabled {
+  .tabsheet, .form_box {
+    border: 2px solid $disabled_light_color;
+    background-color: $disabled_light_color;
+  }
+}
+
 .tabsheet, .form_box {
   border: 2px solid #ffffb2;
   padding: 4px;
@@ -50,7 +67,7 @@ table.horizontal th, table.horizontal td {
 }
 
 /* number fields */
-input.number, #datebox input, #deal_amount, #deal_balance {
+input.number, .datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;
   text-align: right;
 }
@@ -168,6 +185,13 @@ table.masters {
   padding: 2px;
 }
 
+#new_deal_window.disabled {
+  .tab, .selectedtab {
+    border-top: 2px solid $disabled_light_color;
+    border-left: 2px solid $disabled_light_color;
+    border-right: 2px solid $disabled_light_color;
+  }
+}
 
 .tab, .selectedtab {
   margin-top: 8px;
@@ -178,6 +202,12 @@ table.masters {
   border-top: 2px solid #FFFFB2;
   border-left: 2px solid #FFFFB2;
   border-right: 2px solid #FFFFB2;
+}
+
+#new_deal_window.disabled {
+  .selectedtab {
+    background-color: $disabled_light_color;
+  }
 }
 
 .selectedtab {
@@ -318,7 +348,7 @@ a.small_button, .action a {
 #edit_window {
   background: #FFFFCC;
 
-  #datebox {
+  .datebox {
     border: 0;
     float: none;
   }
@@ -329,7 +359,16 @@ a.small_button, .action a {
 }
 
 /* 日付欄 */
-#datebox {
+#new_deal_window.disabled {
+  .datebox {
+    background: $disabled_light_color;
+    border-top: 2px solid $disabled_light_color;
+    border-left: 2px solid $disabled_light_color;
+    border-right: 2px solid $disabled_light_color;
+  }
+}
+
+.datebox {
   float: left;
   padding: 4px;
   background: #FFFFCC;
@@ -412,7 +451,7 @@ table.balance_sheet {
 
 }
 
-#deal_forms {
+.deal_editor {
   .entry div {
     float: left;
   }

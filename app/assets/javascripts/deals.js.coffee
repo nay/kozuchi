@@ -1,3 +1,4 @@
+
 # 残高編集時に金額を計算する
 class MoneyCounter
   fields: ['man', 'gosen', 'nisen', 'sen', 'gohyaku', 'hyaku', 'gojyu', 'jyu', 'go', 'ichi']
@@ -30,9 +31,39 @@ $ ->
   hideNotice = ->
     $('#notice').hide()
 
+  # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化する
+  disableCreateWindow = ->
+    $new_deal_window = $("#new_deal_window")
+    $new_deal_window.addClass('disabled')
+    $new_deal_window.find("*").each ->
+      if @id
+        @id = "disabled_new_deal_" + @id
+      if @tagName == "A"
+        $(@).addClass('disabled')
+      if @tagName == "INPUT" || @tagName == "SELECT"
+        @disabled = 'disabled'
+
+  # 登録フォーム一式のidや無効化状態を戻す
+  enableCreateWindow = ->
+    $new_deal_window = $("#new_deal_window")
+    $new_deal_window.removeClass('disabled')
+    $new_deal_window.find("*").each ->
+      if @.id
+        @.id = @.id.replace("disabled_new_deal_", "")
+      if @tagName == "A"
+        $(@).removeClass('disabled')
+      if @tagName == "INPUT" || @tagName == "SELECT"
+        $(@).prop('disabled', null)
+
+  # 無効化されたリンクを封じる
+  $(document).on('click', "a.disabled", (event) ->
+    event.preventDefault()
+  )
+
   # 編集windowを閉じる
   $(document).on('click', '#edit_window button.close', (event) ->
     $(@).closest('tr.edit_deal_row').remove()
+    enableCreateWindow()
     event.preventDefault()
   )
 
@@ -89,6 +120,7 @@ $ ->
     $('.edit_deal_row').remove()
     while !$tr.hasClass('last_entry')
       $tr = $tr.next()
+    disableCreateWindow()
     $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(@).data('deal-id') + "'></td></tr>")
     $(".edit_deal_row td").load(@href, null, ->
       location.hash = $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
