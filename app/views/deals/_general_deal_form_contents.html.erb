@@ -20,7 +20,7 @@
       <br />
       <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>&nbsp;
       <% if !@deal.new_record? %>
-        <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal' %>
+        <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal', data: {deal_id: @deal.id} %>
       <% end %>
       <div style="clear:left;"></div>
     </div>

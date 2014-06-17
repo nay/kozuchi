@@ -81,7 +81,7 @@ $ ->
     return false # 通常の Form 動作は行わない
   )
 
-  # a.edit_click
+  # 編集リンクのクリック
   $(document).on('click', 'a.edit_deal', (event)->
     $tr = $(@).closest('tr')
     if $tr.hasClass('edit_deal_row')
@@ -89,8 +89,10 @@ $ ->
     $('.edit_deal_row').remove()
     while !$tr.hasClass('last_entry')
       $tr = $tr.next()
-    $tr.after("<tr class='edit_deal_row'><td colspan='12'></td></tr>")
-    $(".edit_deal_row td").load(@href)
+    $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(@).data('deal-id') + "'></td></tr>")
+    $(".edit_deal_row td").load(@href, null, ->
+      location.hash = $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
+    )
     event.preventDefault()
   )
 
