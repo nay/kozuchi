@@ -310,10 +310,13 @@ a.small_button, .action a {
 
 /*　------ 入力欄  ------- */
 
-/* 日付欄 */
+/* 編集欄 */
+.book tr.edit_deal_row td {
+  padding: 0;
+}
+
 #edit_window {
   background: #FFFFCC;
-  border: 2px solid #FFFFB2;
 
   #datebox {
     border: 0;
@@ -325,6 +328,7 @@ a.small_button, .action a {
   }
 }
 
+/* 日付欄 */
 #datebox {
   float: left;
   padding: 4px;

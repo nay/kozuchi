@@ -30,6 +30,12 @@ $ ->
   hideNotice = ->
     $('#notice').hide()
 
+  # 編集windowを閉じる
+  $(document).on('click', '#edit_window button.close', (event) ->
+    $(@).closest('tr.edit_deal_row').remove()
+    event.preventDefault()
+  )
+
   # deal_tab
   $(document).on('click', '#deal_forms a.deal_tab', ->
     hideNotice()
