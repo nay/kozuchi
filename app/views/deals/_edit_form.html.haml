@@ -5,7 +5,7 @@
   - case @deal when Deal::General
     - if params[:complex] != 'true' && @deal.simple?
       - @deal.modify_errors_for_simple_form
-      = render :partial => 'general_deal_form_contents', :locals => {:f => f}
+      = render :partial => 'general_deal_form_contents', :locals => {:f => f, pattern_update_area: '.edit_deal_row td'}
     - else
       - @deal.modify_errors_for_complex_form
       = render :partial => 'complex_deal_form_contents', :locals => {:f => f}

@@ -19,10 +19,10 @@
             if (data == 'Code not found') {
               $('#pattern_search_result')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
             } else {
-              $('#<%= update_area_id %>').empty()
-              $('#<%= update_area_id %>').append(data)
+              $('<%= update_area %>').empty()
+              $('<%= update_area %>').append(data)
               // focus on submit button
-              $("#<%= update_area_id %> input[type='submit']").focus()
+              $("<%= update_area %> input[type='submit']").focus()
 
               // refresh recent patterns
               $('#deal_pattern_frame').load('<%= recent_deal_patterns_path %>')

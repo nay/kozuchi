@@ -1,6 +1,6 @@
 <%
   # TODO: url や更新場所など、呼び出し元依存の分岐コードが入ってしまっているのを整理したい
-  update_area_id = deal.kind_of?(Deal::Base) ? 'deal_forms' : 'form_frame'
+  update_area = deal.kind_of?(Deal::Base) ? '#deal_forms' : '#form_frame'
 %>
 <%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
   <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
@@ -102,7 +102,7 @@
         raise "unknown Deal object"
       end
     %></div>
-    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area_id => update_area_id} %>
+    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area => update_area} %>
   </div>
   <div style="clear: left;"></div>
 </div>
