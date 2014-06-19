@@ -5,8 +5,8 @@
     #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @deals}
 
   #deals_right
+    = link_to '一覧へ', deals_path(year: @year, month: @month), class: %w(btn btn-default)
     #deal_pattern_frame
-      = link_to '一覧へ', deals_path(year: @year, month: @month), class: %w(btn btn-default)
       = render :partial => 'shared/deal_patterns/recent'
 
   #deals_main
