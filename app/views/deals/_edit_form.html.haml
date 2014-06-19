@@ -1,4 +1,4 @@
-= form_for @deal, :as => :deal, :url => deal_path(:id => @deal.id), :method => :patch, :html => {data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}, :id => 'deal_form'} do |f|
+= form_for @deal, :as => :deal, :url => deal_path(:id => @deal.id), :method => :patch, :html => {:id => 'deal_form'} do |f|
   = f.hidden_field(:year)
   = f.hidden_field(:month)
   = f.hidden_field(:day)

@@ -34,6 +34,7 @@ $ ->
   # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化する
   disableCreateWindow = ->
     $new_deal_window = $("#new_deal_window")
+    $new_deal_window.find('#errorExplanation').remove() # 検証エラーメッセージが出ていたら削除する
     $new_deal_window.addClass('disabled')
     $new_deal_window.find("*").each ->
       if @id
@@ -98,7 +99,7 @@ $ ->
         $('#deal_forms').empty()
         $('#deal_forms').append(result.error_view)
       else
-        resultUrl = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
         resultUrlWithHash = resultUrl + "#" + result.id
         prevUrl = location.pathname
         prevSearch = location.search
