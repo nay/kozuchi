@@ -6,7 +6,7 @@
 
   #deals_right
     = link_to '一覧へ', deals_path(year: @year, month: @month), class: %w(btn btn-default)
-    #deal_pattern_frame
+    #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'always'}}
       = render :partial => 'shared/deal_patterns/recent'
 
   #deals_main

@@ -24,8 +24,7 @@
               // focus on submit button
               $("<%= update_area %> input[type='submit']").focus()
 
-              // refresh recent patterns
-              $('#deal_pattern_frame').load('<%= recent_deal_patterns_path %>')
+              loadRecentDealPatterns()
             }
           })
         }

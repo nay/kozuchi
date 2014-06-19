@@ -26,6 +26,21 @@ addClassToUpdatedline = ->
 clearUpdateLine = ->
   $("tr").removeClass("updated_line")
 
+# 最近の記入パターン欄の内容の更新
+loadRecentDealPatterns = ->
+  $frame = $('#deal_pattern_frame')
+  $frame.load($frame.data('url'))
+
+# 最近の記入パターン欄を表示する（常に表示モードならなにもしない）
+showRecentDealPatterns = ->
+  return if $('#deal_pattern_frame').data('mode') == 'always'
+  $('#deal_pattern_frame').show()
+
+# 最近の記入パターン欄を隠す（常に表示モードならなにもしない）
+hideRecentDealPatterns = ->
+  return if $('#deal_pattern_frame').data('mode') == 'always'
+  $('#deal_pattern_frame').hide()
+
 $ ->
   # hide notice
   hideNotice = ->
@@ -65,6 +80,7 @@ $ ->
   $(document).on('click', '#edit_window button.close', (event) ->
     $(@).closest('tr.edit_deal_row').remove()
     enableCreateWindow()
+    hideRecentDealPatterns()
     event.preventDefault()
   )
 
@@ -126,6 +142,7 @@ $ ->
     $(".edit_deal_row td").load(@href, null, ->
       location.hash = $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
     )
+    showRecentDealPatterns()
     event.preventDefault()
   )
 
