@@ -1,0 +1,5 @@
+#edit_window
+  %button.close{type: "button"} &times
+  .deal_editor
+    = deal_editor 1, @deal.date.year, @deal.date.month, @deal.date.day do
+      = render partial: 'deals/edit_form'

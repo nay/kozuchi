@@ -20,14 +20,14 @@
       <br />
       <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>&nbsp;
       <% if !@deal.new_record? %>
-        <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal' %>
+        <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal', data: {deal_id: @deal.id} %>
       <% end %>
       <div style="clear:left;"></div>
     </div>
   </div>
   <div class="deal_patterns" style="float:left; margin-left: 10px;">
     <div style="display:none;" id="load_pattern_url"><%= @deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : edit_deal_path(:id => @deal.id, :pattern_code => 'template_pattern_code') %></div>
-    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area_id => 'deal_forms'} %>
+    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area => pattern_update_area} %>
   </div>
   <div style="clear:left;"></div>
 

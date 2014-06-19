@@ -1,6 +1,5 @@
 - # TODO: @deals 以外を利用したいケースができたので、locals で deals があればそれを優先する
 - deals ||= @deals
-
 %table.book.book_header
   %tr
     %th.date 日付
@@ -15,7 +14,8 @@
     %th.action 削除
   - for deal in deals
     - for account_entry in deal.readonly_entries
-      = content_tag :tr, :class => (deal.confirmed? ? nil : 'unconfirmed') do
+      - tr_classes = [].tap{|a| a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if account_entry == deal.readonly_entries.last}
+      = content_tag :tr, class: tr_classes.empty? ? nil : tr_classes do
         - size = deal.readonly_entries.size
         - if deal.readonly_entries.first == account_entry
 
@@ -31,7 +31,7 @@
           - # number
           = content_tag :td, :class => 'number', :rowspan => size do
             = render :partial => 'shared/deal_note', :locals => {:deal => deal}
-            = content_tag(:span, deal.daily_seq, :id => deal.id)
+            = content_tag(:span, deal.daily_seq, id: deal.id, class: :deal_id)
 
         - # summary
         = content_tag :td, deal.summary_unified? ? deal.summary : account_entry.summary, :class => 'summary', :rowspan => deal.summary_unified? ? size : 1 if !deal.summary_unified? || deal.readonly_entries.first == account_entry
@@ -54,7 +54,7 @@
         %td.amount= number_with_delimiter(account_entry.amount.abs) if account_entry.amount < 0 && !account_entry.initial_balance?
         %td.amount= number_with_delimiter(account_entry.balance)
         - if deal.readonly_entries.first == account_entry
-          %td.action{rowspan: deal.readonly_entries.size}= link_to '変更', {:action => 'edit', :id => deal.id}, class: 'edit_deal'
+          %td.action{rowspan: deal.readonly_entries.size}= link_to '変更', {:action => 'edit', :id => deal.id}, class: 'edit_deal', data: {deal_id: deal.id}
           %td.action{rowspan: deal.readonly_entries.size}
             - unless deal.settlement_attached?
               = link_to '削除', deal_path(:id => deal), :method => :delete, :data => {:confirm => "#{deal.human_name} を削除します。よろしいですか？"}

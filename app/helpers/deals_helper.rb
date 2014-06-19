@@ -67,8 +67,8 @@ module DealsHelper
 
   def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, &block)
     tab_index = start_tab_index
-    text = content_tag(:div, :id => 'datebox') do
-      content_tag :form, :id => 'datebox_form' do
+    text = content_tag(:div, class: 'datebox') do
+      content_tag :form, class: 'datebox_form' do
         d = ''
         d << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
         tab_index += 1
@@ -112,8 +112,8 @@ module DealsHelper
   end
 
   def datebox
-    content_tag :div, :id => "datebox" do
-      content_tag :form, :id => "datebox_form" do
+    content_tag :div, class: "datebox" do
+      content_tag :form, class: "datebox_form" do
         text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => 1) +
           text_field(:date, :month, :size => 2, :max_length => 2, :tabindex => 2) +
           text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => 3)

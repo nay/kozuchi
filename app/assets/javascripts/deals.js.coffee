@@ -1,3 +1,4 @@
+
 # 残高編集時に金額を計算する
 class MoneyCounter
   fields: ['man', 'gosen', 'nisen', 'sen', 'gohyaku', 'hyaku', 'gojyu', 'jyu', 'go', 'ichi']
@@ -30,6 +31,43 @@ $ ->
   hideNotice = ->
     $('#notice').hide()
 
+  # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化する
+  disableCreateWindow = ->
+    $new_deal_window = $("#new_deal_window")
+    $new_deal_window.find('#errorExplanation').remove() # 検証エラーメッセージが出ていたら削除する
+    $new_deal_window.addClass('disabled')
+    $new_deal_window.find("*").each ->
+      if @id
+        @id = "disabled_new_deal_" + @id
+      if @tagName == "A"
+        $(@).addClass('disabled')
+      if @tagName == "INPUT" || @tagName == "SELECT"
+        @disabled = 'disabled'
+
+  # 登録フォーム一式のidや無効化状態を戻す
+  enableCreateWindow = ->
+    $new_deal_window = $("#new_deal_window")
+    $new_deal_window.removeClass('disabled')
+    $new_deal_window.find("*").each ->
+      if @.id
+        @.id = @.id.replace("disabled_new_deal_", "")
+      if @tagName == "A"
+        $(@).removeClass('disabled')
+      if @tagName == "INPUT" || @tagName == "SELECT"
+        $(@).prop('disabled', null)
+
+  # 無効化されたリンクを封じる
+  $(document).on('click', "a.disabled", (event) ->
+    event.preventDefault()
+  )
+
+  # 編集windowを閉じる
+  $(document).on('click', '#edit_window button.close', (event) ->
+    $(@).closest('tr.edit_deal_row').remove()
+    enableCreateWindow()
+    event.preventDefault()
+  )
+
   # deal_tab
   $(document).on('click', '#deal_forms a.deal_tab', ->
     hideNotice()
@@ -61,7 +99,7 @@ $ ->
         $('#deal_forms').empty()
         $('#deal_forms').append(result.error_view)
       else
-        resultUrl = $('#deal_form').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
         resultUrlWithHash = resultUrl + "#" + result.id
         prevUrl = location.pathname
         prevSearch = location.search
@@ -75,11 +113,20 @@ $ ->
     return false # 通常の Form 動作は行わない
   )
 
-  # a.edit_click
-  $(document).on('click', 'a.edit_deal', ->
-    location.hash = 'top'
-    $('#deal_editor').load(@href)
-    return false
+  # 編集リンクのクリック
+  $(document).on('click', 'a.edit_deal', (event)->
+    $tr = $(@).closest('tr')
+    if $tr.hasClass('edit_deal_row')
+      $tr = $tr.prev()
+    $('.edit_deal_row').remove()
+    while !$tr.hasClass('last_entry')
+      $tr = $tr.next()
+    disableCreateWindow()
+    $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(@).data('deal-id') + "'></td></tr>")
+    $(".edit_deal_row td").load(@href, null, ->
+      location.hash = $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
+    )
+    event.preventDefault()
   )
 
   # a.add_entry_fields

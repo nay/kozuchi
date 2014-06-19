@@ -1,3 +1,4 @@
+#deal_form_option{data: {result_url: new_deal_path}}
 .for_deal_editor
   #deals_left
     = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
@@ -12,9 +13,10 @@
     = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
     #deals_frame
       - deal_type = flash[:"#{controller_name}_deal_type"]
-      #deal_editor
-        = deal_editor 1, @year, @month, @day do
-          = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
+      #new_deal_window
+        .deal_editor
+          = deal_editor 1, @year, @month, @day do
+            = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
 
       - if @recently_updated_deals.present?
         %h3 最近の記入
