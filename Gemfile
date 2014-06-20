@@ -54,5 +54,5 @@ group :development, :test do
   gem "rspec-rails"
   gem "capybara"
   gem "factory_girl_rails", "~> 4.0"
+  gem "pry-rails"
 end
-#gem "pry-rails", :group => "development"
