@@ -147,7 +147,7 @@ module Deal
   end
 
   def active_entries
-    changed? ? (debtor_entries + creditor_entries) : readonly_entries
+    (debtor_entries.loaded? || creditor_entries.loaded?) ? (debtor_entries.find_all{|e| !e.marked_for_destruction? } + creditor_entries.find_all{|e| !e.marked_for_destruction? }) : readonly_entries
   end
 
   def reload
