@@ -7,8 +7,6 @@ gem 'rails', '4.0.2'
 
 gem 'mysql2'
 
-gem 'nokogiri' # for jpmobile
-gem 'jpmobile'
 # gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'haml-rails'
 gem 'bootstrap-sass'

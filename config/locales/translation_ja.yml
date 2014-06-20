@@ -180,7 +180,6 @@ ja:
         activated_at: "で活性化"  #g
         password_token: "パスワードのトークン"  #g
         password_token_expires_at: "パスワードがトークンの有効期限"  #g
-        mobile_identity: "モバイルアイデンティティ"  #g
         deals: "お得な情報"  #g
         expenses: "費用"  #g
         preferences: "設定"  #g
@@ -248,7 +247,6 @@ ja:
         password_confirmation: "パスワード（確認）"
         password_token: "パスワードのトークン"  #g
         password_token_expires_at: "パスワードがトークンの有効期限"  #g
-        mobile_identity: "モバイルアイデンティティ"  #g
         preferences: "設定"  #g
         expenses: "費用"  #g
         deals: "お得な情報"  #g

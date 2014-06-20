@@ -89,12 +89,6 @@ Kozuchi::Application.routes.draw do
   # DealSuggestionsController
   resources :deal_suggestions, :path => 'deals/suggestions', :only => [:index]
 
-  resource :mobile_device, :controller => :mobiles do
-    member do
-      get 'confirm_destroy'
-    end
-  end
-
   get '/home' => 'home#index', :as => :home
 
   resource :user
@@ -143,14 +137,6 @@ Kozuchi::Application.routes.draw do
   controller :profit_and_loss do
     get :profit_and_loss, :action => :show
     get 'profit_and_loss/:year/:month', {:as => :monthly_profit_and_loss, :action => 'monthly'}.merge(YEAR_MONTH_REQUIREMENTS)
-  end
-
-  # MobileDealsController
-  scope :controller => 'mobile_deals', :path => 'mobile' do
-    get 'expenses/:year/:month/:day', :as => :mobile_daily_expenses, :action => 'daily_expenses'
-    get 'deals/general/new', :as => :new_mobile_general_deal, :action => 'new_general_deal'
-    post 'deals/general', :as => :mobile_general_deals, :action => 'create_general_deal'
-    get 'deals/created/:year/:month/:day', :as => :daily_created_mobile_deals, :action => 'daily_created'
   end
 
   # ExportController

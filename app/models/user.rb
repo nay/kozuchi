@@ -4,7 +4,6 @@ require 'digest/sha1'
 class User < ActiveRecord::Base
   require 'user/friend' # TODO: User::Friendのincludeが(少なくともdevelopmentモードで)エラーになるため応急措置
   include User::Friend
-  include User::Mobile
 
   delegate :bookkeeping_style?, :to => :preferences
 

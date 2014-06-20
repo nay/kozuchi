@@ -2,13 +2,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   include Messages
-  include Jpmobile::ViewSelector
 
-#  mobile_filter
-  hankaku_filter
-  trans_sid
   include AuthenticatedSystem
-  before_filter :set_content_type_for_mobile
   before_filter :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?
@@ -206,10 +201,6 @@ class ApplicationController < ActionController::Base
     @account = current_user.accounts.find(params[:account_id])
   end
 
-  def set_content_type_for_mobile
-    headers["Content-Type"] = "text/html; chartset=Shift_JIS" if request.mobile?
-  end
-
   def IE6?
     request.user_agent =~ /MSIE 6.0/ && !(request.user_agent =~ /Opera/)
   end
@@ -308,10 +299,6 @@ class ApplicationController < ActionController::Base
       return false
     end
     true
-  end
-
-  def require_mobile
-    raise UnexpectedUserAgentError unless request.mobile?
   end
 
   def bookkeeping_style?

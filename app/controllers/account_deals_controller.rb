@@ -7,8 +7,6 @@ class AccountDealsController < ApplicationController
 
   before_filter :check_account
   before_filter :find_account, :except => [:index]
-  before_filter :require_mobile, :only => [:balance]
-  
 
   deal_actions_for :creditor_general_deal, :debtor_general_deal, :balance_deal,
     :ajax => true,
@@ -41,11 +39,5 @@ class AccountDealsController < ApplicationController
     @deal = Deal::General.new
     @deal.build_simple_entries
   end
-
-  # 携帯専用：残高表示
-  def balance
-    
-  end
-
 
 end

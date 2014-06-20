@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../mobile_spec_helper')
 
 describe AccountDealsController do
   fixtures :users, :preferences, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
