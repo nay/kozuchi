@@ -5,7 +5,7 @@ class DealsController < ApplicationController
   menu_group "家計簿"
   menu "仕訳帳"
   before_filter :check_account
-  before_filter :find_deal, :only => [:edit, :update, :confirm, :destroy]
+  before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
 
 
@@ -54,23 +54,28 @@ class DealsController < ApplicationController
   end
 
   # 変更フォームを表示するAjaxアクション
-  # :pattern_code が指定されていたら画面上はパターン内容をロードする（コードがなければ Code not found）
   # :pattern_id が指定されていたら（TODO: I/F未実装、候補選択でできる予定）それをロードするが、なければもとのまま
   def edit
     load = nil
-    if params[:pattern_code].present?
-      load =  current_user.deal_patterns.find_by(code: params[:pattern_code])
-      # コードが見つからないときはクライアント側で特別に処理するので目印を返す
-      unless load
-        render :text => 'Code not found'
-        return
-      end
-    elsif params[:pattern_id].present?
+    if params[:pattern_id].present?
       load = current_user.deal_patterns.find_by(id: params[:pattern_id])
     end
     @deal.load(load) if load
     @deal.fill_complex_entries if load || @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
     render :partial => 'edit'
+  end
+
+  def load_deal_pattern_into_edit
+    raise "no pattern_code" unless params[:pattern_code].present?
+    load =  current_user.deal_patterns.find_by(code: params[:pattern_code])
+    # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+    unless load
+      render :text => 'Code not found'
+      return
+    end
+    @deal.load(load)
+    @deal.fill_complex_entries if @deal.kind_of?(Deal::General) && (params[:complex] == 'true' || !@deal.simple? || !@deal.summary_unified?)
+    render :partial => 'edit_form'
   end
 
   # 記入欄を増やすアクション

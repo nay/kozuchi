@@ -71,6 +71,7 @@ Kozuchi::Application.routes.draw do
         get 'search'
       end
     end
+    get 'deals/:id/edit/deal_pattern/:pattern_code', as: :deal_pattern_in_edit, action: :load_deal_pattern_into_edit
     # :sub_resources => {:entries => {:only => [:create]}}
     # postだけにしたいが構造上 put のフォームの中から呼ばれて面倒なので
     match 'deals/:id/entries', :action => 'create_entry', :as => :deal_entries, :via => [:post, :patch]
