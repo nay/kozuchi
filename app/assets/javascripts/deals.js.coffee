@@ -227,3 +227,28 @@ $ ->
     today = new Date
     document.calendar.selectMonth(today.getFullYear(), today.getMonth()+1, true)
     event.preventDefault()
+
+  # 記入パターンのロード（リターンキーが押されたとき）
+  $(document).on('keypress', 'input#pattern_keyword', (e) ->
+    if e.which && e.which == 13
+      $('#pattern_search_result').empty()
+      code = $('input#pattern_keyword').val()
+      if code != ''
+        # try to load that pattern
+        $('#notice').hide()
+        url = $('#load_pattern_url').text().replace('template_pattern_code', encodeURIComponent(code))
+
+        # 指定したコードがないときは 'Code not found' が返る
+        $.get(url, (data) ->
+          if data == 'Code not found'
+            $('#pattern_search_result')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
+          else
+            update_area = $('input#pattern_keyword').data('update-area')
+            $(update_area).empty()
+            $(update_area).append(data)
+            # focus on submit button
+            $(update_area).find("input[type='submit']").focus()
+            loadRecentDealPatterns()
+        )
+      event.preventDefault()
+  )
