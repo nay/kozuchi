@@ -229,7 +229,7 @@ $ ->
     event.preventDefault()
 
   # 記入パターンのロード（リターンキーが押されたとき）
-  $(document).on('keypress', 'input#pattern_keyword', (e) ->
+  $(document).on('keypress', 'input#pattern_keyword', (event) ->
     if e.which && e.which == 13
       $('#pattern_search_result').empty()
       code = $('input#pattern_keyword').val()
@@ -251,4 +251,15 @@ $ ->
             loadRecentDealPatterns()
         )
       event.preventDefault()
+  )
+
+  # 記入の削除
+  $(document).on('click', 'a.deal_deletion_link', (event)->
+    $.post(@href, {_method: 'delete'}, (data) ->
+      $('#content').find(".alert").remove()
+      $('#content').prepend("<div class='alert alert-success alert-dismissable'><button class='close' type='button' data-dismiss='alert' area-hidden='true'>&times;</button>" + data.success_message + "</div>")
+      $("tr.d" + data.deal.id).remove()
+      location.hash = "top" # '#' もなしで取るのは難しいのでひとまずこのようにする
+    )
+    event.preventDefault()
   )

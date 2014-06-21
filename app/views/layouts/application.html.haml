@@ -12,7 +12,7 @@
     = javascript_include_tag :application
     = render partial: "shared/google_analytics"
     = yield :head
-  %body
+  %body#top
     %header
       = render partial: 'shared/navbar'
       - if @menu.present?

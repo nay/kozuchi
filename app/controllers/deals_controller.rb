@@ -161,11 +161,14 @@ class DealsController < ApplicationController
   end
 
   # 記入の削除
+  # Ajaxでリクエストされる前提
   def destroy
     @deal.destroy
-    flash[:notice] = "#{@deal.human_name} を削除しました。"
     write_target_date(@deal.date)
-    redirect_to monthly_deals_path(:year => @deal.date.year, :month => @deal.date.month)
+    render json: {
+        deal: {id: @deal.id},
+        success_message: "#{@deal.human_name} を削除しました。"
+    }
   end
 
   # キーワードで検索したときに一覧を出す
