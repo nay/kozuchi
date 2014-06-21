@@ -11,7 +11,11 @@
 
   #deals_main
     #deals_frame
-      = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
+      #deals_navigator.clearfix
+        #account_selector.part
+          = grouped_account_select "account_id", current_user.accounts, '', prompt: 'すべての記入', class: "form-control"
+        #calendar_in_navigator.part
+          = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
       #monthly_contents
         #book.bottom_box
           = render :partial => "deals"
