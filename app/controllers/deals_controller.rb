@@ -147,16 +147,6 @@ class DealsController < ApplicationController
 
     # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
     Deal::Base.set_anchor_dates_to(@deals, @year, @month)
-    # フォーム用
-    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
-    case flash[:"#{controller_name}_deal_type"]
-    when 'balance_deal'
-      @deal = Deal::Balance.new
-      # TODO: 口座
-    else
-      @deal = Deal::General.new
-      @deal.build_simple_entries
-    end
   end
 
   # 記入の削除
