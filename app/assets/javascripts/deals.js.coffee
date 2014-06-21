@@ -263,3 +263,14 @@ $ ->
     )
     event.preventDefault()
   )
+
+  # ナビゲーター内の口座選択の変更
+  $('#deals_navigator #account_selector #account_id').change (event)->
+    account_id = $(@).val()
+    if account_id == ''
+      # TODO: あとで実装する
+      document.location.href = ""
+    else
+      document.location.href = $('#deal_form_option').data('account-url').replace('_ACCOUNT_ID_', account_id)
+
+
