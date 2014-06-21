@@ -12,15 +12,8 @@
   #deals_main
     #deals_frame
       = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
-
-      -# deal_type = flash[:"#{controller_name}_deal_type"]
-      -# #deal_editor
-      -#   = deal_editor 1, @year, @month, @day do
-      -#     = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
-
       #monthly_contents
         #book.bottom_box
           = render :partial => "deals"
-
 
     = render partial: 'monthly_js'
