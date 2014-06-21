@@ -37,26 +37,6 @@ a.disabled, a:hover.disabled, a:active.disabled, a:visited.disabled {
   cursor: default;
 }
 
-/* ここにあるのがいいのかよくわからない */
-/* 口座選択・カレンダーなどを抱える上部バー */
-#deals_navigator {
-  #account_selector {
-    width: 20%;
-    padding-right: 10px;
-
-    select {
-      width: 100%;
-    }
-  }
-  #calendar_in_navigator {
-    width: 80%;
-  }
-  .part {
-    float: left;
-  }
-}
-
-
 /* フォーム地 */
 
 #new_deal_window.disabled {
