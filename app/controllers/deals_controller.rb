@@ -25,8 +25,7 @@ class DealsController < ApplicationController
   def day_navigator
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
-    prepare_for_day_navigator
-    render partial: 'shared/day_navigator'
+    render partial: 'shared/day_navigator', locals: {data: data_for_day_navigator}
   end
 
   # 登録画面
@@ -189,8 +188,8 @@ class DealsController < ApplicationController
 
   private
 
-  def prepare_for_day_navigator
-    @deals ||= current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+  def data_for_day_navigator
+    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
   end
 
   def find_deal
