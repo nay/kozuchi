@@ -1,3 +1,5 @@
+/* 記入一覧系に関するCSS */
+
 #deals_left {
   float: left;
 }
@@ -19,3 +21,22 @@
   padding-bottom: 13px;
   margin-bottom: 8px;
 }
+
+/* 口座選択・カレンダーなどを抱える上部バー */
+#deals_navigator {
+  #account_selector {
+    width: 20%;
+    padding-right: 10px;
+
+    select {
+      width: 100%;
+    }
+  }
+  #calendar_in_navigator {
+    width: 80%;
+  }
+  .part {
+    float: left;
+  }
+}
+

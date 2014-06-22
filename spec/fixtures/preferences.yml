@@ -1,6 +1,5 @@
 taro_preference:
   user_id: <%= Fixtures.identify(:taro) %>
-  deals_scroll_height: 
-  color: 
+  color:
   business_use: 1
   use_daily_booking: 1

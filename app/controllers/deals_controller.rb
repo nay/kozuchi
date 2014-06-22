@@ -7,26 +7,97 @@ class DealsController < ApplicationController
   before_filter :check_account
   before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
+  before_filter :find_account_if_specified, only: [:monthly]
 
+  # 単数記入タブエリアの表示 (Ajax)
+  def new_general_deal
+    @deal = current_user.general_deals.build
+    @deal.build_simple_entries
+    flash[:"#{controller_name}_deal_type"] = 'general_deal' # reloadに強い
+    render partial: 'general_deal_form'
+  end
 
-  RENDER_OPTIONS_PROC = lambda {|deal_type|
-    {:partial => "#{deal_type}_form"}
-  }
+  def new_complex_deal
+    @deal = current_user.general_deals.build
+    load = params[:load].present? ? current_user.general_deals.find_by(id: params[:load]) : nil
+    pattern = nil
+    if !load
+      if params[:pattern_code].present?
+        pattern =  current_user.deal_patterns.find_by(code: params[:pattern_code])
+        # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+        unless pattern
+          render :text => 'Code not found'
+          return
+        end
+      end
+      pattern ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by(id: params[:pattern_id]) : nil
+      pattern.use if pattern
+      load ||= pattern
+    end
+    if load
+      @deal.load(load)
+      # 見つかったパターンが単純明細の場合は単純明細処理に切り替える
+      if pattern && !@deal.complex?
+        changed_deal_type = deal_type.to_s.gsub(/complex/, 'general').to_sym
+        changed_render_options = render_options_proc ? render_options_proc.call(changed_deal_type) : {}
+        flash[:"#{controller_name}_deal_type"] = 'general_deal' # reloadに強い
+        render partial: 'general_deal_form'
+        return
+      end
+      @deal.fill_complex_entries
+    else
+      @deal.build_complex_entries
+    end
+    flash[:"#{controller_name}_deal_type"] = 'complex_deal' # reloadに強い
+    render partial: 'complex_deal_form'
+  end
 
-  REDIRECT_OPTIONS_PROC = lambda{|deal|
-    {:action => :monthly, :year => deal.date.year.to_s, :month => deal.date.month.to_s, :anchor => deal.id.to_s}
-  }
-  deal_actions_for :general_deal, :complex_deal, :balance_deal,
-    :ajax => true,
-    :render_options_proc => RENDER_OPTIONS_PROC,
-    :redirect_options_proc => REDIRECT_OPTIONS_PROC
+  def new_balance_deal
+    @deal = current_user.balance_deals.build
+    flash[:"#{controller_name}_deal_type"] = 'balance_deal' # reloadに強い
+    render partial: 'balance_deal_form'
+  end
+
+  # TODO: アクションを一つにする
+  %w(general_deal complex_deal balance_deal).each do |deal_type|
+
+    # create_xxx
+    define_method "create_#{deal_type}" do
+      size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
+      @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
+
+      if @deal.save
+        flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+        flash[:"#{controller_name}_deal_type"] = deal_type
+        write_target_date(@deal.date)
+        render json: {
+            id: @deal.id,
+            year: @deal.date.year,
+            month: @deal.date.month,
+            day: @deal.date.day,
+            error_view: false
+        }
+      else
+        if deal_type.to_s =~ /complex/
+          @deal.fill_complex_entries(size)
+        end
+        render json: {
+            id: @deal.id,
+            year: @deal.date.year,
+            month: @deal.date.month,
+            day: @deal.date.day,
+            error_view: render_to_string(render_options)
+        }
+      end
+    end
+  end
+
 
   # 日ナビゲーター部品を返す (Ajax)
   def day_navigator
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
-    prepare_for_day_navigator
-    render partial: 'shared/day_navigator'
+    render partial: 'shared/day_navigator', locals: {data: data_for_day_navigator}
   end
 
   # 登録画面
@@ -135,29 +206,22 @@ class DealsController < ApplicationController
     redirect_to monthly_deals_path(:year => year, :month => month)
   end
 
-  # 月表示
+  # 月表示 (すべての記入 & 口座別)
   def monthly
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
 
-    @deals_scroll_height = @user.preferences ? @user.preferences.deals_scroll_height : nil
-
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
-    @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
+
+    @bookings = if @account
+      @account_entries = AccountEntries.new(@account, start_date, start_date.end_of_month)
+    else
+      @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
+    end
 
     # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
-    Deal::Base.set_anchor_dates_to(@deals, @year, @month)
-    # フォーム用
-    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
-    case flash[:"#{controller_name}_deal_type"]
-    when 'balance_deal'
-      @deal = Deal::Balance.new
-      # TODO: 口座
-    else
-      @deal = Deal::General.new
-      @deal.build_simple_entries
-    end
+    Booking.set_anchor_dates_to(@bookings, @year, @month)
   end
 
   # 記入の削除
@@ -189,8 +253,8 @@ class DealsController < ApplicationController
 
   private
 
-  def prepare_for_day_navigator
-    @deals ||= current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+  def data_for_day_navigator
+    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
   end
 
   def find_deal
@@ -203,6 +267,10 @@ class DealsController < ApplicationController
     else
       find_deal
     end
+  end
+
+  def find_account_if_specified
+    @account = params[:account_id].present? ? current_user.accounts.find(params[:account_id]) : nil
   end
 
 end

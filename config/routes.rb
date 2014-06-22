@@ -82,6 +82,7 @@ Kozuchi::Application.routes.draw do
     end
 
     get 'deals/:year/:month/days', :as => :monthly_deal_days, :action => 'day_navigator'
+    get 'accounts/:account_id/deals/:year/:month', as: :monthly_account_deals, action: :monthly
     # TODO: なぜか page.redirect_to redirect_options_proc.call(@deal) でrequirements があるとうまくいかない
     get 'deals/:year/:month', :as => :monthly_deals, :action => 'monthly' #, :requirements => YEAR_MONTH_REQUIREMENTS
   end
@@ -101,22 +102,6 @@ Kozuchi::Application.routes.draw do
       member do
         get 'print_form'
         put 'submit'
-      end
-    end
-  end
-
-  # AccountDealsController
-  # TODO: deal をつけるのがうざいがバッティングがあるためいったんつける
-  controller :account_deals do
-    resources :account_deals, :path => 'accounts/deals', :only => [:index]
-    scope :path => 'accounts/:account_id' do
-      get 'deals/:year/:month', :as => :monthly_account_deals, :action => 'monthly'# TODO: なぜかあるとうまくいかない, :requirements => YEAR_MONTH_REQUIREMENTS
-      get 'balance', :as => :account_balance, :action => :balance
-      post 'general_deals', :as => :account_general_deals, :action => 'create_general_deal'
-      ['creditor_general_deal', 'debtor_general_deal', 'balance_deal'].each do |t|
-        post "#{t.pluralize}", :as => "account_#{t.pluralize}", :action => "create_#{t}"
-        get "new_#{t}", :as => "new_account_#{t}", :action => "new_#{t}"
-        get "#{t.pluralize}/:id", :as => "edit_account_#{t}", :action => "edit_#{t}"
       end
     end
   end

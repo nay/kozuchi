@@ -1,4 +1,0 @@
-<div id="account_options">
-  <%= grouped_account_select "account_id", current_user.accounts, @account.id,
-    :onChange => "var url = $('#month_submit_form').attr('action'); url = url.replace('accounts/#{@account.id}', 'accounts/' + this.value); url = url.replace('_YEAR_', $('#calendar_year').val()); url = url.replace('_MONTH_', $('#calendar_month').val()); $('#month_submit_form').attr('action', url); $('#month_submit_form').get(0).submit();", :tabindex => 1 %>
-</div>

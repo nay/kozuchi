@@ -10,8 +10,8 @@ describe Settings::PreferencesController do
     before do
       visit "/settings/preferences"
     end
-    it "高さ指定欄がある" do
-      page.should have_css('input#preferences_deals_scroll_height')
+    it "色の欄がある" do
+      page.should have_css('input#preferences_color')
     end
   end
 end
