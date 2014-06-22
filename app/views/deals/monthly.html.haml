@@ -21,7 +21,8 @@
         #account_selector.part
           = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: 'すべての記入', class: "form-control"
         #calendar_in_navigator.part
-          = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
+          - url_options = @account ? { url_method: :monthly_account_deals_path, url_params: { account_id: @account.id } } : { url_method: :monthly_deals_path }
+          = render partial: "shared/calendar", :locals => {:year => @year, :month => @month}.merge(url_options)
       #monthly_contents
         #book.bottom_box
           - if @account
