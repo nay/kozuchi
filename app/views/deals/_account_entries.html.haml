@@ -5,24 +5,8 @@
       %th.number
       %th 摘要
       %th.account
-      %th.amount
-        - if bookkeeping_style?
-          借方
-        - elsif @account.kind_of?(Account::Asset)
-          入金
-        - elsif @account.kind_of?(Account::Income)
-          戻し
-        - else
-          支出
-      %th.amount
-        - if bookkeeping_style?
-          貸方
-        - elsif @account.kind_of?(Account::Asset)
-          出金
-        - elsif @account.kind_of?(Account::Income)
-          収入
-        - else
-          戻し
+      %th.amount= debtor_term(@account)
+      %th.amount= creditor_term(@account)
       %th.settlement
       %th.amount
         - if bookkeeping_style? || @account.kind_of?(Account::Asset)
