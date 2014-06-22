@@ -44,4 +44,9 @@
     float: left;
   }
 }
-
+td.open_detail {
+  cursor: pointer;
+}
+tr.detail_row .panel {
+  margin-bottom: 0;
+}

@@ -5,7 +5,7 @@ class DealsController < ApplicationController
   menu_group "家計簿"
   menu "家計簿"
   before_filter :check_account
-  before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
+  before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
   before_filter :find_account_if_specified, only: [:index, :monthly]
 
@@ -195,7 +195,6 @@ class DealsController < ApplicationController
       #end
     end
   end
-
 
   # 仕分け帳画面を初期表示するための処理
   # パラメータ：年月、年月日、タブ（明細or残高）、選択行

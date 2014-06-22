@@ -279,3 +279,14 @@ $ ->
       document.location.href = $('#deal_form_option').data('account-url').replace('_ACCOUNT_ID_', account_id)
 
 
+  # 口座選択状態などで情報ボタンを押したとき
+  $(document).on('click', 'td.open_detail', (event)->
+    $tr = $(@).closest('tr')
+
+    # 自分のところがすでに開いていたらそれを閉じるだけ
+    if $tr.next().is(':visible')
+      $tr.next().hide()
+    else # 新しく開くリクエストがきたらいったん全部閉じてから開く
+      $('tr.detail_row').hide()
+      $tr.next().show()
+  )

@@ -14,8 +14,7 @@
         - else
           合計
       %th.icon_to_deal
-      %th.action 変更
-      %th.action 削除
+      %th.action 詳細
     - if @account.kind_of?(Account::Asset)
       %tr
         %td.date
@@ -27,7 +26,6 @@
         %td.settlement
         %td.amount= number_with_delimiter(@account_entries.balance_start)
         %td.icon_to_deal
-        %td
         %td
     - date = Date.new(@year.to_i, @month.to_i, 1)
     - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
@@ -59,10 +57,11 @@
             %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
         %td.amount= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
         %td.icon_to_deal= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id
-        %td.action= link_to '変更', {:action => 'edit', :id => entry.deal_id}, class: 'edit_deal', data: {deal_id: entry.deal_id}
-        %td.action
-          - unless entry.deal.settlement_attached?
-            = link_to '削除', deal_path(:id => entry.deal_id), :data => {:confirm => "#{entry.deal.human_name} を削除します。よろしいですか？"}, class: :deal_deletion_link
+        %td.action.open_detail{data: {url: deal_path(id: entry.deal_id)}}
+          %span.glyphicon.glyphicon-info-sign
+      %tr.detail_row{style: "display: none;"}
+        %td{colspan: "10"}
+          = render partial: 'detail', locals: {deal: entry.deal}
     - if @account.kind_of?(Account::Asset)
       %tr
         %td.date
@@ -75,7 +74,6 @@
         %td.amount= number_with_delimiter(@account_entries.balance_end)
         %td.icon_to_deal
         %td
-        %td
     - else
       %tr
         %td.date
@@ -87,5 +85,4 @@
         %td.settlement
         %td.amount= number_with_delimiter(@account_entries.pure_balance_end)
         %td.icon_to_deal
-        %td
         %td
