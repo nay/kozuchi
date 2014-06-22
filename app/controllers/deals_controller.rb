@@ -3,7 +3,7 @@ class DealsController < ApplicationController
   cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
   
   menu_group "家計簿"
-  menu "仕訳帳"
+  menu "家計簿"
   before_filter :check_account
   before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
