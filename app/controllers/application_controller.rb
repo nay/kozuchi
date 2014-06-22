@@ -60,13 +60,15 @@ class ApplicationController < ActionController::Base
     @current_account
   end
 
+  ACCOUNT_SELECTION_HISTORY_MAX = 3 # TODO: 設定で変えられてもよい
+
   # 勘定がユーザーに意図的に選択されたことを記憶する
   # 新しいものほど前にくる
   def account_has_been_selected(account)
     raise "Not an account! #{account.inspect}" unless account.kind_of?(Account::Base)
     account_selection_histories.delete(account)
     account_selection_histories.unshift(account)
-    account_selection_histories.pop while account_selection_histories.size > 5
+    account_selection_histories.pop while account_selection_histories.size > ACCOUNT_SELECTION_HISTORY_MAX
     session[:account_selection_histories] = account_selection_histories.map(&:id).join(",") # 一応オブジェクトを避けておく
   end
 

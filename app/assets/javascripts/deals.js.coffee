@@ -205,6 +205,8 @@ $ ->
     url = url.replace('_MONTH_', month.month)
     $('#month_submit_form').attr('action', url)
     $('#month_submit_form').get(0).submit()
+    $('#deals_right a.monthly_deals_link').each ->
+      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
 
   # カレンダー（登録フォーム）
 
@@ -221,7 +223,8 @@ $ ->
     url = url.replace('_YEAR_', month.year)
     url = url.replace('_MONTH_', month.month)
     $('#day_navigator_frame').load(url)
-    $('#deals_right a.btn').each ->
+    # TODO: 月表示と共通になった。別コールバックにする？
+    $('#deals_right a.monthly_deals_link').each ->
       @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
 
   # 今日ボタン （登録フォーム）
