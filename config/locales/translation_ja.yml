@@ -201,7 +201,6 @@ ja:
         name: "名前"
 
       preferences:
-        deals_scroll_height: "お得な高さをスクロール"  #g
         color: "カラー"  #g
         business_use: "ビジネスユース"  #g
         use_daily_booking: "毎日の予約を使用してください"  #g
