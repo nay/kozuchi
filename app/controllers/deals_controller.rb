@@ -271,6 +271,7 @@ class DealsController < ApplicationController
 
   def find_account_if_specified
     @account = params[:account_id].present? ? current_user.accounts.find(params[:account_id]) : nil
+    account_has_been_selected(@account) if @account
   end
 
 end

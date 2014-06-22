@@ -221,6 +221,8 @@ $ ->
     url = url.replace('_YEAR_', month.year)
     url = url.replace('_MONTH_', month.month)
     $('#day_navigator_frame').load(url)
+    $('#deals_right a.btn').each ->
+      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
 
   # 今日ボタン （登録フォーム）
   $('.for_deal_editor #today').click (event) ->

@@ -5,7 +5,10 @@
     #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @deals}
 
   #deals_right
-    = link_to '一覧へ', deals_path(year: @year, month: @month), class: %w(btn btn-default)
+    = link_to 'すべての記入', monthly_deals_path(year: @year, month: @month), class: %w(btn btn-default), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+    - account_selection_histories.each do |a|
+      = link_to a.name, monthly_account_deals_path(account_id: a.id, year: @year, month: @month), class:  %w(btn btn-default), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+
     #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'always'}}
       = render :partial => 'shared/deal_patterns/recent'
 

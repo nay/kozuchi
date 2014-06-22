@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories
   attr_writer :menu_group, :menu
   protected :'menu_group=', :'menu='
 
@@ -41,6 +41,7 @@ class ApplicationController < ActionController::Base
   end
 
   # 関心のある勘定を覚えておく
+  # TODO: ヒストリーを使うようにする
   def current_account=(account)
     old = session[:account_id]
     session[:account_id] = account.try(:id)
@@ -53,9 +54,33 @@ class ApplicationController < ActionController::Base
   end
 
   # 関心のある勘定を取得する
+  # TODO: ヒストリーを使うようにする
   def current_account
     @current_account ||= current_user.accounts.find_by(id: session[:account_id]) if session[:account_id]
     @current_account
+  end
+
+  # 勘定がユーザーに意図的に選択されたことを記憶する
+  # 新しいものほど前にくる
+  def account_has_been_selected(account)
+    raise "Not an account! #{account.inspect}" unless account.kind_of?(Account::Base)
+    account_selection_histories.delete(account)
+    account_selection_histories.unshift(account)
+    account_selection_histories.pop while account_selection_histories.size > 5
+    session[:account_selection_histories] = account_selection_histories.map(&:id).join(",") # 一応オブジェクトを避けておく
+  end
+
+  def account_selection_histories
+    unless @account_selection_histories
+      ids_in_session = (session[:account_selection_histories] || "").split(",").map(&:to_i)
+      @account_selection_histories = if ids_in_session.empty?
+        []
+      else
+        # ないものがあっても許す
+        Account::Base.where("accounts.id in (?)", ids_in_session).sort{|a1, a2| ids_in_session.index(a1.id) <=> ids_in_session.index(a2.id)}
+      end
+    end
+    @account_selection_histories
   end
 
   # 覚えた精算の期間情報を返す
