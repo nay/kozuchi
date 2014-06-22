@@ -9,6 +9,117 @@ class DealsController < ApplicationController
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
   before_filter :find_account_if_specified, only: [:monthly]
 
+  # Deal 編集系アクション群を宣言するメタメソッド
+
+  # options - :render_options_proc, :redirect_options_proc
+  def self.deal_actions_for(*args)
+    options = args.extract_options!
+    render_options_proc = options[:render_options_proc]
+    redirect_options_proc = options[:redirect_options_proc]
+    ajax = options[:ajax]
+
+    raise "render_options_proc is required to do ajax" if ajax && !render_options_proc
+    raise "redirect_options_proc is required for non-ajax" if !ajax && !redirect_options_proc
+
+    args.each do |deal_type|
+      render_options = render_options_proc ? render_options_proc.call(deal_type) : {}
+      # new_xxx
+      case deal_type.to_s
+      when /general/
+        define_method "new_#{deal_type}" do
+          @deal = current_user.general_deals.build
+          @deal.build_simple_entries
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options unless render_options.blank?
+        end
+      when /complex/
+        define_method "new_#{deal_type}" do
+          @deal = current_user.general_deals.build
+          load = params[:load].present? ? current_user.general_deals.find_by(id: params[:load]) : nil
+          pattern = nil
+          if !load
+            if params[:pattern_code].present?
+              pattern =  current_user.deal_patterns.find_by(code: params[:pattern_code])
+              # コードが見つからないときはクライアント側で特別に処理するので目印を返す
+              unless pattern
+                render :text => 'Code not found'
+                return
+              end
+            end
+            pattern ||= params[:pattern_id].present? ? current_user.deal_patterns.find_by(id: params[:pattern_id]) : nil
+            pattern.use if pattern
+            load ||= pattern
+          end
+          if load
+            @deal.load(load)
+            # 見つかったパターンが単純明細の場合は単純明細処理に切り替える
+            if pattern && !@deal.complex?
+              changed_deal_type = deal_type.to_s.gsub(/complex/, 'general').to_sym
+              changed_render_options = render_options_proc ? render_options_proc.call(changed_deal_type) : {}
+              flash[:"#{controller_name}_deal_type"] = changed_deal_type # reloadに強い
+              render 'new_#{new_deal_type}', changed_render_options
+              return
+            end
+            @deal.fill_complex_entries
+          else
+            @deal.build_complex_entries
+          end
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options unless render_options.blank?
+        end
+      when /balance/
+        define_method "new_#{deal_type}" do
+          @deal = current_user.balance_deals.build
+          flash[:"#{controller_name}_deal_type"] = deal_type # reloadに強い
+          render render_options unless render_options.blank?
+        end
+      end
+
+      # create_xxx
+      define_method "create_#{deal_type}" do
+        size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
+        @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
+
+        if @deal.save
+          flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+          flash[:"#{controller_name}_deal_type"] = deal_type
+          write_target_date(@deal.date)
+#          flash[:day] = @deal.date.day
+          if ajax
+            render json: {
+                id: @deal.id,
+                year: @deal.date.year,
+                month: @deal.date.month,
+                day: @deal.date.day,
+                error_view: false
+            }
+          else
+            redirect_to redirect_options_proc.call(@deal)
+          end
+        else
+          if deal_type.to_s =~ /complex/
+            @deal.fill_complex_entries(size)
+          end
+          if ajax
+            render json: {
+                id: @deal.id,
+                year: @deal.date.year,
+                month: @deal.date.month,
+                day: @deal.date.day,
+                error_view: render_to_string(render_options)
+            }
+          else
+            if render_options.blank?
+              render :action => "new_#{deal_type}"
+            else
+              render render_options
+            end
+          end
+        end
+      end
+    end
+  end
+
   RENDER_OPTIONS_PROC = lambda {|deal_type|
     {:partial => "#{deal_type}_form"}
   }
