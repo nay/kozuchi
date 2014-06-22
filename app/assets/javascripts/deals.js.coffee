@@ -269,7 +269,7 @@ $ ->
     account_id = $(@).val()
     if account_id == ''
       # TODO: あとで実装する
-      document.location.href = ""
+      document.location.href = $('#deal_form_option').data('all-url')
     else
       document.location.href = $('#deal_form_option').data('account-url').replace('_ACCOUNT_ID_', account_id)
 

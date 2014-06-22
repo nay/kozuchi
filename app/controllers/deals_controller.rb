@@ -7,7 +7,7 @@ class DealsController < ApplicationController
   before_filter :check_account
   before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
-
+  before_filter :find_account_if_specified, only: [:monthly]
 
   RENDER_OPTIONS_PROC = lambda {|deal_type|
     {:partial => "#{deal_type}_form"}
@@ -134,17 +134,22 @@ class DealsController < ApplicationController
     redirect_to monthly_deals_path(:year => year, :month => month)
   end
 
-  # 月表示
+  # 月表示 (すべての記入 & 口座別)
   def monthly
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
 
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
-    @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
+
+    @bookings = if @account
+      @account_entries = AccountEntries.new(@account, start_date, start_date.end_of_month)
+    else
+      @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
+    end
 
     # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
-    Booking.set_anchor_dates_to(@deals, @year, @month)
+    Booking.set_anchor_dates_to(@bookings, @year, @month)
   end
 
   # 記入の削除
@@ -190,6 +195,10 @@ class DealsController < ApplicationController
     else
       find_deal
     end
+  end
+
+  def find_account_if_specified
+    @account = params[:account_id].present? ? current_user.accounts.find(params[:account_id]) : nil
   end
 
 end

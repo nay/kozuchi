@@ -4,6 +4,8 @@ class Entry::Base < ActiveRecord::Base
   self.table_name = 'account_entries'
   unsavable
 
+  include Booking
+
   MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
   
   belongs_to :account,

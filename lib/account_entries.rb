@@ -3,6 +3,8 @@ class AccountEntries
 
   attr_reader :account, :from, :to, :entries, :balance_start, :balance_end, :pure_balance_end
 
+  delegate :each, :last, :first, :any?, to: :entries
+
   def initialize(account, from, to)
     @account = account
     @from = from
