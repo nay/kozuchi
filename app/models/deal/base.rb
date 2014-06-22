@@ -4,24 +4,7 @@ require 'time'
 class Deal::Base < ActiveRecord::Base
   self.table_name = "deals"
 
-  # ある月の日ナビゲーターに必要なアンカー情報を渡されたリストに仕込むユーティリティメソッド
-  def self.set_anchor_dates_to(deals, year, month)
-    date = Date.new(year.to_i, month.to_i, 1)
-    deals.each do |deal|
-      # その記入以前のまだアンカー登録されていない日を抱えさせる
-      while date <= deal.date
-        deal.anchor_dates << date
-        date += 1
-      end
-      # 後ろがなければ終わりも抱える
-      if deals.last == deal
-        while date.month == deal.date.month
-          deal.anchor_dates << date
-          date += 1
-        end
-      end
-    end
-  end
+  include Booking
 
   belongs_to :user
 
@@ -46,11 +29,6 @@ class Deal::Base < ActiveRecord::Base
   scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
   scope :time_ordering, -> { order(:date, :daily_seq) }
   scope :recently_updated_ordered, -> { order(updated_at: :desc) }
-
-  def anchor_dates
-    @anchor_dates ||= []
-    @anchor_dates
-  end
 
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"
