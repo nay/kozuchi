@@ -230,7 +230,7 @@ $ ->
 
   # 記入パターンのロード（リターンキーが押されたとき）
   $(document).on('keypress', 'input#pattern_keyword', (event) ->
-    if e.which && e.which == 13
+    if event.which && event.which == 13
       $('#pattern_search_result').empty()
       code = $('input#pattern_keyword').val()
       if code != ''
