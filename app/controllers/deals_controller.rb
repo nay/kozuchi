@@ -7,7 +7,7 @@ class DealsController < ApplicationController
   before_filter :check_account
   before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]
-  before_filter :find_account_if_specified, only: [:monthly]
+  before_filter :find_account_if_specified, only: [:index, :monthly]
 
   # 単数記入タブエリアの表示 (Ajax)
   def new_general_deal
@@ -203,7 +203,7 @@ class DealsController < ApplicationController
     write_target_date if params[:today]
     year, month = read_target_date
     flash.keep
-    redirect_to monthly_deals_path(:year => year, :month => month)
+    redirect_to @account ? monthly_account_deals_path(account_id: @account.id, year: year, month: month) : monthly_deals_path(year: year, month: month)
   end
 
   # 月表示 (すべての記入 & 口座別)

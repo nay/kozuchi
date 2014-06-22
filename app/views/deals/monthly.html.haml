@@ -1,7 +1,7 @@
 #deal_form_option{data: {result_url: monthly_deals_path(year: '_YEAR_', month: '_MONTH_'), all_url: monthly_deals_path(year: @year, month: @month), account_url: monthly_account_deals_path(account_id: '_ACCOUNT_ID_', year: @year, month: @month)}}
 .for_monthly_deals
   #deals_left
-    = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
+    = link_to '今日', deals_path(today: 1, account_id: @account ? @account.id : nil), class: %w(btn btn-primary btn-sm), id: :today
     #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @bookings, path_proc: ->(date){ "#day#{date.day}" }}
 
   #deals_right
