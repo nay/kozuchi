@@ -14,6 +14,8 @@
         - else
           合計
       %th.icon_to_deal
+      %th.action 変更
+      %th.action 削除
     - if @account.kind_of?(Account::Asset)
       %tr
         %td.date
@@ -25,35 +27,42 @@
         %td.settlement
         %td.amount= number_with_delimiter(@account_entries.balance_start)
         %td.icon_to_deal
-      - date = Date.new(@year.to_i, @month.to_i, 1)
-      - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
-      - sign = @account.kind_of?(Account::Income) ? -1 : 1
-      - for entry in @account_entries.entries
-        = content_tag :tr, :class => entry.balance? ? 'balance_line' : (entry.deal.confirmed? ? nil : 'unconfirmed') do
-          %td.date
-            - while date <= entry.date
+        %td
+        %td
+    - date = Date.new(@year.to_i, @month.to_i, 1)
+    - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
+    - sign = @account.kind_of?(Account::Income) ? -1 : 1
+    - for entry in @account_entries.entries
+      - tr_class = ["d#{entry.deal_id}"].tap{|a| a << 'balance_line' if entry.balance?; a << 'unconfirmed' unless entry.deal.confirmed? }
+      = content_tag :tr, :class => tr_class do
+        %td.date
+          - while date <= entry.date
+            = day_anchor date
+            - date += 1
+          = l entry.date
+          - if @account_entries.entries.last == entry
+            - while date.month == entry.date.month
               = day_anchor date
               - date += 1
-            = l entry.date
-            - if @account_entries.entries.last == entry
-              - while date.month == entry.date.month
-                = day_anchor date
-                - date += 1
-            - unless entry.deal.confirmed?
-              %br
-              %span.system 未確定
-          %td.number{id: "e#{entry.id}"}
-            = render 'shared/deal_note', :deal => entry.deal
-            %span{id: entry.deal_id}= entry.deal.daily_seq
-          %td= entry.summary
-          %td.account= entry.partner_account_name
-          %td.amount= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance?
-          %td.amount= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance?
-          %td.settlement.jump
-            - if entry.any_settlement_id
-              %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
-          %td.amount= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
-          %td.icon_to_deal= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id
+          - unless entry.deal.confirmed?
+            %br
+            %span.system 未確定
+        %td.number{id: "e#{entry.id}"}
+          = render 'shared/deal_note', :deal => entry.deal
+          %span{id: entry.deal_id}= entry.deal.daily_seq
+        %td= entry.summary
+        %td.account= entry.partner_account_name
+        %td.amount= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance?
+        %td.amount= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance?
+        %td.settlement.jump
+          - if entry.any_settlement_id
+            %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
+        %td.amount= entry.deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
+        %td.icon_to_deal= icon_to_deal_in_monthly entry.date.year, entry.date.month, entry.deal_id
+        %td.action= link_to '変更', {:action => 'edit', :id => entry.deal_id}, class: 'edit_deal', data: {deal_id: entry.deal_id}
+        %td.action
+          - unless entry.deal.settlement_attached?
+            = link_to '削除', deal_path(:id => entry.deal_id), :data => {:confirm => "#{entry.deal.human_name} を削除します。よろしいですか？"}, class: :deal_deletion_link
     - if @account.kind_of?(Account::Asset)
       %tr
         %td.date
@@ -65,6 +74,8 @@
         %td.settlement
         %td.amount= number_with_delimiter(@account_entries.balance_end)
         %td.icon_to_deal
+        %td
+        %td
     - else
       %tr
         %td.date
@@ -76,3 +87,5 @@
         %td.settlement
         %td.amount= number_with_delimiter(@account_entries.pure_balance_end)
         %td.icon_to_deal
+        %td
+        %td
