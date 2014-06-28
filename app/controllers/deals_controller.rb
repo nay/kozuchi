@@ -72,6 +72,7 @@ class DealsController < ApplicationController
         write_target_date(@deal.date)
         render json: {
             id: @deal.id,
+            deal: @deal.as_json(root: false, include: :readonly_entries),
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
@@ -174,6 +175,7 @@ class DealsController < ApplicationController
       flash[:day] = @deal.date.day
       render json: {
           id: @deal.id,
+          deal: @deal.as_json(root: false, include: :readonly_entries),
           year: @deal.date.year,
           month: @deal.date.month,
           day: @deal.date.day,

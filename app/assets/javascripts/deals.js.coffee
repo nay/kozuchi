@@ -36,6 +36,12 @@ hideRecentDealPatterns = ->
   return if $('#deal_pattern_frame').data('mode') == 'always'
   $('#deal_pattern_frame').hide()
 
+dealHasAccountId = (deal, account_id)->
+  return false unless account_id && deal
+  for entry in deal.readonly_entries
+    return true if entry.account_id == account_id
+  return false
+
 $ ->
   # hide notice
   hideNotice = ->
@@ -110,8 +116,13 @@ $ ->
         $('#deal_forms').empty()
         $('#deal_forms').append(result.error_view)
       else
-        resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
-        resultUrlWithHash = resultUrl + "#" + result.id
+        resultUrl = null
+        # 遷移先に条件がついていて適合していればそちらのURLにする
+        if dealHasAccountId(result.deal, $('#deal_form_option').data("condition-account-id"))
+          resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        else
+          resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        resultUrlWithHash = resultUrl + "#d" + result.id
         prevUrl = location.pathname
         prevSearch = location.search
         if prevSearch && prevSearch != ""
