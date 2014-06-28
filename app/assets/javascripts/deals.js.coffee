@@ -287,4 +287,5 @@ $ ->
     else # 新しく開くリクエストがきたらいったん全部閉じてから開く
       $('tr.detail_row').hide()
       $tr.next('.detail_row').show()
+      location.hash = $(@).closest('tr').attr('id')
   )
