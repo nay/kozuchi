@@ -3,7 +3,7 @@ class AccountEntries
 
   attr_reader :account, :from, :to, :entries, :balance_start, :balance_end, :pure_balance_end
 
-  delegate :each, :last, :first, :any?, to: :entries
+  delegate :last, :first, :any?, to: :entries
 
   def initialize(account, from, to)
     @account = account
@@ -15,11 +15,19 @@ class AccountEntries
     calc_balances
   end
 
+  # deal, entries をブロックに渡す
+  def each(&block)
+    @deals.each do |deal|
+      yield deal, deal.readonly_entries.find_all{|e| e.account_id == @account.id}
+    end
+  end
+
   private
 
   # entries を検索して時間順に取得
   def find_entries
-    @entries = @account.entries.in_a_time_between(@from, @to).includes(:deal).order("account_entries.date, account_entries.daily_seq, account_entries.amount")
+    @deals = account.user.deals.in_a_time_between(@from, @to).includes(:readonly_entries).references(:readonly_entries).on(@account).order(:date, :daily_seq)
+    @entries = @deals.map{|d| d.readonly_entries.find_all{|e| e.account_id == @account.id}}.flatten
   end
 
   # 残高推移を取得

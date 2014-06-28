@@ -43,6 +43,7 @@ class Entry::Base < ActiveRecord::Base
   scope :date_from, ->(d) { where("date >= ?", d) } # TODO: 名前バッティングで from → date_from にした
   scope :before, ->(d) { where("date < ?", d) }
   scope :ordered, -> { order(:date, :daily_seq) }
+  # TODO: on にして deal と仕様を揃えたい
   scope :of, ->(account_id) { where(account_id: account_id) }
   scope :after, ->(e) { where("date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq) }
   scope :in_a_time_between, ->(from, to) { where("account_entries.date >= ? and account_entries.date <= ?", from, to) }

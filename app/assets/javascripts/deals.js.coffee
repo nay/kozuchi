@@ -135,7 +135,7 @@ $ ->
     if $tr.hasClass('edit_deal_row')
       $tr = $tr.prev()
     $('.edit_deal_row').remove()
-    while !$tr.hasClass('last_entry')
+    while !$tr.hasClass('last_entry') && $tr.size() > 0
       $tr = $tr.next()
     disableCreateWindow()
     $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(@).data('deal-id') + "'></td></tr>")
@@ -283,10 +283,13 @@ $ ->
   $(document).on('click', 'td.open_detail', (event)->
     $tr = $(@).closest('tr')
 
+    while !$tr.hasClass('last_entry') && $tr.size() > 0
+      $tr = $tr.next()
+
     # 自分のところがすでに開いていたらそれを閉じるだけ
-    if $tr.next().is(':visible')
-      $tr.next().hide()
+    if $tr.next('.detail_row').is(':visible')
+      $tr.next('.detail_row').hide()
     else # 新しく開くリクエストがきたらいったん全部閉じてから開く
       $('tr.detail_row').hide()
-      $tr.next().show()
+      $tr.next('.detail_row').show()
   )
