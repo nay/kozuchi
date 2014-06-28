@@ -16,7 +16,7 @@ class MoneyCounter
 addClassToUpdatedline = ->
   if location.hash.match(/^#d[0-9]+$/)
     id = location.hash.replace('#', '')
-    $("." + id).addClass("updated_line")
+    $("." + id).not(".detail_row").addClass("updated_line")
 
 clearUpdateLine = ->
   $("tr").removeClass("updated_line")

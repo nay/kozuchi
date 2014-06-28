@@ -62,7 +62,7 @@
           - if entry == entries.first
             %td.action.open_detail{data: {url: deal_path(id: deal.id)}, rowspan: entries.size}
               %span.glyphicon.glyphicon-info-sign
-      %tr.detail_row{style: "display: none;"}
+      %tr{class: [:detail_row, "d#{deal.id}"], style: "display: none;"}
         %td{colspan: "10"}
           = render partial: 'detail', locals: {deal: deal}
     - if @account.kind_of?(Account::Asset)
