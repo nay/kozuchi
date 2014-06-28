@@ -16,7 +16,7 @@ module DealsHelper
       raise "3 parameters required" unless args.size == 3
       args
     end
-    link_to '→', monthly_deals_path(:year => year, :month => month, :anchor => deal_id.to_s)
+    link_to '→', monthly_deals_path(:year => year, :month => month, :anchor => 'd' + deal_id.to_s)
   end
 
   def write_hiddens_and_get_simple_deal_procs(f, options = {})
