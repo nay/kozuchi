@@ -14,14 +14,9 @@ class MoneyCounter
 # 更新された行のスタイリング
 
 addClassToUpdatedline = ->
-  if location.hash.match(/^#e?[0-9]+$/)
-    updatedTr = $("tr:has(*[id='" + location.hash.replace('#', '') + "'])")
-    updatedTr.addClass("updated_line")
-    # 複数行がまとめられている場合のため
-
-    while (nextTr = updatedTr.next("tr:not(:has(td.date))")).size() > 0
-      nextTr.addClass("updated_line")
-      updatedTr = nextTr
+  if location.hash.match(/^#d[0-9]+$/)
+    id = location.hash.replace('#', '')
+    $("." + id).addClass("updated_line")
 
 clearUpdateLine = ->
   $("tr").removeClass("updated_line")
@@ -140,7 +135,7 @@ $ ->
     disableCreateWindow()
     $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(@).data('deal-id') + "'></td></tr>")
     $(".edit_deal_row td").load(@href, null, ->
-      location.hash = $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
+      location.hash = 'd' + $(@).data("deal-id") # コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
     )
     showRecentDealPatterns()
     event.preventDefault()

@@ -1,4 +1,6 @@
 - # TODO: @deals 以外を利用したいケースができたので、locals で deals があればそれを優先する
+- # skip_deal_id が指定されていたら #dXXX の id を振らない（詳細画面など）
+- skip_deal_id ||= false
 - deals ||= @deals
 %table.book.book_header
   %tr
@@ -14,8 +16,8 @@
     %th.action 削除
   - for deal in deals
     - for account_entry in deal.readonly_entries
-      - tr_classes = ["d#{deal.id}"].tap{|a| a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if account_entry == deal.readonly_entries.last}
-      = content_tag :tr, class: tr_classes.empty? ? nil : tr_classes do
+      - tr_classes = [].tap{|a| a << "d#{deal.id}" unless skip_deal_id; a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if account_entry == deal.readonly_entries.last}
+      = content_tag :tr, class: tr_classes.empty? ? nil : tr_classes, id: (account_entry == deal.readonly_entries.first && !skip_deal_id) ? "d#{deal.id}" : nil do
         - size = deal.readonly_entries.size
         - if deal.readonly_entries.first == account_entry
 

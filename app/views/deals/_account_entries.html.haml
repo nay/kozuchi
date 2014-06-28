@@ -33,7 +33,7 @@
     - @account_entries.each do |deal, entries|
       - entries.each do |entry|
         - tr_class = ["d#{deal.id}"].tap{|a| a << 'balance_line' if entry.balance?; a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if entry == entries.last }
-        = content_tag :tr, :class => tr_class do
+        = content_tag :tr, class: tr_class, id: entry == entries.first ? "d#{deal.id}" : nil do
           - if entry == entries.first
             %td.date{rowspan: entries.size}
               - while date <= entry.date
