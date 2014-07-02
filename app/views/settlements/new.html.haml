@@ -1,0 +1,22 @@
+:javascript
+  var settlement = new Settlement;
+
+= form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
+  #select_credit_account
+    %table
+      %tr
+        %th 口座
+        %td= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'refresh_targets'
+      %tr
+        %th 期間
+        %td
+          %div
+            = select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)
+            ～
+            = select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true)
+            %button.refresh_targets 表示内容を更新
+
+  - unless @settlement.errors.empty?
+    %div= error_messages_for 'settlement'
+  #target_deals
+    = render :partial => 'target_deals'
