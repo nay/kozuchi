@@ -34,6 +34,18 @@ class SettlementsController < ApplicationController
     # その後の処理のためにセッションに情報を入れておく
     # TODO: current_acocunt導入により、機能がかぶった可能性もあるがいったん保留
     session[:settlement_credit_account_id] = @settlement.account.id
+
+    # TODO: あとで整理する
+    # 未精算記入の有無を表示するための月データを作成する
+    entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
+    date = Time.zone.today.beginning_of_month
+    two_years_ago = date << 24
+    date = date >> 2
+    @months = []
+    while date > two_years_ago
+      @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
+      date = date << 1
+    end
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる

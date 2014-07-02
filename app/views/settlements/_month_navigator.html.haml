@@ -1,13 +1,10 @@
 %table
-  - date = Time.zone.today.beginning_of_month
-  - two_years_ago = date << 24
-  - date = date >> 2
   - displayed_years = []
-  - while date > two_years_ago
-    - unless displayed_years.include?(date.year)
+  - @months.each do |monthly_date, entries|
+    - unless displayed_years.include?(monthly_date.year)
       %tr
-        %td.year= "#{date.year}年"
-      - displayed_years << date.year
-    %tr
-      %td.month= "#{date.month}月"
-    - date = date << 1
+        %td.year{colspan: 2}= "#{monthly_date.year}年"
+      - displayed_years << monthly_date.year
+    %tr{data: {first_date: entries.first.try(:date), last_date: entries.last.try(:date)}}
+      %td.month= "#{monthly_date.month}月"
+      %td= entries.present? ? "*" : ''
