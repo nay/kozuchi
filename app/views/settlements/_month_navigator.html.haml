@@ -1,0 +1,13 @@
+%table
+  - date = Time.zone.today.beginning_of_month
+  - two_years_ago = date << 24
+  - date = date >> 2
+  - displayed_years = []
+  - while date > two_years_ago
+    - unless displayed_years.include?(date.year)
+      %tr
+        %td.year= "#{date.year}年"
+      - displayed_years << date.year
+    %tr
+      %td.month= "#{date.month}月"
+    - date = date << 1

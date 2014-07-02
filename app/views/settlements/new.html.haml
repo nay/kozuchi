@@ -1,6 +1,10 @@
 :javascript
   var settlement = new Settlement;
 
+#settlements_left
+  #month_navigator_frame
+    = render partial: 'month_navigator'
+
 #settlements_right
   = link_to @account.name, monthly_account_deals_path(account_id: @account.id, year: current_year, month: current_month), class:  %w(btn btn-primary monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
 

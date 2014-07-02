@@ -1,6 +1,24 @@
+#settlements_left {
+  float:left;
+
+  #month_navigator_frame {
+    font-size: 10px;
+    margin-right: 10px;
+
+    table {
+      .year {
+        border: 1px solid #888888;
+      }
+      .month {
+        text-align: right;
+      }
+    }
+  }
+}
+
 #settlements_main {
   float:left;
-  width: 86%;
+  width: 82%;
 }
 
 #settlements_right {
