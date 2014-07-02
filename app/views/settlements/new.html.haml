@@ -1,22 +1,32 @@
 :javascript
   var settlement = new Settlement;
 
-= form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
-  #select_credit_account
-    %table
-      %tr
-        %th 口座
-        %td= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'refresh_targets'
-      %tr
-        %th 期間
-        %td
-          %div
-            = select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)
-            ～
-            = select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true)
-            %button.refresh_targets 表示内容を更新
+#settlements_right
+  = link_to @account.name, monthly_account_deals_path(account_id: @account.id, year: current_year, month: current_month), class:  %w(btn btn-primary monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
 
-  - unless @settlement.errors.empty?
-    %div= error_messages_for 'settlement'
-  #target_deals
-    = render :partial => 'target_deals'
+  #recent_settlements
+    %h3 最近の精算
+    %ul
+      - @account.result_settlements.recent(6).each do |s|
+        %li= link_to "#{s.name} - #{s.result_entry.date}", settlement_path(s)
+
+#settlements_main
+  = form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
+    #select_credit_account
+      %table
+        %tr
+          %th 口座
+          %td= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'refresh_targets'
+        %tr
+          %th 期間
+          %td
+            %div
+              = select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)
+              ～
+              = select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true)
+              %button.refresh_targets 表示内容を更新
+
+    - unless @settlement.errors.empty?
+      %div= error_messages_for 'settlement'
+    #target_deals
+      = render :partial => 'target_deals'

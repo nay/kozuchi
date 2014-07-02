@@ -12,6 +12,8 @@ class Account::Base < ActiveRecord::Base
 
   has_many :deals,  ->{ order(:date, :daily_seq) }, through: :entries
 
+  has_many :result_settlements, through: :entries
+
   # この勘定の残高記入を日時のはやいほうからsaveしなおしていくことで、残高計算を正しくする
   # ツールとして利用する
   def fix_balance!

@@ -34,6 +34,9 @@ class Settlement < ActiveRecord::Base
   # result_entryのひもづけにacocunt_entriesというテーブル名が使われる想定
   scope :on, ->(account) { where("account_entries.account_id = ?", account.id) }
 
+  # 同上
+  scope :recent, ->(limit) { order("account_entries.date desc").limit(limit) }
+
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
   end

@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?, :account_selection_histories
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :current_year, :current_month
   attr_writer :menu_group, :menu
   protected :'menu_group=', :'menu='
 
@@ -33,6 +33,15 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+  # TODO: セッションなどで直近の情報を保管したものを使うようにする
+  def current_year
+    Time.zone.today.year
+  end
+
+  def current_month
+    Time.zone.today.month
+  end
 
   # TODO: deal系の機能とともにconcernsにでも出したい
   def deal_params

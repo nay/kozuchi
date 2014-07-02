@@ -19,7 +19,9 @@ class Entry::Base < ActiveRecord::Base
 
   belongs_to :user # to_s で使う
 
-  
+  # General だけ関係するが Account::Baseからの関連で利用することを想定してここで定義
+  belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
+
   before_validation :error_if_account_is_is_chanegd # 最初にやる
   validates :account_id, :presence => true
   validate :validate_account_id_is_users
