@@ -111,16 +111,23 @@ module Deal
     debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
   end
 
+  # TODO: 関連を消したら名前変更
+  # readonly_entries から計算で求める
+  def readonly_creditor_entries
+    readonly_entries.find_all{|e| e.creditor? }.sort_by(&:line_number)
+  end
+  def readonly_debtor_entries
+    readonly_entries.find_all{|e| !e.creditor? }.sort_by(&:line_number)
+  end
+
   # 借り方勘定名を返す
   def creditor_account_name
-    creditor_entries
-    creditor_entries.size == 1 ? creditor_entries.first.account.try(:name) : SHOKOU
+    readonly_creditor_entries.size == 1 ? readonly_creditor_entries.first.account.try(:name) : SHOKOU
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
-    debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.try(:name) : SHOKOU
+    readonly_debtor_entries.size == 1 ? readonly_debtor_entries.first.account.try(:name) : SHOKOU
   end
 
   def load(from)

@@ -26,7 +26,7 @@ class AccountEntries
 
   # entries を検索して時間順に取得
   def find_entries
-    @deals = account.user.deals.in_a_time_between(@from, @to).includes(:readonly_entries).references(:readonly_entries).on(@account).order(:date, :daily_seq)
+    @deals = account.user.deals.in_a_time_between(@from, @to).joins("INNER JOIN account_entries ON account_entries.deal_id = deals.id").on(@account).includes(:readonly_entries).order(:date, :daily_seq)
     @entries = @deals.map{|d| d.readonly_entries.find_all{|e| e.account_id == @account.id}}.flatten
   end
 
@@ -39,11 +39,11 @@ class AccountEntries
       if e.balance?
         pure_balance += e.amount unless e.initial_balance?
       else
+        deal = @deals.detect{|d| e.deal_id == d.id}
         # 確定のときだけ残高に反映
-        raise "no deal in entry #{e.id} (deal_id : #{e.deal_id}" unless e.deal
-        pure_balance += e.amount if e.deal.confirmed?
+        pure_balance += e.amount if deal.confirmed?
         # TODO: account_entry側の仕事にしたいかな
-        e.partner_account_name = e.deal.partner_account_name_of(e) # 効率上自分で入れておく
+        e.partner_account_name = deal.partner_account_name_of(e) # 効率上自分で入れておく
       end
       e.pure_balance = pure_balance
     end
