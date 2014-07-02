@@ -8,12 +8,13 @@ class SettlementsController < ApplicationController
   menu "詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
+  before_filter :find_account, only: [:new]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :target_deals, :change_selected_deals]
 
   # 新しい精算口座を作る
   def new
-    @settlement.account = @credit_accounts.detect{|a| a == current_account} || @credit_accounts.first
+    @settlement.account = @account
     @settlement.name = "#{@settlement.account.name}の精算"
   
     # 現在記憶している精算期間があればそれを使う。
@@ -166,6 +167,12 @@ class SettlementsController < ApplicationController
   end
   
   private
+
+  def find_account
+    # TODO: 移行が終わったら、account_id を必須にする
+    @account = params[:account_id].present? ? current_user.assets.credit.find(params[:account_id]) : current_user.assets.credit.first
+  end
+
   def settlement_params
     result = params.require(:settlement).permit(:account_id, :name, :description, :result_partner_account_id)
     # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
