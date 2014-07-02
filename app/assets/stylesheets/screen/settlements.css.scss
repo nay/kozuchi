@@ -19,6 +19,12 @@
 #settlements_main {
   float:left;
   width: 82%;
+
+  #select_credit_account {
+    select.account_selector {
+      width: 40%;
+    }
+  }
 }
 
 #settlements_right {

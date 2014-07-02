@@ -17,10 +17,9 @@
 #settlements_main
   = form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
     #select_credit_account
+      = select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
+
       %table
-        %tr
-          %th 口座
-          %td= select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'refresh_targets'
         %tr
           %th 期間
           %td
