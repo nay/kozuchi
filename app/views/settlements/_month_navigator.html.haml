@@ -2,9 +2,9 @@
   - displayed_years = []
   - @months.each do |monthly_date, entries|
     - unless displayed_years.include?(monthly_date.year)
-      %tr
+      %tr.year
         %td.year{colspan: 2}= "#{monthly_date.year}年"
       - displayed_years << monthly_date.year
-    %tr{data: {first_date: entries.first.try(:date), last_date: entries.last.try(:date)}}
+    %tr.month{data: {first_date: entries.first.try(:date), last_date: entries.last.try(:date), year: monthly_date.year, month: monthly_date.month}}
       %td.month= "#{monthly_date.month}月"
       %td= entries.present? ? "*" : ''

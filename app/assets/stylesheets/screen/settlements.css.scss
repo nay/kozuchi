@@ -6,11 +6,17 @@
     margin-right: 10px;
 
     table {
-      .year {
+      td.year {
         border: 1px solid #888888;
       }
-      .month {
-        text-align: right;
+      tr.month.selected {
+        background-color: yellow;
+      }
+      tr.month {
+
+        td.month {
+          text-align: right;
+        }
       }
     }
   }
