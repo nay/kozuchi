@@ -24,7 +24,6 @@
           = select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)
           ～
           = select_date(@end_date, :prefix => 'end_date', :use_month_numbers => true)
-          %button.btn.btn-primary.refresh_targets 表示内容を更新
 
     - unless @settlement.errors.empty?
       %div= error_messages_for 'settlement'
