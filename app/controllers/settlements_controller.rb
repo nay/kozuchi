@@ -10,7 +10,7 @@ class SettlementsController < ApplicationController
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
   before_filter :find_account, only: [:new, :create, :target_deals]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_filter :new_settlement, :only => [:new, :target_deals, :change_selected_deals]
+  before_filter :new_settlement, :only => [:new, :target_deals]
 
   # 新しい精算口座を作る
   def new
