@@ -2,9 +2,9 @@
     <% if flash[:notice] %>
       <div><%= flash[:notice]%></div>
     <% end %>
-    <%= form_tag settlements_path, :method => :get, :id => 'account_form' do %>
+    <%= form_tag '' do %>
     <div id="account_options">
-      <%= select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s) %>
+      <%= select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")} %>
     </div>
     <% end %>
 
@@ -26,15 +26,3 @@
       </table>
     <% end %>
 </div>
-<%= javascript_tag do %>
-jQuery(document).ready(function($){
-  $('#account_id').change(function(){
-    var url = $('#account_form').attr('action')
-    if (this.value != '') {
-      url += "/accounts/" + this.value
-    }
-    window.location.href = url
-    return false
-  })
-});
-<% end %>

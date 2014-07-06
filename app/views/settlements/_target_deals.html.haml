@@ -1,7 +1,8 @@
 - debtor_sum = 0
 - creditor_sum = 0
 
-%p= "#{format_date(@start_date)}から#{format_date(@end_date)}の#{@account.name}の未精算取引は 全#{@deals.size}件あります。"
+%p
+  = "#{format_date(@start_date)}から#{format_date(@end_date)}の#{@account.name}の未精算取引は#{@deals.empty? ? "ありません。" : "全#{@deals.size}件あります。"}"
 - unless @entries.empty?
   %div
     #select_and_clear

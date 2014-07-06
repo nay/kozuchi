@@ -7,6 +7,11 @@ $ ->
       e.preventDefault()
   )
 
+  # select.switcher が変更されたら、data-url-template の template 内の _SWITCHER_VALUE_ を置き換えてredirectする
+  $('select.switcher').change ->
+    url = $(@).data('url-template').replace("_SWITCHER_VALUE_", $(@).val())
+    location.href = url
+
 # 月末の日を得る
 @endOfMonth = (year, month) ->
   if !year || year == '' || !month || month == ''
