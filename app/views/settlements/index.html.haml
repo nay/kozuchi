@@ -1,21 +1,25 @@
-#settlements
-  - if flash[:notice]
-    %div= flash[:notice]
-  = form_tag '' do
-    #account_options
-      = select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+#settlements_right
+  = link_to "新しい精算", new_account_settlement_path(account_id: @account.id), class: %w(btn btn-primary) if @account
 
-  - if @settlements.empty?
-    %p 精算データはありません。
-  - else
-    %table.book
-      %tr
-        %th.date 精算日
-        %th 精算データ名
-        %th 精算対象口座
-        %th 対象取引数
-        %th.amount 精算額
-        %th 登録日時
-        %th 状態
-        %th 詳細
-      = render :partial => 'settlement', :collection => @settlements
+#settlements_main
+  #settlements
+    - if flash[:notice]
+      %div= flash[:notice]
+    = form_tag '' do
+      #account_options
+        = select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+
+    - if @settlements.empty?
+      %p 精算データはありません。
+    - else
+      %table.book
+        %tr
+          %th.date 精算日
+          %th 精算データ名
+          %th 精算対象口座
+          %th 対象取引数
+          %th.amount 精算額
+          %th 登録日時
+          %th 状態
+          %th 詳細
+        = render :partial => 'settlement', :collection => @settlements
