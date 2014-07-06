@@ -8,7 +8,7 @@ class SettlementsController < ApplicationController
   menu "詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
-  before_filter :find_account, only: [:new]
+  before_filter :find_account, only: [:new, :create, :target_deals]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :target_deals, :change_selected_deals]
 
@@ -50,7 +50,6 @@ class SettlementsController < ApplicationController
       return
     end
 
-    @account = @user.accounts.find(params[:settlement][:account_id])
     @settlement.account = @account
     # 勘定、精算期間を保存する
     self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
@@ -66,7 +65,9 @@ class SettlementsController < ApplicationController
   end
 
   def create
-    @settlement = current_user.settlements.new(settlement_params)
+    @settlement = current_user.settlements.new
+    @settlement.account = @account
+    @settlement.attributes = settlement_params
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
       # 覚えた精算期間を消す
@@ -78,7 +79,6 @@ class SettlementsController < ApplicationController
       @end_date = to_date(params[:end_date])
       load_deals
       @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
-      @account = @settlement.account # TODO: あとで勘定前提に変更する
       prepare_for_month_navigator
       render :action => 'new'
     end
@@ -188,12 +188,11 @@ class SettlementsController < ApplicationController
   end
 
   def find_account
-    # TODO: 移行が終わったら、account_id を必須にする
-    @account = params[:account_id].present? ? current_user.assets.credit.find(params[:account_id]) : current_user.assets.credit.first
+    @account = current_user.assets.credit.find(params[:account_id])
   end
 
   def settlement_params
-    result = params.require(:settlement).permit(:account_id, :name, :description, :result_partner_account_id)
+    result = params.require(:settlement).permit(:name, :description, :result_partner_account_id)
     # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
     result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
     result

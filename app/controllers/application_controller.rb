@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :current_year, :current_month
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month
   attr_writer :menu_group, :menu
   protected :'menu_group=', :'menu='
 
@@ -92,6 +92,10 @@ class ApplicationController < ActionController::Base
       end
     end
     @account_selection_histories
+  end
+
+  def last_selected_credit
+    @last_selected_credit ||= account_selection_histories.detect{|a| a.kind_of?(Account::Asset) && a.any_credit? }
   end
 
   # 覚えた精算の期間情報を返す

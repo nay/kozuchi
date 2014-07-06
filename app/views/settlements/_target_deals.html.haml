@@ -56,5 +56,5 @@
                       %span#result= " に #{number_with_delimiter(creditor_sum + debtor_sum)}円 が入金される。"
             = submit_tag('精算データを登録する', :class => 'button')
   - # TODO: とりあえずJSをやめる
-  #settlement_sums{data: {debtor_sum: debtor_sum * -1, creditor_sum: creditor_sum}}}
+  #settlement_sums{data: {debtor_sum: debtor_sum * -1, creditor_sum: creditor_sum}}
 

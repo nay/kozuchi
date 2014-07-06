@@ -96,11 +96,12 @@ Kozuchi::Application.routes.draw do
 
   # SettlementsController
   controller :settlements do
-    # TODO: 勘定なしのnewは廃止する
-    get 'accounts/:account_id/settlements/new', as: :new_account_settlement, action: :new
-    get 'settlements/new/target_deals', :as => :new_settlement_target_deals, :action => :target_deals
-    get 'settlements/accounts/:account_id', :as => :account_settlements, :action => :index
-    resources :settlements, :only => [:index, :show, :new, :create, :destroy] do
+    scope path: 'accounts/:account_id', as: :account do
+      get 'settlements/new/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
+      resources :settlements, only: [:new, :create, :index]
+
+    end
+    resources :settlements, :only => [:index, :show, :destroy] do
       member do
         get 'print_form'
         put 'submit'

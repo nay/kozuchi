@@ -15,11 +15,11 @@
         %li= link_to "#{s.name} - #{s.result_entry.date}", settlement_path(s)
 
 #settlements_main
-  = form_tag settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
+  = form_tag account_settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
     #select_credit_account
       .row
         .col-xs-4
-          = select :settlement, :account_id, @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, {}, class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
+          = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.id), class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
         .col-xs-8
           = select_date(@start_date, :prefix => 'start_date', :use_month_numbers => true)
           ～
