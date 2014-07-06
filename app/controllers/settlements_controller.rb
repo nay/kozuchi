@@ -10,11 +10,10 @@ class SettlementsController < ApplicationController
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
   before_filter :find_account, only: [:new, :create, :target_deals]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_filter :new_settlement, :only => [:new, :target_deals]
+  before_filter :new_settlement, :only => [:new, :create, :target_deals]
 
   # 新しい精算口座を作る
   def new
-    @settlement.account = @account
     @settlement.name = "#{@settlement.account.name}の精算"
   
     # 現在記憶している精算期間があればそれを使う。
@@ -40,7 +39,7 @@ class SettlementsController < ApplicationController
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
   def target_deals
-    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date] && params[:settlement]
+    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date]
 
     begin
       @start_date = to_date(params[:start_date])
@@ -50,7 +49,6 @@ class SettlementsController < ApplicationController
       return
     end
 
-    @settlement.account = @account
     # 勘定、精算期間を保存する
     self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
     self.settlement_start_date = @start_date
@@ -65,8 +63,6 @@ class SettlementsController < ApplicationController
   end
 
   def create
-    @settlement = current_user.settlements.new
-    @settlement.account = @account
     @settlement.attributes = settlement_params
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
@@ -151,7 +147,8 @@ class SettlementsController < ApplicationController
   
   def new_settlement
     @settlement = Settlement.new
-    @settlement.user_id = @user.id
+    @settlement.user = current_user
+    @settlement.account = @account
   end
   
   def check_credit_account
