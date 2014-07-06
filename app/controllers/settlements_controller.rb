@@ -85,7 +85,7 @@ class SettlementsController < ApplicationController
 
   # ある勘定の精算一覧を提供する
   def account_settlements
-    prepare_for_summary_months
+    prepare_for_summary_months(5, 1)
 
     self.menu = "#{@account.name}の精算一覧"
 
@@ -187,11 +187,11 @@ class SettlementsController < ApplicationController
     end
   end
 
-  def prepare_for_summary_months
+  def prepare_for_summary_months(past = 7, future = 2)
     # 月サマリー用の月情報
     @months = []
-    date = start_date = Time.zone.today.beginning_of_month << 7
-    end_date = Time.zone.today.beginning_of_month >> 2
+    date = start_date = Time.zone.today.beginning_of_month << past
+    end_date = Time.zone.today.beginning_of_month >> future
 
     while date <= end_date
       @months << date

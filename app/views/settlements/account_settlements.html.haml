@@ -6,15 +6,18 @@
   #settlements
     - if flash[:notice]
       %div= flash[:notice]
-    = form_tag '' do
-      #account_options
-        = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+    .row
+      .col-xs-4
+        = form_tag '' do
+          #account_options
+            = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+      .col-xs-8
+        = render partial: 'summary'
 
+    %h3 一覧
     - if @settlements.empty?
       %p 精算データはありません。
     - else
-      = render partial: 'summary'
-      %h3 精算の一覧
       %table.book
         %tr
           %th.date 精算日
