@@ -4,11 +4,11 @@ class SettlementsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
-  menu "一覧", :only => [:index]
+  menu "最近の精算情報", :only => [:index]
   menu "詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
-  before_filter :find_account, only: [:new, :create, :target_deals]
+  before_filter :find_account, only: [:new, :create, :target_deals, :account_settlements]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
   before_filter :new_settlement, :only => [:new, :create, :target_deals]
 
@@ -74,33 +74,22 @@ class SettlementsController < ApplicationController
 
   # TDOO: current_account まわりを強引に消したので見直す
   def index
-    # 月サマリー用の月情報
+    prepare_for_monthly_summary
 
-    @months = []
-    date = start_date = Time.zone.today.beginning_of_month << 7
-    end_date = Time.zone.today.beginning_of_month >> 2
-
-    while date <= end_date
-      @months << date
-      date = date >> 1
+    self.menu = "最近の精算情報"
+    @settlements = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
+    @credit_accounts.each do |account|
+      @settlements[account] = nil unless @settlements.keys.include?(account)
     end
-    @years = @months.group_by(&:year)
+  end
 
-    unless params[:account_id]
-      self.menu = "最近の精算情報"
-      @settlements = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
-      @credit_accounts.each do |account|
-        @settlements[account] = nil unless @settlements.keys.include?(account)
-      end
-      return
-    end
+  # ある勘定の精算一覧を提供する
+  def account_settlements
+    prepare_for_monthly_summary
 
-    @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
     self.menu = "#{@account.name}の精算一覧"
-    raise InvalidParameterError unless @account
 
     @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
-    render :account_settlements
   end
   
   # 1件を削除する
@@ -195,6 +184,19 @@ class SettlementsController < ApplicationController
       @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
       date = date >> 1
     end
+  end
+
+  def prepare_for_monthly_summary
+    # 月サマリー用の月情報
+    @months = []
+    date = start_date = Time.zone.today.beginning_of_month << 7
+    end_date = Time.zone.today.beginning_of_month >> 2
+
+    while date <= end_date
+      @months << date
+      date = date >> 1
+    end
+    @years = @months.group_by(&:year)
   end
 
   def find_account

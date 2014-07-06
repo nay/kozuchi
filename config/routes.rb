@@ -96,10 +96,12 @@ Kozuchi::Application.routes.draw do
 
   # SettlementsController
   controller :settlements do
-    scope path: 'accounts/:account_id', as: :account do
+    scope path: 'accounts/:account_id' do
       get 'settlements/new/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
-      resources :settlements, only: [:new, :create, :index]
-
+      scope as: :account do
+        get 'settlements', as: :settlements, action: :account_settlements
+        resources :settlements, only: [:new, :create]
+      end
     end
     resources :settlements, :only => [:index, :show, :destroy] do
       member do
