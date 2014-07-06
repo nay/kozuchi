@@ -147,7 +147,7 @@ class SettlementsController < ApplicationController
     redirect_to settlement_path(:id => @settlement.id)
   end
   
-  protected
+  private
   
   def new_settlement
     @settlement = Settlement.new
@@ -171,8 +171,6 @@ class SettlementsController < ApplicationController
     end
   end
   
-  private
-
   # 未精算記入の有無を表示するための月データを作成する
   def prepare_for_month_navigator
     entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
