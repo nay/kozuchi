@@ -19,9 +19,8 @@ class SettlementsController < ApplicationController
     # 現在記憶している精算期間があればそれを使う。
     # 精算期間の記憶がなく、現在月の場合は前月にする
     # 初期表示なので、記憶はしない（ほかのページへいってもどっても同じように計算される）
-    if @settlement.account == current_account && settlement_start_date && settlement_end_date
-      @start_date = settlement_start_date
-      @end_date = settlement_end_date
+    if account_settlement_term(@account)
+      @start_date, @end_date = account_settlement_term(@account)
     else
       this_month = Date.new(Date.today.year, Date.today.month, 1)
       @start_date = this_month << 1 # 前月
@@ -29,10 +28,6 @@ class SettlementsController < ApplicationController
     end
     
     load_deals
-    
-    # その後の処理のためにセッションに情報を入れておく
-    # TODO: current_acocunt導入により、機能がかぶった可能性もあるがいったん保留
-    session[:settlement_credit_account_id] = @settlement.account.id
 
     prepare_for_month_navigator
   end
@@ -50,9 +45,7 @@ class SettlementsController < ApplicationController
     end
 
     # 勘定、精算期間を保存する
-    self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
-    self.settlement_start_date = @start_date
-    self.settlement_end_date = @end_date
+    store_account_settlement_term(@account, @start_date, @end_date)
 
     @settlement.name = "#{@settlement.account.name}の精算"
 
@@ -67,8 +60,7 @@ class SettlementsController < ApplicationController
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
       # 覚えた精算期間を消す
-      self.settlement_start_date = nil
-      self.settlement_end_date = nil
+      clear_account_settlement_term(@account)
       redirect_to :action => 'index'
     else
       @start_date = to_date(params[:start_date])
@@ -79,24 +71,23 @@ class SettlementsController < ApplicationController
       render :action => 'new'
     end
   end
-  
+
+  # TDOO: current_account まわりを強引に消したので見直す
   def index
     # account_id が指定されていない場合はredirectする
     case params[:account_id]
     when nil
-      account_id = if current_account && @credit_accounts.detect{|a| a == current_account}
-        current_account.id
+      account_id = if last_selected_credit
+        last_selected_credit.id
       else
         'all'
       end
       redirect_to account_settlements_path(:account_id => account_id)
       return
     when 'all'
-      self.current_account = nil
     else
       @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
       raise InvalidParameterError unless @account
-      self.current_account = @account
     end
 
     @settlements = @user.settlements
@@ -144,6 +135,22 @@ class SettlementsController < ApplicationController
   end
   
   private
+
+  def settlement_terms
+    session[:settlement_terms] ||= {}
+  end
+
+  def store_account_settlement_term(account, start_date, end_date)
+    settlement_terms[account.id] = [start_date, end_date]
+  end
+
+  def clear_account_settlement_term(account)
+    settlement_terms.delete(account.id)
+  end
+
+  def account_settlement_term(account)
+    settlement_terms[account.id]
+  end
   
   def new_settlement
     @settlement = Settlement.new
