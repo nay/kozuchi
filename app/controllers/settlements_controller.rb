@@ -4,7 +4,7 @@ class SettlementsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
-  menu "最近の精算情報", :only => [:index]
+  menu "精算の概況", :only => [:index]
   menu "詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]

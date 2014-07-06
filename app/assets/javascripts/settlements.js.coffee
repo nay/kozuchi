@@ -150,6 +150,6 @@ $ ->
 
       onSpanChange()
 
-  if settlement
+  if $('#settlement_sums').size() > 0
     settlement.debtorSum = $('#settlement_sums').data("debtor-sum")
     settlement.creditorSum = $('#settlement_sums').data("creditor-sum")
