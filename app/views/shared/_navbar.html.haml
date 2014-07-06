@@ -20,11 +20,7 @@
               %li= link_to '貸借対照表', balance_sheet_path
 
           %li.dropdown{class: active_class_if(controller_name == 'settlements')}
-            = link_to "精算<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
-            %ul.dropdown-menu
-              - if last_selected_credit
-                %li= link_to "精算の作成(#{last_selected_credit.name})", new_account_settlement_path(account_id: last_selected_credit.id)
-              %li= link_to '精算一覧', settlements_path
+            = link_to "精算", settlements_path
           %li.dropdown{class: active_class_if(%w|assets expenses incomes deal_patterns preferences friends account_links partner_accounts single_logins export|.include?(controller_name))}
             = link_to "設定<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
             %ul.dropdown-menu

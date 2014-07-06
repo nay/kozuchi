@@ -31,6 +31,7 @@
 
   #select_credit_account {
   }
+
 }
 
 #settlements_right {
@@ -50,5 +51,14 @@
 
   #submit_settlement {
     margin: 8px 0;
+  }
+}
+
+table.settlements_summary {
+  margin-top: 10px;
+
+  td.settlement {
+    width: 76px;
+    text-align: right;
   }
 }

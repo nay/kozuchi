@@ -1,25 +1,24 @@
-#settlements_right
-  = link_to "新しい精算", new_account_settlement_path(account_id: @account.id), class: %w(btn btn-primary) if @account
+- if flash[:notice]
+  %div= flash[:notice]
 
-#settlements_main
-  #settlements
-    - if flash[:notice]
-      %div= flash[:notice]
-    = form_tag '' do
-      #account_options
-        = select_tag :account_id, options_for_select([['すべて', 'all']] + @credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
-
-    - if @settlements.empty?
-      %p 精算データはありません。
-    - else
-      %table.book
-        %tr
-          %th.date 精算日
-          %th 精算データ名
-          %th 精算対象口座
-          %th 対象取引数
-          %th.amount 精算額
-          %th 登録日時
-          %th 状態
-          %th 詳細
-        = render :partial => 'settlement', :collection => @settlements
+%table.book.settlements_summary
+  %tr
+    %th
+    - @years.each do |year, months|
+      %th{colspan: months.size}= "#{year}年"
+  %tr
+    %th
+    - @months.each do |monthly_date|
+      %th= "#{monthly_date.month}月"
+  - @settlements.each do |account, account_settlements|
+    %tr
+      %th
+        = account.name
+        .pull-right
+          = link_to '一覧', account_settlements_path(account_id: account.id), class: %w(btn btn-default btn-sm)
+          = link_to '作成', new_account_settlement_path(account_id: account.id), class: %w(btn btn-default btn-sm)
+      - @months.each do |monthly_date|
+        %td.settlement
+          - if account_settlements
+            - account_settlements.find_all{|s| s.result_entry.date.year == monthly_date.year && s.result_entry.date.month == monthly_date.month}.each do |s|
+              %div= link_to number_with_delimiter(s.result_entry.amount), settlement_path(s.id)

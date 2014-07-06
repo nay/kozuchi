@@ -74,25 +74,33 @@ class SettlementsController < ApplicationController
 
   # TDOO: current_account まわりを強引に消したので見直す
   def index
-    # account_id が指定されていない場合はredirectする
-    case params[:account_id]
-    when nil
-      account_id = if last_selected_credit
-        last_selected_credit.id
-      else
-        'all'
+    # 月サマリー用の月情報
+
+    @months = []
+    date = start_date = Time.zone.today.beginning_of_month << 7
+    end_date = Time.zone.today.beginning_of_month >> 2
+
+    while date <= end_date
+      @months << date
+      date = date >> 1
+    end
+    @years = @months.group_by(&:year)
+
+    unless params[:account_id]
+      self.menu = "最近の精算情報"
+      @settlements = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
+      @credit_accounts.each do |account|
+        @settlements[account] = nil unless @settlements.keys.include?(account)
       end
-      redirect_to account_settlements_path(:account_id => account_id)
       return
-    when 'all'
-    else
-      @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
-      raise InvalidParameterError unless @account
     end
 
-    @settlements = @user.settlements
-    @settlements = @settlements.on(@account) if @account
-    @settlements = @settlements.includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+    @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
+    self.menu = "#{@account.name}の精算一覧"
+    raise InvalidParameterError unless @account
+
+    @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+    render :account_settlements
   end
   
   # 1件を削除する

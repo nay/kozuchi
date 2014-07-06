@@ -4,7 +4,6 @@
 		  <% else -%>
           <td class="date"><%= format_date settlement.result_entry.deal.date %></td>
           <td><%= settlement.name %></td>
-          <td><%= settlement.account.name %></td>
           <td style="text-align:right;"><%= settlement.target_entries.size %></td>
           <td class="amount"><%= number_with_delimiter settlement.target_sum.abs %></td>
           <td><%= format_datetime settlement.created_at %></td>
