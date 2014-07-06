@@ -74,22 +74,23 @@ class SettlementsController < ApplicationController
 
   # TDOO: current_account まわりを強引に消したので見直す
   def index
-    prepare_for_monthly_summary
+    prepare_for_summary_months
 
     self.menu = "最近の精算情報"
-    @settlements = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
+    @summaries = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
     @credit_accounts.each do |account|
-      @settlements[account] = nil unless @settlements.keys.include?(account)
+      @summaries[account] = nil unless @summaries.keys.include?(account)
     end
   end
 
   # ある勘定の精算一覧を提供する
   def account_settlements
-    prepare_for_monthly_summary
+    prepare_for_summary_months
 
     self.menu = "#{@account.name}の精算一覧"
 
     @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+    @summaries = {@account => @settlements}
   end
   
   # 1件を削除する
@@ -186,7 +187,7 @@ class SettlementsController < ApplicationController
     end
   end
 
-  def prepare_for_monthly_summary
+  def prepare_for_summary_months
     # 月サマリー用の月情報
     @months = []
     date = start_date = Time.zone.today.beginning_of_month << 7

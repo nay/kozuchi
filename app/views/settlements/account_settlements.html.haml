@@ -13,6 +13,8 @@
     - if @settlements.empty?
       %p 精算データはありません。
     - else
+      = render partial: 'summary'
+      %h3 精算の一覧
       %table.book
         %tr
           %th.date 精算日
