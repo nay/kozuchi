@@ -35,18 +35,7 @@ class SettlementsController < ApplicationController
     # TODO: current_acocunt導入により、機能がかぶった可能性もあるがいったん保留
     session[:settlement_credit_account_id] = @settlement.account.id
 
-    # TODO: あとで整理する
-    # 未精算記入の有無を表示するための月データを作成する
-    entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
-    date = Time.zone.today.beginning_of_month
-    start_month = date << 24
-    end_month = date >> 2
-    date = start_month
-    @months = []
-    while date < end_month
-      @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
-      date = date >> 1
-    end
+    prepare_for_month_navigator
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
@@ -88,7 +77,9 @@ class SettlementsController < ApplicationController
       @start_date = to_date(params[:start_date])
       @end_date = to_date(params[:end_date])
       load_deals
-      @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
+      @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
+      @account = @settlement.account # TODO: あとで勘定前提に変更する
+      prepare_for_month_navigator
       render :action => 'new'
     end
   end
@@ -182,6 +173,20 @@ class SettlementsController < ApplicationController
   
   private
 
+  # 未精算記入の有無を表示するための月データを作成する
+  def prepare_for_month_navigator
+    entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
+    date = Time.zone.today.beginning_of_month
+    start_month = date << 24
+    end_month = date >> 2
+    date = start_month
+    @months = []
+    while date < end_month
+      @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
+      date = date >> 1
+    end
+  end
+
   def find_account
     # TODO: 移行が終わったら、account_id を必須にする
     @account = params[:account_id].present? ? current_user.assets.credit.find(params[:account_id]) : current_user.assets.credit.first
@@ -190,7 +195,7 @@ class SettlementsController < ApplicationController
   def settlement_params
     result = params.require(:settlement).permit(:account_id, :name, :description, :result_partner_account_id)
     # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
-    result[:deal_ids] = params[:settlement][:deal_ids].permit!
+    result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
     result
   end
 
