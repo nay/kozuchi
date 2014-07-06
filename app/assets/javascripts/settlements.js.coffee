@@ -149,3 +149,7 @@ $ ->
         $('#end_date_day').val((new Date(year, month, 0)).getDate())
 
       onSpanChange()
+
+  if settlement
+    settlement.debtorSum = $('#settlement_sums').data("debtor-sum")
+    settlement.creditorSum = $('#settlement_sums').data("creditor-sum")
