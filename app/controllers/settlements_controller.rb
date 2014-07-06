@@ -39,12 +39,13 @@ class SettlementsController < ApplicationController
     # 未精算記入の有無を表示するための月データを作成する
     entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
     date = Time.zone.today.beginning_of_month
-    two_years_ago = date << 24
-    date = date >> 2
+    start_month = date << 24
+    end_month = date >> 2
+    date = start_month
     @months = []
-    while date > two_years_ago
+    while date < end_month
       @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
-      date = date << 1
+      date = date >> 1
     end
   end
   

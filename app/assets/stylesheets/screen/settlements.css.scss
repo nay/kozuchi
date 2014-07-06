@@ -9,6 +9,9 @@
       td.year {
         border: 1px solid #888888;
       }
+      tr.month.now {
+        font-weight: bold;
+      }
       tr.month.selected {
         background-color: yellow;
       }
