@@ -39,7 +39,10 @@ numToFormattedString = (num) ->
 
 $ ->
   refreshTargets = ->
-    $('#target_deals').load($('#target_deals_form').data('url'), $('#target_deals_form').serialize())
+    $('#target_deals').load($('#target_deals_form').data('url'), $('#target_deals_form').serialize(), ->
+      settlement.debtorSum = $('#settlement_sums').data("debtor-sum")
+      settlement.creditorSum = $('#settlement_sums').data("creditor-sum")
+    )
 
   $('#select_credit_account select.account_selector').change ->
     location.href = $(@).data("url-template").replace("_ACCOUNT_ID_", $(@).val())

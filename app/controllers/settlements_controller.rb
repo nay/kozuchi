@@ -61,7 +61,8 @@ class SettlementsController < ApplicationController
       return
     end
 
-    @settlement.account = @user.accounts.find(params[:settlement][:account_id])
+    @account = @user.accounts.find(params[:settlement][:account_id])
+    @settlement.account = @account
     # 勘定、精算期間を保存する
     self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
     self.settlement_start_date = @start_date
