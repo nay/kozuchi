@@ -5,11 +5,10 @@
     %td.date= format_date settlement.result_entry.deal.date
     %td= settlement.name
     %td{style: "text-align:right;"}= settlement.target_entries.size
-    %td.amount= number_with_delimiter settlement.target_sum.abs
+    %td.amount= link_to number_with_delimiter(settlement.amount), settlement_path(settlement)
     %td= format_datetime settlement.created_at
   %td
     - if settlement.submitted_settlement_id
       提出済
     - elsif settlement.kind_of?(SubmittedSettlement)
       受理
-  %td= link_to '詳細', settlement_path(:id => settlement.id)

@@ -60,6 +60,11 @@ class Settlement < ActiveRecord::Base
     target_entries.each{|e| sum += e.amount}
     sum
   end
+
+  # お金が返ってくるときはプラス、出ていくときはマイナスになる金額を result_entry をもとに提供する
+  def amount
+    result_entry.amount * -1
+  end
   
   # 相手に提出済にする
   def submit
