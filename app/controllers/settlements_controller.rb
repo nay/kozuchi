@@ -5,7 +5,7 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
   menu "精算の概況", :only => [:index]
-  menu "詳細", :only => [:show]
+  menu "精算の詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
   before_filter :find_account, only: [:new, :create, :target_deals, :account_settlements]
@@ -108,6 +108,7 @@ class SettlementsController < ApplicationController
 
   # TODO: 例外にしたいが、目にしがちな画面なので、エラーページをきれいにしてからのほうがいいかも
   def show
+    self.menu = @settlement.name if @settlement.try(:name).present?
     unless @settlement
       render :action => 'no_settlement'
       return
