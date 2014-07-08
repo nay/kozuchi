@@ -1,4 +1,4 @@
-= render :partial => "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_assets_path}
+= render :partial => "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: monthly_assets_path(year: '_YEAR_', month: '_MONTH_')}}
 
 #book
   = render :partial => "assets"
