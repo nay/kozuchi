@@ -1,3 +1,0 @@
-<% for entry in @settlement.target_entries %>
-<%= entry.deal.date %>,<%= entry.deal.summary.try(:encode, "CP932") %>,<%= entry.mate_account_name.try(:encode, "CP932") %>,<%= entry.amount.try(:encode, "CP932") %>
-<% end %>

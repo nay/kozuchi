@@ -117,11 +117,6 @@ class SettlementsController < ApplicationController
   
   # 立替精算依頼書
   def print_form
-    if params[:format] == "csv"
-      headers["Content-Type"] = 'text/plain; charset=Shift_JIS'
-      render :action => 'print_form_csv', :layout => false
-      return
-    end
     render :layout => false
   end
   

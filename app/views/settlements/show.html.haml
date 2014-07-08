@@ -3,7 +3,6 @@
     = link_to '精算の削除', settlement_path(:id => @settlement.id), :method => :delete, :data => {:confirm => "精算データを削除すると、精算結果の取引も自動的に削除されます。精算データを削除してよろしいですか？"}, class: %w(btn btn-danger)
   - unless @settlement.kind_of?(SubmittedSettlement)
     = link_to '精算依頼書', print_form_settlement_path(:id => @settlement), 'data-popup' => true, class: %w(btn btn-default)
-    = link_to '精算依頼csv', print_form_settlement_path(:id => @settlement, :format => 'csv'), 'data-popup' => true, class: %w(btn btn-default)
     - if @settlement.result_entry
       - if @settlement.submitted_settlement_id.blank? && @settlement.account.destination_account
         = button_to "提出する", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"}, class: %w(btn btn-warning)
