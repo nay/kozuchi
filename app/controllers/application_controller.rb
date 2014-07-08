@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_filter :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
   attr_writer :menu_group, :menu
   protected :'menu_group=', :'menu='
 
@@ -33,6 +33,10 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+  def dummy_year_and_month
+    {year: "_YEAR_", month: "_MONTH_"}
+  end
 
   # TODO: セッションなどで直近の情報を保管したものを使うようにする
   def current_year
