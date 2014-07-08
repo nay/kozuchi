@@ -205,14 +205,14 @@ $ ->
 
   # カレンダー（月表示）
 
-  $('.for_monthly_deals #calendar').change (event, month)->
-    url = $('#month_submit_form').attr('action')
-    url = url.replace('_YEAR_', month.year)
-    url = url.replace('_MONTH_', month.month)
-    $('#month_submit_form').attr('action', url)
-    $('#month_submit_form').get(0).submit()
-    $('#deals_right a.monthly_deals_link').each ->
-      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
+#  $('.for_monthly_deals #calendar').change (event, month)->
+#    url = $('#month_submit_form').attr('action')
+#    url = url.replace('_YEAR_', month.year)
+#    url = url.replace('_MONTH_', month.month)
+#    $('#month_submit_form').attr('action', url)
+#    $('#month_submit_form').get(0).submit()
+#    $('#deals_right a.monthly_deals_link').each ->
+#      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
 
   # カレンダー（登録フォーム）
 

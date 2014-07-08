@@ -117,3 +117,7 @@ $ ->
   $(document).on('click', '#calendar .calendar_selector', ->
     document.calendar.selectMonth($(@).data('year'), $(@).data('month'), true)
   )
+  $(document).on('change', '#calendar.switcher', (event, month) ->
+    url = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
+    location.href = url
+  )
