@@ -1,0 +1,14 @@
+= render partial: "/settings/shared/new_flow_account_form", locals: {path: settings_incomes_path, account_type_name: Account::Income.human_name}
+
+= error_messages @account
+
+.bottom_box
+  = form_tag settings_incomes_path, method: :put do
+    %table.masters{width: "100%"}
+      %tr
+        %th= "#{Account::Income.human_name}名"
+        %th 並び順
+        %th 変更
+        %th 削除
+      = render partial: "settings/shared/flow_account", collection: @accounts, locals: {member_path: :settings_income_path}
+    .operation= link_to "編集を中止して再表示", settings_incomes_path
