@@ -4,7 +4,7 @@
 
 .bottom_box
   = form_tag settings_assets_path, method: :put do
-    %table.masters{width: "100%"}
+    %table.table.accounts
       %tr
         %th= "#{Account::Asset.human_name}名"
         %th 種別

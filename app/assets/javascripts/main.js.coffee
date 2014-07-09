@@ -24,3 +24,10 @@ $ ->
   nextMonth = if month == 12 then 1 else month + 1
 
   new Date(nextYear, nextMonth - 1, 0).getDate()
+
+$ ->
+  $(document).on("click", "a.reason", (event)->
+    message = $(@).data("reason")
+    alert message if message
+    event.preventDefault()
+  )
