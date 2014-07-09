@@ -1,0 +1,24 @@
+- account = asset # TODO: :as対応まで
+%tr
+  %td
+    = text_field("account[]", "name", :class => "text", :object => account)
+    - unless account.errors.empty?
+      .error= error_message account
+  %td
+    = select 'account[]', :asset_kind, @asset_kinds_options_container, :object => account
+  %td
+    - if account.linked?
+      %span.system 取引連動
+  %td= text_field("account[]", "sort_key", :size => 2, :class => 'number', :object => account)
+  - if account == @accounts.first
+    %td.button_action{rowspan: @accounts.size}>
+      %button{type: "submit"} 変更
+  %td.button_action
+    - if account.deletable?
+      = link_to "削除", settings_asset_path(:id => account.id), :method => :delete, :data => {:confirm => "「#{account.errors.empty? ? account.name : account.stored_name}」を削除します。よろしいですか？"}
+    - else
+      - delete_error_message = account.delete_errors.join('\n')
+      %span
+        ×(
+        %a{href: "javascript:alert('#{delete_error_message}');"} 理由
+        )
