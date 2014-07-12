@@ -1,12 +1,16 @@
 - # 前提 ： @accountがあること、account_type_name、path が locals で渡されること
-.form_box
-  = form_for @account, :as => :account, :url => path do |f|
-    .flatField= f.label :name, account_type_name + "名"
-    .flatField= f.text_field :name, :size => 16, :class => "text"
-    .flatField= f.label :asset_kind, "種別"
-    .flatField= f.select :asset_kind, @asset_kinds_options_container
-    .flatField= f.label :sort_key, "並び順"
-    .flatField= f.text_field :sort_key, :size => 2, :class => "amount"
-    .flatField= f.submit "新しい#{account_type_name}を追加", :class => "button"
-    .clearFlat
-    %p.guide ※並び順が小さいものほど、各機能で上に表示されます。
+.panel.panel-default
+  .panel-heading #{account_type_name}の追加
+  .panel-body
+    = form_for @account, :as => :account, :url => path do |f|
+      .form-group
+        = f.label :name, account_type_name + "名"
+        = f.text_field :name, size: 16, class: %w(text form-control)
+      .form-group
+        = f.label :asset_kind, "種別"
+        = f.select :asset_kind, @asset_kinds_options_container, {}, class: %w(form-control)
+      .form-group
+        = f.label :sort_key, "並び順"
+        = f.text_field :sort_key, size: 2, class: %w(amount form-control)
+        %p ※並び順が小さいものほど、各機能で上に表示されます。
+      = f.submit "新しい#{account_type_name}を追加", class: %w(btn btn-primary)

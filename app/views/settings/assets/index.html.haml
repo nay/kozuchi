@@ -1,16 +1,19 @@
-= render :partial => "new_asset_form", :locals => {:path => settings_assets_path, :account_type_name => Account::Asset.human_name}
+.container-fluid
+  .row
+    .col-md-9
+      .bottom_box
+        = form_tag settings_assets_path, method: :put do
+          %table.table.accounts
+            %tr
+              %th= "#{Account::Asset.human_name}名"
+              %th 種別
+              %th 詳細
+              %th 並び順
+              %th 変更
+              %th 削除
+            = render partial: "asset", collection: @accounts
+          .operation= link_to "編集を中止して再表示", settings_assets_path
 
-= error_messages @account
-
-.bottom_box
-  = form_tag settings_assets_path, method: :put do
-    %table.table.accounts
-      %tr
-        %th= "#{Account::Asset.human_name}名"
-        %th 種別
-        %th 詳細
-        %th 並び順
-        %th 変更
-        %th 削除
-      = render partial: "asset", collection: @accounts
-    .operation= link_to "編集を中止して再表示", settings_assets_path
+    .col-md-3
+      = render :partial => "new_asset_form", :locals => {:path => settings_assets_path, :account_type_name => Account::Asset.human_name}
+      = error_messages @account
