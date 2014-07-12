@@ -1,4 +1,8 @@
 .container-fluid
+  %ul.nav.nav-tabs.account_tabs{role: "tablist"}
+    %li.active= link_to Account::Asset.human_name, settings_assets_path
+    %li= link_to Account::Expense.human_name, settings_expenses_path
+    %li= link_to Account::Income.human_name, settings_incomes_path
   .row
     .col-md-9
       .bottom_box
