@@ -1,0 +1,9 @@
+.row.deal_pattern
+  = link_to deal_pattern.to_s, settings_deal_pattern_path(deal_pattern)
+  .delete
+    = link_to '削除', settings_deal_pattern_path(deal_pattern), :method => :delete, data: {confirm: confirm_message_on_destroy(deal_pattern)}
+  .timestamp
+    = l deal_pattern.updated_at
+    更新
+  %div{style: "clear:right;"}
+
