@@ -3,6 +3,7 @@ class Settings::DealPatternsController < ApplicationController
   menu_group "設定"
   menu "記入パターン"
   menu "記入パターンの新規登録", only: [:new, :create]
+  menu "記入パターンの編集", only: [:show, :update]
 
   before_filter :find_deal_pattern, :only => [:show, :update, :destroy]
   before_filter :find_or_build_deal_pattern, :only => [:create_entry]
@@ -28,7 +29,7 @@ class Settings::DealPatternsController < ApplicationController
     @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
 
-    render :partial => 'form' if request.xhr?
+    render action: :form, layout: !request.xhr?
   end
 
   # :pattern_code が指定されていたら対応する内容を画面上にコピーする
@@ -49,7 +50,7 @@ class Settings::DealPatternsController < ApplicationController
     @deal_pattern.load(load) if load
     @deal_pattern.fill_complex_entries
 
-    render :partial => 'form' if request.xhr?
+    render action: :form, layout: !request.xhr?
   end
 
   def create
