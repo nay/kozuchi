@@ -74,7 +74,7 @@ class Settings::AccountsController < ApplicationController
   end
 
   def find_account
-    @account = current_user.assets.find(params[:id])
+    @account = user_accounts.find(params[:id])
   end
 
   def set_asset_kinds_option_container
