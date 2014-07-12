@@ -1,7 +1,14 @@
-%h2 記入パターン一覧
-.navigation
-  = link_to '新規登録', new_settings_deal_pattern_path
-.masters
-  - if @deal_patterns.empty?
-    %p 記入パターンは１つも登録されていません。
-  = render partial: 'deal_pattern', collection: @deal_patterns
+.container-fluid
+  .row
+    .col-md-10
+      - if @deal_patterns.empty?
+        %p 記入パターンは１つも登録されていません。
+      - else
+        %table.table
+          %tr
+            %th 記入パターン名
+            %th 更新日時
+            %th 削除
+          = render partial: 'deal_pattern', collection: @deal_patterns
+    .col-md-2.side_nav
+      = link_to '新規登録', new_settings_deal_pattern_path, class: %w(btn btn-primary)

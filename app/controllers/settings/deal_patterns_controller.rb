@@ -2,6 +2,7 @@
 class Settings::DealPatternsController < ApplicationController
   menu_group "設定"
   menu "記入パターン"
+  menu "記入パターンの新規登録", only: [:new, :create]
 
   before_filter :find_deal_pattern, :only => [:show, :update, :destroy]
   before_filter :find_or_build_deal_pattern, :only => [:create_entry]
