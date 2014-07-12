@@ -11,7 +11,6 @@ class Settings::AccountsController < ApplicationController
     @accounts = user_accounts
     @account = @account_class.new
     set_asset_kinds_option_container if @account_class.has_kind?
-    render "/settings/shared/accounts/index"
   end
 
   # 新しい勘定を作成
@@ -23,7 +22,7 @@ class Settings::AccountsController < ApplicationController
     else
       @accounts = user_accounts(true)
       set_asset_kinds_option_container if @account_class.has_kind?
-      render "/settings/shared/accounts/index"
+      render action: :index
     end
   end
 

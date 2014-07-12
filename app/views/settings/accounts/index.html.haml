@@ -15,8 +15,8 @@
               %th 並び順
               %th 変更
               %th 削除
-            = render partial: "/settings/shared/accounts/account", collection: @accounts, as: :account
+            = render partial: "account", collection: @accounts, as: :account
           .operation= link_to "編集を中止して再表示", url_for
 
     .col-md-3
-      = render :partial => "/settings/shared/accounts/new_form"
+      = render :partial => "new_form"
