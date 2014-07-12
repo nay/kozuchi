@@ -6,18 +6,27 @@ Kozuchi::Application.routes.draw do
 
   # settings
   namespace :settings do
-    controller :incomes do
-      put 'incomes', :action => :update_all
-      resources :incomes
+    controller :accounts do
+      %w(asset income expense).each do |type|
+        with_options account_type: type do |with_type|
+          with_type.put type.pluralize, :action => :update_all
+          with_type.resources type.pluralize, controller: :accounts
+        end
+      end
     end
-    controller :expenses do
-      put 'expenses', :action => :update_all
-      resources :expenses
-    end
-    controller :assets do
-      put 'assets', :action => :update_all
-      resources :assets
-    end
+
+    # controller :incomes do
+    #   put 'incomes', :action => :update_all
+    #   resources :incomes
+    # end
+    # controller :expenses do
+    #   put 'expenses', :action => :update_all
+    #   resources :expenses
+    # end
+    # controller :assets do
+    #   put 'assets', :action => :update_all
+    #   resources :assets
+    # end
     # 連携
     resources :account_link_requests, :path => 'accounts/:account_id/link_requests', :only => [:destroy]
 
