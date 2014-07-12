@@ -8,8 +8,10 @@ class Settings::IncomesController < ApplicationController
 
   # 一覧表示する。
   def index
+    @account_class = Account::Income
     @accounts = current_user.incomes
     @account = Account::Income.new
+    render "/settings/shared/accounts/index"
   end
 
   # 新しい勘定を作成する。
@@ -19,8 +21,9 @@ class Settings::IncomesController < ApplicationController
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_incomes_path
     else
+      @account_class = Account::Income
       @accounts = current_user.incomes(true)
-      render :action => "index"
+      render "/settings/shared/accounts/index"
     end
   end
 

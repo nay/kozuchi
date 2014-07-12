@@ -8,8 +8,10 @@ class Settings::ExpensesController < ApplicationController
 
   # 一覧表示する。
   def index
+    @account_class = Account::Expense
     @accounts = current_user.expenses
     @account = Account::Expense.new
+    render "/settings/shared/accounts/index"
   end
 
   # 新しい勘定を作成する。
@@ -19,8 +21,9 @@ class Settings::ExpensesController < ApplicationController
       flash[:notice] = "「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_expenses_path
     else
+      @account_class = Account::Expense
       @accounts = current_user.expenses(true)
-      render :action => "index"
+      render "/settings/shared/accounts/index"
     end
   end
 

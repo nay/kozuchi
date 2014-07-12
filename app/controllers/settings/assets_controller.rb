@@ -8,10 +8,12 @@ class Settings::AssetsController < ApplicationController
 
   # 一覧表示する。
   def index
+    @account_class = Account::Asset
     @account_type = account_type # symbol # TODO
     @accounts = current_user.assets
     @account = Account::Asset.new
     set_asset_kinds_option_container
+    render "/settings/shared/accounts/index"
   end
 
   # 新しい勘定を作成する。
@@ -21,9 +23,10 @@ class Settings::AssetsController < ApplicationController
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to settings_assets_path
     else
+      @account_class = Account::Asset
       @accounts = current_user.assets(true)
       set_asset_kinds_option_container
-      render :action => "index"
+      render "/settings/shared/accounts/index"
     end
   end
 

@@ -1,0 +1,18 @@
+- # 前提 ： @account_class, @accountがあること
+.panel.panel-default
+  .panel-heading #{@account_class.human_name}の追加
+  .panel-body
+    = form_for @account, :as => :account, :url => url_for do |f|
+      .form-group
+        = f.label :name, @account_class.human_name + "名"
+        = f.text_field :name, size: 16, class: %w(text form-control)
+      - if @account_class.has_kind?
+        .form-group
+          = f.label :asset_kind, "種別"
+          = f.select :asset_kind, @asset_kinds_options_container, {}, class: %w(form-control)
+      .form-group
+        = f.label :sort_key, "並び順"
+        = f.text_field :sort_key, size: 2, class: %w(amount form-control)
+        %p ※並び順が小さいものほど、各機能で上に表示されます。
+      = error_messages @account
+      = f.submit "新しい#{@account_class.human_name}を追加", class: %w(btn btn-primary)
