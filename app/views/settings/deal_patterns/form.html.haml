@@ -1,3 +1,4 @@
+#deal_pattern_options{data: {check_code_url_template: settings_deal_pattern_codes_path(:code => 'code_template', :except => @deal_pattern.new_record? ? nil : @deal_pattern.id) }}
 .container-fluid
   .row
     .col-md-10
@@ -44,7 +45,7 @@
   function checkCodeDuplication() {
     if (jQuery('#deal_pattern_code').val() == '') return
     jQuery.ajax({
-      url: '<%= settings_deal_pattern_codes_path(:code => 'code_template', :except => @deal_pattern.new_record? ? nil : @deal_pattern.id) %>'.replace('code_template', jQuery('input#deal_pattern_code').val()),
+      url: $('#deal_pattern_options').data("check-code-url-template").replace('code_template', jQuery('input#deal_pattern_code').val()),
       dataType: 'text',
       success: function(data, dataType) {
         if (data != '') {
@@ -63,7 +64,7 @@
 
     // add entry
     $('#add_entry_link').click(function() {
-      $('#form_frame').load(this.href, $('#deal_pattern_form').serializeArray())
+      $('#content').load(this.href, $('#deal_pattern_form').serializeArray())
       return false;
     })
     

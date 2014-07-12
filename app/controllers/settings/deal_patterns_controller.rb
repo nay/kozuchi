@@ -83,7 +83,7 @@ class Settings::DealPatternsController < ApplicationController
     entries_size = params[:deal_pattern][:debtor_entries_attributes].size
     @deal_pattern.attributes = deal_pattern_params
     @deal_pattern.fill_complex_entries(entries_size+1)
-    render :partial => 'form'
+    render action: 'form', layout: false
   end
 
   # 指定されたコードでそのユーザーに記入パターンが登録済みか調べる
