@@ -1,0 +1,14 @@
+.top_bottom
+  .form_box
+    = error_messages_for :user
+
+    = form_for @user, :url => user_path, :html => {:method => :put}  do |f|
+      .user_edit
+        %table{style: "margin-left:auto;margin-right:auto;"}
+          = with_label "ログインID", f.text_field(:login, {:size => 30})
+          = with_label "パスワード", password_field_tag(:password, nil, :size => 30)
+          = with_label "パスワード（確認）", password_field_tag(:password_confirmation, nil, :size => 30)
+          = with_label "Eメールアドレス", f.text_field(:email)
+        %tr
+          %td{colspan: "2"}= submit_tag '変更'
+    %div= link_to 'アカウントを削除する', {:action => 'destroy',}, { :data => {:confirm =>"アカウントとデータをすべて削除します。復活させることはできません。削除してよろしいですか？"}, :method => 'delete'}
