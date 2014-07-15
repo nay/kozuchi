@@ -1,27 +1,34 @@
-%div
-  = @keywords.map{|k| "「#{k}」"}.join('')
-  を含む明細は
-  = @deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"
+.container-fluid
+  .row
+    .col-md-10
+      %p
+        = @keywords.map{|k| "「#{k}」"}.join('')
+        を含む明細は
+        = @deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"
 
-%div{style: "text-align: center;padding: 4px;"}= link_to '戻る', :action => 'index'
-- unless @deals.empty?
-  %table.book
-    %tr
-      %th.date 日付
-      %th 摘要
-      %th{style: "width: 2em;"}
-      %th.account
-      %th.amount 入金
-      %th.amount 出金
-      %th.amount 残高
-    - for d in @deals
-      - for e in d.entries
-        %tr
-          - if e == d.entries.first
-            %td.date{rowspan: d.entries.size}= l d.date
-            %td.summary{rowspan: d.entries.size}= d.summary
-            %td.icon_to_deal{rowspan: d.entries.size, syle: "text-align:center;"}= icon_to_deal_in_monthly d
-          %td.account= e.account.name
-          %td.amount= number_with_delimiter(e.amount) if e.amount  > 0 && !e.initial_balance?
-          %td.amount= number_with_delimiter(e.amount.abs) if e.amount < 0 && !e.initial_balance?
-          %td.amount= number_with_delimiter(e.balance)
+      - unless @deals.empty?
+        %table.book
+          %tr
+            %th.date 日付
+            %th 摘要
+            %th{style: "width: 2em;"}
+            %th.account
+            %th.amount 入金
+            %th.amount 出金
+            %th.amount 残高
+          - for d in @deals
+            - for e in d.entries
+              %tr
+                - if e == d.entries.first
+                  %td.date{rowspan: d.entries.size}= l d.date
+                  %td.summary{rowspan: d.entries.size}= d.summary
+                  %td.icon_to_deal{rowspan: d.entries.size, syle: "text-align:center;"}= icon_to_deal_in_monthly d
+                %td.account= e.account.name
+                %td.amount= number_with_delimiter(e.amount) if e.amount  > 0 && !e.initial_balance?
+                %td.amount= number_with_delimiter(e.amount.abs) if e.amount < 0 && !e.initial_balance?
+                %td.amount= number_with_delimiter(e.balance)
+    .col-md-2.side_nav
+      = link_to '記入する', new_deal_path, class: %w(btn btn-default)
+      = link_to 'すべての記入', monthly_deals_path(year: current_year, month: current_month), class: %w(btn btn-default)
+      - account_selection_histories.each do |a|
+        = link_to a.name, monthly_account_deals_path(account_id: a.id, year: current_year, month: current_month), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}

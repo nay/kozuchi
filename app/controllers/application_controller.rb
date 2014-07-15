@@ -38,13 +38,12 @@ class ApplicationController < ActionController::Base
     {year: "_YEAR_", month: "_MONTH_"}
   end
 
-  # TODO: セッションなどで直近の情報を保管したものを使うようにする
   def current_year
-    Time.zone.today.year
+    read_target_date.first
   end
 
   def current_month
-    Time.zone.today.month
+    read_target_date.second
   end
 
   # TODO: deal系の機能とともにconcernsにでも出したい
