@@ -42,6 +42,8 @@
             %li= link_to '小槌の特徴', :controller => '/help', :action => 'index'
             %li= link_to 'できること', :controller => '/help', :action => 'functions'
             %li= link_to 'FAQ', :controller => '/help', :action => 'faq'
+            %li.divider{role: 'presentation'}
+            %li= link_to '小槌.net', "http://www.kozuchi.net/", target: 'kozuchi_net'
         - if current_user
           = form_tag search_deals_path, method: :get, class: %w(navbar-form navbar-left), role: :search do
             .form-group
