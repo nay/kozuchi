@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::ExpensesController do
+describe Settings::AccountsController do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::AssetsController, :js => true do
+describe "sesstings/assets", :js => true do
   self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base

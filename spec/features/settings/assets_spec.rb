@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::AssetsController do
+describe "settings/assets" do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
