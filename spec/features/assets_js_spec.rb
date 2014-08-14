@@ -16,7 +16,7 @@ describe AssetsController, :js => true do
 
   describe "カレンダー（翌月）のクリック" do
     before do
-      find("#month_#{target_date.year}_#{target_date.month} a").click
+      click_calendar(target_date.year, target_date.month)
     end
     it do
       page.should have_content("#{target_date.year}年#{target_date.month}月末日の資産表")

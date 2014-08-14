@@ -16,18 +16,16 @@ describe DealsController, :js => true do
     let(:target_date) {Date.today << 1}
     before do
       # 前月にしておいて
-      find('#header_menu').click_link '家計簿'
-      find("#month_#{target_date.year}_#{target_date.month}").click_link "#{target_date.month}月"
+      select_menu('家計簿')
+      click_calendar(target_date.year, target_date.month)
 
       # クリック
-      find("#user_and_today").click
+      find("#today").click
     end
 
-    it "カレンダーの選択月が今月に変わり、今日の日付が入る" do
+    it "カレンダーの選択月が今月に変わる" do
       find("td.selected_month").text.should == "#{Date.today.month}月"
-      find("input#date_day").value.should == Date.today.day.to_s
     end
-
   end
 
   describe "カレンダー（翌月）のクリック" do
