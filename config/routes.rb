@@ -15,18 +15,6 @@ Kozuchi::Application.routes.draw do
       end
     end
 
-    # controller :incomes do
-    #   put 'incomes', :action => :update_all
-    #   resources :incomes
-    # end
-    # controller :expenses do
-    #   put 'expenses', :action => :update_all
-    #   resources :expenses
-    # end
-    # controller :assets do
-    #   put 'assets', :action => :update_all
-    #   resources :assets
-    # end
     # 連携
     resources :account_link_requests, :path => 'accounts/:account_id/link_requests', :only => [:destroy]
 

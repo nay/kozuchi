@@ -43,7 +43,7 @@ class Settings::AccountsController < ApplicationController
       flash.now[:notice] = "変更できなかった#{@account_class.human_name}があります。"
       @accounts.sort!{|a, b| a.sort_key.to_i <=> b.sort_key.to_i}
       @account = @account_class.new
-      set_asset_kinds_option_container if @account.has_kind?
+      set_asset_kinds_option_container if @account_class.has_kind?
       render :action => "index"
     end
   end
