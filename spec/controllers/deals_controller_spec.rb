@@ -108,7 +108,7 @@ describe DealsController do
     end
     it "成功する" do
       delete :destroy, :id => @deal.id
-      response.should redirect_to(monthly_deals_path(:year => '2010', :month => '7'))
+      response.should be_success
       Deal::Base.find_by(id: @deal.id).should be_nil
     end
   end
