@@ -27,8 +27,7 @@
               = day_anchor date
             = l deal.date
             - if !deal.confirmed?
-              %br
-              = link_to '確認' , confirm_deal_path(:id => deal), :method => :put, :class => 'small_button', :alt => '確認状態にします。'
+              = link_to '確認', confirm_deal_path(:id => deal), :class => 'small_button deal_confirmation_link', :alt => '確認状態にします。'
 
           - # number
           = content_tag :td, :class => 'number', :rowspan => size do

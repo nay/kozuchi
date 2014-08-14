@@ -275,6 +275,18 @@ $ ->
     event.preventDefault()
   )
 
+  # 記入の確認
+  $(document).on('click', 'a.deal_confirmation_link', (event)->
+    $.post(@href, {_method: 'put'}, (data) ->
+      $('#content').find(".alert").remove()
+      $('#content').prepend("<div class='alert alert-success alert-dismissable'><button class='close' type='button' data-dismiss='alert' area-hidden='true'>&times;</button>" + data.success_message + "</div>")
+      $("tr.d" + data.deal.id + " a.deal_confirmation_link").remove()
+      $("tr.d" + data.deal.id).removeClass('unconfirmed')
+      location.hash = "d" + data.deal.id
+    )
+    event.preventDefault()
+  )
+
   # ナビゲーター内の口座選択の変更
   $('#deals_navigator #account_selector #account_id').change (event)->
     account_id = $(@).val()

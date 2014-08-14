@@ -119,7 +119,7 @@ describe DealsController do
     end
     it "成功する" do
       post :confirm, :id => @deal.id
-      response.should redirect_to(monthly_deals_path(:year => '2010', :month => '7', :anchor => @deal.id))
+      response.should be_success
       @deal.reload
       @deal.should be_confirmed
     end

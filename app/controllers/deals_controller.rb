@@ -245,11 +245,15 @@ class DealsController < ApplicationController
   end
 
   
-  # 確認処理
+  # 確認
+  # Ajaxでリクエストされる前提
   def confirm
     @deal.confirm!
     write_target_date(@deal.date)
-    redirect_to REDIRECT_OPTIONS_PROC.call(@deal)
+    render json: {
+      deal: {id: @deal.id},
+      success_message:  "#{@deal.human_name} を確認しました。"
+    }
   end
 
   private
