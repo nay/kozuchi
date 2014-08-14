@@ -157,7 +157,7 @@ class DealsController < ApplicationController
     @deal.attributes = deal_params
     @deal.fill_complex_entries(entries_size+1)
     if @deal.new_record?
-      render RENDER_OPTIONS_PROC.call(:complex_deal)
+      render partial: 'complex_deal_form'
     else
       render :partial => 'edit_form'
     end
