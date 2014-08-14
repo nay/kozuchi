@@ -11,8 +11,7 @@ describe AssetsController, :js => true do
   let(:target_date) {Date.today >> 1}
   before do
     Deal::Base.destroy_all
-    find('body header .navbar').click_link '分析'
-    click_link '資産表'
+    select_menu('分析', '資産表')
   end
 
   describe "カレンダー（翌月）のクリック" do
