@@ -132,7 +132,9 @@ module Deal
 
   def load(from)
     self.debtor_entries_attributes = from.debtor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    debtor_entries.build if debtor_entries.empty?
     self.creditor_entries_attributes = from.creditor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    creditor_entries.build if creditor_entries.empty?
     self
   end
 

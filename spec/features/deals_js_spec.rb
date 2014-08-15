@@ -62,6 +62,20 @@ describe DealsController, :js => true do
       end
     end
 
+    describe "日ナビゲーターのクリック" do
+      let(:target_date) {Date.today << 1} # 前月
+      before do
+        click_calendar(target_date.year, target_date.month)
+        # 3日をクリック
+        date = Date.new((Date.today << 1).year, target_date.month, 3)
+        click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
+      end
+      it "URLに対応する日付ハッシュがつく" do
+        current_url =~ (/^.*#(.*)$/)
+        $1.should == 'day3'
+      end
+    end
+
   end
 
   describe "家計簿(記入)" do
@@ -119,201 +133,190 @@ describe DealsController, :js => true do
       end
     end
 
+    describe "日ナビゲーターのクリック" do
+      let(:target_date) {Date.today << 1} # 前月
+      before do
+        click_calendar(target_date.year, target_date.month)
+        # 3日をクリック
+        date = Date.new((Date.today << 1).year, target_date.month, 3)
+        click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
+      end
+      it "日の欄に指定した日が入る" do
+        find("input#date_day").value.should == '3'
+      end
+    end
+
+    describe "登録" do
+      describe "通常明細" do
+        before do
+          fill_in 'deal_summary', :with => '朝食のおにぎり'
+          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '210'
+          select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+          select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+          click_button '記入'
+        end
+        it do
+          flash_notice.should have_content('追加しました。')
+          page.should have_content('朝食のおにぎり')
+        end
+      end
+
+      describe "通常明細のサジェッション" do
+        describe "'のない明細" do
+          before do
+            FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食のサンドイッチ")
+            fill_in 'deal_summary', :with => '朝食'
+            sleep 0.6
+          end
+          it "先に登録したデータがサジェッション表示される" do
+            page.should have_css("#patterns div.clickable_text")
+          end
+          it "サジェッションをクリックするとデータが入る" do
+            page.find("#patterns div.clickable_text").click
+            page.find("#deal_summary").value.should == '朝食のサンドイッチ'
+          end
+        end
+
+        describe "'のある明細" do
+          before do
+            FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食の'サンドイッチ'")
+            fill_in 'deal_summary', :with => '朝食'
+            sleep 0.6
+          end
+          it "先に登録したデータがサジェッション表示される" do
+            page.should have_css("#patterns div.clickable_text")
+          end
+          it "サジェッションをクリックするとデータが入る" do
+            page.find("#patterns div.clickable_text").click
+            page.find("#deal_summary").value.should == "朝食の'サンドイッチ'"
+          end
+        end
+      end
+
+      describe "通常明細のパターン指定(id)" do
+        let!(:pattern) { FactoryGirl.create(:deal_pattern,
+                                            :code => '',
+                                            :name => '',
+                                            :debtor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_food), :amount => 800}],
+                                            :creditor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_cache), :amount => -800}]
+        ) }
+        before do
+          select_menu('家計簿')
+          click_link "記入する"
+          click_link "*昼食" # パターンを指定
+        end
+        it "パターン登録した内容が入る" do
+          sleep 1
+          page.find("#deal_debtor_entries_attributes_0_amount").value.should == '800'
+          page.find("#deal_summary").value.should == '昼食'
+        end
+      end
+
+      describe "複数明細" do
+        before do
+          click_link "明細(複数)"
+        end
+
+        describe "タブを表示できる" do
+          it "タブが表示される" do
+            page.should have_css('input#deal_summary')
+            page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
+            page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
+            page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
+            page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
+            page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
+            page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
+            page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
+            page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
+            page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
+            page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
+            page.should have_css('input#deal_debtor_entries_attributes_0_amount')
+            page.should have_css('input#deal_debtor_entries_attributes_1_amount')
+            page.should have_css('input#deal_debtor_entries_attributes_2_amount')
+            page.should have_css('input#deal_debtor_entries_attributes_3_amount')
+            page.should have_css('input#deal_debtor_entries_attributes_4_amount')
+            page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
+            page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
+            page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
+            page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
+            page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
+          end
+        end
+
+        describe "記入欄を増やすことができる" do
+          before do
+            click_link '記入欄を増やす'
+          end
+
+          it "6つめの記入欄が表示される" do
+            page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
+            page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
+            page.should have_css('input#deal_debtor_entries_attributes_5_amount')
+            page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
+          end
+        end
+
+        describe "1対2の明細が登録できる" do
+          before do
+            find('a.entry_summary').click # unifyモードにする
+            fill_in 'deal_summary', :with => '買い物'
+            fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
+            select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
+            select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+            fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
+            select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
+            click_button '記入'
+          end
+
+          it "明細が一覧に表示される" do
+            flash_notice.should have_content('追加しました。')
+            page.should have_content '買い物'
+            page.should have_content '1,000'
+            page.should have_content '800'
+            page.should have_content '200'
+          end
+        end
+
+      end
+
+      describe "残高" do
+        before do
+          click_link "残高"
+        end
+
+        describe "タブを表示できる" do
+          it do
+            page.should have_css('select#deal_account_id')
+            page.should have_content('計算')
+            page.should have_content('残高:')
+            page.should have_content('記入')
+
+            page.should_not have_css('input#deal_summary')
+          end
+        end
+
+        describe "パレットをつかって登録できる" do
+          before do
+            select '現金', :from => 'deal_account_id'
+            fill_in 'gosen', :with => '1'
+            fill_in 'jyu', :with => '3'
+            click_button '計算'
+            click_button '記入'
+          end
+
+          it "一覧に表示される" do
+            flash_notice.should have_content("追加しました。")
+            page.should have_content("残高確認")
+            page.should have_content("5,030")
+          end
+        end
+      end
+    end
+
   end
 
-  # describe "日ナビゲーターのクリック" do
-  #   let(:target_date) {Date.today << 1} # 前月
-  #   before do
-  #     select_menu('家計簿')
-  #     find("#month_#{target_date.year}_#{target_date.month}").click_link "#{target_date.month}月"
-  #     # 3日をクリック
-  #     date = Date.new((Date.today << 1).year, target_date.month, 3)
-  #     click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
-  #   end
   #
-  #   it "URLに対応する日付ハッシュがつき、日の欄に指定した日が入る" do
-  #     current_url =~ (/^.*#(.*)$/)
-  #     $1.should == 'day3'
-  #     find("input#date_day").value.should == '3'
-  #   end
-  # end
-  #
-  # describe "登録" do
-  #
-  #   describe "通常明細" do
-  #     before do
-  #       visit "/deals" # 今月へ。日付は入っているはず
-  #       fill_in 'deal_summary', :with => '朝食のおにぎり'
-  #       fill_in 'deal_debtor_entries_attributes_0_amount', :with => '210'
-  #       select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
-  #       select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
-  #       click_button '記入'
-  #     end
-  #
-  #     it do
-  #       flash_notice.should have_content('追加しました。')
-  #       page.should have_content('朝食のおにぎり')
-  #     end
-  #
-  #   end
-  #
-  #   describe "通常明細のサジェッション" do
-  #     describe "'のない明細" do
-  #       before do
-  #         FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食のサンドイッチ")
-  #         visit "/deals" # 今月へ。日付は入っているはず
-  #
-  #         fill_in 'deal_summary', :with => '朝食'
-  #         sleep 0.6
-  #       end
-  #       it "先に登録したデータがサジェッション表示される" do
-  #         page.should have_css("#patterns div.clickable_text")
-  #       end
-  #       it "サジェッションをクリックするとデータが入る" do
-  #         page.find("#patterns div.clickable_text").click
-  #         page.find("#deal_summary").value.should == '朝食のサンドイッチ'
-  #       end
-  #     end
-  #
-  #     describe "'のある明細" do
-  #       before do
-  #         FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食の'サンドイッチ'")
-  #         visit "/deals" # 今月へ。日付は入っているはず
-  #
-  #         fill_in 'deal_summary', :with => '朝食'
-  #         sleep 0.6
-  #       end
-  #       it "先に登録したデータがサジェッション表示される" do
-  #         page.should have_css("#patterns div.clickable_text")
-  #       end
-  #       it "サジェッションをクリックするとデータが入る" do
-  #         page.find("#patterns div.clickable_text").click
-  #         page.find("#deal_summary").value.should == "朝食の'サンドイッチ'"
-  #       end
-  #     end
-  #   end
-  #
-  #   describe "通常明細のパターン指定(id)" do
-  #     let!(:pattern) { FactoryGirl.create(:deal_pattern,
-  #         :code => '',
-  #         :name => '',
-  #         :debtor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_food), :amount => 800}],
-  #         :creditor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_cache), :amount => -800}]
-  #         ) }
-  #     before do
-  #       visit "/deals" # 今月へ。日付は入っているはず
-  #       click_link "*昼食" # パターンを指定
-  #     end
-  #     it "パターン登録した内容が入る" do
-  #       sleep 1
-  #       page.find("#deal_debtor_entries_attributes_0_amount").value.should == '800'
-  #       page.find("#deal_summary").value.should == '昼食'
-  #     end
-  #   end
-  #
-  #   describe "複数明細" do
-  #     before do
-  #       visit "/deals"
-  #       click_link "明細(複数)"
-  #     end
-  #
-  #     describe "タブを表示できる" do
-  #       it "タブが表示される" do
-  #         page.should have_css('input#deal_summary')
-  #         page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
-  #         page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
-  #         page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
-  #         page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
-  #         page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
-  #         page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
-  #         page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
-  #         page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
-  #         page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
-  #         page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
-  #         page.should have_css('input#deal_debtor_entries_attributes_0_amount')
-  #         page.should have_css('input#deal_debtor_entries_attributes_1_amount')
-  #         page.should have_css('input#deal_debtor_entries_attributes_2_amount')
-  #         page.should have_css('input#deal_debtor_entries_attributes_3_amount')
-  #         page.should have_css('input#deal_debtor_entries_attributes_4_amount')
-  #         page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
-  #         page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
-  #         page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
-  #         page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
-  #         page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
-  #       end
-  #     end
-  #
-  #     describe "記入欄を増やすことができる" do
-  #       before do
-  #         click_link '記入欄を増やす'
-  #       end
-  #
-  #       it "6つめの記入欄が表示される" do
-  #         page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
-  #         page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
-  #         page.should have_css('input#deal_debtor_entries_attributes_5_amount')
-  #         page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
-  #       end
-  #     end
-  #
-  #     describe "1対2の明細が登録できる" do
-  #       before do
-  #         find('a.entry_summary').click # unifyモードにする
-  #         fill_in 'deal_summary', :with => '買い物'
-  #         fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
-  #         select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
-  #         fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
-  #         select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
-  #         fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
-  #         select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
-  #         click_button '記入'
-  #       end
-  #
-  #       it "明細が一覧に表示される" do
-  #         flash_notice.should have_content('追加しました。')
-  #         page.should have_content '買い物'
-  #         page.should have_content '1,000'
-  #         page.should have_content '800'
-  #         page.should have_content '200'
-  #       end
-  #     end
-  #
-  #   end
-  #
-  #   describe "残高" do
-  #     before do
-  #       visit "/deals" # 今月へ。日付は入っているはず
-  #       click_link "残高"
-  #     end
-  #
-  #     describe "タブを表示できる" do
-  #       it do
-  #         page.should have_css('select#deal_account_id')
-  #         page.should have_content('計算')
-  #         page.should have_content('残高:')
-  #         page.should have_content('記入')
-  #
-  #         page.should_not have_css('input#deal_summary')
-  #       end
-  #     end
-  #
-  #     describe "パレットをつかって登録できる" do
-  #       before do
-  #         select '現金', :from => 'deal_account_id'
-  #         fill_in 'gosen', :with => '1'
-  #         fill_in 'jyu', :with => '3'
-  #         click_button '計算'
-  #         click_button '記入'
-  #       end
-  #
-  #       it "一覧に表示される" do
-  #         flash_notice.should have_content("追加しました。")
-  #         page.should have_content("残高確認")
-  #         page.should have_content("5,030")
-  #       end
-  #     end
-  #   end
-  # end
   #
   # describe "変更" do
   #   describe "複数明細利用時" do

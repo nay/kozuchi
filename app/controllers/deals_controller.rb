@@ -38,8 +38,6 @@ class DealsController < ApplicationController
       @deal.load(load)
       # 見つかったパターンが単純明細の場合は単純明細処理に切り替える
       if pattern && !@deal.complex?
-        changed_deal_type = deal_type.to_s.gsub(/complex/, 'general').to_sym
-        changed_render_options = render_options_proc ? render_options_proc.call(changed_deal_type) : {}
         flash[:"#{controller_name}_deal_type"] = 'general_deal' # reloadに強い
         render partial: 'general_deal_form'
         return

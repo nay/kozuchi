@@ -30,7 +30,7 @@ module DealsHelper
       if e.object.marked_for_destruction?
         concat(e.hidden_field :_delete, :value => '1')
       else
-        amount_unchangable = e.object.settlement_attached? || f.object.creditor_entries.first.settlement_attached?
+        amount_unchangable = e.object.settlement_attached?
         amount_field_proc = lambda{|tabindex | (e.text_field(:amount, {:size => "8", :disabled => amount_unchangable, :class => "amount#{amount_unchangable ? '' : ' pattern_field'}", :tabindex => tabindex}.merge(amount_unchangable ? {:id => nil} : {}))) + (amount_unchangable ? e.hidden_field(:amount, :class => 'pattern_field') : '')}
         debtor_account_field_proc = if fixed_account
           lambda{|tabindex|
