@@ -6,6 +6,39 @@ describe DealsController, :js => true do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
+  # 変更windowを開いたあとの記述。閲覧と記入でまったく同じなのでここで
+  shared_examples_for "複数記入に変更できる" do
+    before do
+      click_link '複数記入にする'
+    end
+    it "フォーム部分だけが変わる" do
+      page.should have_css("select#deal_creditor_entries_attributes_4_account_id")
+    end
+    it "記入欄を増やせる" do
+      click_link '記入欄を増やす'
+      page.should have_css("select#deal_creditor_entries_attributes_5_account_id")
+    end
+  end
+
+  shared_examples_for "変更を実行できる" do
+    before do
+      find("#date_day[value='10']")
+      fill_in 'date_day', :with => '11'
+      fill_in 'deal_summary', :with => '冷やし中華'
+      fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
+      select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+      click_button '変更'
+    end
+
+    it "一覧に表示される" do
+      flash_notice.should have_content("更新しました。")
+      flash_notice.should have_content("2012/07/11")
+      page.should have_content('冷やし中華')
+      page.should have_content('920')
+      page.should have_content('クレジットカードＸ')
+    end
+  end
+
   before do
     Deal::Base.destroy_all
   end
@@ -76,7 +109,7 @@ describe DealsController, :js => true do
     end
 
     describe "変更" do
-      describe "複数明細利用時" do
+      context "単純明細の変更ボタンをクリックしたとき" do
         let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do
           visit "/deals/2012/7"
@@ -89,6 +122,26 @@ describe DealsController, :js => true do
           find("#edit_window #date_day").value.should == "10"
           find("#edit_window #deal_summary").value.should ==  "ラーメン"
           current_hash.should == "d#{deal.id}"
+        end
+        it_behaves_like "複数記入に変更できる"
+        it_behaves_like "変更を実行できる"
+        describe "実行できる" do
+          before do
+            find("#date_day[value='10']")
+            fill_in 'date_day', :with => '11'
+            fill_in 'deal_summary', :with => '冷やし中華'
+            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
+            select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+            click_button '変更'
+          end
+
+          it "一覧に表示される" do
+            flash_notice.should have_content("更新しました。")
+            flash_notice.should have_content("2012/07/11")
+            page.should have_content('冷やし中華')
+            page.should have_content('920')
+            page.should have_content('クレジットカードＸ')
+          end
         end
       end
     end
@@ -331,7 +384,7 @@ describe DealsController, :js => true do
     end
 
     describe "変更" do
-      describe "複数明細利用時" do
+      context "単純明細の変更ボタンをクリックしたとき" do
         let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do
           visit "/deals/new"
@@ -346,73 +399,13 @@ describe DealsController, :js => true do
           find("#edit_window #deal_summary").value.should ==  "ラーメン"
           current_hash.should == "d#{deal.id}"
         end
+        it_behaves_like "複数記入に変更できる"
+        it_behaves_like "変更を実行できる"
       end
     end
-
   end
-
-  #
   #
   # describe "変更" do
-  #   describe "複数明細利用時" do
-  #     before do
-  #       FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
-  #       visit "/deals/2012/7"
-  #       click_link '変更'
-  #     end
-  #     it "変更タブが表示される" do
-  #       tab_window.should have_content("変更(2012-07-10-1)")
-  #       find("input#deal_summary").value.should == "ラーメン"
-  #     end
-  #
-  #     describe "複数記入への変更" do
-  #       before do
-  #         click_link '複数記入にする'
-  #       end
-  #       it "フォーム部分だけが変わる" do
-  #         page.should have_content("仕訳帳")
-  #         page.should have_css("select#deal_creditor_entries_attributes_4_account_id")
-  #       end
-  #       it "記入欄を増やせる" do
-  #         click_link '記入欄を増やす'
-  #         page.should have_css("select#deal_creditor_entries_attributes_5_account_id")
-  #       end
-  #     end
-  #   end
-  #
-  #   describe "通常明細" do
-  #     before do
-  #       FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン")
-  #       visit "/deals/2012/7"
-  #       click_link '変更'
-  #     end
-  #
-  #     describe "タブを表示できる" do
-  #       it "変更タブが表示される" do
-  #         tab_window.should have_content("変更(2012-07-10-1)")
-  #         find("input#deal_summary").value.should == "ラーメン"
-  #       end
-  #     end
-  #
-  #     describe "実行できる" do
-  #       before do
-  #         find("#date_day[value='10']")
-  #         fill_in 'date_day', :with => '11'
-  #         fill_in 'deal_summary', :with => '冷やし中華'
-  #         fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
-  #         select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
-  #         click_button '変更'
-  #       end
-  #
-  #       it "一覧に表示される" do
-  #         flash_notice.should have_content("更新しました。")
-  #         flash_notice.should have_content("2012/07/11")
-  #         page.should have_content('冷やし中華')
-  #         page.should have_content('920')
-  #         page.should have_content('クレジットカードＸ')
-  #       end
-  #     end
-  #   end
   #
   #   describe "複数明細" do
   #     before do
