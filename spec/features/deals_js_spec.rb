@@ -71,11 +71,27 @@ describe DealsController, :js => true do
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
       end
       it "URLに対応する日付ハッシュがつく" do
-        current_url =~ (/^.*#(.*)$/)
-        $1.should == 'day3'
+        current_hash.should == 'day3'
       end
     end
 
+    describe "変更" do
+      describe "複数明細利用時" do
+        let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
+        before do
+          visit "/deals/2012/7"
+          click_link '変更'
+        end
+        it "URLにハッシュがつき、変更ウィンドウが表示される" do
+          page.should have_css("#edit_window")
+          find("#edit_window #date_year").value.should == "2012"
+          find("#edit_window #date_month").value.should == "7"
+          find("#edit_window #date_day").value.should == "10"
+          find("#edit_window #deal_summary").value.should ==  "ラーメン"
+          current_hash.should == "d#{deal.id}"
+        end
+      end
+    end
   end
 
   describe "家計簿(記入)" do
@@ -310,6 +326,25 @@ describe DealsController, :js => true do
             page.should have_content("残高確認")
             page.should have_content("5,030")
           end
+        end
+      end
+    end
+
+    describe "変更" do
+      describe "複数明細利用時" do
+        let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
+        before do
+          visit "/deals/new"
+          find("tr#d#{deal.id}").click_link '変更'
+        end
+        it "URLにハッシュがつき、登録エリアが編集不可になり、変更ウィンドウが表示される" do
+          page.should have_css("#disabled_new_deal_deal_forms")
+          page.should have_css("#edit_window")
+          find("#edit_window #date_year").value.should == "2012"
+          find("#edit_window #date_month").value.should == "7"
+          find("#edit_window #date_day").value.should == "10"
+          find("#edit_window #deal_summary").value.should ==  "ラーメン"
+          current_hash.should == "d#{deal.id}"
         end
       end
     end
