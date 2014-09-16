@@ -22,7 +22,7 @@ gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗す�
 gem 'rails-observers' # TODO: なくしたい
 gem 'activerecord-session_store'
 group :assets do
-  gem 'sass-rails'
+  gem 'sass-rails', '~> 4.0.0'
   gem 'coffee-rails'
   gem 'uglifier', '>= 1.0.3'
 end
@@ -49,7 +49,7 @@ end
 group :development, :test do
   gem 'selenium-webdriver'
   gem 'i18n_generators'
-  gem "rspec-rails"
+  gem "rspec-rails", "~> 2.14"
   gem "capybara"
   gem "factory_girl_rails", "~> 4.0"
   gem "pry-rails"
