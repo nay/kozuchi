@@ -22,7 +22,7 @@ describe Settings::AccountsController do
     end
 
     describe "create" do
-      share_examples_for 'current_userのassetが登録される' do
+      shared_examples_for 'current_userのassetが登録される' do
         it "current_userのassetが登録される" do
           response.should redirect_to(settings_assets_path)
           asset = @current_user.assets.find_by(name: '追加')
@@ -75,7 +75,7 @@ describe Settings::AccountsController do
         put :update_all, :account => @current_values, account_type: 'asset'
         response.should be_success
         @current_user.assets.find_by(name: '現金').should_not be_nil
-        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_true
+        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truethy
       end
       it "他人の口座の情報を混ぜると例外" do
         @current_values[:hanako_cache.to_id.to_s] = {:name => '花子の現金改'}

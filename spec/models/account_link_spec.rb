@@ -28,7 +28,7 @@ describe AccountLink do
       @link.should_not be_valid
     end
     it "user_id, target_user_id, target_ex_account_idがあれば検証を通る" do
-      @link.valid?.should be_true
+      @link.valid?.should be_truethy
     end
     it "user_idがなければ検証エラー" do
       @link.user_id = nil
@@ -63,7 +63,7 @@ describe AccountLink do
       @link.user_id = 3
       @link.target_user_id = 5
       @link.target_ex_account_id = 12
-      @link.save.should be_true
+      @link.save.should be_truethy
     end
     describe "対応するフレンドな相手ユーザーオブジェクトが取得できる時" do
       before do
@@ -79,7 +79,7 @@ describe AccountLink do
         @link.target_ex_account_id = @target_user_account_for_user.id
       end
       it "成功して、相手側にaccount_link_requestが作られる" do
-        @link.save.should be_true
+        @link.save.should be_truethy
         r = AccountLinkRequest.find_by(sender_id: @user.id)
         r.should_not be_nil
         r.account_id.should == @target_user_account_for_user.id

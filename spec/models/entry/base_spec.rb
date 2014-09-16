@@ -44,7 +44,7 @@ describe Entry::Base do
       e.date = Date.today
       e.daily_seq = 1
       e.user_id = Fixtures.identify(:account_entry_test_user)
-      e.save.should be_true
+      e.save.should be_truethy
     end
     it "user_idがないと例外" do
       lambda{new_account_entry({}, :user_id => nil).save}.should raise_error(RuntimeError)
@@ -77,12 +77,12 @@ describe Entry::Base do
     it "settlement_id があれば true になる" do
       @entry.settlement_id = 130 # 適当
       @entry.save!
-      @entry.settlement_attached?.should be_true
+      @entry.settlement_attached?.should be_truethy
     end
     it "result_settlement_id があれば true になる" do
       @entry.result_settlement_id = 130 # 適当
       @entry.save!
-      @entry.settlement_attached?.should be_true
+      @entry.settlement_attached?.should be_truethy
     end
   end
 
