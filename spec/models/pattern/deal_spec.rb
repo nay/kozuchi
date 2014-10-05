@@ -58,7 +58,7 @@ describe Pattern::Deal do
   describe "#overwrites_code?" do
     context "overwrites_code が '1' のとき" do
       let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :overwrites_code => '1') }
-      it { deal_pattern.overwrites_code?.should be_truethy }
+      it { deal_pattern.overwrites_code?.should be_truthy }
     end
     context "overwrites_code が nil のとき" do
       let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :overwrites_code => nil) }
@@ -74,13 +74,13 @@ describe Pattern::Deal do
     context "空のコード" do
       let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => '', :name => 'TEST PATTERN 2') }
       it "空のコードを保存するとコードはNULLになる" do
-        deal_pattern.save.should be_truethy
+        deal_pattern.save.should be_truthy
         deal_pattern.code.should be_nil
         deal_pattern.reload
         deal_pattern.code.should be_nil
       end
       it "検証なしで空のコードを保存してもコードはNULLになる" do
-        deal_pattern.save(:validate => false).should be_truethy
+        deal_pattern.save(:validate => false).should be_truthy
         deal_pattern.code.should be_nil
         deal_pattern.reload
         deal_pattern.code.should be_nil
@@ -91,13 +91,13 @@ describe Pattern::Deal do
       context "大文字小文字の異なる重複コードが登録されており、overwrites_codeが指定されていないとき" do
         let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => 'codeX', :name => 'TEST PATTERN 2') }
         it do
-          deal_pattern.save.should be_truethy
+          deal_pattern.save.should be_truthy
         end
       end
       context "重複コードが登録されており、overwrites_codeが指定されているとき" do
         let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => 'CODEX', :name => 'TEST PATTERN 2', :overwrites_code => '1') }
         it "saveできる" do
-          deal_pattern.save.should be_truethy
+          deal_pattern.save.should be_truthy
           deal_pattern.id.should == existing.id
           deal_pattern.debtor_entries.size.should == 2
           deal_pattern.creditor_entries.size.should == 1
@@ -117,7 +117,7 @@ describe Pattern::Deal do
         context "重複コードが登録されており、overwrites_codeが指定されているとき" do
           let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => 'CODEX', :name => 'TEST PATTERN 2', :overwrites_code => '1') }
           it "id が変更され、編集内容が反映される" do
-            deal_pattern.prepare_overwrite.should be_truethy
+            deal_pattern.prepare_overwrite.should be_truthy
             deal_pattern.id.should == existing.id # 既存のものを更新しようとする状態になる
             deal_pattern.debtor_entries.not_marked.size.should == 2
             deal_pattern.creditor_entries.not_marked.size.should == 1
@@ -132,7 +132,7 @@ describe Pattern::Deal do
             deal_pattern.overwrites_code = '1'
           end
           it "id が変更され、編集内容が反映される" do
-            deal_pattern.prepare_overwrite.should be_truethy
+            deal_pattern.prepare_overwrite.should be_truthy
             deal_pattern.id.should == existing.id # 既存のものを更新しようとする状態になる
             deal_pattern.debtor_entries.not_marked.size.should == 2
             deal_pattern.creditor_entries.not_marked.size.should == 1
@@ -145,7 +145,7 @@ describe Pattern::Deal do
       context "２つめのNULLコードが上書き指定で登録される場合" do
         let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :code => nil, :name => 'TEST PATTERN 2', :overwrites_code => '1') }
         it "上書きにならない" do
-          deal_pattern.save.should be_truethy
+          deal_pattern.save.should be_truthy
           deal_pattern.id.should_not == existing.id
         end
       end
@@ -159,13 +159,13 @@ describe Pattern::Deal do
         deal_pattern.code = 'NEWCODE'
       end
       it "変更できる" do
-        deal_pattern.save.should be_truethy
+        deal_pattern.save.should be_truthy
         deal_pattern.reload
         deal_pattern.code.should == 'NEWCODE'
       end
       it "コードを空文字列にするとNULLになる" do
         deal_pattern.code = ''
-        deal_pattern.save.should be_truethy
+        deal_pattern.save.should be_truthy
         deal_pattern.code.should be_nil
         deal_pattern.reload
         deal_pattern.code.should be_nil
@@ -182,7 +182,7 @@ describe Pattern::Deal do
           deal_pattern.overwrites_code = '1'
         end
         it "saveでき、もとのオブジェクトが削除される" do
-          deal_pattern.save.should be_truethy
+          deal_pattern.save.should be_truthy
           deal_pattern.id.should == existing.id
           deal_pattern.debtor_entries.size.should == 2
           deal_pattern.creditor_entries.size.should == 1

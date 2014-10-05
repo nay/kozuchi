@@ -72,7 +72,7 @@ describe Settings::AccountsController do
         put :update_all, :account => @current_values, account_type: 'income'
         response.should be_success
         @current_user.incomes.find_by(name: '給料').should_not be_nil
-        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truethy
+        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truthy
       end
       it "他人の口座の情報を混ぜると例外" do
         @current_values[:hanako_salary.to_id.to_s] = {:name => '花子の給料改'}

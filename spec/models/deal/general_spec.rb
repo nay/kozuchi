@@ -60,7 +60,7 @@ describe Deal::General do
   describe "valid?" do
     it "数字の合った複合Dealが検証をとおること" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
-      deal.valid?.should be_truethy
+      deal.valid?.should be_truthy
     end
     it "数字の合わない複合Dealが検証を通らないこと" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -200})
@@ -72,12 +72,12 @@ describe Deal::General do
     end
     it "複合Dealの各Entryの口座に重複があっても構わない" do
       deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
-      deal.valid?.should be_truethy
+      deal.valid?.should be_truthy
     end
 
     it "同じ口座間での移動が検証を通る" do
       deal = new_simple_deal(3, 1, :taro_food, :taro_food, 300)
-      deal.valid?.should be_truethy
+      deal.valid?.should be_truthy
     end
     it "金額が0ではいけないこと" do
       deal = new_simple_deal(3, 1, :taro_food, :taro_cache, 0)
@@ -90,16 +90,16 @@ describe Deal::General do
 
     it "数字の合った複合Dealが作成できること" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})
-      deal.save.should be_truethy
+      deal.save.should be_truthy
     end
     it "カンマ入り数字による複合Dealが作成できること" do
       deal = new_complex_deal(3, 1, {:taro_food => '1,300'},{:taro_cache => '-1,000', :taro_bank => '-300'})
-      deal.save.should be_truethy
-      deal.debtor_entries.any?{|e| e.amount.to_i == 1300}.should be_truethy
+      deal.save.should be_truthy
+      deal.debtor_entries.any?{|e| e.amount.to_i == 1300}.should be_truthy
     end
     it "複合Dealの各Entryの口座に重複があっても作成できること" do
       deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
-      deal.save.should be_truethy
+      deal.save.should be_truthy
 
       d = deal.debtor_entries.first
       d.account_id.should == Fixtures.identify(:taro_food)
@@ -118,7 +118,7 @@ describe Deal::General do
         :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}],
         :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 1] # 0でない
       )
-      deal.save.should be_truethy
+      deal.save.should be_truthy
       deal.creditor_entries.first.line_number.should == 1
     end
     it "両側に空白欄のある複合Dealが作成でき、空白分が詰められる" do
@@ -126,14 +126,14 @@ describe Deal::General do
         :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 2}],
         :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 2] # 0, 1でない
       )
-      deal.save.should be_truethy
+      deal.save.should be_truthy
       deal.debtor_entries.map(&:line_number).should == [0, 1]
       deal.creditor_entries.first.line_number.should == 1
     end
 
     it "同じ口座間での移動記入が作成できること" do
       deal = new_simple_deal(3, 1, :taro_food, :taro_food, 300)
-      deal.save.should be_truethy
+      deal.save.should be_truthy
       d = deal.debtor_entries.first
       d.account_id.should == Fixtures.identify(:taro_food)
       d.amount.should == 300
@@ -149,7 +149,7 @@ describe Deal::General do
       end
 
       it "成功する" do
-        @deal.save.should be_truethy
+        @deal.save.should be_truthy
       end
 
       it "user_id, date, daily_seqがentriesに引き継がれる" do
@@ -167,7 +167,7 @@ describe Deal::General do
         deal.debtor_entries.build(
           :account_id => @bank.id,
           :amount => 10000)
-        deal.save.should be_truethy
+        deal.save.should be_truthy
         deal.creditor_entries.detect{|e| e.new_record?}.should be_nil
         deal.debtor_entries.detect{|e| e.new_record?}.should be_nil
       end
@@ -199,11 +199,11 @@ describe Deal::General do
         }
       }
       @deal.creditor_entries.size.should == 3 # 一時的に３つになる
-      @deal.creditor_entries.first.marked_for_destruction?.should be_truethy
+      @deal.creditor_entries.first.marked_for_destruction?.should be_truthy
       @deal.creditor_entries[1].amount.should == -3200
       @deal.creditor_entries[2].amount.should == -300
-      @deal.valid?.should be_truethy
-      @deal.save.should be_truethy
+      @deal.valid?.should be_truthy
+      @deal.save.should be_truthy
       @deal.reload
       @deal.creditor_entries.size.should == 2
       @deal.debtor_entries.size.should == 1
@@ -221,11 +221,11 @@ describe Deal::General do
         }
       }
       @deal.debtor_entries.size.should == 3 # 一時的に３つになる
-      @deal.debtor_entries.first.marked_for_destruction?.should be_truethy
+      @deal.debtor_entries.first.marked_for_destruction?.should be_truthy
       @deal.debtor_entries[1].amount.should == 3200
       @deal.debtor_entries[2].amount.should == 300
-      @deal.valid?.should be_truethy
-      @deal.save.should be_truethy
+      @deal.valid?.should be_truthy
+      @deal.save.should be_truthy
       @deal.reload
       @deal.creditor_entries.size.should == 1
       @deal.debtor_entries.size.should == 2

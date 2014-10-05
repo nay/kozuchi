@@ -72,7 +72,7 @@ describe Settings::AccountsController do
         put :update_all, :account => @current_values, account_type: 'expense'
         response.should be_success
         @current_user.expenses.find_by(name: '食費').should_not be_nil
-        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truethy
+        assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truthy
       end
       it "他人の口座の情報を混ぜると例外" do
         @current_values[:hanako_food.to_id.to_s] = {:name => '花子の食費改'}
