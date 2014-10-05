@@ -6,7 +6,7 @@ describe WelcomeController do
   set_fixture_class  :accounts => Account::Base
 
   shared_examples "index for pc" do
-    it {page.should have_content('Web家計簿 小槌')}
+    it {page.should have_content('きちんと。気楽に。')}
   end
 
   shared_examples "having login form" do
