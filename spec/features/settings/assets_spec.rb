@@ -14,7 +14,7 @@ describe "settings/assets" do
       page.should have_css('input#account_name')
     end
     it "各口座のフォームがある" do
-      page.should have_css('table.masters')
+      page.should have_css('table.accounts')
     end
   end
 end
