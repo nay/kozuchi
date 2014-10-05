@@ -64,11 +64,11 @@ describe Deal::General do
     end
     it "数字の合わない複合Dealが検証を通らないこと" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -200})
-      deal.valid?.should be_false
+      deal.valid?.should be_falsey
     end
     it "amountが0のEntryを含む複合Dealが検証を通らないこと" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1300, :taro_bank => 0})
-      deal.valid?.should be_false
+      deal.valid?.should be_falsey
     end
     it "複合Dealの各Entryの口座に重複があっても構わない" do
       deal = new_complex_deal(3, 1, {:taro_food => 1400}, {:taro_cache => -1300, :taro_food => -100})
@@ -82,7 +82,7 @@ describe Deal::General do
     it "金額が0ではいけないこと" do
       deal = new_simple_deal(3, 1, :taro_food, :taro_cache, 0)
       deal.valid?
-      deal.valid?.should be_false
+      deal.valid?.should be_falsey
     end
   end
 

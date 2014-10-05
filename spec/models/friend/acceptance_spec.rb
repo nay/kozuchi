@@ -19,12 +19,12 @@ describe Friend::Acceptance do
     it "Rejectionが存在する場合は検証エラーとなる" do
       new_rejection(@user.id, @target.id).save!
 
-      new_acceptance(@user.id, @target.id).save.should be_false
+      new_acceptance(@user.id, @target.id).save.should be_falsey
     end
     it "Acceptanceが存在する場合は検証エラーとなる" do
       new_acceptance(@user.id, @target.id).save!
 
-      new_acceptance(@user.id, @target.id).save.should be_false
+      new_acceptance(@user.id, @target.id).save.should be_falsey
     end
     it "相手側のRequestレコードが作成される" do
       new_acceptance(@user.id, @target.id).save!

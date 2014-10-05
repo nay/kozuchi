@@ -32,15 +32,15 @@ describe AccountLink do
     end
     it "user_idがなければ検証エラー" do
       @link.user_id = nil
-      @link.save.should be_false
+      @link.save.should be_falsey
     end
     it "target_user_idがなければ検証エラー" do
       @link.target_user_id = nil
-      @link.save.should be_false
+      @link.save.should be_falsey
     end
     it "target_ex_account_idがなければ検証エラー" do
       @link.target_ex_account_id = nil
-      @link.save.should be_false
+      @link.save.should be_falsey
     end
   end
 

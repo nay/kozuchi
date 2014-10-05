@@ -28,10 +28,10 @@ describe Entry::Base do
 
   describe "validate" do
     it "amountが指定されていないと検証エラー" do
-      new_account_entry(:amount => nil).valid?.should be_false
+      new_account_entry(:amount => nil).valid?.should be_falsey
     end
     it "account_idが指定されていないと検証エラー" do
-      new_account_entry(:account_id => nil).valid?.should be_false
+      new_account_entry(:account_id => nil).valid?.should be_falsey
     end
     it "account_idが対応するユーザーのものでないと検証エラー" do
       new_account_entry({:account_id => Fixtures.identify(:taro_cache), :amount => 300}, {:user_id => Fixtures.identify(:hanako)}).should_not be_valid
@@ -72,7 +72,7 @@ describe Entry::Base do
     end
     it "settlement_id も result_settlement_idもないとき falseとなる" do
       @entry.save!
-      @entry.settlement_attached?.should be_false
+      @entry.settlement_attached?.should be_falsey
     end
     it "settlement_id があれば true になる" do
       @entry.settlement_id = 130 # 適当

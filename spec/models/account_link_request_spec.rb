@@ -14,7 +14,7 @@ describe AccountLinkRequest, :no_deals_and_patterns do
     end
     it "user_idが自動的に入ること" do
       link_request = @account.link_requests.create(:account_id => @account.id, :sender_id => @sender.id, :sender_ex_account_id => @sender_account.id)
-      link_request.new_record?.should be_false
+      link_request.new_record?.should be_falsey
       link_request.user_id.should == @account.user_id
       link_request.reload
       link_request.user_id.should == @account.user_id

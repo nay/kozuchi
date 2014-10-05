@@ -62,11 +62,11 @@ describe Pattern::Deal do
     end
     context "overwrites_code が nil のとき" do
       let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :overwrites_code => nil) }
-      it { deal_pattern.overwrites_code?.should be_false }
+      it { deal_pattern.overwrites_code?.should be_falsey }
     end
     context "overwrites_code が '0' のとき" do
       let(:deal_pattern) { FactoryGirl.build(:deal_pattern, :overwrites_code => '0') }
-      it { deal_pattern.overwrites_code?.should be_false }
+      it { deal_pattern.overwrites_code?.should be_falsey }
     end
   end
 

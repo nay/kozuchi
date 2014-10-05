@@ -55,14 +55,14 @@ describe "Deal Linking" do
       taro_linked_entry = @taro_deal.debtor_entries.first
       taro_linked_entry.linked_ex_deal_id.should_not be_nil
       taro_linked_entry.linked_ex_entry_id.should_not be_nil
-      taro_linked_entry.linked_ex_entry_confirmed.should be_false
+      taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
       taro_linked_entry.linked_user_id.should == @hanako.id
       # 太郎側の相手記入には連携情報が入らない
       taro_partner_entry = @taro_deal.creditor_entries.first
       taro_partner_entry.linked_ex_entry_id.should be_nil
       taro_partner_entry.linked_ex_deal_id.should be_nil
       taro_partner_entry.linked_user_id.should be_nil
-      taro_partner_entry.linked_ex_entry_confirmed.should be_false
+      taro_partner_entry.linked_ex_entry_confirmed.should be_falsey
 
       # 花子側に連携した取引が記入される
       hanako_deal = @hanako.general_deals.find_by(id: taro_linked_entry.linked_ex_deal_id)
@@ -103,12 +103,12 @@ describe "Deal Linking" do
       taro_home_cost_entry.linked_ex_entry_id.should == home_income_from_two_entry.id
       taro_home_cost_entry.linked_ex_deal_id.should == @home_deal.id
       taro_home_cost_entry.linked_user_id.should == @home.id
-      taro_home_cost_entry.linked_ex_entry_confirmed.should be_false
+      taro_home_cost_entry.linked_ex_entry_confirmed.should be_falsey
 
       taro_home_entry.linked_ex_entry_id.should == home_taro_entry.id
       taro_home_entry.linked_ex_deal_id.should == @home_deal.id
       taro_home_entry.linked_user_id == @home.id
-      taro_home_entry.linked_ex_entry_confirmed.should be_false
+      taro_home_entry.linked_ex_entry_confirmed.should be_falsey
 
       home_taro_entry.linked_ex_entry_id.should == taro_home_entry.id
       home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
@@ -246,7 +246,7 @@ describe "Deal Linking" do
         home_taro_entry.linked_ex_entry_id.should == taro_linked_entry.id
         home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
         home_taro_entry.linked_user_id.should == @taro.id
-        home_taro_entry.linked_ex_entry_confirmed.should be_false
+        home_taro_entry.linked_ex_entry_confirmed.should be_falsey
         # 太郎側の家計側の記入
         taro_linked_entry.linked_ex_entry_id.should == home_taro_entry.id
         taro_linked_entry.linked_ex_deal_id.should == @home_deal.id
@@ -260,7 +260,7 @@ describe "Deal Linking" do
         home_hanako_entry.linked_ex_entry_id.should == hanako_linked_entry.id
         home_hanako_entry.linked_ex_deal_id.should == @hanako_deal.id
         home_hanako_entry.linked_user_id.should == @hanako.id
-        home_hanako_entry.linked_ex_entry_confirmed.should be_false
+        home_hanako_entry.linked_ex_entry_confirmed.should be_falsey
         # TODO: 花子側の家計側の記入、花子側の相手側の記入
       end
 
@@ -389,7 +389,7 @@ describe "Deal Linking" do
           # 太郎側
           taro_linked_entry.linked_ex_entry_id.should == new_hanako_linked_entry.id
           taro_linked_entry.linked_ex_deal_id.should == new_hanako_deal.id
-          taro_linked_entry.linked_ex_entry_confirmed.should be_false
+          taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
           taro_linked_entry.linked_user_id.should == @hanako.id
 
           # 古いほうのリンクが切れていることの確認
@@ -398,7 +398,7 @@ describe "Deal Linking" do
           old_hanako_linked_entry.linked_ex_entry_id.should be_nil
           old_hanako_linked_entry.linked_ex_deal_id.should be_nil
           old_hanako_linked_entry.linked_user_id.should be_nil
-          old_hanako_linked_entry.linked_ex_entry_confirmed.should be_false
+          old_hanako_linked_entry.linked_ex_entry_confirmed.should be_falsey
         end
       end
     end
@@ -438,7 +438,7 @@ describe "Deal Linking" do
         @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
         @hanako_unlinked_entry.linked_ex_deal_id.should be_nil
         @hanako_unlinked_entry.linked_user_id.should be_nil
-        @hanako_unlinked_entry.linked_ex_entry_confirmed.should be_false
+        @hanako_unlinked_entry.linked_ex_entry_confirmed.should be_falsey
       end
     end
   end

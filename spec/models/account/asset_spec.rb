@@ -45,12 +45,12 @@ describe "Account::Asset", :no_deals_and_patterns do
       @capital_fund.capital_fund?.should be_truthy
     end
     it "クレジットカード口座でfalseになること" do
-      @credit_card.capital_fund?.should be_false
+      @credit_card.capital_fund?.should be_falsey
     end
   end
   describe "credit_card?" do
     it "資本金口座でfalseになること" do
-      @capital_fund.credit_card?.should be_false
+      @capital_fund.credit_card?.should be_falsey
     end
     it "クレジットカード口座でtrueになること" do
       @credit_card.credit_card?.should be_truthy

@@ -69,7 +69,7 @@ describe Deal::Balance do
     context "balanceに'foo'が入っている場合" do
       let(:deal) { FactoryGirl.build(:balance_deal, :balance => 'foo') }
       it "saveに失敗する（Dealだけ保存されたりしない）" do
-        deal.save.should be_false
+        deal.save.should be_falsey
       end
     end
 
