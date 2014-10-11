@@ -50,6 +50,8 @@ describe "記入パターン", js: true do
 
       before do
         fill_in "パターン呼出", with: "001\n" # NOTE: Driver の実装により、続けてリターンを押したのと同じになるのを期待している
+        # NOTE: 以下のような方法もあるらしい
+        # find('#pattern_keyword').native.send_keys :return
       end
 
       it {

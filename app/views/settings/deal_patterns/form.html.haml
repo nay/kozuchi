@@ -5,7 +5,7 @@
       = error_messages_for :deal_pattern
       .panel.panel-default
         .panel-heading= @deal_pattern.new_record? ? "新しい#{@deal_pattern.class.model_name.human}の登録" : "#{@deal_pattern.human_name}の編集"
-        .panel-body
+        #form_frame.panel-body
           - unless @deal_pattern.new_record?
             .timestamps
               = l @deal_pattern.created_at
