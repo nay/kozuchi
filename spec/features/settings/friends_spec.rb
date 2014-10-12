@@ -10,9 +10,6 @@ describe Settings::FriendsController do
     before do
       visit "/settings/friends"
     end
-    it do
-      page.should have_css('div#page')
-    end
     it "登録フォームが表示されている" do
       page.should have_css('form')
     end
