@@ -378,6 +378,18 @@ a.small_button, .action a {
   border-top: 2px solid #FFFFB2;
   border-left: 2px solid #FFFFB2;
   border-right: 2px solid #FFFFB2;
+
+  input {
+    padding: 0 4px 0 4px;
+  }
+
+  input#date_year {
+    width: 60px;
+  }
+
+  input#date_month, #date_day {
+    width: 40px;
+  }
 }
 
 /* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
@@ -481,7 +493,8 @@ table.book, table.book_header {
   background-color: #dddddd;
 }
 .end_of_month_button {
-  font-size: 12px;
+  margin: 0 10px 0 10px;
+  font-size: 14px;
   padding: 2px 4px;
   text-decoration: none;
   color: #000000;
