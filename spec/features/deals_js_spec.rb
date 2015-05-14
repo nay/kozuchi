@@ -288,7 +288,8 @@ describe DealsController, :js => true do
 
         describe "タブを表示できる" do
           it "タブが表示される" do
-            page.should have_css('input#deal_summary')
+            page.should have_css('input#deal_creditor_entries_attributes_0_summary')
+            page.should have_css('input#deal_creditor_entries_attributes_1_summary')
             page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
             page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
             page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
