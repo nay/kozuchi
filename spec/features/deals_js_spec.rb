@@ -391,9 +391,9 @@ describe DealsController, :js => true do
           visit "/deals/new"
           find("tr#d#{deal.id}").click_link '変更'
         end
-        it "URLにハッシュがつき、登録エリアが編集不可になり、変更ウィンドウが表示される" do
-          page.should have_css("#disabled_new_deal_deal_forms")
+        it "URLにハッシュがつき、登録エリアが隠され、変更ウィンドウが表示される" do
           page.should have_css("#edit_window")
+          page.should_not have_css("#new_deal_window")
           find("#edit_window #date_year").value.should == "2012"
           find("#edit_window #date_month").value.should == "7"
           find("#edit_window #date_day").value.should == "10"
