@@ -1,5 +1,7 @@
 /* ============== 共通情報　=============== */
 
+@import 'variables';
+
 $disabled_light_color: #dddddd;
 
 /* 上下の margin に関する汎用部品 */
@@ -38,13 +40,6 @@ a.disabled, a:hover.disabled, a:active.disabled, a:visited.disabled {
 }
 
 /* フォーム地 */
-
-#new_deal_window.disabled {
-  .tabsheet, .form_box {
-    border: 2px solid $disabled_light_color;
-    background-color: $disabled_light_color;
-  }
-}
 
 .tabsheet, .form_box {
   border: 2px solid #ffffb2;
@@ -184,47 +179,6 @@ table.masters {
   padding: 2px;
 }
 
-#new_deal_window.disabled {
-  .tab, .selectedtab {
-    border-top: 2px solid $disabled_light_color;
-    border-left: 2px solid $disabled_light_color;
-    border-right: 2px solid $disabled_light_color;
-  }
-}
-
-.tab, .selectedtab {
-  margin-top: 8px;
-/*  margin-bottom: 16px;*/
-  font-weight: bold;
-/*  height: 24px;*/
-  padding : 2px 16px;
-  border-top: 2px solid #FFFFB2;
-  border-left: 2px solid #FFFFB2;
-  border-right: 2px solid #FFFFB2;
-}
-
-#new_deal_window.disabled {
-  .selectedtab {
-    background-color: $disabled_light_color;
-  }
-}
-
-.selectedtab {
-  background-color: #FFFFCC;
-  color: #ff7fbf;
-}
-
-.tab, .selectedtab {
-  margin-left: 2px;
-  float: right;
-}
-
-.tabbuttons {
-/*  float: right; */
-/*  margin-top: -1.8em;*/
-  height: 36px;
-}
-
 .automatic {
   color: blue;
 }
@@ -361,18 +315,43 @@ a.small_button, .action a {
   }
 }
 
-/* 日付欄 */
-#new_deal_window.disabled {
-  .datebox {
-    background: $disabled_light_color;
-    border-top: 2px solid $disabled_light_color;
-    border-left: 2px solid $disabled_light_color;
-    border-right: 2px solid $disabled_light_color;
+#new_deal_window {
+  h3 {
+    margin-top: 6px;
+    position: absolute;
+  }
+
+  .deal_editor {
+    margin-top: 12px;
+    position: relative;
+
+    .datebox {
+      position: absolute;
+      left: 2px;
+      top: 38px;
+    }
+
+    .tabbuttons {
+      height: 36px;
+      a.btn {
+        margin-left: 2px;
+        width: 90px;
+      }
+    }
+
+    #tabsheet {
+      border: $sub_dark_color 2px solid;
+
+    }
+
+    #deal_form {
+      padding-top: 32px;
+    }
+
   }
 }
 
 .datebox {
-  float: left;
   padding: 4px;
   background: #FFFFCC;
   border-top: 2px solid #FFFFB2;
@@ -390,13 +369,6 @@ a.small_button, .action a {
   input#date_month, #date_day {
     width: 40px;
   }
-}
-
-/* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
-#tabwindow {
-}
-.tabsheet {
-  clear:both;
 }
 
 /* ================ 機能別 =================== */

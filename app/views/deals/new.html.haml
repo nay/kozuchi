@@ -17,6 +17,7 @@
     #deals_frame
       - deal_type = flash[:"#{controller_name}_deal_type"]
       #new_deal_window
+        %h3 記入する
         .deal_editor
           = deal_editor 1, @year, @month, @day do
             = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'

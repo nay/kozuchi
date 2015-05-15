@@ -88,9 +88,7 @@ module DealsHelper
   # link_html_options に :class が渡されることは想定していない
   def deal_tab(caption, url, current_caption, link_html_options = {})
     selected = current_caption == true || current_caption == caption
-    content_tag :div, :class => selected ? "selectedtab" : "tab" do
-      link_to_unless selected, caption, url, {class: [:deal_tab]}.merge(link_html_options)
-    end
+    link_to caption, url, {class: %w(btn btn-default pull-right) + (selected ? %w(active) : []) }.merge(link_html_options)
   end
 
   def deal_form(current_caption, options = {}, &block)

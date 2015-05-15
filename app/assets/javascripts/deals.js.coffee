@@ -94,7 +94,8 @@ $ ->
   )
 
   # deal_tab
-  $(document).on('click', '#deal_forms a.deal_tab', ->
+  $(document).on('click', '#deal_forms .tabbuttons a.btn', ->
+    return false if $(@).hasClass('active')
     hideNotice()
     $('#deal_forms').load(this.href)
     return false
