@@ -4,6 +4,7 @@ class DealsController < ApplicationController
   
   menu_group "家計簿"
   menu "家計簿"
+  title '記入する', only: [:new]
   before_filter :check_account
   before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_filter :find_new_or_existing_deal, :only => [:create_entry]

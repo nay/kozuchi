@@ -7,8 +7,9 @@ class ApplicationController < ActionController::Base
   before_filter :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
-  attr_writer :menu_group, :menu
-  protected :'menu_group=', :'menu='
+  attr_writer :menu_group, :menu, :title
+  helper_method :'menu_group=', :'menu=', :'title='
+
 
   # メニューグループを指定する
   def self.menu_group(menu_group, options = {})
@@ -17,6 +18,10 @@ class ApplicationController < ActionController::Base
   # メニューを指定する
   def self.menu(menu, options = {})
     before_filter(options) {|controller| controller.send(:'menu=', menu) }
+  end
+
+  def self.title(title, options = {})
+    before_filter(options) {|controller| controller.send(:'title=', title)}
   end
 
   protected

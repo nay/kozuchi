@@ -11,6 +11,11 @@
     = stylesheet_link_tag :print, media: :print
     = javascript_include_tag :application
     = render partial: "shared/google_analytics"
+    %title
+      小槌
+      - if @title.present?
+        = '-'
+        = @title
     = yield :head
   %body#top
     %header
