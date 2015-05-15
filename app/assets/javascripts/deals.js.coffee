@@ -47,9 +47,11 @@ $ ->
   hideNotice = ->
     $('#notice').hide()
 
-  # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化する
+  # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化して、見えなくする
   disableCreateWindow = ->
     $new_deal_window = $("#new_deal_window")
+    $new_deal_window.hide()
+    $('#edit_mode_explanation').show()
     $new_deal_window.find('#errorExplanation').remove() # 検証エラーメッセージが出ていたら削除する
     $new_deal_window.addClass('disabled')
     $new_deal_window.find("*").each ->
@@ -60,7 +62,7 @@ $ ->
       if @tagName == "INPUT" || @tagName == "SELECT"
         @disabled = 'disabled'
 
-  # 登録フォーム一式のidや無効化状態を戻す
+  # 登録フォーム一式のidや無効化状態を戻して表示する
   enableCreateWindow = ->
     $new_deal_window = $("#new_deal_window")
     $new_deal_window.removeClass('disabled')
@@ -71,6 +73,8 @@ $ ->
         $(@).removeClass('disabled')
       if @tagName == "INPUT" || @tagName == "SELECT"
         $(@).prop('disabled', null)
+    $('#edit_mode_explanation').hide()
+    $new_deal_window.show()
 
   # 無効化されたリンクを封じる
   $(document).on('click', "a.disabled", (event) ->
@@ -78,11 +82,15 @@ $ ->
   )
 
   # 編集windowを閉じる
-  $(document).on('click', '#edit_window button.close', (event) ->
+  closeEditWindow = (event) ->
     $(@).closest('tr.edit_deal_row').remove()
     enableCreateWindow()
     hideRecentDealPatterns()
     event.preventDefault()
+
+  $(document).on('click', '#edit_window button.close', closeEditWindow)
+  $(document).on('click', 'a.close_edit_window', ->
+    $('#edit_window button.close').click()
   )
 
   # deal_tab

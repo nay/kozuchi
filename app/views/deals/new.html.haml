@@ -20,6 +20,11 @@
         .deal_editor
           = deal_editor 1, @year, @month, @day do
             = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
+      #edit_mode_explanation{style: 'display: none;'}
+        .panel.panel-default
+          .panel-body{style: 'text-align: center;'}
+            記入するには、変更を完了してください。
+            = link_to '変更をキャンセル', '#', class: 'btn btn-default close_edit_window'
 
       - if @recently_updated_deals.present?
         %h3 最近の記入
