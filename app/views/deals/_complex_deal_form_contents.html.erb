@@ -1,9 +1,7 @@
 <%= render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal}  %>
-  <div style="text-align: right; padding-right: 100px;"><%= link_to '記入欄を増やす', deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), class: 'add_entry_fields' %></div>
-  <div>
-      <%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "999", :class => 'button' %>
-      <%= link_to 'パターン登録', '#', :id => 'add_pattern' %>
-  </div>
+  <%= link_to 'パターン登録', '#', :id => 'add_pattern', class: %w(btn btn-default pull-right) %>
+  <%= link_to '記入欄を増やす', deal_entries_path(:id => @deal.new_record? ? 'new' : @deal.id), class: 'add_entry_fields' %>
+  &nbsp;<%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "999", :class => 'btn btn-primary' %>
   <%= javascript_tag do %>
     jQuery(document).ready(function($){
       $('a#add_pattern').click(function() {

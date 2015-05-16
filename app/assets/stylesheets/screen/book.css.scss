@@ -343,7 +343,15 @@ a.small_button, .action a {
       border: $sub_dark_color 2px solid;
 
       #deal_form {
-        padding-top: 34px;
+        .deal_patterns {
+          float: right;
+          text-align: right;
+        }
+
+        .deal_fields {
+          padding-top: 32px;
+        }
+
         padding-left: 2px;
 
         .entry {
