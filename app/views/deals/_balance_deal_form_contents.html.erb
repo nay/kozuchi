@@ -1,6 +1,20 @@
 <div class="deal_fields">
   <%= f.select :account_id, options_from_collection_for_select(current_user.assets, :id, :name, @deal.account_id), :tabindex => 13 %>
-  <%= render :partial => '/shared/money_counting' %>
+  <div id="money_counting">
+    <div class='field'><%= label_tag :man, '万札:' %><%= text_field_tag :man, '', :size => '2', :autocomplete => 'off' %><span>枚</span></div>
+    <div class='field'><%= label_tag :gosen , '五千円札:' %><%= text_field_tag :gosen, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :nisen, '二千円札:' %><%= text_field_tag :nisen, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :sen, '千円札:' %><%= text_field_tag :sen, '', :size => '2'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :gohyaku, '五百円玉:' %><%= text_field_tag :gohyaku, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div style="clear:left;"></div>
+    <div class='field'><%= label_tag :hyaku, '百円玉:' %><%= text_field_tag :hyaku, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :gojyu, '五十円玉:' %><%= text_field_tag :gojyu, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :jyu, '十円玉:' %><%= text_field_tag :jyu, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :go, '五円玉:' %><%= text_field_tag :go, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div class='field'><%= label_tag :ichi, '一円玉:' %><%= text_field_tag :ichi, '', :size => '2', :autocomplete => 'off'  %><span>枚</span></div>
+    <div style="clear:left;"></div>
+    <div style="text-align: center;"><button style="width: 100px; margin: 0 10px;" id="count_money_button" class="btn btn-default">計算</button></div>
+  </div>
   <label>残高:</label><%= f.text_field :balance, :size => "8", :tabindex => "11"%>円
   <button type="submit" tabindex="12" class="btn btn-primary"><%= @deal.new_record? ? '記入' : '変更' %></button>
 </div>
