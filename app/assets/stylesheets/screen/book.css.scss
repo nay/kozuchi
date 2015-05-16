@@ -342,11 +342,24 @@ a.small_button, .action a {
     #tabsheet {
       border: $sub_dark_color 2px solid;
 
+      #deal_form {
+        padding-top: 34px;
+        padding-left: 2px;
+
+        .entry {
+          margin-bottom: 8px;
+          clear: left;
+          div {
+            padding: 4px 0;
+          }
+        }
+
+        input.amount {
+          width: 120px;
+        }
+      }
     }
 
-    #deal_form {
-      padding-top: 32px;
-    }
 
   }
 }
