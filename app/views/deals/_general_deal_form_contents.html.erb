@@ -6,42 +6,42 @@
   <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
   <%= f.hidden_field :summary_mode, :value => 'unify', :class => 'pattern_field' %>
   <div id="patterns"></div>
-</div>
-<div class="entry">
-  <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
+  <div class="entry">
+    <% amount_field_proc, debtor_account_field_proc, creditor_account_field_proc = write_hiddens_and_get_simple_deal_procs(f) %>
 
-  <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
-    :locals => {
-      :amount_field_proc => amount_field_proc,
-      :debtor_account_field_proc => debtor_account_field_proc,
-      :creditor_account_field_proc => creditor_account_field_proc,
-      :tab_index => 10 # この次からはじまる
-    }
-  %>
+    <%= render :partial => "general_deal_form_contents_#{bookkeeping_style? ? 'bookkeeping_style' : 'kozuchi_style'}",
+      :locals => {
+        :amount_field_proc => amount_field_proc,
+        :debtor_account_field_proc => debtor_account_field_proc,
+        :creditor_account_field_proc => creditor_account_field_proc,
+        :tab_index => 10 # この次からはじまる
+      }
+    %>
 
-  <%= link_to 'パターン登録', '#', :id => 'add_pattern', class: %w(pull-right btn btn-default) %>
-  &nbsp;<%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "14", :class => 'submit btn btn-primary' %>
-  <% if !@deal.new_record? %>
-    <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal', data: {deal_id: @deal.id} %>
-  <% end %>
-  <div style="clear:left;"></div>
-</div>
-<div style="clear:right;"></div>
+    <%= link_to 'パターン登録', '#', :id => 'add_pattern', class: %w(pull-right btn btn-default) %>
+    &nbsp;<%= f.submit @deal.new_record? ? '記入' : '変更', :tabindex => "14", :class => 'submit btn btn-primary' %>
+    <% if !@deal.new_record? %>
+      <%= link_to '複数記入にする', {:action => 'edit', :id => @deal.id, :complex => true}, class: 'edit_deal', data: {deal_id: @deal.id} %>
+    <% end %>
+    <div style="clear:left;"></div>
+  </div>
+  <div style="clear:right;"></div>
 
-<%= javascript_tag do %>
-jQuery(document).ready(function($){
-  $("input#deal_summary").observe_field(0.5, function() {
-    $('#patterns').load('<%= deal_suggestions_path %>?keyword=' + encodeURIComponent(this.value))
-  });
+  <%= javascript_tag do %>
+  jQuery(document).ready(function($){
+    $("input#deal_summary").observe_field(0.5, function() {
+      $('#patterns').load('<%= deal_suggestions_path %>?keyword=' + encodeURIComponent(this.value))
+    });
 
-  $('a#add_pattern').click(function() {
-    if ($('#deal_summary').val() == '') {
-      alert('パターンを登録するには摘要が必要です。')
+    $('a#add_pattern').click(function() {
+      if ($('#deal_summary').val() == '') {
+        alert('パターンを登録するには摘要が必要です。')
+        return false
+      } // end if
+      $('#deal_pattern_frame').load('<%= deal_patterns_path %>', $(".pattern_field, input[name='authenticity_token']:first, input[name='utf8']:first").serializeArray())
       return false
-    } // end if
-    $('#deal_pattern_frame').load('<%= deal_patterns_path %>', $(".pattern_field, input[name='authenticity_token']:first, input[name='utf8']:first").serializeArray())
-    return false
-  }) // end click
-})
+    }) // end click
+  })
 
-<% end %>
+  <% end %>
+</div>

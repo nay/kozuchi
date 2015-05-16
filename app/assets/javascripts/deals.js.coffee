@@ -50,6 +50,7 @@ $ ->
   # 登録フォーム一式のidを編集フォームと重複しないように加工し、無効化して、見えなくする
   disableCreateWindow = ->
     $new_deal_window = $("#new_deal_window")
+    return if $new_deal_window.hasClass('disabled') # 二重に走らないようにする
     $new_deal_window.hide()
     $('#edit_mode_explanation').show()
     $new_deal_window.find('#errorExplanation').remove() # 検証エラーメッセージが出ていたら削除する

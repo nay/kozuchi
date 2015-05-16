@@ -2,13 +2,6 @@
   # TODO: url や更新場所など、呼び出し元依存の分岐コードが入ってしまっているのを整理したい
   update_area = deal.kind_of?(Deal::Base) ? '#deal_forms' : '#form_frame'
 %>
-<%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
-  <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
-  <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
-  <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', class: :split_summary %>
-  <div id="patterns"></div>
-<% end %>
-
 <div class="deal_patterns">
   <div style="display:none;" id="load_pattern_url"><%=
       case deal
@@ -24,6 +17,13 @@
 </div>
 
 <div class="deal_fields">
+  <%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
+      <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
+      <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
+      <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', class: :split_summary %>
+      <div id="patterns"></div>
+  <% end %>
+
   <%
     entry_types = [:debtor_entries, :creditor_entries]
     entry_types.reverse! unless current_user.preferences.bookkeeping_style?

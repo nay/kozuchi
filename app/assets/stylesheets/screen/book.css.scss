@@ -298,16 +298,68 @@ a.small_button, .action a {
   padding: 0;
 }
 
+/* 登録・編集共通 */
+
+// 日付欄は相対位置指定で幅が限られる
+.deal_editor {
+  position: relative;
+
+  .datebox {
+    position: absolute;
+    left: 2px;
+    padding: 4px 4px 0 4px;
+    background: #FFFFCC;
+
+    input {
+      padding: 0 4px 0 4px;
+    }
+
+    input#date_year {
+      width: 60px;
+    }
+
+    input#date_month, #date_day {
+      width: 40px;
+    }
+  }
+
+  #deal_form {
+
+    .deal_fields {
+      padding-top: 32px;
+
+      .entry {
+        margin-top: 2px;
+        clear: left;
+        div {
+          padding: 4px 0;
+        }
+      }
+
+      input.amount {
+        width: 120px;
+      }
+    }
+  }
+}
+
 #edit_window {
   background: #FFFFCC;
 
-  .datebox {
-    border: 0;
-    float: none;
+  .deal_editor {
+    margin-right: 20px; // ×ボタン分を避ける
+
+    .datebox {
+      top: 0px;
+    }
   }
 
   #deal_form {
     padding: 4px;
+
+    .deal_fields {
+      padding-left: 2px;
+    }
   }
 
   #errorExplanation {
@@ -323,13 +375,9 @@ a.small_button, .action a {
 
   .deal_editor {
     margin-top: 12px;
-    position: relative;
 
     .datebox {
-      position: absolute;
-      left: 2px;
       top: 38px;
-      padding-bottom: 0;
     }
 
     .tabbuttons {
@@ -342,54 +390,14 @@ a.small_button, .action a {
 
     #tabsheet {
       border: $sub_dark_color 2px solid;
-
-      #deal_form {
-        .deal_patterns {
-          float: right;
-          text-align: right;
-        }
-
-        .deal_fields {
-          padding-top: 32px;
-        }
-
-        padding-left: 2px;
-
-        .entry {
-          margin-bottom: 8px;
-          clear: left;
-          div {
-            padding: 4px 0;
-          }
-        }
-
-        input.amount {
-          width: 120px;
-        }
-      }
     }
-
-
   }
 }
 
-.datebox {
-  padding: 4px;
-  background: #FFFFCC;
-  border-top: 2px solid #FFFFB2;
-  border-left: 2px solid #FFFFB2;
-  border-right: 2px solid #FFFFB2;
-
-  input {
-    padding: 0 4px 0 4px;
-  }
-
-  input#date_year {
-    width: 60px;
-  }
-
-  input#date_month, #date_day {
-    width: 40px;
+#deal_form {
+  .deal_patterns {
+    float: right;
+    text-align: right;
   }
 }
 
