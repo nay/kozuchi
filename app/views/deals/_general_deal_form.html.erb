@@ -1,6 +1,0 @@
-<% @deal.modify_errors_for_simple_form %>
-<%= deal_form '明細',
-              :url => general_deals_path do |f| %>
-  <%= render :partial => 'general_deal_form_contents', :locals => {:f => f, pattern_update_area: '#deal_forms'} %>
-<% end %>
-<%= error_messages_for :deal %>
