@@ -448,14 +448,18 @@ table.balance_sheet {
   background-color: #ffffdd;
 
   .field {
+    padding: 2px;
     text-align: right;
-    width: 150px;
-    margin: 0 16px;
+    width: 18%;
     float: left;
 
     input {
       text-align: right;
     }
+  }
+
+  #count_money_button {
+    width: 90px;
   }
 
 }

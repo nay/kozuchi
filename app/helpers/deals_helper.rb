@@ -1,6 +1,14 @@
 # -*- encoding : utf-8 -*-
 module DealsHelper
 
+  def money_count_field(name, caption)
+    content_tag :div, class: %w(field) do
+      html = label_tag name, caption
+      html << text_field_tag(name, size: 2, autocomplete: 'off')
+      html << content_tag(:span, '枚')
+    end
+  end
+
   # 仕訳帳中の指定された deal を示すURLを生成する
   # 以下のいずれかの引数をとる
   # * dealオブジェクトのみ

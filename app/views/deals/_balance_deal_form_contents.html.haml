@@ -1,0 +1,16 @@
+.deal_fields
+  = f.select :account_id, options_from_collection_for_select(current_user.assets, :id, :name, @deal.account_id), tabindex: 13, class: %w(account_selector)
+  #money_counting
+    - [[:man, :gosen, :nisen, :sen, :gohyaku],[:hyaku, :gojyu, :jyu, :go, :ichi]].each do |units|
+      - units.each do |name|
+        .field
+          = label_tag name, t(name, scope: :yen)
+          = text_field_tag name, '', size: 2, autocomplete: 'off'
+          %span 枚
+      %div{style: "clear:left;"}
+    %div{style: "text-align: center;"}
+      %button#count_money_button.btn.btn-default 計算
+  = f.label :balance, "残高"
+  = f.text_field :balance, size: 8, tabindex: 11
+  円
+  %button.btn.btn-primary{type: "submit", tabindex: 12}= @deal.new_record? ? '記入' : '変更'

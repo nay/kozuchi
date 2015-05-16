@@ -5,6 +5,17 @@
 #  - Tsutomu Kuroda (t-kuroda@oiax.jp)
 
 ja:
+  yen:
+    man: "一万円札"
+    gosen: "五千円札"
+    nisen: "二千円札"
+    sen: "千円札"
+    gohyaku: "五百円玉"
+    hyaku: "百円玉"
+    gojyu: "五十円玉"
+    jyu: "十円玉"
+    go: "五円玉"
+    ichi: "一円玉"
   messages:
     confirm:
       destroy: "%{target}を削除します。よろしいですか？"
