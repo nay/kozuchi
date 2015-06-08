@@ -100,6 +100,8 @@ class DealsController < ApplicationController
     render partial: 'shared/day_navigator', locals: {data: data_for_day_navigator}
   end
 
+  RECENT_DEALS_SIZE = 5
+
   # 登録画面
   def new
     @year, @month, @day = read_target_date
@@ -121,7 +123,7 @@ class DealsController < ApplicationController
     end
 
     # 最近登録/更新された記入を常に5件まで表示する
-    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(5)
+    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
   end
 
   # 変更フォームを表示するAjaxアクション
