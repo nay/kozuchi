@@ -16,6 +16,13 @@
     width: 100%;
     margin-bottom: 4px;
   }
+
+  #account_selector {
+    select {
+      width: 100%;
+    }
+    margin-bottom: 16px;
+  }
 }
 
 #deal_pattern_frame {
@@ -29,16 +36,8 @@
 
 /* 口座選択・カレンダーなどを抱える上部バー */
 #deals_navigator {
-  #account_selector {
-    width: 20%;
-    padding-right: 10px;
-
-    select {
-      width: 100%;
-    }
-  }
   #calendar_in_navigator {
-    width: 80%;
+    width: 100%;
   }
   .part {
     float: left;

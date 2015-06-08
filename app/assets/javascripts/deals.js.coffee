@@ -298,7 +298,7 @@ $ ->
   )
 
   # ナビゲーター内の口座選択の変更
-  $('#deals_navigator #account_selector #account_id').change (event)->
+  $('#account_selector #account_id').change (event)->
     account_id = $(@).val()
     if account_id == ''
       # TODO: あとで実装する
