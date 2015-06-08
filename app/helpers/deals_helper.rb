@@ -1,6 +1,10 @@
 # -*- encoding : utf-8 -*-
 module DealsHelper
 
+  def account_button(account, year, month)
+    link_to truncate(account.name, length: 10), monthly_account_deals_path(account_id: account.id, year: year, month: month), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+  end
+
   def money_count_field(name, caption)
     content_tag :div, class: %w(field) do
       html = label_tag name, caption

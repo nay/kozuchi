@@ -172,6 +172,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
+      account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。" # TODO: 他コントーラとDRYに
       flash[:"#{controller_name}_deal_type"] = deal_type
       flash[:day] = @deal.date.day
