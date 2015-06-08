@@ -69,6 +69,7 @@ class DealsController < ApplicationController
         flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
         flash[:"#{controller_name}_deal_type"] = deal_type
         write_target_date(@deal.date)
+        account_has_been_selected(*@deal.accounts)
         render json: {
             id: @deal.id,
             deal: @deal.as_json(root: false, include: :readonly_entries),

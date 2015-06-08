@@ -147,6 +147,10 @@ class Deal::Base < ActiveRecord::Base
     save!
   end
 
+  # 記入対象の勘定のリスト（一意にしたもの）を返す
+  def accounts
+    readonly_entries.map(&:account).uniq
+  end
 
   private
 

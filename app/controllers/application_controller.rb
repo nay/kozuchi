@@ -61,12 +61,14 @@ class ApplicationController < ActionController::Base
 
   # 勘定がユーザーに意図的に選択されたことを記憶する
   # 新しいものほど前にくる
-  def account_has_been_selected(account)
-    raise "Not an account! #{account.inspect}" unless account.kind_of?(Account::Base)
-    account_selection_histories.delete(account)
-    account_selection_histories.unshift(account)
-    account_selection_histories.pop while account_selection_histories.size > ACCOUNT_SELECTION_HISTORY_MAX
-    session[:account_selection_histories] = account_selection_histories.map(&:id).join(",") # 一応オブジェクトを避けておく
+  def account_has_been_selected(*accounts)
+    accounts.reverse_each do |account|
+      raise "Not an account! #{account.inspect}" unless account.kind_of?(Account::Base)
+      account_selection_histories.delete(account)
+      account_selection_histories.unshift(account)
+      account_selection_histories.pop while account_selection_histories.size > ACCOUNT_SELECTION_HISTORY_MAX
+      session[:account_selection_histories] = account_selection_histories.map(&:id).join(",") # 一応オブジェクトを避けておく
+    end
   end
 
   def account_selection_histories

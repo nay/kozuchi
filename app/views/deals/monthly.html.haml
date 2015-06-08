@@ -16,7 +16,6 @@
 
   #deals_right
     = link_to '記入する', new_deal_path, class: %w(btn btn-primary)
-
     %hr
     #account_selector
       = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: 'すべての記入', class: "form-control"
