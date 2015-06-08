@@ -185,14 +185,12 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
-  validates :login, presence: true, length: {within: 3..40, allow_blank: true, uniqueness: {case_sensitive: false}}
-  validates_presence_of     :email
+  validates :login, presence: true, length: {within: 3..40,  allow_blank: true, uniqueness: {case_sensitive: false, allow_blank: true}}
+  validates :email, presence: true, length: {within: 3..100, allow_blank: true, uniqueness: {case_sensitive: false, allow_blank: true}}
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 4..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :email, :case_sensitive => false
   before_save :encrypt_password
   before_create :make_activation_code
   after_destroy :destroy_deals, :destroy_accounts
