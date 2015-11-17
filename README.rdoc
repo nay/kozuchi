@@ -1,4 +1,4 @@
-{<img src="https://travis-ci.org/everyleaf/kozuchi.png" />}[https://travis-ci.org/everyleaf/kozuchi.png]
+{<img src="https://travis-ci.org/everyleaf/kozuchi.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/everyleaf/kozuchi]
 
 = Kozuchi
 
