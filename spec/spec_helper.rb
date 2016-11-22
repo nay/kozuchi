@@ -63,3 +63,5 @@ class ActionController::TestRequest
   alias_method_chain :session_options, :session_key
 end
 
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
