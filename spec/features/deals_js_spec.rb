@@ -359,7 +359,7 @@ describe DealsController, :js => true do
           it do
             page.should have_css('select#deal_account_id')
             page.should have_content('計算')
-            page.should have_content('残高:')
+            page.should have_content('残高')
             page.should have_content('記入')
 
             page.should_not have_css('input#deal_summary')
