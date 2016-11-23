@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.0'
 gem 'rake', '11.3.0'
 
 # Bundle edge Rails instead:
@@ -23,7 +23,7 @@ gem 'sass'
 gem 'rails-observers' # TODO: なくしたい
 gem 'activerecord-session_store'
 group :assets do
-  gem 'sass-rails', '~> 4.0.0'
+  gem 'sass-rails'
   gem 'coffee-rails'
   gem 'uglifier', '>= 1.0.3'
 end
