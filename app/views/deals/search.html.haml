@@ -1,7 +1,7 @@
 .container-fluid
   .row
     .col-md-10
-      %p= "#{@keywords.map{|k| "「#{k}」"}.join('')}を含む明細は#{@deals.empty? ? '登録されていません。' : "#{@deals.size}件あります。"}"
+      %p= "#{@keywords.map{|k| "「#{k}」"}.join('')}を含む明細は#{@deals.length == 0 ? '登録されていません。' : "#{@deals.length}件あります。"}"
 
       - unless @deals.empty?
         %table.book
