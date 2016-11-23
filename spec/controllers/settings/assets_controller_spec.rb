@@ -9,6 +9,12 @@ describe Settings::AccountsController, type: :controller do
   describe "/assets" do
 
     before do
+      # TODO: 環境汚染対策
+      Entry::Base.delete_all
+      Deal::Base.delete_all
+      Pattern::Entry.delete_all
+      Pattern::Deal.delete_all
+
       login_as :taro
     end
 
