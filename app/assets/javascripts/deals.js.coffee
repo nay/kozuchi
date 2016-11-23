@@ -22,7 +22,7 @@ clearUpdateLine = ->
   $("tr").removeClass("updated_line")
 
 # 最近の記入パターン欄の内容の更新
-loadRecentDealPatterns = ->
+@loadRecentDealPatterns = ->
   $frame = $('#deal_pattern_frame')
   $frame.load($frame.data('url'))
 
