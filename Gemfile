@@ -5,7 +5,7 @@ gem 'rails', '4.0.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
+gem 'mysql2', '~> 0.3.20' # TODO: Rails 4.2.5 以降でなおる
 
 # gem 'prototype-rails', :git => 'git://github.com/rails/prototype-rails.git'
 gem 'haml-rails'
@@ -13,7 +13,7 @@ gem 'bootstrap-sass'
 gem 'html5jp_graphs', '~> 0.0.3'
 gem 'dynamic_form'
 gem 'therubyracer'
-gem 'libv8'
+gem 'libv8', '~> 3.11.8.3'
 gem 'passenger'
 gem 'rb-readline'
 gem 'httpclient'
@@ -47,10 +47,11 @@ end
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :development, :test do
-  gem 'selenium-webdriver'
+#  gem 'selenium-webdriver'
   gem 'i18n_generators'
   gem "rspec-rails", "~> 2.14"
   gem "capybara"
+  gem 'poltergeist'
   gem "factory_girl_rails", "~> 4.0"
   gem "pry-rails"
 end
