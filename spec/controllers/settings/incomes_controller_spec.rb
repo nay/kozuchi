@@ -2,9 +2,18 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::AccountsController do
+describe Settings::AccountsController, type: :controller do
+  self.use_transactional_fixtures = true
   fixtures :users, :preferences, :accounts
   set_fixture_class :accounts => Account::Base, :preferences => Preferences
+
+  # TODO: 環境が汚れているため記入を削除する
+  before do
+    Entry::Base.delete_all
+    Deal::Base.delete_all
+    Pattern::Deal.delete_all
+    Pattern::Entry.delete_all
+  end
 
   describe "/incomes" do
 
@@ -17,14 +26,14 @@ describe Settings::AccountsController do
     describe "index" do
       it "成功する" do
         get :index, account_type: 'income'
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "create" do
       shared_examples_for 'current_userのincomeが登録される' do
         it "current_userのincomeが登録される" do
-          response.should redirect_to(settings_incomes_path)
+          expect(response).to redirect_to(settings_incomes_path)
           income = @current_user.incomes.find_by(name: '追加')
           income.should_not be_nil
           income.sort_key.should == 77
@@ -48,7 +57,7 @@ describe Settings::AccountsController do
           post :create, :account => {:name => '給料', :sort_key => 77}, account_type: 'income'
         end
         it "エラーメッセージ" do
-          response.should be_success
+          expect(response).to be_success
           assigns(:account).errors.should_not be_empty
         end
       end
@@ -62,7 +71,7 @@ describe Settings::AccountsController do
       it "成功する" do
         @current_values[:taro_salary.to_id.to_s][:name] = "きゅうりょう"
         put :update_all, :account => @current_values, account_type: 'income'
-        response.should redirect_to(settings_incomes_path)
+        expect(response).to redirect_to(settings_incomes_path)
         income = @current_user.incomes.find_by(name: 'きゅうりょう')
         income.should_not be_nil
         flash[:errors].should be_nil
@@ -70,7 +79,7 @@ describe Settings::AccountsController do
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_salary.to_id.to_s][:name] = ""
         put :update_all, :account => @current_values, account_type: 'income'
-        response.should be_success
+        expect(response).to be_success
         @current_user.incomes.find_by(name: '給料').should_not be_nil
         assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truthy
       end
@@ -83,9 +92,9 @@ describe Settings::AccountsController do
     describe "destroy" do
       it "成功する" do
         delete :destroy, :id => :taro_salary.to_id, account_type: 'income'
-        response.should redirect_to(settings_incomes_path)
-        Account::Base.find_by(id: :taro_salary.to_id).should be_nil
+        expect(response).to redirect_to(settings_incomes_path)
         flash[:errors].should be_nil
+        Account::Base.find_by(id: :taro_salary.to_id).should be_nil
       end
       it "他人の口座を指定できない" do
         lambda{delete :destroy, :id => :hanako_salary.to_id, account_type: 'income'}.should raise_error(ActiveRecord::RecordNotFound)
@@ -96,7 +105,7 @@ describe Settings::AccountsController do
           :date => Date.today
           )
         delete :destroy, :id => :taro_salary.to_id, account_type: 'income'
-        response.should redirect_to(settings_incomes_path)
+        expect(response).to redirect_to(settings_incomes_path)
         flash[:errors].should_not be_nil
         @current_user.incomes.find_by(id: :taro_salary.to_id).should_not be_nil
       end

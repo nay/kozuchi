@@ -50,9 +50,9 @@ end
 group :development, :test do
 #  gem 'selenium-webdriver'
   gem 'i18n_generators'
-  gem "rspec-rails", "~> 2.14"
+  gem "rspec-rails"
   gem "capybara"
   gem 'poltergeist'
-  gem "factory_girl_rails", "~> 4.0"
+  gem "factory_girl_rails"
   gem "pry-rails"
 end

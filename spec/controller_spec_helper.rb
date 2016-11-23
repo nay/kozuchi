@@ -18,7 +18,7 @@ module ControllerSpecHelper
 
   shared_examples_for 'トップページにリダイレクトされる' do
     it "トップページにリダイレクトされる" do
-      response.should redirect_to(root_path)
+      expect(response).to redirect_to(root_path)
     end
   end
 

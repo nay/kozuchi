@@ -1,20 +1,20 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe WelcomeController do
+describe WelcomeController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
   shared_examples "index" do
-    it {page.should have_content('きちんと。気楽に。')}
+    it {expect(page).to have_content('きちんと。気楽に。')}
   end
 
   shared_examples "having login form" do
-    it {page.should have_css("input#login")}
+    it {expect(page).to have_css("input#login")}
   end
   
   shared_examples "not having login form" do
-    it {page.should_not have_css("input#login")}
+    it {expect(page).not_to have_css("input#login")}
   end
 
   describe "GET /" do

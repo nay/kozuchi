@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe HelpController do
+describe HelpController, type: :controller do
   fixtures :users
   context "ログインしているとき" do
     before do
@@ -11,19 +11,19 @@ describe HelpController do
     describe "index" do
       it "成功する" do
         get :index
-        response.should be_success
+        expect(response).to be_success
       end
     end
     describe "functions" do
       it "成功する" do
         get :functions
-        response.should be_success
+        expect(response).to be_success
       end
     end
     describe "faq" do
       it "成功する" do
         get :faq
-        response.should be_success
+        expect(response).to be_success
       end
     end
   end
@@ -31,19 +31,19 @@ describe HelpController do
     describe "index" do
       it "成功する" do
         get :index
-        response.should be_success
+        expect(response).to be_success
       end
     end
     describe "functions" do
       it "成功する" do
         get :functions
-        response.should be_success
+        expect(response).to be_success
       end
     end
     describe "faq" do
       it "成功する" do
         get :faq
-        response.should be_success
+        expect(response).to be_success
       end
     end
   end

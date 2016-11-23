@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe BalanceSheetController do
+describe BalanceSheetController, type: :controller do
   fixtures :users, :accounts
   set_fixture_class :accounts => Account::Base
   before do
@@ -11,13 +11,13 @@ describe BalanceSheetController do
   describe "show" do
     it "monthlyにリダイレクトされる" do
       get :show
-      response.should redirect_to(monthly_balance_sheet_path(:year => Date.today.year, :month => Date.today.month))
+      expect(response).to redirect_to(monthly_balance_sheet_path(:year => Date.today.year, :month => Date.today.month))
     end
   end
   describe "monthly" do
     it "成功する" do
       get :monthly, {:year => Date.today.year, :month => Date.today.month}
-      response.should be_success
+      expect(response).to be_success
     end
   end
 end

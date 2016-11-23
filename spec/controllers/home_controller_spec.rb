@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe HomeController do
+describe HomeController, type: :controller do
   fixtures :users
   describe "index" do
 
@@ -12,7 +12,7 @@ describe HomeController do
       end
       it "成功する" do
         get :index
-        response.should be_success
+        expect(response).to be_success
       end
     end
 

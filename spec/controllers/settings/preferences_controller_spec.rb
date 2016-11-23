@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::PreferencesController do
+describe Settings::PreferencesController, type: :controller do
   fixtures :users, :preferences
   set_fixture_class :preferences => Preferences
 
@@ -15,14 +15,14 @@ describe Settings::PreferencesController do
   describe "show" do
     it "成功する" do
       get :show
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "update" do
     it "成功する" do
       put :update, :preferences => {:business_use => '1', :bookkeeping_style => '1', :color => '#8a4b3f'}
-      response.should redirect_to(settings_preferences_path)
+      expect(response).to redirect_to(settings_preferences_path)
       @preferences = @current_user.preferences(true)
       @preferences.should be_business_use
       @preferences.should be_bookkeeping_style

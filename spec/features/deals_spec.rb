@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe DealsController do
+describe DealsController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -16,7 +16,7 @@ describe DealsController do
         page.should have_css('div#monthly_contents')
       end
       it "日ナビゲーターがある" do
-        page.should have_css('#day_navigator')
+        expect(page).to have_css('#day_navigator')
       end
     end
 
@@ -26,7 +26,7 @@ describe DealsController do
         visit "/deals/2012/7"
       end
       it do
-        page.should have_content("2012/07/20")
+        expect(page).to have_content("2012/07/20")
       end
     end
   end
@@ -44,7 +44,7 @@ describe DealsController do
         click_button('検索')
       end
       it do
-        page.should have_content("「test」を含む明細は登録されていません。")
+        expect(page).to have_content("「test」を含む明細は登録されていません。")
       end
     end
 
@@ -55,7 +55,7 @@ describe DealsController do
         click_button('検索')
       end
       it do
-        page.should have_content("「ランチ」を含む明細は1件あります。")
+        expect(page).to have_content("「ランチ」を含む明細は1件あります。")
       end
     end
   end

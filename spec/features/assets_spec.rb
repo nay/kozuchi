@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe AssetsController do
+describe AssetsController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -13,7 +13,7 @@ describe AssetsController do
 
   describe "メニュー「資産表」のクリック" do
     it "今月の資産表が表示される" do
-      page.should have_content("#{Date.today.year}年#{Date.today.month}月末日の資産表")
+      expect(page).to have_content("#{Date.today.year}年#{Date.today.month}月末日の資産表")
     end
   end
 

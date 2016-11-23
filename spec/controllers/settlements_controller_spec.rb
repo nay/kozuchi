@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe SettlementsController do
+describe SettlementsController, type: :controller do
   fixtures :users, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
   set_fixture_class  :accounts => Account::Base
 
@@ -15,7 +15,7 @@ describe SettlementsController do
   describe "new" do
     it "成功する" do
       get :new, account_id: :taro_card.to_id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -29,7 +29,7 @@ describe SettlementsController do
         :end_date => {:year => '2010', :month => '5', :day => '1'},
         :settlement => {:account_id => :taro_cache.to_id},
         account_id: :taro_card.to_id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -38,7 +38,7 @@ describe SettlementsController do
       get 'index'
     end
     it "成功する" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -48,7 +48,7 @@ describe SettlementsController do
     end
 
     it "成功する" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -71,7 +71,7 @@ describe SettlementsController do
         }, :result_date => {:year => '2010', :month => '6', :day => '30'},
         account_id: :taro_hanako.to_id
 
-      response.should redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path)
       @current_user.settlements.find_by(name: 'テスト精算2010-5').should_not be_nil
     end
   end
@@ -96,7 +96,7 @@ describe SettlementsController do
     end
     it "成功する" do
       post :submit, :id => @settlement.id
-      response.should redirect_to(settlement_path(:id => @settlement.id))
+      expect(response).to redirect_to(settlement_path(:id => @settlement.id))
       # TODO: 内部の変更確認
     end
     
@@ -108,7 +108,7 @@ describe SettlementsController do
     end
     it "成功する" do
       get :show, :id => @settlement.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -118,7 +118,7 @@ describe SettlementsController do
     end
     it "成功する" do
       get :print_form, :id => @settlement.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -128,7 +128,7 @@ describe SettlementsController do
       delete :destroy, :id => @settlement.id
     end
     it "リダイレクトされる" do
-      response.should redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path)
     end
     it "実際に削除されている" do
       Settlement.find_by(id: @settlement.id).should be_nil

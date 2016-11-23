@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::AccountLinksController do
+describe Settings::AccountLinksController, type: :controller do
   fixtures :users, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
   set_fixture_class :accounts => Account::Base
 
@@ -15,7 +15,7 @@ describe Settings::AccountLinksController do
   describe "GET 'index'" do
     it "成功する" do
       get :index
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -26,7 +26,7 @@ describe Settings::AccountLinksController do
     end
     it "成功する" do
       delete :destroy, :account_id => @target_account_id, :id => @target_id
-      response.should redirect_to(settings_account_links_path)
+      expect(response).to redirect_to(settings_account_links_path)
       AccountLink.find_by(id: @target_id).should be_nil
     end
   end
@@ -35,7 +35,7 @@ describe Settings::AccountLinksController do
     shared_examples_for 'createが成功する' do
       it "成功する" do
         post :create, :linked_account_name => '太郎', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'
-        response.should redirect_to(settings_account_links_path)
+        expect(response).to redirect_to(settings_account_links_path)
         flash[:errors].should be_nil
         AccountLink.find_by(account_id: Fixtures.identify(:taro_hanako), target_user_id: Fixtures.identify(:hanako)).should_not be_nil
       end

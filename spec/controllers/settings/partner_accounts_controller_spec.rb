@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::PartnerAccountsController do
+describe Settings::PartnerAccountsController, type: :controller do
   fixtures :users, :accounts
   set_fixture_class :accounts => Account::Base
 
@@ -15,7 +15,7 @@ describe Settings::PartnerAccountsController do
   describe "index" do
     it "成功する" do
       get :index
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -28,7 +28,7 @@ describe Settings::PartnerAccountsController do
 
       put :update, :account_id => @account.id, :account => {:partner_account_id => :taro_bank.to_id}
 
-      response.should redirect_to(settings_partner_accounts_path)
+      expect(response).to redirect_to(settings_partner_accounts_path)
       @account.reload
       @account.partner_account_id.should == :taro_bank.to_id
     end

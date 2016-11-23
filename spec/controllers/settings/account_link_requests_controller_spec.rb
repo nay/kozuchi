@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::AccountLinkRequestsController do
+describe Settings::AccountLinkRequestsController, type: :controller do
   fixtures :users, :accounts, :account_links, :account_link_requests
   set_fixture_class :accounts => Account::Base
 
@@ -24,7 +24,7 @@ describe Settings::AccountLinkRequestsController do
     context "目的のAccountLinkRequestがあるとき" do
       it "AccountLinkRequestを削除できる" do
         delete :destroy, :id => @target_id, :account_id => @target_account_id
-        response.should redirect_to(settings_account_links_path)
+        expect(response).to redirect_to(settings_account_links_path)
         AccountLinkRequest.find_by(id: @target_id).should be_nil
         flash[:errors].should be_nil
       end

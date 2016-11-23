@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe BalanceSheetController, :js => true do
+describe BalanceSheetController, js: true, type: :feature do
   self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
@@ -19,7 +19,7 @@ describe BalanceSheetController, :js => true do
       click_calendar(target_date.year, target_date.month)
     end
     it do
-      page.should have_content("#{target_date.year}年#{target_date.month}月末日の貸借対照表")
+      expect(page).to have_content("#{target_date.year}年#{target_date.month}月末日の貸借対照表")
     end
   end
 

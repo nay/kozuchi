@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::AccountsController do
+describe Settings::AccountsController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -11,10 +11,10 @@ describe Settings::AccountsController do
       visit "/settings/expenses"
     end
     it "口座名入力欄がある" do
-      page.should have_css('input#account_name')
+      expect(page).to have_css('input#account_name')
     end
     it "各口座のフォームがある" do
-      page.should have_css('table.accounts')
+      expect(page).to have_css('table.accounts')
     end
   end
 end
