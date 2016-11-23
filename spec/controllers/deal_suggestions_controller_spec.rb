@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe DealSuggestionsController do
+describe DealSuggestionsController, type: :controller do
   fixtures :users
   
   before do
@@ -11,7 +11,7 @@ describe DealSuggestionsController do
   describe "index" do
     it "成功する" do
       get :index, :keyword => 'テスト'
-      response.should be_success
+      expect(response).to be_success
     end
   end
   

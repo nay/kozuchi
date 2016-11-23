@@ -2,28 +2,28 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe DealsController do
+describe DealsController, type: :controller do
   fixtures :users, :preferences, :accounts
-  set_fixture_class :accounts => 'Account::Base', :preferences => 'Preferences'
+  set_fixture_class :accounts => Account::Base, :preferences => Preferences
   before do
     login_as :taro
   end
   describe "index" do
     it "monthlyにリダイレクトされる" do
       get :index
-      response.should redirect_to monthly_deals_path(:year => Date.today.year, :month => Date.today.month)
+      expect(response).to redirect_to monthly_deals_path(:year => Date.today.year, :month => Date.today.month)
     end
   end
   describe "monthly" do
     it "成功する" do
       get :monthly, :year => '2010', :month => '4'
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "new_general_deal" do
     it "成功する" do
       get :new_general_deal
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "create_general_deal" do
@@ -37,19 +37,19 @@ describe DealsController do
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
         }
-      response.should be_success
+      expect(response).to be_success
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
-      deal.should_not be_nil
-      deal.debtor_entries.size.should == 1
-      deal.creditor_entries.size.should == 1
-      deal.debtor_entries.first.summary.should == 'test'
-      deal.creditor_entries.first.summary.should == 'test'
+      expect(deal).not_to be_nil
+      expect(deal.debtor_entries.size).to eq 1
+      expect(deal.creditor_entries.size).to eq 1
+      expect(deal.debtor_entries.first.summary).to eq 'test'
+      expect(deal.creditor_entries.first.summary).to eq 'test'
     end
   end
   describe "new_complex_deal" do
     it "成功する" do
       get :new_complex_deal
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "create_complex_deal" do
@@ -62,20 +62,20 @@ describe DealsController do
           :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
           :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
         }
-      response.should be_success
+      expect(response).to be_success
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
-      deal.should_not be_nil
-      deal.debtor_entries.size.should == 1
-      deal.creditor_entries.size.should == 2
-      deal.debtor_entries.first.summary.should == 'test_complex'
-      deal.creditor_entries.first.summary.should == 'test_complex'
-      deal.creditor_entries.last.summary.should == 'test_complex'
+      expect(deal).not_to be_nil
+      expect(deal.debtor_entries.size).to eq 1
+      expect(deal.creditor_entries.size).to eq 2
+      expect(deal.debtor_entries.first.summary).to eq 'test_complex'
+      expect(deal.creditor_entries.first.summary).to eq 'test_complex'
+      expect(deal.creditor_entries.last.summary).to eq 'test_complex'
     end
   end
   describe "new_balance_deal" do
     it "成功する" do
       get :new_balance_deal
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "create_balance_deal" do
@@ -85,7 +85,7 @@ describe DealsController do
         :account_id => :taro_cache.to_id,
         :year => '2010', :month => '7', :day => '7'
       }
-      response.should be_success
+      expect(response).to be_success
       deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
       deal.should_not be_nil
       deal.balance.should == 3000
@@ -95,7 +95,7 @@ describe DealsController do
   describe "search" do
     it "成功する" do
       get :search, :keyword => 'test'
-      response.should be_success
+      expect(response).to be_success
     end
     it "キーワードなしだとエラーとなる" do
       lambda{get :search}.should raise_error(InvalidParameterError)
@@ -108,7 +108,7 @@ describe DealsController do
     end
     it "成功する" do
       delete :destroy, :id => @deal.id
-      response.should be_success
+      expect(response).to be_success
       Deal::Base.find_by(id: @deal.id).should be_nil
     end
   end
@@ -119,7 +119,7 @@ describe DealsController do
     end
     it "成功する" do
       post :confirm, :id => @deal.id
-      response.should be_success
+      expect(response).to be_success
       @deal.reload
       @deal.should be_confirmed
     end
@@ -131,7 +131,7 @@ describe DealsController do
     end
     it "成功する" do
       get :edit, :id => @deal.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -147,7 +147,7 @@ describe DealsController do
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
       }
-      response.should be_success
+      expect(response).to be_success
       @deal.reload
       @deal.creditor_entries.size.should == 2
       @deal.summary.should == 'changed like test_complex'
@@ -164,7 +164,7 @@ describe DealsController do
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
         }
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
@@ -179,7 +179,7 @@ describe DealsController do
           :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
           :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
         }
-        response.should be_success
+        expect(response).to be_success
       end
     end
   end

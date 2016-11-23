@@ -5,7 +5,7 @@ module User::DealsExtension
   # keywordsをsummaryに含む明細をすべて検索する。 keywordsは配列で受け取り、and検索する。
   def including(keywords)
     raise ArgumentError.new("No keywords") if keywords.blank?
-    select("distinct deals.*"
+    select("deals.*"
     ).joins("inner join account_entries on account_entries.deal_id = deals.id"
     ).where(keywords.map{"account_entries.summary like ?"}.join(' and '), *keywords.map{|k| "%#{k}%"})
   end

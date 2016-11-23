@@ -2,9 +2,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::AccountsController do
+describe Settings::AccountsController, type: :controller do
   fixtures :users, :preferences, :accounts
-  set_fixture_class :accounts => 'Account::Base', :preferences => 'Preferences'
+  set_fixture_class :accounts => Account::Base, :preferences => Preferences
 
   describe "/expenses" do
 
@@ -17,14 +17,14 @@ describe Settings::AccountsController do
     describe "index" do
       it "成功する" do
         get :index, account_type: 'expense'
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "create" do
       shared_examples_for 'current_userのexpenseが登録される' do
         it "current_userのexpenseが登録される" do
-          response.should redirect_to(settings_expenses_path)
+          expect(response).to redirect_to(settings_expenses_path)
           expense = @current_user.expenses.find_by(name: '追加')
           expense.should_not be_nil
           expense.sort_key.should == 77
@@ -48,7 +48,7 @@ describe Settings::AccountsController do
           post :create, :account => {:name => '食費', :sort_key => 77}, account_type: 'expense'
         end
         it "エラーメッセージ" do
-          response.should be_success
+          expect(response).to be_success
           assigns(:account).errors.should_not be_empty
         end
       end
@@ -62,7 +62,7 @@ describe Settings::AccountsController do
       it "成功する" do
         @current_values[:taro_food.to_id.to_s][:name] = "しょくひ"
         put :update_all, :account => @current_values, account_type: 'expense'
-        response.should redirect_to(settings_expenses_path)
+        expect(response).to redirect_to(settings_expenses_path)
         expense = @current_user.expenses.find_by(name: 'しょくひ')
         expense.should_not be_nil
         flash[:errors].should be_nil
@@ -70,7 +70,7 @@ describe Settings::AccountsController do
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_food.to_id.to_s][:name] = ""
         put :update_all, :account => @current_values, account_type: 'expense'
-        response.should be_success
+        expect(response).to be_success
         @current_user.expenses.find_by(name: '食費').should_not be_nil
         assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truthy
       end
@@ -83,7 +83,7 @@ describe Settings::AccountsController do
     describe "destroy" do
       it "成功する" do
         delete :destroy, :id => :taro_food.to_id, account_type: 'expense'
-        response.should redirect_to(settings_expenses_path)
+        expect(response).to redirect_to(settings_expenses_path)
         Account::Base.find_by(id: :taro_food.to_id).should be_nil
         flash[:errors].should be_nil
       end
@@ -96,7 +96,7 @@ describe Settings::AccountsController do
           :date => Date.today
           )
         delete :destroy, :id => :taro_food.to_id, account_type: 'expense'
-        response.should redirect_to(settings_expenses_path)
+        expect(response).to redirect_to(settings_expenses_path)
         flash[:errors].should_not be_nil
         @current_user.expenses.find_by(id: :taro_food.to_id).should_not be_nil
       end

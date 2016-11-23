@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe ExportController do
+describe ExportController, type: :controller do
   fixtures :users
   before do
     login_as :taro
@@ -11,7 +11,7 @@ describe ExportController do
   describe "GET 'index'" do
     it "成功すること" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -19,13 +19,13 @@ describe ExportController do
     describe "xml" do
       it "成功すること" do
         get 'whole', :format => "xml", :filename => "export"
-        response.should be_success
+        expect(response).to be_success
       end
     end
     describe "csv" do
       it "成功すること" do
         get 'whole', :format => "csv", :filename => "export"
-        response.should be_success
+        expect(response).to be_success
       end
     end
   end

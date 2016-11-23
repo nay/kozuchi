@@ -243,7 +243,7 @@ class DealsController < ApplicationController
   def search
     raise InvalidParameterError if params[:keyword].blank?
     @keywords = params[:keyword].split(' ')
-    @deals = current_user.deals.time_ordering.including(@keywords).uniq # NOTE: Rails4.0.2 関連はじまりだとuniqがスコープにならずここで発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう
+    @deals = current_user.deals.time_ordering.including(@keywords).uniq # NOTE: Rails4.1.0 関連の直後だとuniqがスコープにならず発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう。countはDISTINCTが重なってSQLエラーになるので view でlength を使っている
     @as_action = :index
   end
 

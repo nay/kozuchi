@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
-describe WelcomeController do
+describe WelcomeController, type: :controller do
   fixtures :users
   describe "GET index" do
     describe "pc" do
@@ -11,7 +11,7 @@ describe WelcomeController do
           get :index
         end
         it "成功する" do
-          response.should be_success
+          expect(response).to be_success
         end
       end
       describe "ログインしているとき" do
@@ -20,7 +20,7 @@ describe WelcomeController do
           get :index
         end
         it "成功する" do
-          response.should be_success
+          expect(response).to be_success
         end
       end
     end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::PreferencesController do
+describe Settings::PreferencesController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -11,7 +11,7 @@ describe Settings::PreferencesController do
       visit "/settings/preferences"
     end
     it "色の欄がある" do
-      page.should have_css('input#preferences_color')
+      expect(page).to have_css('input#preferences_color')
     end
   end
 end

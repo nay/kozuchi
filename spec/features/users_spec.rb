@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe UsersController do
+describe UsersController, type: :feature do
   fixtures :users, :preferences
 
   describe "GET /signup" do

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe DealsController, :js => true do
+describe DealsController, js: true, type: :feature do
   self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
@@ -12,11 +12,11 @@ describe DealsController, :js => true do
       click_link '複数記入にする'
     end
     it "フォーム部分だけが変わる" do
-      page.should have_css("select#deal_creditor_entries_attributes_4_account_id")
+      expect(page).to have_css("select#deal_creditor_entries_attributes_4_account_id")
     end
     it "記入欄を増やせる" do
       click_link '記入欄を増やす'
-      page.should have_css("select#deal_creditor_entries_attributes_5_account_id")
+      expect(page).to have_css("select#deal_creditor_entries_attributes_5_account_id")
     end
   end
 
@@ -31,11 +31,11 @@ describe DealsController, :js => true do
     end
 
     it "一覧に表示される" do
-      flash_notice.should have_content("更新しました。")
-      flash_notice.should have_content("2012/07/11")
-      page.should have_content('冷やし中華')
-      page.should have_content('920')
-      page.should have_content('クレジットカードＸ')
+      expect(flash_notice).to have_content("更新しました。")
+      expect(flash_notice).to have_content("2012/07/11")
+      expect(page).to have_content('冷やし中華')
+      expect(page).to have_content('920')
+      expect(page).to have_content('クレジットカードＸ')
     end
   end
 
@@ -61,7 +61,7 @@ describe DealsController, :js => true do
       end
 
       it "カレンダーの選択月が今月に変わる" do
-        find("td.selected_month").text.should == "#{Date.today.month}月"
+        expect(find("td.selected_month").text).to eq("#{Date.today.month}月")
       end
     end
 
@@ -73,7 +73,7 @@ describe DealsController, :js => true do
       end
 
       it "カレンダーの選択月が翌月に変わる" do
-        find("td.selected_month").text.should == "#{target_date.month}月"
+        expect(find("td.selected_month").text).to eq("#{target_date.month}月")
       end
     end
 
@@ -82,7 +82,7 @@ describe DealsController, :js => true do
         find("#next_year").click
       end
       it "URLに翌年を含む" do
-        current_path =~ /\/#{(Date.today >> 12).year.to_s}\//
+        expect(current_path =~ /\/#{(Date.today >> 12).year.to_s}\//).to be_truthy
       end
     end
 
@@ -91,7 +91,7 @@ describe DealsController, :js => true do
         find("#prev_year").click
       end
       it "URLに前年を含む" do
-        current_path =~ /\/#{(Date.today << 12).year.to_s}\//
+        expect(current_path =~ /\/#{(Date.today << 12).year.to_s}\//).to be_truthy
       end
     end
 
@@ -104,7 +104,7 @@ describe DealsController, :js => true do
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
       end
       it "URLに対応する日付ハッシュがつく" do
-        current_hash.should == 'day3'
+        expect(current_hash).to eq('day3')
       end
     end
 
@@ -116,11 +116,11 @@ describe DealsController, :js => true do
           click_link '変更'
         end
         it "URLにハッシュがつき、変更ウィンドウが表示される" do
-          page.should have_css("#edit_window")
-          find("#edit_window #date_year").value.should == "2012"
-          find("#edit_window #date_month").value.should == "7"
-          find("#edit_window #date_day").value.should == "10"
-          find("#edit_window #deal_summary").value.should ==  "ラーメン"
+          expect(page).to have_css("#edit_window")
+          expect(find("#edit_window #date_year").value).to eq "2012"
+          expect(find("#edit_window #date_month").value).to eq "7"
+          expect(find("#edit_window #date_day").value).to eq "10"
+          expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
           current_hash.should == "d#{deal.id}"
         end
         it_behaves_like "複数記入に変更できる"
@@ -136,11 +136,11 @@ describe DealsController, :js => true do
           end
 
           it "一覧に表示される" do
-            flash_notice.should have_content("更新しました。")
-            flash_notice.should have_content("2012/07/11")
-            page.should have_content('冷やし中華')
-            page.should have_content('920')
-            page.should have_content('クレジットカードＸ')
+            expect(flash_notice).to have_content("更新しました。")
+            expect(flash_notice).to have_content("2012/07/11")
+            expect(page).to have_content('冷やし中華')
+            expect(page).to have_content('920')
+            expect(page).to have_content('クレジットカードＸ')
           end
         end
       end
@@ -164,10 +164,10 @@ describe DealsController, :js => true do
         find("#today").click
       end
       it "カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
-        find("td.selected_month").text.should == "#{Date.today.month}月"
-        find("input#date_year").value == Date.today.year.to_s
-        find("input#date_month").value == Date.today.month.to_s
-        find("input#date_day").value == Date.today.day.to_s
+        expect(find("td.selected_month").text).to eq "#{Date.today.month}月"
+        expect(find("input#date_year").value).to eq Date.today.year.to_s
+        expect(find("input#date_month").value).to eq Date.today.month.to_s
+        expect(find("input#date_day").value).to eq Date.today.day.to_s
       end
     end
 
@@ -177,8 +177,8 @@ describe DealsController, :js => true do
         click_calendar(target_date.year, target_date.month)
       end
       it "カレンダーの選択月が翌月に変わり、記入日の月が変わる" do
-        find("td.selected_month").text.should == "#{target_date.month}月"
-        find("input#date_month").value == Date.today.month.to_s
+        expect(find("td.selected_month").text).to eq "#{target_date.month}月"
+        expect(find("input#date_month").value).to eq target_date.month.to_s
       end
     end
 
@@ -186,9 +186,8 @@ describe DealsController, :js => true do
       before do
         find("#next_year").click
       end
-      it "URLに翌年を含み、記入日の年が変わる" do
-        current_path =~ /\/#{(Date.today >> 12).year.to_s}\//
-        find("input#date_year").value == (Date.today >> 12).year.to_s
+      it "記入日の年が変わる" do
+        expect(find("input#date_year").value).to eq (Date.today >> 12).year.to_s
       end
     end
 
@@ -196,9 +195,8 @@ describe DealsController, :js => true do
       before do
         find("#prev_year").click
       end
-      it "URLに前年を含み、記入日の年が変わる" do
-        current_path =~ /\/#{(Date.today << 12).year.to_s}\//
-        find("input#date_year").value.should == (Date.today << 12).year.to_s
+      it "記入日の年が変わる" do
+        expect(find("input#date_year").value).to eq (Date.today << 12).year.to_s
       end
     end
 
@@ -211,7 +209,7 @@ describe DealsController, :js => true do
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
       end
       it "日の欄に指定した日が入る" do
-        find("input#date_day").value.should == '3'
+        expect(find("input#date_day").value).to eq '3'
       end
     end
 
@@ -225,8 +223,8 @@ describe DealsController, :js => true do
           click_button '記入'
         end
         it do
-          flash_notice.should have_content('追加しました。')
-          page.should have_content('朝食のおにぎり')
+          expect(flash_notice).to have_content('追加しました。')
+          expect(page).to have_content('朝食のおにぎり')
         end
       end
 
@@ -238,11 +236,11 @@ describe DealsController, :js => true do
             sleep 0.6
           end
           it "先に登録したデータがサジェッション表示される" do
-            page.should have_css("#patterns div.clickable_text")
+            expect(page).to have_css("#patterns div.clickable_text")
           end
           it "サジェッションをクリックするとデータが入る" do
             page.find("#patterns div.clickable_text").click
-            page.find("#deal_summary").value.should == '朝食のサンドイッチ'
+            expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
           end
         end
 
@@ -253,11 +251,11 @@ describe DealsController, :js => true do
             sleep 0.6
           end
           it "先に登録したデータがサジェッション表示される" do
-            page.should have_css("#patterns div.clickable_text")
+            expect(page).to have_css("#patterns div.clickable_text")
           end
           it "サジェッションをクリックするとデータが入る" do
             page.find("#patterns div.clickable_text").click
-            page.find("#deal_summary").value.should == "朝食の'サンドイッチ'"
+            expect(page.find("#deal_summary").value).to eq "朝食の'サンドイッチ'"
           end
         end
       end
@@ -276,8 +274,8 @@ describe DealsController, :js => true do
         end
         it "パターン登録した内容が入る" do
           sleep 1
-          page.find("#deal_debtor_entries_attributes_0_amount").value.should == '800'
-          page.find("#deal_summary").value.should == '昼食'
+          expect(page.find("#deal_debtor_entries_attributes_0_amount").value).to eq '800'
+          expect(page.find("#deal_summary").value).to eq '昼食'
         end
       end
 
@@ -288,28 +286,28 @@ describe DealsController, :js => true do
 
         describe "タブを表示できる" do
           it "タブが表示される" do
-            page.should have_css('input#deal_creditor_entries_attributes_0_summary')
-            page.should have_css('input#deal_creditor_entries_attributes_1_summary')
-            page.should have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
-            page.should have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
-            page.should have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
-            page.should have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
-            page.should have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
-            page.should have_css('select#deal_creditor_entries_attributes_0_account_id')
-            page.should have_css('select#deal_creditor_entries_attributes_1_account_id')
-            page.should have_css('select#deal_creditor_entries_attributes_2_account_id')
-            page.should have_css('select#deal_creditor_entries_attributes_3_account_id')
-            page.should have_css('select#deal_creditor_entries_attributes_4_account_id')
-            page.should have_css('input#deal_debtor_entries_attributes_0_amount')
-            page.should have_css('input#deal_debtor_entries_attributes_1_amount')
-            page.should have_css('input#deal_debtor_entries_attributes_2_amount')
-            page.should have_css('input#deal_debtor_entries_attributes_3_amount')
-            page.should have_css('input#deal_debtor_entries_attributes_4_amount')
-            page.should have_css('select#deal_debtor_entries_attributes_0_account_id')
-            page.should have_css('select#deal_debtor_entries_attributes_1_account_id')
-            page.should have_css('select#deal_debtor_entries_attributes_2_account_id')
-            page.should have_css('select#deal_debtor_entries_attributes_3_account_id')
-            page.should have_css('select#deal_debtor_entries_attributes_4_account_id')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_0_summary')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_1_summary')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_0_reversed_amount')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_1_reversed_amount')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_2_reversed_amount')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_3_reversed_amount')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_4_reversed_amount')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_0_account_id')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_1_account_id')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_2_account_id')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_3_account_id')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_4_account_id')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_0_amount')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_1_amount')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_2_amount')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_3_amount')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_4_amount')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_0_account_id')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_1_account_id')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_2_account_id')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_3_account_id')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_4_account_id')
           end
         end
 
@@ -319,10 +317,10 @@ describe DealsController, :js => true do
           end
 
           it "6つめの記入欄が表示される" do
-            page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
-            page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
-            page.should have_css('input#deal_debtor_entries_attributes_5_amount')
-            page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
+            expect(page).to have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
+            expect(page).to have_css('select#deal_creditor_entries_attributes_5_account_id')
+            expect(page).to have_css('input#deal_debtor_entries_attributes_5_amount')
+            expect(page).to have_css('select#deal_debtor_entries_attributes_5_account_id')
           end
         end
 
@@ -340,11 +338,11 @@ describe DealsController, :js => true do
           end
 
           it "明細が一覧に表示される" do
-            flash_notice.should have_content('追加しました。')
-            page.should have_content '買い物'
-            page.should have_content '1,000'
-            page.should have_content '800'
-            page.should have_content '200'
+            expect(flash_notice).to have_content('追加しました。')
+            expect(page).to have_content '買い物'
+            expect(page).to have_content '1,000'
+            expect(page).to have_content '800'
+            expect(page).to have_content '200'
           end
         end
 
@@ -357,12 +355,12 @@ describe DealsController, :js => true do
 
         describe "タブを表示できる" do
           it do
-            page.should have_css('select#deal_account_id')
-            page.should have_content('計算')
-            page.should have_content('残高')
-            page.should have_content('記入')
+            expect(page).to have_css('select#deal_account_id')
+            expect(page).to have_content('計算')
+            expect(page).to have_content('残高')
+            expect(page).to have_content('記入')
 
-            page.should_not have_css('input#deal_summary')
+            expect(page).to_not have_css('input#deal_summary')
           end
         end
 
@@ -376,9 +374,9 @@ describe DealsController, :js => true do
           end
 
           it "一覧に表示される" do
-            flash_notice.should have_content("追加しました。")
-            page.should have_content("残高確認")
-            page.should have_content("5,030")
+            expect(flash_notice).to have_content("追加しました。")
+            expect(page).to have_content("残高確認")
+            expect(page).to have_content("5,030")
           end
         end
       end
@@ -392,13 +390,13 @@ describe DealsController, :js => true do
           find("tr#d#{deal.id}").click_link '変更'
         end
         it "URLにハッシュがつき、登録エリアが隠され、変更ウィンドウが表示される" do
-          page.should have_css("#edit_window")
-          page.should_not have_css("#new_deal_window")
-          find("#edit_window #date_year").value.should == "2012"
-          find("#edit_window #date_month").value.should == "7"
-          find("#edit_window #date_day").value.should == "10"
-          find("#edit_window #deal_summary").value.should ==  "ラーメン"
-          current_hash.should == "d#{deal.id}"
+          expect(page).to have_css("#edit_window")
+          expect(page).to_not have_css("#new_deal_window")
+          expect(find("#edit_window #date_year").value).to eq "2012"
+          expect(find("#edit_window #date_month").value).to eq "7"
+          expect(find("#edit_window #date_day").value).to eq "10"
+          expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
+          expect(current_hash).to eq "d#{deal.id}"
         end
         it_behaves_like "複数記入に変更できる"
         it_behaves_like "変更を実行できる"
@@ -430,10 +428,10 @@ describe DealsController, :js => true do
   #       end
   #
   #       it "6つめの記入欄が表示される" do
-  #         page.should have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
-  #         page.should have_css('select#deal_creditor_entries_attributes_5_account_id')
-  #         page.should have_css('input#deal_debtor_entries_attributes_5_amount')
-  #         page.should have_css('select#deal_debtor_entries_attributes_5_account_id')
+  #         expect(page).to have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
+  #         expect(page).to have_css('select#deal_creditor_entries_attributes_5_account_id')
+  #         expect(page).to have_css('input#deal_debtor_entries_attributes_5_amount')
+  #         expect(page).to have_css('select#deal_debtor_entries_attributes_5_account_id')
   #       end
   #     end
   #
@@ -447,11 +445,11 @@ describe DealsController, :js => true do
   #       end
   #
   #       it "変更内容が一覧に表示される" do
-  #         flash_notice.should have_content "更新しました。"
-  #         page.should have_content '銀行'
-  #         page.should have_content '1,200'
-  #         page.should have_content '900'
-  #         page.should have_content '300'
+  #         expect(flash_notice).to have_content "更新しました。"
+  #         expect(page).to have_content '銀行'
+  #         expect(page).to have_content '1,200'
+  #         expect(page).to have_content '900'
+  #         expect(page).to have_content '300'
   #       end
   #     end
   #
@@ -466,11 +464,11 @@ describe DealsController, :js => true do
   #       end
   #
   #       it "変更内容が一覧に表示される" do
-  #         flash_notice.should have_content "更新しました。"
-  #         page.should have_content '銀行'
-  #         page.should have_content '1,200'
-  #         page.should have_content '900'
-  #         page.should have_content '300'
+  #         expect(flash_notice).to have_content "更新しました。"
+  #         expect(page).to have_content '銀行'
+  #         expect(page).to have_content '1,200'
+  #         expect(page).to have_content '900'
+  #         expect(page).to have_content '300'
   #       end
   #     end
   #
@@ -496,8 +494,8 @@ describe DealsController, :js => true do
   #         click_button '変更'
   #       end
   #       it "一覧に表示される" do
-  #         flash_notice.should have_content("更新しました。")
-  #         page.should have_content('2,080')
+  #         expect(flash_notice).to have_content("更新しました。")
+  #         expect(page).to have_content('2,080')
   #       end
   #     end
   #   end
@@ -513,7 +511,7 @@ describe DealsController, :js => true do
   #       page.driver.browser.switch_to.alert.accept
   #     end
   #     it do
-  #       flash_notice.should have_content("削除しました。")
+  #       expect(flash_notice).to have_content("削除しました。")
   #     end
   #   end
   #
@@ -526,7 +524,7 @@ describe DealsController, :js => true do
   #     end
   #
   #     it do
-  #       flash_notice.should have_content("削除しました。")
+  #       expect(flash_notice).to have_content("削除しました。")
   #     end
   #
   #   end
@@ -539,7 +537,7 @@ describe DealsController, :js => true do
   #       page.driver.browser.switch_to.alert.accept
   #     end
   #     it do
-  #       flash_notice.should have_content("削除しました。")
+  #       expect(flash_notice).to have_content("削除しました。")
   #     end
   #   end
   #

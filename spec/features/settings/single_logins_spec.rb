@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::SingleLoginsController do
+describe Settings::SingleLoginsController, type: :feature do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -11,7 +11,7 @@ describe Settings::SingleLoginsController do
       visit "/settings/single_logins"
     end
     it "ログイン名入力欄がある" do
-      page.should have_css('input#single_login_login')
+      expect(page).to have_css('input#single_login_login')
     end
 
     describe "新しい設定の登録" do
@@ -24,16 +24,16 @@ describe Settings::SingleLoginsController do
         let(:login) { 'hanako' }
         let(:password) { 'hanako' }
         it "追加メッセージが出て、ログイン名入力欄がある" do
-          flash_notice.should have_content('追加しました')
-          page.should have_css('input#single_login_login')
+          expect(flash_notice).to have_content('追加しました')
+          expect(page).to have_css('input#single_login_login')
         end
       end
       context "パスワードが異なるとき" do
         let(:login) { 'hanako' }
         let(:password) { 'wrong' }
         it "追加メッセージ欄がなく、ログイン名入力欄がある" do
-          page.should_not have_css('#notice')
-          page.should have_css('input#single_login_login')
+          expect(page).not_to have_css('#notice')
+          expect(page).to have_css('input#single_login_login')
         end
       end
     end

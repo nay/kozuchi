@@ -2,9 +2,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
-describe Settings::AccountsController do
+describe Settings::AccountsController, type: :controller do
   fixtures :users, :preferences, :accounts
-  set_fixture_class :accounts => 'Account::Base', :preferences => 'Preferences'
+  set_fixture_class :accounts => Account::Base, :preferences => Preferences
 
   describe "/assets" do
 
@@ -17,14 +17,14 @@ describe Settings::AccountsController do
     describe "index" do
       it "成功する" do
         get :index, account_type: 'asset'
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "create" do
       shared_examples_for 'current_userのassetが登録される' do
         it "current_userのassetが登録される" do
-          response.should redirect_to(settings_assets_path)
+          expect(response).to redirect_to(settings_assets_path)
           asset = @current_user.assets.find_by(name: '追加')
           asset.should_not be_nil
           asset.asset_kind.should == 'cache'
@@ -49,7 +49,7 @@ describe Settings::AccountsController do
           post :create, :account => {:name => '現金', :sort_key => 77, :asset_kind => 'cache'}, account_type: 'asset'
         end
         it "エラーメッセージ" do
-          response.should be_success
+          expect(response).to be_success
           assigns(:account).errors.should_not be_empty
         end
       end
@@ -64,7 +64,7 @@ describe Settings::AccountsController do
         @current_values[:taro_cache.to_id.to_s][:name] = "げんきん"
         @current_values[:taro_cache.to_id.to_s][:asset_kind] = 'credit'
         put :update_all, :account => @current_values, account_type: 'asset'
-        response.should redirect_to(settings_assets_path)
+        expect(response).to redirect_to(settings_assets_path)
         asset = @current_user.assets.find_by(name: 'げんきん')
         asset.should_not be_nil
         asset.asset_kind.should == 'credit'
@@ -73,7 +73,7 @@ describe Settings::AccountsController do
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_cache.to_id.to_s][:name] = ""
         put :update_all, :account => @current_values, account_type: 'asset'
-        response.should be_success
+        expect(response).to be_success
         @current_user.assets.find_by(name: '現金').should_not be_nil
         assigns(:accounts).any?{|a| !a.errors.empty?}.should be_truthy
       end
@@ -86,7 +86,7 @@ describe Settings::AccountsController do
     describe "destroy" do
       it "成功する" do
         delete :destroy, :id => Fixtures.identify(:taro_cache), account_type: 'asset'
-        response.should redirect_to(settings_assets_path)
+        expect(response).to redirect_to(settings_assets_path)
         Account::Base.find_by(id: Fixtures.identify(:taro_cache)).should be_nil
         flash[:errors].should be_nil
       end
@@ -99,7 +99,7 @@ describe Settings::AccountsController do
           :date => Date.today
           )
         delete :destroy, :id => :taro_cache.to_id, account_type: 'asset'
-        response.should redirect_to(settings_assets_path)
+        expect(response).to redirect_to(settings_assets_path)
         flash[:errors].should_not be_nil
         @current_user.assets.find_by(id: :taro_cache.to_id).should_not be_nil
       end
