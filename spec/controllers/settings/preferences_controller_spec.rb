@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper
 
 describe Settings::PreferencesController do
   fixtures :users, :preferences
-  set_fixture_class :preferences => 'Preferences'
+  set_fixture_class :preferences => Preferences
 
   before do
     login_as :taro

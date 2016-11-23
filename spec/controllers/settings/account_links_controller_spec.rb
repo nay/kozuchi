@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper
 
 describe Settings::AccountLinksController do
   fixtures :users, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
-  set_fixture_class :accounts => 'Account::Base'
+  set_fixture_class :accounts => Account::Base
 
   before do
     login_as :taro

@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper
 
 describe Settings::AccountsController do
   fixtures :users, :preferences, :accounts
-  set_fixture_class :accounts => 'Account::Base', :preferences => 'Preferences'
+  set_fixture_class :accounts => Account::Base, :preferences => Preferences
 
   describe "/assets" do
 
