@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '4.0.2'
+gem 'rake', '11.3.0'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -18,7 +19,7 @@ gem 'passenger'
 gem 'rb-readline'
 gem 'httpclient'
 gem 'jquery-rails'
-gem 'sass', '3.2.6' # 3.2.7以上が入るとtravisでrequest specが失敗する
+gem 'sass'
 gem 'rails-observers' # TODO: なくしたい
 gem 'activerecord-session_store'
 group :assets do
