@@ -1,0 +1,4 @@
+%tr
+  %td= single_login.login
+  %td= single_login.active? ? '有効' : '無効'
+  %td= link_to '削除', settings_single_login_path(:id => single_login.id), :method => :delete, class: %w(btn btn-danger), :data => {:confirm => "#{h single_login.login}さんへのシングルログイン設定を削除します。よろしいですか？"}

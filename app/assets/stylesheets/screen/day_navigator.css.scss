@@ -1,14 +1,21 @@
+@import 'variables';
+
 #day_navigator_frame {
-  float:left;
   background-color:
   #ffffff;
   line-height: 12px;
   font-size: 10px;
+  width: 50px;
 
   #day_navigator {
     border-collapse: collapse;
     margin-right: 10px;
+    margin-bottom: 16px;
 
+    td.year_month {
+      text-align: right;
+      padding-bottom: 4px;
+    }
     td.day {
       padding: 2px 2px;
       text-align: right;
@@ -29,9 +36,4 @@
       }
     }
   }
-}
-#deals_frame {
-  float:left;
-  width: 92%;
-  margin-right: 8px;
 }

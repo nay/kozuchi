@@ -10,7 +10,7 @@
       $('a.new_deal_with_pattern_link').click(function() {
         $('#notice').hide()
         $('#deal_forms').load(this.href, null, function() {
-          $('#deal_pattern_frame').load('<%= recent_deal_patterns_path %>')
+          loadRecentDealPatterns()
         })
         return false
       })

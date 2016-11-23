@@ -1,0 +1,30 @@
+#settlements_right
+  = link_to "新しい精算", new_account_settlement_path(account_id: @account.id), class: %w(btn btn-primary)
+  = link_to @account.name, monthly_account_deals_path(account_id: @account.id, year: Time.zone.today.year, month: Time.zone.today.month), class: %w(btn btn-default)
+  = link_to "概況", settlements_path, class:  %w(btn btn-default)
+
+#settlements_main
+  #settlements
+    - if flash[:notice]
+      %div= flash[:notice]
+    .row
+      .col-xs-4
+        = form_tag '' do
+          #account_options
+            = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+      .col-xs-8
+        = render partial: 'summary'
+
+    %h3 一覧
+    - if @settlements.empty?
+      %p 精算データはありません。
+    - else
+      %table.book
+        %tr
+          %th.date 精算日
+          %th 精算データ名
+          %th 対象取引数
+          %th.amount 精算額
+          %th 登録日時
+          %th 状態
+        = render :partial => 'settlement', :collection => @settlements

@@ -16,7 +16,7 @@ module ControllerSpecHelper
     end
   end
 
-  share_examples_for 'トップページにリダイレクトされる' do
+  shared_examples_for 'トップページにリダイレクトされる' do
     it "トップページにリダイレクトされる" do
       response.should redirect_to(root_path)
     end

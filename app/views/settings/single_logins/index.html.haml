@@ -1,0 +1,36 @@
+.container-fluid
+  .row
+    .col-md-9
+      - if current_user.single_logins.empty?
+        %p シングルログインは未設定です。
+      - else
+        %table.table
+          %tr
+            %th ログインID
+            %th 状態
+            %th 削除
+          = render :partial => 'single_login', :collection => current_user.single_logins
+      %h3 シングルログインの解説
+      %p
+        同じ小槌サービス上の別のユーザーの画面に簡単に移動するための設定を行えます。
+        家計と個人など、複数のアカウント間の移動に便利です。
+        %br
+        設定を追加するには、移動したいユーザーのログインID、パスワードを指定する必要があります。
+        %br
+        シングルログインが設定されると、ページ下部に、別のユーザーとしてログインするためのボタンが追加されます。
+
+    .col-md-3
+      .panel.panel-default
+        .panel-heading シングルログインを登録
+        .panel-body
+          = error_messages_for :single_login
+          %div{style: "margin-bottom: 1em;"}
+            = form_for @single_login, :url => settings_single_logins_path do |f|
+              .form-group
+                = f.label :login, 'ログインID'
+                = f.text_field :login, class: 'form-control'
+              .form-group
+                = f.label :password, 'パスワード'
+                = f.password_field :password, class: 'form-control'
+              .form-group
+                = f.submit '新しい設定を登録', class: %w(btn btn-primary)

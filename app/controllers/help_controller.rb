@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
-  layout 'main'
+  skip_before_filter :login_required
   menu_group "ヘルプ"
   menu "小槌の特徴", :only => [:index]
   menu "できること", :only => [:functions]

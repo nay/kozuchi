@@ -1,0 +1,38 @@
+.container-fluid
+  .row
+    .col-md-9
+      - unless @requests.empty?
+        = render partial: 'requests'
+
+      = render partial: 'friends'
+
+      - unless @rejections.empty?
+        %h3 フレンドの申し込みの拒否
+        %p
+          = current_user.login
+          さんがフレンドの申し込みを拒否したユーザーが
+          = @rejections.size
+          名います。
+
+        %table.table
+          - for r in @rejections
+            %tr
+              %td
+                %span.userName= r.target.login
+                さん
+              %td= link_to "撤回", settings_friend_rejection_path(:target_login => r.target.login), class: %w(btn btn-danger btn-sm), :method => :delete, :data => {:confirm => "#{h r.target.login}さんからのフレンドの申し込みに対する拒否を撤回します。相手をフレンドに登録したり、相手からのフレンド申請を見ることができるようになります。撤回してよろしいですか？"}
+    .col-md-3
+      .panel.panel-default
+        .panel-heading フレンドを登録する
+        .panel-body
+          = form_tag settings_friend_acceptance_path do
+            .form-group
+              %label{for: "target_login"} ユーザーID
+              = text_field_tag :target_login, flash[:target_login], class: 'form-control'
+            .form-group
+              = submit_tag "フレンドを登録する（申し込む）", class: 'btn btn-primary'
+          %p
+            フレンドと取引連動については、
+            = link_to("ヘルプの「フレンドの項」", :controller => '/help', :action => 'functions', :anchor => "friend")
+            に詳しいのでご参照ください。
+

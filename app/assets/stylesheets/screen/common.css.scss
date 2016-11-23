@@ -97,11 +97,13 @@ p {
 
 /* general input fields padding */
 
+/*
 input, select {
     padding: 0px 1px;
     font-size: 100%;
     margin: 4px;
 }
+*/
 select {
 }
 
@@ -192,11 +194,6 @@ table.simple_form .operation {
     padding-left: 4em;
 }
 
-h1.mobile_title {
-  text-align: center;
-  font-size: 120%;
-}
-
 /* line form style */
 .flatField {
     float:left;
@@ -282,5 +279,12 @@ td.icon_to_deal {
     display: block;
     text-decoration: none;
     white-space: nowrap;
+  }
+}
+
+.side_nav {
+  a.btn {
+    width: 100%;
+    margin-bottom: 4px;
   }
 }

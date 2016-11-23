@@ -1,0 +1,59 @@
+.container-fluid
+  .row
+    .col-md-9
+      %table.table
+        %tr
+          %th #{current_user.login}さんの口座・費目・収入内訳
+          %th 連携の向き
+          %th フレンドの口座・費目・収入内訳
+        - for account in @linked_accounts
+          - for linked_account_summary in account.linked_account_summaries
+            %tr
+              - if linked_account_summary == account.linked_account_summaries.first
+                %td{rowspan:account.linked_account_summaries.size}= account.name_with_asset_type
+              %td
+                - if linked_account_summary[:to]
+                  %span→
+                  （
+                  = link_to "解除", settings_account_link_path(:account_id => account.id), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」への連携書き込みを行わないようにします。よろしいですか？"}
+                  ）
+                  %br
+                - if linked_account_summary[:from]
+                  %span ←
+                  （
+                  = link_to "解除", settings_account_link_request_path(:account_id => account.id, :id => linked_account_summary[:request_id]), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」からの連携書き込みを行わないようにします。よろしいですか？"}
+                  ）
+                  %br
+              %td= linked_account_summary[:name_with_user]
+      %h3 連携機能の解説
+      %p 連携では、あなたの口座（費目/収入内訳）とフレンドの口座（収入内訳/費目）を関連づけます。関連づけを通じて、家計簿を記入したときに、自動的に相手の家計簿にも対応する記入が書き込まれるようになります。
+      %h4 貸し借りを連動するには？
+      %p あなたの家計簿のフレンド債権口座と、フレンドの家計簿のあなたの債権口座を関連づけます。
+      %h4 贈与や出資、支払い分担などを連動するには？
+      %p あなたの家計簿の費目（または収入内訳）と、フレンドの家計簿の収入内訳（または費目）を関連づけます。
+      %p
+        フレンドと取引連動については、
+        = link_to("ヘルプの「フレンドの項」", :controller => '/help', :action => 'functions', :anchor => "friend")
+        に詳しいのでご参照ください。
+    .col-md-3
+      .panel.panel-default
+        .panel-heading 新しい連携を設定する
+        .panel-body
+          - if @friends.size > 0
+            = form_tag settings_account_links_path do
+
+              %div= "#{current_user.login}さんの"
+              = select_tag :account_id, options_from_collection_for_select(@accounts, :id, :name_with_asset_type, flash[:form] ? flash[:form]['account_id'].to_i : nil), class: 'form-control'
+              %p へ記入された時は、
+              .row
+                .col-md-8
+                  = select_tag :linked_user_login, options_from_collection_for_select(@friends, :login, :login, flash[:form] ? flash[:form]['linked_user_login'] : nil), class: 'form-control'
+                .col-md-4 さんの
+              = text_field_tag :linked_account_name, "", placeholder: "フレンドから教わった口座名", :size => 16, class: %w(text form-control), :value => flash[:form] ? flash[:form]['linked_account_name'] : ''
+              %p へも自動的に記入されるようにする
+              %label
+                = check_box_tag :require_reverse, "1", flash[:form] ? flash[:form]['require_reverse'] == '1' : true
+                相手が記入したら自分側にも記入されるようにする
+              = submit_tag "連携を設定", class: %w(btn btn-primary)
+          - else
+            %p.guide 取引連動機能を利用するには、フレンドが必要です。フレンド登録を申請し、お友達に承認をもらってください。

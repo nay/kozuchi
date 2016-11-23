@@ -4,7 +4,6 @@ class Entry::General < Entry::Base
              :class_name => 'Deal::General',
              :foreign_key => 'deal_id'
   belongs_to :settlement
-  belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
 
   include ::Entry
 

@@ -111,3 +111,23 @@ table.simple {
     border: 1px solid #888888;
   }
 }
+
+#aboutPrivacy
+{
+  height:200px;
+  line-height:3em;
+  overflow:scroll;
+  padding:5px;
+  color:#714d03;
+  margin-bottom:10px;
+  border: solid 2px #e6e6e6;
+}
+
+table.csv_format {
+  margin-left:20px;
+  border:1px solid #888888;
+
+  td, th {
+    padding: 4px 8px;
+  }
+}

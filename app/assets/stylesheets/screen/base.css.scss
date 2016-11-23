@@ -1,0 +1,72 @@
+/* TODO: 新しいデザイン */
+
+@import "variables";
+
+header {
+  background-color: $main_color;
+  margin-bottom: 16px;
+
+  #logo {
+    float: left;
+  }
+
+  h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  #menu_bar {
+    background-color: $sub_dark_color;
+    color: #ffffff;
+    padding: 2px 16px;
+    h2 {
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+    }
+  }
+
+}
+
+#content {
+  background-color: $light_color;
+  padding: 0 3em;
+  font-size: 16px;
+}
+
+footer {
+  clear: both;
+  border-top: 1px solid $sub_color;
+  background-color: $main_color;
+  padding-left: 2em;
+  margin-top: 16px;
+}
+
+/* buttons */
+/* button sizes */
+.large_button {
+  display: block;
+  text-decoration: none;
+  font-size: 140%;
+  margin: 1em;
+}
+/* button colors */
+.primary_button {
+  background-color: $accent_color;
+  color: $main_color;
+}
+
+
+/* forms */
+
+form.vertical {
+  .label {
+    display: block;
+  }
+  .control {
+    display: block;
+    margin-bottom: 1em;
+  }
+}

@@ -1,0 +1,29 @@
+%table.table
+  %tr
+    %th XML形式
+    %td
+      = link_to "#{@export_file_name}.xml", export_file_path(:filename => @export_file_name, :format => :xml)
+      （
+      = link_to "ダウンロード", export_file_path(:filename => @export_file_name, :format => :xml, :download => 1)
+      ）
+  %tr
+    %th CSV形式
+    %td
+      = link_to "#{@export_file_name}.csv", export_file_path(:filename => @export_file_name, :format => :csv)
+      （
+      = link_to "ダウンロード", export_file_path(:filename => @export_file_name, :format => :csv, :download => 1)
+      ）
+%h3 エクスポートの解説
+%p
+  = current_user.login
+  さんの全ての口座、費目、収入内訳、記入、精算データをXMLまたはCSVでダウンロードできます。
+  %br
+  エクスポートされるデータには、他のアカウントとの連携情報は含まれません。
+  %br
+  この機能はまだ開発中のため、将来、インポートに利用できるようになるかどうかは保証できません。加工用としてお使いください。
+  %br
+  なお、この処理には数十秒かかることがあります。
+  %br
+  データフォーマットについての詳細は
+  = link_to 'ヘルプのエクスポートの項', :controller => "help", :action => "functions", :anchor => "export"
+  をご参照ください。

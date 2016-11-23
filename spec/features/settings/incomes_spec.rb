@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe Settings::IncomesController do
+describe Settings::AccountsController do
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -14,7 +14,7 @@ describe Settings::IncomesController do
       page.should have_css('input#account_name')
     end
     it "各口座のフォームがある" do
-      page.should have_css('table.masters')
+      page.should have_css('table.accounts')
     end
   end
 end

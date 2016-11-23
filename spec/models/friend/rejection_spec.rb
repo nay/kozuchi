@@ -23,7 +23,7 @@ describe Friend::Rejection do
     it "Rejectionが存在する場合は検証エラー" do
       new_rejection(@user.id, @target.id).save!
 
-      new_rejection(@user.id, @target.id).save.should be_false
+      new_rejection(@user.id, @target.id).save.should be_falsey
     end
   end
 

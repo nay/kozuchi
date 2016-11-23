@@ -1,0 +1,24 @@
+= form_for @preferences, :as => :preferences, :url => settings_preferences_path, :html => {:method => :put} do |f|
+  .form-group
+    = f.label :color, "ユーザーカラー"
+    %p 例) #ff0000, red など
+    = f.text_field :color, size: 20, class: 'form-control'
+  .form-group
+    %label 事業利用
+    %p 「事業利用」にチェックすると、資本金の概念が導入されます。チェックを外すと、資本金口座は債権口座に自動変更されます。
+    .form-control
+      %label.checkbox-inline
+        = f.check_box :business_use
+        事業利用
+  .form-group
+    %label 項目の左右配置のスタイル
+    %p 簿記同様の左右配置に統一するには、簿記方式を選択してください。
+    .form-control
+      %label.radio-inline
+        = f.radio_button :bookkeeping_style, 1, :checked => current_user.preferences.bookkeeping_style?
+        簿記方式（左に借方、右に貸方を表示）
+      %label.radio-inline
+        = f.radio_button :bookkeeping_style, 0, :checked => !current_user.preferences.bookkeeping_style?
+        小槌方式（出金が左、入金が右）
+  .form-group
+    = f.submit 'カスタマイズ設定を更新', :class => 'btn btn-primary'

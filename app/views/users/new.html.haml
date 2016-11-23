@@ -1,0 +1,40 @@
+.container-fluid
+  .row
+    .col-md-9
+      = error_messages_for :user
+      %h2 ようこそ小槌へ！
+      - if @personal_info_policy_setting.show
+        %p
+          下記の「
+          = @personal_info_policy_setting.title
+          」にご同意の上、
+      - if defined?(SKIP_MAIL) && SKIP_MAIL
+        %p 必要事項を入力してユーザー登録ボタンを押せば登録が完了します。
+      - else
+        %p 必要事項を入力してユーザー登録ボタンを押すと、確認メールが送られます。メールの案内に従ってユーザー登録を完了してください。
+        %p
+          %span.strong 利用可能なEメールアドレス
+          をご指定いただかないとユーザー登録が完了しませんのでご注意ください。
+      - if @personal_info_policy_setting.show
+        #aboutPrivacy
+          - cache action_suffix: 'personal_info_policy' do
+            = raw @personal_info_policy_setting.body
+    .col-md-3
+      = form_for :user, :url => signup_post_path, :html => {:id => 'signupForm'} do |f|
+        .form-group
+          = f.label :login, "ログインID"
+          = f.text_field :login, class: 'form-control'
+        .form-group
+          = f.label :email, "Email"
+          = f.text_field :email, class: 'form-control'
+        .form-group
+          = f.label :password, "パスワード"
+          = f.password_field :password, class: 'form-control'
+        .form-group
+          = f.label :password_confirmation, "パスワード（確認）"
+          = f.password_field :password_confirmation, class: 'form-control'
+        .form-group
+          - if @personal_info_policy_setting.show
+            = submit_tag '同意してユーザー登録', class: %w(btn btn-primary)
+          - else
+            = submit_tag 'ユーザー登録', class: %w(btn btn-primary)

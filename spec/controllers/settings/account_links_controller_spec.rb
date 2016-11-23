@@ -32,7 +32,7 @@ describe Settings::AccountLinksController do
   end
 
   describe "create" do
-    share_examples_for 'createが成功する' do
+    shared_examples_for 'createが成功する' do
       it "成功する" do
         post :create, :linked_account_name => '太郎', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'
         response.should redirect_to(settings_account_links_path)

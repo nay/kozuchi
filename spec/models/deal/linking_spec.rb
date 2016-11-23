@@ -55,14 +55,14 @@ describe "Deal Linking" do
       taro_linked_entry = @taro_deal.debtor_entries.first
       taro_linked_entry.linked_ex_deal_id.should_not be_nil
       taro_linked_entry.linked_ex_entry_id.should_not be_nil
-      taro_linked_entry.linked_ex_entry_confirmed.should be_false
+      taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
       taro_linked_entry.linked_user_id.should == @hanako.id
       # 太郎側の相手記入には連携情報が入らない
       taro_partner_entry = @taro_deal.creditor_entries.first
       taro_partner_entry.linked_ex_entry_id.should be_nil
       taro_partner_entry.linked_ex_deal_id.should be_nil
       taro_partner_entry.linked_user_id.should be_nil
-      taro_partner_entry.linked_ex_entry_confirmed.should be_false
+      taro_partner_entry.linked_ex_entry_confirmed.should be_falsey
 
       # 花子側に連携した取引が記入される
       hanako_deal = @hanako.general_deals.find_by(id: taro_linked_entry.linked_ex_deal_id)
@@ -78,7 +78,7 @@ describe "Deal Linking" do
       hanako_linked_entry.linked_ex_deal_id.should == @taro_deal.id
       hanako_linked_entry.linked_ex_entry_id.should == taro_linked_entry.id
       hanako_linked_entry.linked_user_id.should == @taro.id
-      hanako_linked_entry.linked_ex_entry_confirmed.should be_true
+      hanako_linked_entry.linked_ex_entry_confirmed.should be_truthy
       # 花子側の相手記入が正しい
       hanako_partner_entry = hanako_deal.debtor_entries.first
       hanako_partner_entry.account_id.should == @hanako.default_asset.id
@@ -103,22 +103,22 @@ describe "Deal Linking" do
       taro_home_cost_entry.linked_ex_entry_id.should == home_income_from_two_entry.id
       taro_home_cost_entry.linked_ex_deal_id.should == @home_deal.id
       taro_home_cost_entry.linked_user_id.should == @home.id
-      taro_home_cost_entry.linked_ex_entry_confirmed.should be_false
+      taro_home_cost_entry.linked_ex_entry_confirmed.should be_falsey
 
       taro_home_entry.linked_ex_entry_id.should == home_taro_entry.id
       taro_home_entry.linked_ex_deal_id.should == @home_deal.id
       taro_home_entry.linked_user_id == @home.id
-      taro_home_entry.linked_ex_entry_confirmed.should be_false
+      taro_home_entry.linked_ex_entry_confirmed.should be_falsey
 
       home_taro_entry.linked_ex_entry_id.should == taro_home_entry.id
       home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
       home_taro_entry.linked_user_id.should == @taro.id
-      home_taro_entry.linked_ex_entry_confirmed.should be_true
+      home_taro_entry.linked_ex_entry_confirmed.should be_truthy
 
       home_income_from_two_entry.linked_ex_entry_id.should == taro_home_cost_entry.id
       home_income_from_two_entry.linked_ex_deal_id.should == @taro_deal.id
       home_income_from_two_entry.linked_user_id.should == @taro.id
-      home_income_from_two_entry.linked_ex_entry_confirmed.should be_true
+      home_income_from_two_entry.linked_ex_entry_confirmed.should be_truthy
     end
 
     context "サマリー分割モードで記入された連携Entryを１つ含む複数明細" do
@@ -127,12 +127,12 @@ describe "Deal Linking" do
       }
 
       describe "valid?" do
-        it { deal.valid?.should be_true }
+        it { deal.valid?.should be_truthy }
       end
 
       describe "save (create)" do
         it "登録が成功し、正しいサマリーが連携記入に含まれる" do
-          deal.save.should be_true
+          deal.save.should be_truthy
           linked_deal = hanako.linked_deal_for(taro.id, deal.id)
           linked_deal.should_not be_nil
           # 花子側の借方に連携が入る
@@ -153,7 +153,7 @@ describe "Deal Linking" do
             }
           end
           it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
-            deal.save.should be_true
+            deal.save.should be_truthy
             linked_deal = hanako.linked_deal_for(taro.id, deal.id)
             linked_deal.should_not be_nil
             # 花子側の借方に連携が入る
@@ -171,12 +171,12 @@ describe "Deal Linking" do
             }
           end
           it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
-            deal.save.should be_true
+            deal.save.should be_truthy
             linked_deal = hanako.linked_deal_for(taro.id, deal.id)
             linked_deal.should_not be_nil
             # 花子側の借方に連携が入る
             linked_deal.debtor_entries.map(&:summary).should == ['ラーメンと菓子', 'ラーメンと菓子']
-            linked_deal.summary_unified?.should be_true
+            linked_deal.summary_unified?.should be_truthy
           end
         end
       end
@@ -246,12 +246,12 @@ describe "Deal Linking" do
         home_taro_entry.linked_ex_entry_id.should == taro_linked_entry.id
         home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
         home_taro_entry.linked_user_id.should == @taro.id
-        home_taro_entry.linked_ex_entry_confirmed.should be_false
+        home_taro_entry.linked_ex_entry_confirmed.should be_falsey
         # 太郎側の家計側の記入
         taro_linked_entry.linked_ex_entry_id.should == home_taro_entry.id
         taro_linked_entry.linked_ex_deal_id.should == @home_deal.id
         taro_linked_entry.linked_user_id.should == @home.id
-        taro_linked_entry.linked_ex_entry_confirmed.should be_true
+        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
         # 太郎側の相手側の記入
         taro_partner_entry = @taro_deal.creditor_entries.first
         taro_partner_entry.amount.should == taro_linked_entry.amount * -1
@@ -260,7 +260,7 @@ describe "Deal Linking" do
         home_hanako_entry.linked_ex_entry_id.should == hanako_linked_entry.id
         home_hanako_entry.linked_ex_deal_id.should == @hanako_deal.id
         home_hanako_entry.linked_user_id.should == @hanako.id
-        home_hanako_entry.linked_ex_entry_confirmed.should be_false
+        home_hanako_entry.linked_ex_entry_confirmed.should be_falsey
         # TODO: 花子側の家計側の記入、花子側の相手側の記入
       end
 
@@ -273,11 +273,11 @@ describe "Deal Linking" do
       end
 
       describe "valid?" do
-        it { deal.valid?.should be_true }
+        it { deal.valid?.should be_truthy }
       end
 
       describe "save" do
-        it { deal.save.should be_true }
+        it { deal.save.should be_truthy }
       end
     end
 
@@ -297,7 +297,7 @@ describe "Deal Linking" do
         raise "前提エラー：相手が未確認ということになっていない" if taro_linked_entry.linked_ex_entry_confirmed
         @hanako_deal.confirm!
         taro_linked_entry.reload
-        taro_linked_entry.linked_ex_entry_confirmed.should be_true
+        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
       end
 
       # 一方向リンクのとき、destination_accountがないのに使っている不具合(#187)があったのでその確認スペック
@@ -307,7 +307,7 @@ describe "Deal Linking" do
         @hanako_deal.confirm!
         @taro_deal.reload
         taro_linked_entry = @taro_deal.debtor_entries.first
-        taro_linked_entry.linked_ex_entry_confirmed.should be_true
+        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
       end
 
       describe "相手が確認済みでないとき" do
@@ -384,12 +384,12 @@ describe "Deal Linking" do
           new_hanako_linked_entry = new_hanako_deal.creditor_entries.first
           new_hanako_linked_entry.linked_ex_entry_id.should == taro_linked_entry.id
           new_hanako_linked_entry.linked_ex_deal_id.should == @taro_deal.id
-          new_hanako_linked_entry.linked_ex_entry_confirmed.should be_true
+          new_hanako_linked_entry.linked_ex_entry_confirmed.should be_truthy
           new_hanako_linked_entry.linked_user_id.should == @taro.id
           # 太郎側
           taro_linked_entry.linked_ex_entry_id.should == new_hanako_linked_entry.id
           taro_linked_entry.linked_ex_deal_id.should == new_hanako_deal.id
-          taro_linked_entry.linked_ex_entry_confirmed.should be_false
+          taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
           taro_linked_entry.linked_user_id.should == @hanako.id
 
           # 古いほうのリンクが切れていることの確認
@@ -398,7 +398,7 @@ describe "Deal Linking" do
           old_hanako_linked_entry.linked_ex_entry_id.should be_nil
           old_hanako_linked_entry.linked_ex_deal_id.should be_nil
           old_hanako_linked_entry.linked_user_id.should be_nil
-          old_hanako_linked_entry.linked_ex_entry_confirmed.should be_false
+          old_hanako_linked_entry.linked_ex_entry_confirmed.should be_falsey
         end
       end
     end
@@ -438,7 +438,7 @@ describe "Deal Linking" do
         @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
         @hanako_unlinked_entry.linked_ex_deal_id.should be_nil
         @hanako_unlinked_entry.linked_user_id.should be_nil
-        @hanako_unlinked_entry.linked_ex_entry_confirmed.should be_false
+        @hanako_unlinked_entry.linked_ex_entry_confirmed.should be_falsey
       end
     end
   end

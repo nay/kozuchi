@@ -1,0 +1,5 @@
+%tr
+  %td= link_to deal_pattern.to_s, settings_deal_pattern_path(deal_pattern)
+  %td= l deal_pattern.updated_at
+  %td= link_to '削除', settings_deal_pattern_path(deal_pattern), class: %w(btn btn-danger), :method => :delete, data: {confirm: confirm_message_on_destroy(deal_pattern)}
+

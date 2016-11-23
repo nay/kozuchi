@@ -1,5 +1,9 @@
 /* ============== 共通情報　=============== */
 
+@import 'variables';
+
+$disabled_light_color: #dddddd;
+
 /* 上下の margin に関する汎用部品 */
 .top_box {
   margin-bottom: 8px;
@@ -29,7 +33,14 @@
   cursor: pointer;
 }
 
+a.disabled, a:hover.disabled, a:active.disabled, a:visited.disabled {
+  color: black;
+  text-decoration: none;
+  cursor: default;
+}
+
 /* フォーム地 */
+
 .tabsheet, .form_box {
   border: 2px solid #ffffb2;
   padding: 4px;
@@ -50,7 +61,7 @@ table.horizontal th, table.horizontal td {
 }
 
 /* number fields */
-input.number, #datebox input, #deal_amount, #deal_balance {
+input.number, .datebox input, #deal_amount, #deal_balance {
   ime-mode:disabled;
   text-align: right;
 }
@@ -168,35 +179,6 @@ table.masters {
   padding: 2px;
 }
 
-
-.tab, .selectedtab {
-  margin-top: 4px;
-/*  margin-bottom: 16px;*/
-  font-weight: bold;
-/*  height: 24px;*/
-  padding : 2px 16px;
-  border-top: 2px solid #FFFFB2;
-  border-left: 2px solid #FFFFB2;
-  border-right: 2px solid #FFFFB2;
-}
-
-.selectedtab {
-  background-color: #FFFFCC;
-  color: #ff7fbf;
-}
-
-.tab, .selectedtab {
-  margin-top: 1em;
-  margin-left: 2px;
-  float: right;
-}
-
-.tabbuttons {
-/*  float: right; */
-/*  margin-top: -1.8em;*/
-  height: 2.4em;
-}
-
 .automatic {
   color: blue;
 }
@@ -311,21 +293,112 @@ a.small_button, .action a {
 
 /*　------ 入力欄  ------- */
 
-/* 日付欄 */
-#datebox {
-  float: left;
-  padding: 4px;
-  background: #FFFFCC;
-  border-top: 2px solid #FFFFB2;
-  border-left: 2px solid #FFFFB2;
-  border-right: 2px solid #FFFFB2;
+/* 編集欄 */
+.book tr.edit_deal_row td {
+  padding: 0;
 }
 
-/* ------ Ajax対象となるタブ（日付を含まない範囲） ---- */
-#tabwindow {
+/* 登録・編集共通 */
+
+// 日付欄は相対位置指定で幅が限られる
+.deal_editor {
+  position: relative;
+
+  .datebox {
+    position: absolute;
+    left: 2px;
+    padding: 4px 4px 0 4px;
+    background: #FFFFCC;
+
+    input {
+      padding: 0 4px 0 4px;
+    }
+
+    input#date_year {
+      width: 60px;
+    }
+
+    input#date_month, #date_day {
+      width: 40px;
+    }
+  }
+
+  #deal_form {
+
+    .deal_fields {
+      padding-top: 32px;
+
+      .entry {
+        margin-top: 2px;
+        clear: left;
+        div {
+          padding: 4px 0;
+        }
+      }
+
+      input.amount {
+        width: 120px;
+      }
+    }
+  }
 }
-.tabsheet {
-  clear:both;
+
+#edit_window {
+  background: #FFFFCC;
+
+  .deal_editor {
+    margin-right: 20px; // ×ボタン分を避ける
+
+    .datebox {
+      top: 0px;
+    }
+  }
+
+  #deal_form {
+    padding: 4px;
+
+    .deal_fields {
+      padding-left: 2px;
+    }
+  }
+
+  #errorExplanation {
+    background: #ffffff;
+  }
+}
+
+#new_deal_window {
+  h3 {
+    margin-top: 6px;
+    position: absolute;
+  }
+
+  .deal_editor {
+    margin-top: 12px;
+
+    .datebox {
+      top: 38px;
+    }
+
+    .tabbuttons {
+      height: 36px;
+      a.btn {
+        margin-left: 2px;
+        width: 90px;
+      }
+    }
+
+    #tabsheet {
+      border: $sub_dark_color 2px solid;
+    }
+  }
+}
+
+#deal_form {
+  .deal_patterns {
+    float: right;
+    text-align: right;
+  }
 }
 
 /* ================ 機能別 =================== */
@@ -383,9 +456,9 @@ table.balance_sheet {
   background-color: #ffffdd;
 
   .field {
+    padding: 2px;
     text-align: right;
-    width: 150px;
-    margin: 0 16px;
+    width: 18%;
     float: left;
 
     input {
@@ -393,9 +466,13 @@ table.balance_sheet {
     }
   }
 
+  #count_money_button {
+    width: 90px;
+  }
+
 }
 
-#deal_forms {
+.deal_editor {
   .entry div {
     float: left;
   }
@@ -410,12 +487,20 @@ table.balance_sheet {
   }
 }
 
+table.book, table.book_header {
+  border-collapse: separate;
+  border-spacing: 2px;
+  border-color: gray;
+  border: 0;
+}
+
 /* 精算 */
 .book tbody tr.disabled td {
   background-color: #dddddd;
 }
 .end_of_month_button {
-  font-size: 12px;
+  margin: 0 10px 0 10px;
+  font-size: 14px;
   padding: 2px 4px;
   text-decoration: none;
   color: #000000;

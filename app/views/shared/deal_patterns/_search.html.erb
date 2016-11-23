@@ -1,36 +1,5 @@
     <div>
-      <div><%= label_tag :pattern_keyword, "パターン呼出" %>: <%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 1100 %></div>
+      <div><%= label_tag :pattern_keyword, "パターン呼出" %>: <%= text_field_tag :pattern_keyword, '', :size => 10, :tabindex => 1100, data: {update_area: update_area} %></div>
       <div class="inline_guide">コードを指定してリターンを押してください</div>
     </div>
     <div id="pattern_search_result" style="width: 240px;" class="warning"></div>
-<%= javascript_tag do %>
-  jQuery(document).ready(function($){
-    $('input#pattern_keyword').keypress(function(e){
-      // When the return key is pressed on pattern_keyword field
-      if (e.which && e.which === 13) {
-        $('#pattern_search_result')[0].innerHTML = ''
-        var code = $('input#pattern_keyword').val()
-        if (code != '') {
-          // try to load that pattern
-          $('#notice').hide()
-          var url = $('#load_pattern_url').text().replace('template_pattern_code', encodeURIComponent(code))
-          // 指定したコードがないときは 'Code not found' が返る
-          $.get(url, function(data) {
-            if (data == 'Code not found') {
-              $('#pattern_search_result')[0].innerHTML = 'コード「' + code + '」の記入パターンは登録されていません。'
-            } else {
-              $('#<%= update_area_id %>').empty()
-              $('#<%= update_area_id %>').append(data)
-              // focus on submit button
-              $("#<%= update_area_id %> input[type='submit']").focus()
-
-              // refresh recent patterns
-              $('#deal_pattern_frame').load('<%= recent_deal_patterns_path %>')
-            }
-          })
-        }
-        return false
-      }
-    })
-  })
-<% end %>

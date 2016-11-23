@@ -69,7 +69,7 @@ describe Deal::Balance do
     context "balanceに'foo'が入っている場合" do
       let(:deal) { FactoryGirl.build(:balance_deal, :balance => 'foo') }
       it "saveに失敗する（Dealだけ保存されたりしない）" do
-        deal.save.should be_false
+        deal.save.should be_falsey
       end
     end
 
@@ -77,7 +77,7 @@ describe Deal::Balance do
       let(:deal) { FactoryGirl.build(:balance_deal, :balance => '800') }
       
       it "成功する" do
-        deal.save.should be_true
+        deal.save.should be_truthy
       end
       
       context "成功後" do
@@ -226,7 +226,7 @@ describe Deal::Balance do
 
     it "日付を変えたらentryも追随する" do
       balance_deal.date += 1
-      balance_deal.save.should be_true
+      balance_deal.save.should be_truthy
       balance_deal.reload
       balance_deal.entry.date.to_s.should == Date.new(2012, 4, 2).to_s
     end

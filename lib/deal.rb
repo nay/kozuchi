@@ -111,21 +111,30 @@ module Deal
     debtor_entries.inject(0){|value, entry| value += entry.amount.to_i}
   end
 
+  # TODO: 関連を消したら名前変更
+  # readonly_entries から計算で求める
+  def readonly_creditor_entries
+    readonly_entries.find_all{|e| e.creditor? }.sort_by(&:line_number)
+  end
+  def readonly_debtor_entries
+    readonly_entries.find_all{|e| !e.creditor? }.sort_by(&:line_number)
+  end
+
   # 借り方勘定名を返す
   def creditor_account_name
-    creditor_entries
-    creditor_entries.size == 1 ? creditor_entries.first.account.try(:name) : SHOKOU
+    readonly_creditor_entries.size == 1 ? readonly_creditor_entries.first.account.try(:name) : SHOKOU
   end
 
   # 貸し方勘定名を返す
   def debtor_account_name
-    debtor_entries # 一度全部とる
-    debtor_entries.size == 1 ? debtor_entries.first.account.try(:name) : SHOKOU
+    readonly_debtor_entries.size == 1 ? readonly_debtor_entries.first.account.try(:name) : SHOKOU
   end
 
   def load(from)
     self.debtor_entries_attributes = from.debtor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    debtor_entries.build if debtor_entries.empty?
     self.creditor_entries_attributes = from.creditor_entries.map(&:copyable_attributes) #{|e| {:account_id => e.account_id, :amount => e.amount, :summary => e.summary}}
+    creditor_entries.build if creditor_entries.empty?
     self
   end
 
@@ -147,7 +156,7 @@ module Deal
   end
 
   def active_entries
-    changed? ? (debtor_entries + creditor_entries) : readonly_entries
+    (debtor_entries.loaded? || creditor_entries.loaded?) ? (debtor_entries.find_all{|e| !e.marked_for_destruction? } + creditor_entries.find_all{|e| !e.marked_for_destruction? }) : readonly_entries
   end
 
   def reload

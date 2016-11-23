@@ -1,0 +1,64 @@
+#settlements_right
+  - if @settlement.deletable?
+    = link_to '精算の削除', settlement_path(:id => @settlement.id), :method => :delete, :data => {:confirm => "精算データを削除すると、精算結果の取引も自動的に削除されます。精算データを削除してよろしいですか？"}, class: %w(btn btn-danger)
+  - unless @settlement.kind_of?(SubmittedSettlement)
+    = link_to '精算依頼書', print_form_settlement_path(:id => @settlement), 'data-popup' => true, class: %w(btn btn-default)
+    - if @settlement.result_entry
+      - if @settlement.submitted_settlement_id.blank? && @settlement.account.destination_account
+        = button_to "提出する", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"}, class: %w(btn btn-warning)
+  - if @settlement.deletable? || !@settlement.kind_of?(SubmittedSettlement)
+    %hr
+  = link_to '精算一覧', account_settlements_path(@settlement.account.id), class: %w(btn btn-default)
+  = link_to '概況', settlements_path, class: %w(btn btn-default)
+
+#settlements_main
+  %h3 精算の基本情報
+  .panel.panel-default
+    %table.table
+      %tr
+        %th 精算データ名
+        %td= @settlement.name
+      %tr
+        %th 精算対象口座
+        %td= @settlement.account.name
+      %tr
+        %th 精算日
+        %td= format_date @settlement.result_entry.date
+      %tr
+        %th 精算金額
+        %td= number_with_delimiter(@settlement.amount)
+      %tr
+        %th 登録日時
+        %td= format_datetime @settlement.created_at
+  - if @settlement.kind_of?(SubmittedSettlement)
+    %p= "この精算は#{@settlement.resource.user.login}さんから提出されたことによりできたものです。"
+    - # 確定状態
+    %p
+      - if @settlement.all_confirmed?
+        この精算は確認済です。
+      - else
+        この精算には未確認の取引が含まれています。
+  - if @settlement.submitted_settlement
+    %p= "この精算は#{@settlement.submitted_settlement.user.login}さんに提出済です。削除するには先方に取消を依頼してください。"
+
+  %h3 精算対象
+  %table.book
+    %tr
+      = display_account_entry_header
+      %th.icon_to_deal
+    - for target_entry in @settlement.target_entries
+      %tr
+        = display_account_entry(target_entry)
+        %td.icon_to_deal= icon_to_deal_in_monthly(target_entry.year, target_entry.month, target_entry.deal_id)
+
+  %h3 精算結果
+  - unless @settlement.result_entry
+    %div{style: "color:red; font-weight: bold;"} データが破損しています。精算取引がありません。管理者に連絡してください。
+  - else
+    %table.book
+      %tr
+        = display_account_entry_header
+        %th.icon_to_deal
+      %tr
+        = display_account_entry(@settlement.result_entry)
+        %td.icon_to_deal= icon_to_deal_in_monthly(@settlement.result_entry.year, @settlement.result_entry.month, @settlement.result_entry.deal_id)

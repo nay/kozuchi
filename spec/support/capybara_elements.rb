@@ -1,5 +1,5 @@
 def flash_notice
-  find('#notice')
+  find('.alert-success')
 end
 
 def tab_window

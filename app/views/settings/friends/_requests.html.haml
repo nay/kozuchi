@@ -1,0 +1,21 @@
+%h3 フレンドの申し込み
+%p
+  = current_user.login
+  さんへのフレンドの申し込みが
+  = @requests.size
+  件あります。
+
+%table.table
+  %tr
+    %th ユーザー
+    %th 申し込まれた日時
+    %th 返答
+  - for r in @requests
+    %tr
+      %td
+        %span.userName= r.sender.login
+        さんからの申し込み
+      %td.timestamp= r.created_at.to_formatted_s(:db)
+      %td
+        = link_to '承諾', settings_friend_acceptance_path(:target_login => r.sender.login), :method => :post, class: %w(btn btn-primary btn-sm)
+        = link_to '拒否', settings_friend_rejection_path(:target_login => r.sender.login), :method => :post, class: %w(btn btn-danger btn-sm)

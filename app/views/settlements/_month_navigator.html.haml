@@ -1,0 +1,10 @@
+%table
+  - displayed_years = []
+  - @months.each do |monthly_date, entries|
+    - unless displayed_years.include?(monthly_date.year)
+      %tr.year
+        %td.year{colspan: 2}= "#{monthly_date.year}年"
+      - displayed_years << monthly_date.year
+    %tr.month{class: monthly_date.year == Time.zone.today.year && monthly_date.month == Time.zone.today.month ? 'now' : nil, data: {first_date: entries.first.try(:date), last_date: entries.last.try(:date), year: monthly_date.year, month: monthly_date.month}}
+      %td.month= "#{monthly_date.month}月"
+      %td= entries.present? ? "*" : ''

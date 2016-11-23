@@ -1,0 +1,7 @@
+- # locals として year, month を必要とする。
+- # data が指定されていればマージして#calendarに出力する
+- # switcher が指定されていればクラスに switcher をつける（=data-url-templateのURLヘリダイレクトされるだけになる）
+- data ||= {}
+- switcher ||= false
+#calendar_form
+  #calendar.top_box{data: data.merge(initial_year: year, initial_month: month), class: switcher ? 'switcher': nil}

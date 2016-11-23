@@ -1,15 +1,29 @@
 <%
   # TODO: url や更新場所など、呼び出し元依存の分岐コードが入ってしまっているのを整理したい
-  update_area_id = deal.kind_of?(Deal::Base) ? 'deal_forms' : 'form_frame'
+  update_area = deal.kind_of?(Deal::Base) ? '#deal_forms' : '#form_frame'
 %>
-<%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
-  <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
-  <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
-  <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', class: :split_summary %>
-  <div id="patterns"></div>
-<% end %>
+<div class="deal_patterns">
+  <div style="display:none;" id="load_pattern_url"><%=
+      case deal
+      when Deal::General
+        deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : deal_pattern_in_edit_path(:id => deal.id, :pattern_code => 'template_pattern_code')
+      when Pattern::Deal
+        deal.new_record? ? new_settings_deal_pattern_path(:pattern_code => 'template_pattern_code') : settings_deal_pattern_path(:id => deal.id, :pattern_code => 'template_pattern_code')
+      else
+        raise "unknown Deal object"
+      end
+  %></div>
+  <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area => update_area} %>
+</div>
 
-<div>
+<div class="deal_fields">
+  <%= content_tag :div, :style => deal.summary_unified? ? '' : 'display:none;', :id => 'deal_summary_frame' do %>
+      <%= f.hidden_field :summary_mode, :value => deal.summary_unified? ? 'unify' : 'split', :class => 'pattern_field' %>
+      <%= f.text_field :summary, :size => "40", :tabindex => '10', :class => 'pattern_field' %>
+      <%= link_to image_tag('plus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', class: :split_summary %>
+      <div id="patterns"></div>
+  <% end %>
+
   <%
     entry_types = [:debtor_entries, :creditor_entries]
     entry_types.reverse! unless current_user.preferences.bookkeeping_style?
@@ -32,7 +46,7 @@
           <%= e.hidden_field :line_number, :value => line_number += 1, :class => 'pattern_field' %>
           <%= e.text_field :summary, :class => 'entry_summary pattern_field', :style => "width: 260px; margin-bottom: 0px; #{deal.summary_unified? ? 'display:none;' : ''}", :tabindex => tab_index += 1 %>
           <% if first_entry %>
-            <%= link_to image_tag('minus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', :class => [:entry_summary, :unify_summary], :style => deal.summary_unified? ? "display:none;" : nil %>
+            <%= link_to image_tag('minus.png', :align => "top", :style => "margin-top: 6px;", :width => "24px", :height => "24px"), '#', :class => [:entry_summary, :unify_summary, 'pull-right'], :style => deal.summary_unified? ? "display:none;" : nil %>
             <% first_entry = false %>
           <% end %>
           <%= tag(:br, :class => 'entry_summary', :style => deal.summary_unified? ? "display:none;" : nil) %>
@@ -90,19 +104,6 @@
         </div>
       <% end %>
     <% end %>
-  </div>
-  <div class="deal_patterns" style="float:left; margin-left: 10px;">
-    <div style="display:none;" id="load_pattern_url"><%= 
-      case deal
-      when Deal::General
-        deal.new_record? ? new_complex_deal_path(:pattern_code => 'template_pattern_code') : edit_deal_path(:id => deal.id, :pattern_code => 'template_pattern_code')
-      when Pattern::Deal
-        deal.new_record? ? new_settings_deal_pattern_path(:pattern_code => 'template_pattern_code') : settings_deal_pattern_path(:id => deal.id, :pattern_code => 'template_pattern_code')
-      else
-        raise "unknown Deal object"
-      end
-    %></div>
-    <%= render :partial => 'shared/deal_patterns/search', :locals => {:update_area_id => update_area_id} %>
   </div>
   <div style="clear: left;"></div>
 </div>

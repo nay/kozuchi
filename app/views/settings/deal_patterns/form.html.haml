@@ -1,0 +1,74 @@
+#deal_pattern_options{data: {check_code_url_template: settings_deal_pattern_codes_path(:code => 'code_template', :except => @deal_pattern.new_record? ? nil : @deal_pattern.id) }}
+.container-fluid
+  .row
+    .col-md-10
+      = error_messages_for :deal_pattern
+      .panel.panel-default
+        .panel-heading= @deal_pattern.new_record? ? "新しい#{@deal_pattern.class.model_name.human}の登録" : "#{@deal_pattern.human_name}の編集"
+        #form_frame.panel-body
+          - unless @deal_pattern.new_record?
+            .timestamps
+              = l @deal_pattern.created_at
+              登録
+              %br
+              = l @deal_pattern.updated_at
+              更新
+              %br
+          = form_for @deal_pattern, :as => :deal_pattern, :url => @deal_pattern.new_record? ? settings_deal_patterns_path : settings_deal_pattern_path(@deal_pattern), :html => {:id => 'deal_pattern_form'} do |f|
+            .row
+              .col-md-6
+                .form-group
+                  = f.label :code
+                  = f.text_field :code, size: 10, class: %w(code form-control), tabindex: 1
+              .col-md-6
+                .form-group
+                  = f.label :name
+                  = f.text_field :name, size: 40, class: %w(name form-control), tabindex: 2
+            %div{style: "clear:left;"}
+            #code_duplication.warning{style: "display:none;"}
+              コード
+              %span#duplicated_code
+              のパターンがすでに登録されています。
+              = f.check_box :overwrites_code
+              上書き登録する
+            = render :partial => '/shared/complex_deal_entry_fields', :locals => {:f => f, :deal => @deal_pattern}
+            %div{style: "text-align: right; padding-right: 100px;"}
+              = link_to '記入欄を増やす', settings_deal_pattern_entries_path(@deal_pattern.new_record? ? 'new' : @deal_pattern), :id => 'add_entry_link'
+            %div
+              = f.submit @deal_pattern.new_record? ? '登録' : '更新', tabindex: "1099", class: 'btn btn-primary'
+              - unless @deal_pattern.new_record?
+                = link_to 'この記入パターンを削除', settings_deal_pattern_path(@deal_pattern), class: %w(btn btn-danger), data: {confirm: confirm_message_on_destroy(@deal_pattern)}, method: :delete
+    .col-md-2.side_nav
+      = link_to '一覧へ', settings_deal_patterns_path, class: %w(btn btn-default)
+
+:javascript
+  function checkCodeDuplication() {
+    if (jQuery('#deal_pattern_code').val() == '') return
+    jQuery.ajax({
+      url: $('#deal_pattern_options').data("check-code-url-template").replace('code_template', jQuery('input#deal_pattern_code').val()),
+      dataType: 'text',
+      success: function(data, dataType) {
+        if (data != '') {
+          jQuery('#duplicated_code').text('「' + data + '」')
+          jQuery('#code_duplication').show()
+        } else {
+          jQuery('#code_duplication').hide()
+          jQuery('#deal_pattern_overwrites_code').attr('checked', false)
+        }
+      }
+    })
+  }
+
+  jQuery(document).ready(function($){
+    checkCodeDuplication()
+
+    // add entry
+    $('#add_entry_link').click(function() {
+      $('#content').load(this.href, $('#deal_pattern_form').serializeArray())
+      return false;
+    })
+    
+    // show code duplication alert and checkbox if reuqired
+    $("input#deal_pattern_code").observe_field(0.5, checkCodeDuplication)
+
+  })

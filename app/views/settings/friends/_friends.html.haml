@@ -1,0 +1,23 @@
+%h3 登録されているフレンド
+- if @acceptances.empty?
+  %p フレンドは登録されていません。
+- else
+  %p
+    = @acceptances.size
+    人のフレンドが登録されています。
+  %table.table
+    %tr
+      %th ユーザー
+      %th 状態
+      %th 操作
+    - for a in @acceptances
+      %tr
+        %td
+          %span.userName= a.target.login
+          さん
+        %td
+          - if a.accepted_by_target?
+            相手からもフレンド登録されています
+          - else
+            相手からフレンド登録されるまで連携書き込みはできません
+        %td= link_to "削除", settings_friend_acceptance_path(:target_login => a.target.login), class: %w(btn btn-danger btn-sm), :method => :delete, :data => {:confirm => "#{h a.target.login}さんをフレンドから削除します。よろしいですか？"}

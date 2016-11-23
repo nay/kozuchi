@@ -1,0 +1,29 @@
+.container-fluid
+  .row
+    .col-md-8
+      .jumbotron
+        %h2 きちんと。気楽に。
+        %p Web家計簿「小槌」なら、本格的な家計簿を、気楽に続けられます。
+        - unless current_user
+          %p= link_to 'アカウント登録して使い始める（無料）', signup_path, class: %w(btn btn-primary)
+    .col-md-4
+      - if current_user
+        %p.home= link_to "#{current_user.login}さんのホームへ", home_path, class: %w(btn btn-primary)
+      - else
+        %h3 アカウントをお持ちの方
+        = form_tag login_post_path, roll: 'form' do
+          .form-group
+            = label_tag :login, "ログインID"
+            = text_field_tag :login, flash['login'], class: 'form-control'
+          .form-group
+            = label_tag :password, "パスワード"
+            = password_field_tag 'password', '', class: 'form-control'
+          .checkbox
+            %label
+              = check_box_tag :remember_me
+              ログイン状態を記憶（２週間）
+          = submit_tag "ログイン", id: :login_button, class: %w(btn btn-default)
+          %ul.nav.nav-pills
+            %li= link_to 'パスワードを忘れたとき', forgot_password_path
+            - if @privacy_policy_setting.show
+              %li= link_to 'プライバシーポリシー', privacy_policy_path

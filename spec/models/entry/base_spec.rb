@@ -28,10 +28,10 @@ describe Entry::Base do
 
   describe "validate" do
     it "amountが指定されていないと検証エラー" do
-      new_account_entry(:amount => nil).valid?.should be_false
+      new_account_entry(:amount => nil).valid?.should be_falsey
     end
     it "account_idが指定されていないと検証エラー" do
-      new_account_entry(:account_id => nil).valid?.should be_false
+      new_account_entry(:account_id => nil).valid?.should be_falsey
     end
     it "account_idが対応するユーザーのものでないと検証エラー" do
       new_account_entry({:account_id => Fixtures.identify(:taro_cache), :amount => 300}, {:user_id => Fixtures.identify(:hanako)}).should_not be_valid
@@ -44,7 +44,7 @@ describe Entry::Base do
       e.date = Date.today
       e.daily_seq = 1
       e.user_id = Fixtures.identify(:account_entry_test_user)
-      e.save.should be_true
+      e.save.should be_truthy
     end
     it "user_idがないと例外" do
       lambda{new_account_entry({}, :user_id => nil).save}.should raise_error(RuntimeError)
@@ -72,17 +72,17 @@ describe Entry::Base do
     end
     it "settlement_id も result_settlement_idもないとき falseとなる" do
       @entry.save!
-      @entry.settlement_attached?.should be_false
+      @entry.settlement_attached?.should be_falsey
     end
     it "settlement_id があれば true になる" do
       @entry.settlement_id = 130 # 適当
       @entry.save!
-      @entry.settlement_attached?.should be_true
+      @entry.settlement_attached?.should be_truthy
     end
     it "result_settlement_id があれば true になる" do
       @entry.result_settlement_id = 130 # 適当
       @entry.save!
-      @entry.settlement_attached?.should be_true
+      @entry.settlement_attached?.should be_truthy
     end
   end
 

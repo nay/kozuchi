@@ -1,0 +1,10 @@
+ja:
+  terms:
+    user:
+      "%{name}さん"
+    bookkeeping:
+      debtor: "借方"
+      creditor: "貸方"
+    kozuchi:
+      debtor: "入金"
+      creditor: "出金"

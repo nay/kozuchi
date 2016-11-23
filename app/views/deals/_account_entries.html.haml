@@ -1,0 +1,91 @@
+#monthly_contents
+  %table.book.book_header
+    %tr
+      %th.date 日付
+      %th.number
+      %th 摘要
+      %th.account
+      %th.amount= debtor_term(@account)
+      %th.amount= creditor_term(@account)
+      %th.settlement
+      %th.amount
+        - if bookkeeping_style? || @account.kind_of?(Account::Asset)
+          残高
+        - else
+          合計
+      %th.icon_to_deal
+      %th.action 詳細
+    - if @account.kind_of?(Account::Asset)
+      %tr
+        %td.date
+        %td.number
+        %td 期首残高
+        %td
+        %td
+        %td
+        %td.settlement
+        %td.amount= number_with_delimiter(@account_entries.balance_start)
+        %td.icon_to_deal
+        %td
+    - date = Date.new(@year.to_i, @month.to_i, 1)
+    - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
+    - sign = @account.kind_of?(Account::Income) ? -1 : 1
+    - @account_entries.each do |deal, entries|
+      - entries.each do |entry|
+        - tr_class = ["d#{deal.id}"].tap{|a| a << 'balance_line' if entry.balance?; a << 'unconfirmed' unless deal.confirmed?; a << "last_entry" if entry == entries.last }
+        = content_tag :tr, class: tr_class, id: entry == entries.first ? "d#{deal.id}" : nil do
+          - if entry == entries.first
+            %td.date{rowspan: entries.size}
+              - while date <= entry.date
+                = day_anchor date
+                - date += 1
+              = l entry.date
+              - if @account_entries.entries.last == entry
+                - while date.month == entry.date.month
+                  = day_anchor date
+                  - date += 1
+              - unless deal.confirmed?
+                %br
+                %span.system 未確定
+            %td.number{id: "e#{entry.id}", rowspan: entries.size}
+              = render 'shared/deal_note', :deal => deal
+              %span{id: deal.id}= deal.daily_seq
+          %td= entry.summary
+          %td.account= entry.partner_account_name
+          %td.amount= number_with_delimiter(entry.amount) if entry.amount >= 0 && !entry.initial_balance?
+          %td.amount= number_with_delimiter(entry.reversed_amount) if entry.amount < 0 && !entry.initial_balance?
+          %td.settlement.jump
+            - if entry.any_settlement_id
+              %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
+          %td.amount= deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
+          %td.icon_to_deal= icon_to_deal_in_monthly entry.date.year, entry.date.month, deal.id
+          - if entry == entries.first
+            %td.action.open_detail{data: {url: deal_path(id: deal.id)}, rowspan: entries.size}
+              %span{style: "font-size: small;"} 詳細
+      %tr{class: [:detail_row, "d#{deal.id}"], style: "display: none;"}
+        %td{colspan: "10"}
+          = render partial: 'detail', locals: {deal: deal}
+    - if @account.kind_of?(Account::Asset)
+      %tr
+        %td.date
+        %td.number
+        %td 期末残高
+        %td
+        %td
+        %td
+        %td.settlement
+        %td.amount= number_with_delimiter(@account_entries.balance_end)
+        %td.icon_to_deal
+        %td
+    - else
+      %tr
+        %td.date
+        %td.number
+        %td 期末合計
+        %td
+        %td
+        %td
+        %td.settlement
+        %td.amount= number_with_delimiter(@account_entries.pure_balance_end)
+        %td.icon_to_deal
+        %td

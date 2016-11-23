@@ -1,0 +1,14 @@
+%tr
+  - unless settlement.result_entry
+    %td{colspan: 5}= "請求(ID:#{settlement.id}、「#{s.name}」、相手先：#{settlement.account ? settlement.account.name : '？'})のデータが破損しています。精算取引がありません。管理者に連絡してください。"
+  - else
+    %td.date= format_date settlement.result_entry.deal.date
+    %td= settlement.name
+    %td{style: "text-align:right;"}= settlement.target_entries.size
+    %td.amount= link_to number_with_delimiter(settlement.amount), settlement_path(settlement)
+    %td= format_datetime settlement.created_at
+  %td
+    - if settlement.submitted_settlement_id
+      提出済
+    - elsif settlement.kind_of?(SubmittedSettlement)
+      受理

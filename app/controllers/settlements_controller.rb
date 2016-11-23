@@ -1,28 +1,26 @@
 # -*- encoding : utf-8 -*-
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
-  layout 'main'
   cache_sweeper :export_sweeper
   menu_group "精算"
   menu "新しい精算", :only => [:new, :cerate]
-  menu "一覧", :only => [:index]
-  menu "詳細", :only => [:show]
+  menu "精算の概況", :only => [:index]
+  menu "精算の詳細", :only => [:show]
 
   before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
+  before_filter :find_account, only: [:new, :create, :target_deals, :account_settlements]
   before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_filter :new_settlement, :only => [:new, :target_deals, :change_selected_deals]
+  before_filter :new_settlement, :only => [:new, :create, :target_deals]
 
   # 新しい精算口座を作る
   def new
-    @settlement.account = @credit_accounts.detect{|a| a == current_account} || @credit_accounts.first
     @settlement.name = "#{@settlement.account.name}の精算"
   
     # 現在記憶している精算期間があればそれを使う。
     # 精算期間の記憶がなく、現在月の場合は前月にする
     # 初期表示なので、記憶はしない（ほかのページへいってもどっても同じように計算される）
-    if @settlement.account == current_account && settlement_start_date && settlement_end_date
-      @start_date = settlement_start_date
-      @end_date = settlement_end_date
+    if account_settlement_term(@account)
+      @start_date, @end_date = account_settlement_term(@account)
     else
       this_month = Date.new(Date.today.year, Date.today.month, 1)
       @start_date = this_month << 1 # 前月
@@ -30,15 +28,13 @@ class SettlementsController < ApplicationController
     end
     
     load_deals
-    
-    # その後の処理のためにセッションに情報を入れておく
-    # TODO: current_acocunt導入により、機能がかぶった可能性もあるがいったん保留
-    session[:settlement_credit_account_id] = @settlement.account.id
+
+    prepare_for_month_navigator
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
   def target_deals
-    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date] && params[:settlement]
+    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date]
 
     begin
       @start_date = to_date(params[:start_date])
@@ -48,11 +44,8 @@ class SettlementsController < ApplicationController
       return
     end
 
-    @settlement.account = @user.accounts.find(params[:settlement][:account_id])
     # 勘定、精算期間を保存する
-    self.current_account = @settlement.account # settlement_xxx_date の代入より先に行う必要がある
-    self.settlement_start_date = @start_date
-    self.settlement_end_date = @end_date
+    store_account_settlement_term(@account, @start_date, @end_date)
 
     @settlement.name = "#{@settlement.account.name}の精算"
 
@@ -63,44 +56,41 @@ class SettlementsController < ApplicationController
   end
 
   def create
-    @settlement = current_user.settlements.new(settlement_params)
+    @settlement.attributes = settlement_params
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
       # 覚えた精算期間を消す
-      self.settlement_start_date = nil
-      self.settlement_end_date = nil
+      clear_account_settlement_term(@account)
       redirect_to :action => 'index'
     else
       @start_date = to_date(params[:start_date])
       @end_date = to_date(params[:end_date])
       load_deals
-      @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
+      @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
+      prepare_for_month_navigator
       render :action => 'new'
     end
   end
-  
-  def index
-    # account_id が指定されていない場合はredirectする
-    case params[:account_id]
-    when nil
-      account_id = if current_account && @credit_accounts.detect{|a| a == current_account}
-        current_account.id
-      else
-        'all'
-      end
-      redirect_to account_settlements_path(:account_id => account_id)
-      return
-    when 'all'
-      self.current_account = nil
-    else
-      @account = @credit_accounts.detect{|a| a.id == params[:account_id].to_i}
-      raise InvalidParameterError unless @account
-      self.current_account = @account
-    end
 
-    @settlements = @user.settlements
-    @settlements = @settlements.on(@account) if @account
-    @settlements = @settlements.includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+  # TDOO: current_account まわりを強引に消したので見直す
+  def index
+    prepare_for_summary_months
+
+    self.menu = "最近の精算情報"
+    @summaries = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
+    @credit_accounts.each do |account|
+      @summaries[account] = nil unless @summaries.keys.include?(account)
+    end
+  end
+
+  # ある勘定の精算一覧を提供する
+  def account_settlements
+    prepare_for_summary_months(5, 1)
+
+    self.menu = "#{@account.name}の精算一覧"
+
+    @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
+    @summaries = {@account => @settlements}
   end
   
   # 1件を削除する
@@ -118,6 +108,7 @@ class SettlementsController < ApplicationController
 
   # TODO: 例外にしたいが、目にしがちな画面なので、エラーページをきれいにしてからのほうがいいかも
   def show
+    self.menu = @settlement.name if @settlement.try(:name).present?
     unless @settlement
       render :action => 'no_settlement'
       return
@@ -126,11 +117,6 @@ class SettlementsController < ApplicationController
   
   # 立替精算依頼書
   def print_form
-    if params[:format] == "csv"
-      headers["Content-Type"] = 'text/plain; charset=Shift_JIS'
-      render :action => 'print_form_csv', :layout => false
-      return
-    end
     render :layout => false
   end
   
@@ -142,11 +128,28 @@ class SettlementsController < ApplicationController
     redirect_to settlement_path(:id => @settlement.id)
   end
   
-  protected
+  private
+
+  def settlement_terms
+    session[:settlement_terms] ||= {}
+  end
+
+  def store_account_settlement_term(account, start_date, end_date)
+    settlement_terms[account.id] = [start_date, end_date]
+  end
+
+  def clear_account_settlement_term(account)
+    settlement_terms.delete(account.id)
+  end
+
+  def account_settlement_term(account)
+    settlement_terms[account.id]
+  end
   
   def new_settlement
     @settlement = Settlement.new
-    @settlement.user_id = @user.id
+    @settlement.user = current_user
+    @settlement.account = @account
   end
   
   def check_credit_account
@@ -166,11 +169,41 @@ class SettlementsController < ApplicationController
     end
   end
   
-  private
+  # 未精算記入の有無を表示するための月データを作成する
+  def prepare_for_month_navigator
+    entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
+    date = Time.zone.today.beginning_of_month
+    start_month = date << 24
+    end_month = date >> 2
+    date = start_month
+    @months = []
+    while date < end_month
+      @months << [date, entry_dates.find_all{|e| e.date.year == date.year && e.date.month == date.month }]
+      date = date >> 1
+    end
+  end
+
+  def prepare_for_summary_months(past = 7, future = 2)
+    # 月サマリー用の月情報
+    @months = []
+    date = start_date = Time.zone.today.beginning_of_month << past
+    end_date = Time.zone.today.beginning_of_month >> future
+
+    while date <= end_date
+      @months << date
+      date = date >> 1
+    end
+    @years = @months.group_by(&:year)
+  end
+
+  def find_account
+    @account = current_user.assets.credit.find(params[:account_id])
+  end
+
   def settlement_params
-    result = params.require(:settlement).permit(:account_id, :name, :description, :result_partner_account_id)
+    result = params.require(:settlement).permit(:name, :description, :result_partner_account_id)
     # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
-    result[:deal_ids] = params[:settlement][:deal_ids].permit!
+    result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
     result
   end
 

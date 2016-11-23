@@ -8,10 +8,7 @@ shared_examples "users/new" do
   it {page.should have_css("form#signupForm")}
 end
 
-shared_examples "users/forgot_password" do
-  it {page.should have_content("パスワードを忘れたとき")}
+shared_examples "forgot_password (メール送信あり)" do
+  it {page.should have_content("登録されたEメールアドレスを入力してください。")}
 end
 
-shared_examples "home/index_mobile" do
-  it {page.should have_content("今日の支出")}
-end

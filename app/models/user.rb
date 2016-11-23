@@ -4,7 +4,6 @@ require 'digest/sha1'
 class User < ActiveRecord::Base
   require 'user/friend' # TODO: User::Friendのincludeが(少なくともdevelopmentモードで)エラーになるため応急措置
   include User::Friend
-  include User::Mobile
 
   delegate :bookkeeping_style?, :to => :preferences
 
@@ -186,17 +185,16 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
-  validates_presence_of     :login, :email
-  validates_presence_of     :password,                   :if => :password_required?
-  validates_presence_of     :password_confirmation,      :if => :password_required?
-  validates_length_of       :password, :within => 4..40, :if => :password_required?
-  validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :login,    :within => 3..40
-  validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :login, :email, :case_sensitive => false
+  validates :login, presence: true, length: {within: 3..40,  allow_blank: true}, uniqueness: {case_sensitive: false, allow_blank: true}
+  validates :email, presence: true, length: {within: 3..100, allow_blank: true}, uniqueness: {case_sensitive: false, allow_blank: true}
+
+  with_options if: :password_required? do |req|
+    req.validates :password,              presence: true, length: {within: 4..40,  allow_blank: true}, confirmation: true
+    req.validates :password_confirmation, presence: true
+  end
+
   before_save :encrypt_password
   before_create :make_activation_code
-#  attr_accessible :login, :email, :password, :password_confirmation
   after_destroy :destroy_deals, :destroy_accounts
 
   # Activates the user in the database.

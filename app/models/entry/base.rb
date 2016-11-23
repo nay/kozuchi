@@ -4,6 +4,8 @@ class Entry::Base < ActiveRecord::Base
   self.table_name = 'account_entries'
   unsavable
 
+  include Booking
+
   MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
   
   belongs_to :account,
@@ -17,7 +19,9 @@ class Entry::Base < ActiveRecord::Base
 
   belongs_to :user # to_s で使う
 
-  
+  # General だけ関係するが Account::Baseからの関連で利用することを想定してここで定義
+  belongs_to :result_settlement, :class_name => 'Settlement', :foreign_key => 'result_settlement_id'
+
   before_validation :error_if_account_is_is_chanegd # 最初にやる
   validates :account_id, :presence => true
   validate :validate_account_id_is_users
@@ -41,6 +45,7 @@ class Entry::Base < ActiveRecord::Base
   scope :date_from, ->(d) { where("date >= ?", d) } # TODO: 名前バッティングで from → date_from にした
   scope :before, ->(d) { where("date < ?", d) }
   scope :ordered, -> { order(:date, :daily_seq) }
+  # TODO: on にして deal と仕様を揃えたい
   scope :of, ->(account_id) { where(account_id: account_id) }
   scope :after, ->(e) { where("date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq) }
   scope :in_a_time_between, ->(from, to) { where("account_entries.date >= ? and account_entries.date <= ?", from, to) }

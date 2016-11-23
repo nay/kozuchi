@@ -57,9 +57,6 @@ module Kozuchi
     config.assets.version = '1.0'
 
     config.assets.precompile += ['all_media.css', 'print.css']
-
-    config.jpmobile.mobile_filter
-    config.jpmobile.form_accept_charset_conversion = true
   end
   class << self
     attr_accessor :news_updated_on, :personal_info_policy_updated_on, :privacy_policy_updated_on

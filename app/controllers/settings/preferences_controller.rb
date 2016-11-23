@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 # カスタマイズ （個人的好みによる設定） 
 class Settings::PreferencesController < ApplicationController
-  layout 'main'
   menu_group "設定"
   menu "カスタマイズ"
 
@@ -23,7 +22,7 @@ class Settings::PreferencesController < ApplicationController
 
   private
   def preferences_params
-    params.require(:preferences).permit(:color, :deals_scroll_height, :business_use, :bookkeeping_style)
+    params.require(:preferences).permit(:color, :business_use, :bookkeeping_style)
   end
 
   def find_preferences

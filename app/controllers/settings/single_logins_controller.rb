@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class Settings::SingleLoginsController < ApplicationController
-  layout 'main'
   menu_group "設定"
   menu "シングルログイン"
 

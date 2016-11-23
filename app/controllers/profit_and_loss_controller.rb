@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class ProfitAndLossController < ApplicationController 
-  layout 'main'
   helper :graph
   menu_group "家計簿"
   menu "収支表"

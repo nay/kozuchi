@@ -60,3 +60,18 @@
   }
 
 }
+
+// TODO: わける？
+table.accounts {
+  td.batch_button {
+    vertical-align: middle;
+  }
+}
+
+ul.account_tabs {
+  margin-bottom: 10px;
+
+  li {
+    width: 120px;
+  }
+}

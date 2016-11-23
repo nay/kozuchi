@@ -1,0 +1,36 @@
+#deal_form_option{data: {result_url: new_deal_path}}
+.for_deal_editor
+  #deals_left
+    = link_to '今日', deals_path(today: 1), class: %w(btn btn-primary btn-sm), id: :today
+    #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @deals}
+
+  #deals_right
+    = link_to 'すべての記入', monthly_deals_path(year: @year, month: @month), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+    - account_selection_histories.each do |a|
+      = account_button(a, @year, @month)
+
+    #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'always'}}
+      = render :partial => 'shared/deal_patterns/recent'
+
+  #deals_main
+    = render partial: "shared/calendar", :locals => {:year => @year, :month => @month, :url_method => :monthly_deals_path }
+    #deals_frame
+      - deal_type = flash[:"#{controller_name}_deal_type"]
+      #new_deal_window
+        %h3 記入する
+        .deal_editor
+          = deal_editor 1, @year, @month, @day do
+            = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
+      #edit_mode_explanation{style: 'display: none;'}
+        .panel.panel-default
+          .panel-body{style: 'text-align: center;'}
+            記入するには、変更を完了してください。
+            = link_to '変更をキャンセル', '#', class: 'btn btn-default close_edit_window'
+
+      - if @recently_updated_deals.present?
+        %h3 最近の記入 (#{controller.class::RECENT_DEALS_SIZE}件)
+        #monthly_contents
+          #book.bottom_box
+            = render :partial => "deals", locals: {deals: @recently_updated_deals}
+
+  = render partial: 'monthly_js'

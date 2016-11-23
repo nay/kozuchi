@@ -1,0 +1,36 @@
+!!!5
+%html
+  %head
+    %meta{charset: 'UTF-8'}
+    %meta{'http-equiv' => "Content-Script-Type", content: "text/javascript; charset=utf-8" }
+    %meta{name: "author", content: "Everyleaf Corporation" }
+    %meta{'http-equiv' => "content-style-type", content: "text/css" }
+    = csrf_meta_tags
+    = stylesheet_link_tag :application
+    = stylesheet_link_tag :all_media, media: :all
+    = stylesheet_link_tag :print, media: :print
+    = javascript_include_tag :application
+    = render partial: "shared/google_analytics"
+    %title
+      小槌
+      - if @title.present?
+        = '-'
+        = @title
+    = yield :head
+  %body#top
+    %header
+      = render partial: 'shared/navbar'
+      - if @menu.present?
+        #menu_bar
+          %h2= @menu
+    #content.clearfix
+      - if flash[:notice].present?
+        .alert.alert-success.alert-dismissable
+          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
+          = flash[:notice]
+      - if flash[:error].present?
+        .alert.alert-danger.alert-dismissable
+          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
+          = flash[:error]
+      = yield
+    = render partial: "shared/footer"

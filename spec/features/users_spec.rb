@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe UsersController do
-  fixtures :users
+  fixtures :users, :preferences
 
   describe "GET /signup" do
     context "when not logged in" do
@@ -18,7 +18,7 @@ describe UsersController do
       before do
         SKIP_MAIL = true # 警告が出るがしかたない。TODO: 変更可能な形態にする
         visit "/"
-        click_link "ユーザー登録"
+        click_link "アカウント登録して使い始める（無料）"
         fill_in "ログインID", with: "featuretest"
         fill_in "Email", with: "featuretest@kozuchi.net"
         fill_in "パスワード", with: "testtest"
@@ -36,7 +36,7 @@ describe UsersController do
       before do
         SKIP_MAIL = false # 警告が出るがしかたない。TODO: 変更可能な形態にする
         visit "/"
-        click_link "ユーザー登録"
+        click_link "アカウント登録して使い始める（無料）"
         fill_in "ログインID", with: "featuretest"
         fill_in "Email", with: "featuretest@kozuchi.net"
         fill_in "パスワード", with: "testtest"

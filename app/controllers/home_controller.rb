@@ -7,10 +7,6 @@ class HomeController < ApplicationController
     prepare_assets_summary
     prepare_expenses_summary
     @IE6 = IE6?
-
-    if request.mobile?
-      @mobile_login_available = !request.mobile.ident.blank? || request.mobile.docomo?
-    end
   end
 
   private

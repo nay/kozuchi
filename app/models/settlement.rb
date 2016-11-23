@@ -34,6 +34,9 @@ class Settlement < ActiveRecord::Base
   # result_entryのひもづけにacocunt_entriesというテーブル名が使われる想定
   scope :on, ->(account) { where("account_entries.account_id = ?", account.id) }
 
+  # 同上
+  scope :recent, ->(limit) { order("account_entries.date desc").limit(limit) }
+
   def deal_ids=(ids_hash)
     @deal_ids = ids_hash.keys.map{|k| k.to_i}
   end
@@ -56,6 +59,11 @@ class Settlement < ActiveRecord::Base
     sum = 0
     target_entries.each{|e| sum += e.amount}
     sum
+  end
+
+  # お金が返ってくるときはプラス、出ていくときはマイナスになる金額を result_entry をもとに提供する
+  def amount
+    result_entry.amount * -1
   end
   
   # 相手に提出済にする

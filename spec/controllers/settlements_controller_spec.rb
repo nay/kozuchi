@@ -14,49 +14,41 @@ describe SettlementsController do
 
   describe "new" do
     it "成功する" do
-      get :new
+      get :new, account_id: :taro_card.to_id
       response.should be_success
     end
   end
 
   describe "target_deals" do
     it "十分なパラメータがないと例外" do
-      lambda{get :target_deals}.should raise_error(InvalidParameterError)
+      lambda{ get :target_deals, account_id: :taro_card.to_id }.should raise_error(InvalidParameterError)
     end
     it "成功する" do
       get :target_deals,
         :start_date => {:year => '2010', :month => '5', :day => '1'},
         :end_date => {:year => '2010', :month => '5', :day => '1'},
-        :settlement => {:account_id => :taro_cache.to_id}
+        :settlement => {:account_id => :taro_cache.to_id},
+        account_id: :taro_card.to_id
       response.should be_success
     end
   end
 
   describe "index" do
-    context "引数にaccount_idがないとき" do
-      it "精算データがない時、リダイレクトされる" do
-        raise "there are settlements!" unless @current_user.settlements.empty?
-        get 'index'
-        response.should redirect_to(account_settlements_path('all'))
-      end
-      it "精算データがある時、リダイレクトされる" do
-        create_taro_settlement
-        get 'index'
-        response.should redirect_to(account_settlements_path('all'))
-      end
+    before do
+      get 'index'
     end
-    context "引数にaccount_idがあるとき" do
-      let(:account_id) {:taro_card.to_id}
-      it "精算データがない時、成功する" do
-        raise "there are settlements!" unless @current_user.settlements.empty?
-        get 'index', :account_id => account_id
-        response.should be_success
-      end
-      it "精算データがある時、成功する" do
-        create_taro_settlement
-        get 'index', :account_id => account_id
-        response.should be_success
-      end
+    it "成功する" do
+      response.should be_success
+    end
+  end
+
+  describe "account_settlements" do
+    before do
+      get 'account_settlements', account_id: :taro_card.to_id
+    end
+
+    it "成功する" do
+      response.should be_success
     end
   end
 
@@ -76,7 +68,8 @@ describe SettlementsController do
         :description => '',
         :result_partner_account_id => :taro_bank.to_id.to_s,
         :deal_ids => {@deal.id.to_s => '1'}
-        }, :result_date => {:year => '2010', :month => '6', :day => '30'}
+        }, :result_date => {:year => '2010', :month => '6', :day => '30'},
+        account_id: :taro_hanako.to_id
 
       response.should redirect_to(settlements_path)
       @current_user.settlements.find_by(name: 'テスト精算2010-5').should_not be_nil
@@ -123,12 +116,8 @@ describe SettlementsController do
     before do
       @settlement = create_taro_settlement
     end
-    it "formatなしで成功する" do
+    it "成功する" do
       get :print_form, :id => @settlement.id
-      response.should be_success
-    end
-    it "formatありで成功する" do
-      get :print_form, :id => @settlement.id, :format => "csv"
       response.should be_success
     end
   end

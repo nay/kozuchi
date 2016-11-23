@@ -1,0 +1,18 @@
+= error_messages_for :user
+
+= form_for @user, :url => user_path, :html => {:method => :put}  do |f|
+  .form-group
+    = f.label :login, "ログインID"
+    = f.text_field :login, size: 30, class: 'form-control'
+  .form-group
+    = label_tag :password, "パスワード"
+    = password_field_tag :password, nil, :size => 30, class: 'form-control'
+  .form-group
+    = label_tag :password_confirmation, "パスワード（確認）"
+    = password_field_tag :password_confirmation, nil, size: 30, class: 'form-control'
+  .form-group
+    = f.label :email, "Eメールアドレス"
+    = f.text_field :email, class: 'form-control'
+  .form-group
+    = f.submit '変更', class: %w(btn btn-primary)
+%div= link_to 'アカウントを削除する', {:action => 'destroy',}, { :data => {:confirm =>"アカウントとデータをすべて削除します。復活させることはできません。削除してよろしいですか？"}, :method => 'delete', class: %w(btn btn-danger)}

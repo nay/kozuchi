@@ -1,0 +1,62 @@
+#settlements_left {
+  float:left;
+
+  #month_navigator_frame {
+    font-size: 10px;
+    margin-right: 10px;
+
+    table {
+      td.year {
+        border: 1px solid #888888;
+      }
+      tr.month.now {
+        font-weight: bold;
+      }
+      tr.month.selected {
+        background-color: yellow;
+      }
+      tr.month {
+
+        td.month {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+#settlements_main {
+  float:left;
+  width: 82%;
+
+  #select_credit_account {
+  }
+
+}
+
+#settlements_right {
+  float:right;
+  width: 12%;
+
+  .btn {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+}
+
+#target_deals {
+  #select_and_clear {
+    margin: 8px 0;
+  }
+
+  #submit_settlement {
+    margin: 8px 0;
+  }
+}
+
+table.settlements_summary {
+  td.settlement {
+    width: 76px;
+    text-align: right;
+  }
+}

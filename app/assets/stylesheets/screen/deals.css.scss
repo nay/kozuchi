@@ -1,0 +1,51 @@
+/* 記入一覧系に関するCSS */
+
+#deals_left {
+  float: left;
+}
+#deals_main {
+  float:left;
+  width: 82%;
+}
+
+#deals_right {
+  float:right;
+  width: 12%;
+
+  .btn {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  #account_selector {
+    select {
+      width: 100%;
+    }
+    margin-bottom: 16px;
+  }
+}
+
+#deal_pattern_frame {
+  font-size: 14px;
+}
+#today {
+  padding-top: 14px;
+  padding-bottom: 13px;
+  margin-bottom: 8px;
+}
+
+/* 口座選択・カレンダーなどを抱える上部バー */
+#deals_navigator {
+  #calendar_in_navigator {
+    width: 100%;
+  }
+  .part {
+    float: left;
+  }
+}
+td.open_detail {
+  cursor: pointer;
+}
+tr.detail_row .panel {
+  margin-bottom: 0;
+}

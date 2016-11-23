@@ -1,0 +1,21 @@
+%p 受け皿設定を行うと、取引連携で自動的に記入される場合の受け皿口座とすることができます。
+%p
+  フレンドと取引連動については、
+  = link_to("ヘルプの「フレンドの項」", :controller => '/help', :action => 'functions', :anchor => "friend")
+  に詳しいのでご参照ください。
+
+%table.table
+  %tr
+    %th 対象
+    %th 受け皿口座
+  - for account in @accounts
+    %tr
+      %td= account.name_with_asset_type
+      %td
+        = form_for account, :as => :account, :url => settings_partner_account_path(:account_id => account.id), :html => {:method => :put} do |f|
+          .row
+            .col-md-8
+              = f.select :partner_account_id, "<option value=''>-- 設定なし --</option>".html_safe + options_from_collection_for_select( |
+                  @partner_account_candidates[account], "id", "name_with_asset_type", account.partner_account_id), {}, class: 'form-control' |
+            .col-md-4
+              = f.submit '更新', class: %w(btn btn-default)

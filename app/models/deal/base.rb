@@ -4,6 +4,8 @@ require 'time'
 class Deal::Base < ActiveRecord::Base
   self.table_name = "deals"
 
+  include Booking
+
   belongs_to :user
 
   # 実験的に読み出し専用の共通的なentryを設定
@@ -20,8 +22,17 @@ class Deal::Base < ActiveRecord::Base
   validates_presence_of :date
   
   scope :in_a_time_between, ->(from, to) { where("deals.date >= ? and deals.date <= ?", from, to) }
+  scope :in_month, ->(year, month) {
+    start_date = Date.new(year.to_i, month.to_i, 1)
+    in_a_time_between(start_date, start_date.end_of_month)
+  }
   scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
   scope :time_ordering, -> { order(:date, :daily_seq) }
+  scope :recently_updated_ordered, -> { order(updated_at: :desc) }
+  scope :on, ->(account_or_account_id) {
+    account_id = account_or_account_id.kind_of?(Account::Base) ? account_or_account_id.id : account_or_account_id
+    where("account_entries.account_id = ?", account_id)
+  }
 
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"
@@ -136,6 +147,10 @@ class Deal::Base < ActiveRecord::Base
     save!
   end
 
+  # 記入対象の勘定のリスト（一意にしたもの）を返す
+  def accounts
+    readonly_entries.map(&:account).uniq
+  end
 
   private
 

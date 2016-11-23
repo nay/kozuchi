@@ -18,6 +18,10 @@ class Account::Asset < Account::Base
     where("accounts.asset_kind in (?)", kinds)
   }
 
+  def self.has_kind?
+    true
+  end
+
   def capital_fund?
     asset_kind == "capital_fund"
   end

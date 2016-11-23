@@ -1,0 +1,52 @@
+- data = {}
+- # 登録・編集後のリダイレクト先に関わる情報
+- if @account
+  - data[:condition] = {account_id: @account.id} # 遷移先を決めるための条件
+  - data[:condition_match_url] = monthly_account_deals_path(account_id: @account.id, year: '_YEAR_', month: '_MONTH_')
+- data[:result_url] = monthly_deals_path(year: '_YEAR_', month: '_MONTH_') # 条件がないときや、条件に合わなかったときの遷移先
+- # 口座選択を変えたときのURLテンプレート
+- data[:account_url] = monthly_account_deals_path(account_id: '_ACCOUNT_ID_', year: @year, month: @month) # 口座が指定されたとき
+- data[:all_url] = monthly_deals_path(year: @year, month: @month) # 口座が解除されたとき
+#deal_form_option{ data: data }
+
+.for_monthly_deals
+  #deals_left
+    = link_to '今日', deals_path(today: 1, account_id: @account ? @account.id : nil), class: %w(btn btn-primary btn-sm), id: :today
+    #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @bookings, path_proc: ->(date){ "#day#{date.day}" }}
+
+  #deals_right
+    = link_to '記入する', new_deal_path, class: %w(btn btn-primary)
+    %hr
+    #account_selector
+      = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: 'すべての記入', class: "form-control"
+    - if @account
+      - if @account.kind_of?(Account::Asset) && @account.any_credit?
+        %hr
+        = link_to '精算一覧', account_settlements_path(account_id: @account.id), class: %w(btn btn-default)
+        = link_to '新しい精算', new_account_settlement_path(account_id: @account.id), class: 'btn btn-default'
+        %hr
+      = link_to 'すべての記入', monthly_deals_path(year: @year, month: @month), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+    - account_selection_histories.each do |a|
+      - if @account != a
+        = account_button(a, @year, @month)
+
+    #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'occasional'}, style: "display: none;"}
+      = render :partial => 'shared/deal_patterns/recent'
+
+  #deals_main
+    #deals_frame
+      #deals_navigator
+        #calendar_in_navigator
+          - url_for(year: '_YEAR_', month: '_MONTH_')
+          = render partial: "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: url_for(year: '_YEAR_', month: '_MONTH_')}}
+      %h3
+        = @account ? @account.name : "すべての記入"
+        (#{@year}年 #{@month}月)
+      #monthly_contents
+        #book.bottom_box
+          - if @account
+            = render :partial => "account_entries"
+          - else
+            = render :partial => "deals"
+
+    = render partial: 'monthly_js'
