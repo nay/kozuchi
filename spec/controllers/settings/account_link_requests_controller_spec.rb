@@ -25,8 +25,8 @@ describe Settings::AccountLinkRequestsController, type: :controller do
       it "AccountLinkRequestを削除できる" do
         delete :destroy, :id => @target_id, :account_id => @target_account_id
         expect(response).to redirect_to(settings_account_links_path)
-        AccountLinkRequest.find_by(id: @target_id).should be_nil
-        flash[:errors].should be_nil
+        expect(AccountLinkRequest.find_by(id: @target_id)).to be_nil
+        expect(flash[:errors]).to be_nil
       end
     end
     context "目的のAccountLinkRequestがないとき" do
@@ -34,7 +34,7 @@ describe Settings::AccountLinkRequestsController, type: :controller do
         violated '前提エラー' if AccountLinkRequest.find_by(id: 99) || Account::Base.find_by(id: 99)
       end
       it "ActiveRecord::RecordNotFoundを投げる" do
-        lambda{delete :destroy, :id => 99, :account_id => 99}.should raise_error(ActiveRecord::RecordNotFound)
+        expect {delete :destroy, :id => 99, :account_id => 99}.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

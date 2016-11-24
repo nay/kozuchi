@@ -87,8 +87,8 @@ describe DealsController, type: :controller do
       }
       expect(response).to be_success
       deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
-      deal.should_not be_nil
-      deal.balance.should == 3000
+      expect(deal).not_to be_nil
+      expect(deal.balance).to eq 3000
     end
   end
 
@@ -98,7 +98,7 @@ describe DealsController, type: :controller do
       expect(response).to be_success
     end
     it "キーワードなしだとエラーとなる" do
-      lambda{get :search}.should raise_error(InvalidParameterError)
+      expect{get :search}.to raise_error(InvalidParameterError)
     end
   end
 
@@ -109,7 +109,7 @@ describe DealsController, type: :controller do
     it "成功する" do
       delete :destroy, :id => @deal.id
       expect(response).to be_success
-      Deal::Base.find_by(id: @deal.id).should be_nil
+      expect(Deal::Base.find_by(id: @deal.id)).to be_nil
     end
   end
 
@@ -121,7 +121,7 @@ describe DealsController, type: :controller do
       post :confirm, :id => @deal.id
       expect(response).to be_success
       @deal.reload
-      @deal.should be_confirmed
+      expect(@deal).to be_confirmed
     end
   end
 
@@ -149,9 +149,9 @@ describe DealsController, type: :controller do
       }
       expect(response).to be_success
       @deal.reload
-      @deal.creditor_entries.size.should == 2
-      @deal.summary.should == 'changed like test_complex'
-      @deal.date.should == Date.new(2010, 7, 9)
+      expect(@deal.creditor_entries.size).to eq 2
+      expect(@deal.summary).to eq 'changed like test_complex'
+      expect(@deal.date).to eq Date.new(2010, 7, 9)
     end
   end
 
