@@ -7,7 +7,7 @@ class Settings::SingleLoginsController < ApplicationController
 
   def index
     @single_login = current_user.single_logins.build
-    current_user.single_logins(true)
+    current_user.single_logins.reload
   end
 
   def create

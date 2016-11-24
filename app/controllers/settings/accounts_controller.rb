@@ -20,7 +20,7 @@ class Settings::AccountsController < ApplicationController
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to action: :index
     else
-      @accounts = user_accounts(true)
+      @accounts = user_accounts.reload
       set_asset_kinds_option_container if @account_class.has_kind?
       render action: :index
     end
@@ -60,8 +60,8 @@ class Settings::AccountsController < ApplicationController
 
   private
 
-  def user_accounts(*args)
-    current_user.send(params[:account_type].pluralize, *args)
+  def user_accounts
+    current_user.send(params[:account_type].pluralize)
   end
 
   def set_account_class

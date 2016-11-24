@@ -58,7 +58,7 @@ module Deal
 
           # 更新時は必ずしも ID ではなく、内容で既存のデータと紐づける
           unless new_record?
-            old_entries = Array.new(send(:"#{side}_entries", true))
+            old_entries = Array.new(send("#{side}_entries").reload)
 
             # attirbutes の中と引き当てていく
             matched_old_entries = []

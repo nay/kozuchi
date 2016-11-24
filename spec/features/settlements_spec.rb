@@ -14,7 +14,7 @@ describe SettlementsController, type: :feature do
       before do
         AccountLink.destroy_all
         AccountLinkRequest.destroy_all
-        Account::Asset.delete_all("asset_kind != 'cache'") # TODO: destroyできない
+        Account::Asset.where("asset_kind != 'cache'").delete_all # TODO: destroyできない
         visit url
       end
 

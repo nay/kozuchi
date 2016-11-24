@@ -262,7 +262,7 @@ class DealsController < ApplicationController
   private
 
   def data_for_day_navigator
-    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).distinct
   end
 
   def find_deal
