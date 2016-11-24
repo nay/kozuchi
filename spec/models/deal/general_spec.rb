@@ -186,16 +186,17 @@ describe Deal::General do
     let!(:old_time_stamp) { deal.created_at }
     before do
       @deal = deal # TODO: 互換性のためいったん残す
+      @deal.reload
     end
     # 複数記入への変更
     it "貸し方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries(true).first.id, :line_number => 0},
+          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries.first.id, :line_number => 0},
           '1' => {:account_id => :deal_test_food.to_id, :amount => -300, :line_number => 1}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries(true).first.id, :line_number => 0}
+          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries.first.id, :line_number => 0}
         }
       }
       @deal.creditor_entries.size.should == 3 # 一時的に３つになる
@@ -213,10 +214,10 @@ describe Deal::General do
     it "借り方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries(true).first.id, :line_number => 0}
+          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries.first.id, :line_number => 0}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries(true).first.id, :line_number => 0},
+          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries.first.id, :line_number => 0},
           '1' => {:account_id => :deal_test_food.to_id, :amount => 300, :line_number => 1}
         }
       }
