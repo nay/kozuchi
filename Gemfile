@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.7.1'
 gem 'rake', '11.3.0'
 
 # Bundle edge Rails instead:
@@ -49,6 +49,7 @@ end
 # and rake tasks are available in development mode:
 group :development, :test do
 #  gem 'selenium-webdriver'
+  gem 'timecop'
   gem 'i18n_generators'
   gem "rspec-rails"
   gem "capybara"
