@@ -6,23 +6,23 @@ shared_examples "valid? when including ::Entry" do
   describe "amount" do
     it "0の場合は検証エラーとなる" do
       entry.amount = '0'
-      entry.should_not be_valid
+      expect(entry).not_to be_valid
     end
 
     it "'3a'の場合は検証エラーとなる" do
       entry.amount = '3a'
-      entry.should_not be_valid
+      expect(entry).not_to be_valid
     end
 
     it "'3.3'の場合は検証エラーとなる" do
       entry.amount = '3.3'
-      entry.should_not be_valid
+      expect(entry).not_to be_valid
     end
 
     it "未指定の場合は数値検証エラーとならない" do
       entry.amount = nil
       entry.valid?
-      entry.errors[:amount].should_not be_include(I18n.t("errors.messages.not_a_number"))
+      expect(entry.errors[:amount]).not_to be_include(I18n.t("errors.messages.not_a_number"))
     end
   end
 
@@ -33,6 +33,6 @@ shared_examples "save when including ::Entry" do
     entry.amount = nil
     entry.account_id = nil
     entry.summary = nil
-    expect { entry.save(:validate => false) }.to raise_error
+    expect { entry.save(:validate => false) }.to raise_error(RuntimeError)
   end
 end
