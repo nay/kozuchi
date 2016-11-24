@@ -26,7 +26,7 @@ describe Settlement do
   end
   describe "submit" do
     it "成功する" do
-      lambda{@settlement.submit}.should_not raise_error
+      expect {@settlement.submit}.not_to raise_error(RuntimeError)
       @settlement.reload
       @settlement.submitted_settlement.should_not be_nil
     end

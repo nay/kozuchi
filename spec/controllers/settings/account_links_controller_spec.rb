@@ -27,7 +27,7 @@ describe Settings::AccountLinksController, type: :controller do
     it "成功する" do
       delete :destroy, :account_id => @target_account_id, :id => @target_id
       expect(response).to redirect_to(settings_account_links_path)
-      expect(AccountLink.find_by(id: @target_id).to be_nil
+      expect(AccountLink.find_by(id: @target_id)).to be_nil
     end
   end
 
