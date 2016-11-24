@@ -1,4 +1,4 @@
-$icon-font-path: "bootstrap/"; /* Avoid error: No route matches [GET] "/fonts/bootstrap/glyphicons-halflings-regular.woff" */
+@import "bootstrap-sprockets";
 @import "bootstrap";
 @import "variables.scss";
 

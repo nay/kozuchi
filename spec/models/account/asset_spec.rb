@@ -25,7 +25,7 @@ describe "Account::Asset", :no_deals_and_patterns do
         FactoryGirl.create(:general_deal)
       end
       it "削除できない" do
-        expect{ account.destroy }.to raise_error
+        expect{ account.destroy }.to raise_error(Account::Base::UsedAccountException)
       end
     end
     context "Pattern::Dealに使われているとき" do
@@ -34,7 +34,7 @@ describe "Account::Asset", :no_deals_and_patterns do
           :debtor_entries_attributes => [{:line_number => 0, :account_id => Fixtures.identify(:taro_cache), :summary => '給料', :amount => 210000 }, { :line_number => 1, :account_id => Fixtures.identify(:taro_tax), :amount => 20000, :summary => '所得税'}])
       end
       it "削除できない" do
-        expect{ account.destroy }.to raise_error
+        expect{ account.destroy }.to raise_error(Account::Base::UsedAccountException)
       end
     end
   end

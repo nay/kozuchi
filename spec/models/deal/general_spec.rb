@@ -176,14 +176,14 @@ describe Deal::General do
   end
 
   describe "update" do
-    let!(:old_time_stamp) {Time.zone.now - 10000}
     let!(:deal) do
-      d = new_simple_deal(6, 1, @cache, @bank, 3500)
-      d.save!
-      d.class.where(id: d.id).update_all(["created_at = ?, updated_at = ?", old_time_stamp, old_time_stamp])
-      d.reload
-      d
+      Timecop.travel(Time.now - 10000) do
+        d = new_simple_deal(6, 1, @cache, @bank, 3500)
+        d.save!
+        d
+      end
     end
+    let!(:old_time_stamp) { deal.created_at }
     before do
       @deal = deal # TODO: 互換性のためいったん残す
     end

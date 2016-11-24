@@ -21,7 +21,7 @@ describe SettlementsController, type: :controller do
 
   describe "target_deals" do
     it "十分なパラメータがないと例外" do
-      lambda{ get :target_deals, account_id: :taro_card.to_id }.should raise_error(InvalidParameterError)
+      expect{ get :target_deals, account_id: :taro_card.to_id }.to raise_error(InvalidParameterError)
     end
     it "成功する" do
       get :target_deals,
@@ -72,7 +72,7 @@ describe SettlementsController, type: :controller do
         account_id: :taro_hanako.to_id
 
       expect(response).to redirect_to(settlements_path)
-      @current_user.settlements.find_by(name: 'テスト精算2010-5').should_not be_nil
+      expect(@current_user.settlements.find_by(name: 'テスト精算2010-5')).not_to be_nil
     end
   end
 
@@ -131,7 +131,7 @@ describe SettlementsController, type: :controller do
       expect(response).to redirect_to(settlements_path)
     end
     it "実際に削除されている" do
-      Settlement.find_by(id: @settlement.id).should be_nil
+      expect(Settlement.find_by(id: @settlement.id)).to be_nil
     end
   end
 

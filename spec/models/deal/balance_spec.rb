@@ -109,7 +109,7 @@ describe Deal::Balance do
     context "user_idがないとき" do
       let(:deal) { FactoryGirl.build(:balance_deal, :user_id => nil) }
       it "例外が発生する" do
-        expect{ deal.save }.to raise_error
+        expect { deal.save }.to raise_error(RuntimeError)
       end
     end
 
