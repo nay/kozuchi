@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.2.7.1'
+gem 'rails', '5.0.0'
 gem 'rake', '11.3.0'
 
 # Bundle edge Rails instead:
@@ -14,18 +14,18 @@ gem 'bootstrap-sass'
 gem 'html5jp_graphs', '~> 0.0.3'
 gem 'dynamic_form'
 gem 'therubyracer'
-gem 'libv8', '~> 3.11.8.3'
+gem 'libv8'
 gem 'passenger'
 gem 'rb-readline'
 gem 'httpclient'
 gem 'jquery-rails'
 gem 'sass'
-gem 'rails-observers' # TODO: なくしたい
+gem 'rails-observers', git: 'git://github.com/rails/rails-observers.git' # TODO: なくしたい
 gem 'activerecord-session_store'
 group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
-  gem 'uglifier', '>= 1.0.3'
+  gem 'uglifier'
 end
 
 # Use unicorn as the web server
@@ -52,6 +52,7 @@ group :development, :test do
   gem 'timecop'
   gem 'i18n_generators'
   gem "rspec-rails"
+  gem "timecop"
   gem "capybara"
   gem 'poltergeist'
   gem "factory_girl_rails"

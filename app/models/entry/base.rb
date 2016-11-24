@@ -145,8 +145,7 @@ class Entry::Base < ActiveRecord::Base
 
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
-    # TODO: どうも Deal でも Entry でもやっているっぽいので何とかならないか？
-    if deal(true) && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
+    if deal && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
       self.user_id = deal.user_id
       self.date = deal.date
       self.daily_seq = deal.daily_seq

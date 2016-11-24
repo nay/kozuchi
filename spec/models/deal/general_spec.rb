@@ -177,7 +177,7 @@ describe Deal::General do
 
   describe "update" do
     let!(:deal) do
-      Timecop.travel(Time.now - 10000) do
+      Timecop.travel(10.minutes.ago) do
         d = new_simple_deal(6, 1, @cache, @bank, 3500)
         d.save!
         d
