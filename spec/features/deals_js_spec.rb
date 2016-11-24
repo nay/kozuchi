@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe DealsController, js: true, type: :feature do
-  self.use_transactional_fixtures = false
+  self.use_transactional_tests = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 
@@ -270,7 +270,7 @@ describe DealsController, js: true, type: :feature do
         before do
           select_menu('家計簿')
           click_link "記入する"
-          click_link "*昼食" # パターンを指定
+          page.find("#recent_deal_patterns").click_link "*昼食" # パターンを指定
         end
         it "パターン登録した内容が入る" do
           sleep 1

@@ -47,7 +47,7 @@ module AuthenticatedSystem
     #
     # To skip this in a subclassed controller:
     #
-    #   skip_before_filter :login_required
+    #   skip_before_action :login_required
     #
     def login_required
       authorized? || access_denied

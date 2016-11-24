@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "記入パターン", js: true, type: :feature do
-  self.use_transactional_fixtures = false
+  self.use_transactional_tests = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 

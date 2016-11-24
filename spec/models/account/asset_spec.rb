@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe "Account::Asset", :no_deals_and_patterns do
-  self.use_transactional_fixtures = true
+  self.use_transactional_tests = true
   fixtures :users, :accounts
   set_fixture_class  :accounts => Account::Base
   
