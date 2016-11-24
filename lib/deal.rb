@@ -31,8 +31,8 @@ module Deal
 
         debtor_attributes = deal_attributes[:debtor_entries_attributes]
         creditor_attributes = deal_attributes[:creditor_entries_attributes]
-        debtor_attributes = debtor_attributes.values if debtor_attributes.kind_of?(Hash)
-        creditor_attributes = creditor_attributes.values if creditor_attributes.kind_of?(Hash)
+        debtor_attributes = debtor_attributes.values unless debtor_attributes.kind_of?(Array)
+        creditor_attributes = creditor_attributes.values unless creditor_attributes.kind_of?(Array)
 
         # 借方と借り方に有効なデータが１つだけあるとき
         if debtor_attributes.find_all{|v| v[:account_id]}.size == 1 && creditor_attributes.find_all{|v| v[:account_id]}.size == 1
