@@ -234,6 +234,7 @@ describe Deal::General do
     end
     context "日付を変更したとき" do
       before do
+        deal.reload # セーブ前の状態で deal 内の entry に deal が存在しているとentry保存時に日付が巻きもどるのでクリーンにしておく
         deal.date = deal.date - 7
         deal.save!
       end

@@ -143,6 +143,7 @@ class Entry::Base < ActiveRecord::Base
     errors.add(:account_id, "が不正です。") if !user_id.nil? && account.user_id.to_i != user_id.to_i
   end
 
+  # TODO: Dealからもセットしているので要らないかとおもったが外すと結構動かないので精査が必要
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
     if deal && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
