@@ -3,7 +3,7 @@ class Settings::AccountLinksController < ApplicationController
   menu_group "連携"
   menu "連携"
 
-  before_filter :find_account, :only => [:destroy, :create]
+  before_action :find_account, :only => [:destroy, :create]
 
   # 取引連動初期表示画面
   def index

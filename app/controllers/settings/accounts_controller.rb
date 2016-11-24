@@ -2,8 +2,8 @@ class Settings::AccountsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "設定"
 
-  before_filter :set_account_class
-  before_filter :find_account, :only => [:destroy]
+  before_action :set_account_class
+  before_action :find_account, :only => [:destroy]
 
   # 一覧・登録フォーム
   def index

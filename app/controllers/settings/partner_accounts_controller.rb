@@ -3,7 +3,7 @@ class Settings::PartnerAccountsController < ApplicationController
   menu_group "連携"
   menu "受け皿"
 
-  before_filter :find_account, :only => 'update'
+  before_action :find_account, :only => 'update'
 
   # 受け皿初期画面
   def index

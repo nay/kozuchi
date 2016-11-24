@@ -88,7 +88,7 @@ class User < ActiveRecord::Base
         ).includes(nil
         ).where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
         ).group('accounts.id'
-        ).each{|a| a.flow = a.flow.to_i}
+        ).to_a.each{|a| a.flow = a.flow.to_i}
       end
     end
 
@@ -100,7 +100,8 @@ class User < ActiveRecord::Base
         ).includes(nil
         ).where("deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
         ).group('accounts.id'
-        ).each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
+        ).to_a.each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
+        # Rails5.0にあげたとき、to_a をはさまずに each すると結果が frozen になってしまった
       end
     end
   

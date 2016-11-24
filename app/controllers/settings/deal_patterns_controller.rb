@@ -5,8 +5,8 @@ class Settings::DealPatternsController < ApplicationController
   menu "記入パターンの新規登録", only: [:new, :create]
   menu "記入パターンの編集", only: [:show, :update]
 
-  before_filter :find_deal_pattern, :only => [:show, :update, :destroy]
-  before_filter :find_or_build_deal_pattern, :only => [:create_entry]
+  before_action :find_deal_pattern, :only => [:show, :update, :destroy]
+  before_action :find_or_build_deal_pattern, :only => [:create_entry]
 
   def index
     @deal_patterns = current_user.deal_patterns.order('updated_at desc') # TODO: paginate

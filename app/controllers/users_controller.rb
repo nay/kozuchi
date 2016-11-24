@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   menu_group "設定"
   menu "プロフィール", :only => [:edit, :update]
 
-  before_filter :password_token_required, :only => [:edit_password, :update_password]
+  before_action :password_token_required, :only => [:edit_password, :update_password]
   cache_sweeper :export_sweeper, :only => [:destroy]
 
   # render new.rhtml

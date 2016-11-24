@@ -39,11 +39,11 @@ module AuthenticatedSystem
     #
     # To require logins for all actions, use this in your controllers:
     #
-    #   before_filter :login_required
+    #   before_action :login_required
     #
     # To require logins for specific actions, use this in your controllers:
     #
-    #   before_filter :login_required, :only => [ :edit, :update ]
+    #   before_action :login_required, :only => [ :edit, :update ]
     #
     # To skip this in a subclassed controller:
     #
