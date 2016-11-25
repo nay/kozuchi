@@ -1,6 +1,7 @@
 tmp
 log
 .*~log
+.*/
 public/assets/*
 doc/app/*
 config/database.yml
@@ -13,3 +14,4 @@ coverage/*
 nbproject
 *~
 .rvmrc
+.ruby-gemset
