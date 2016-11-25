@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 # ユーザーに紐づくロジックは多いので、機能別にモジュールを記述してincludeする
 require 'digest/sha1'
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   require 'user/friend' # TODO: User::Friendのincludeが(少なくともdevelopmentモードで)エラーになるため応急措置
   include User::Friend
 

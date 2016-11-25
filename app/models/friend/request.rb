@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Friend::Request < ActiveRecord::Base
+class Friend::Request < ApplicationRecord
   self.table_name = "friend_requests"
   belongs_to :user
   belongs_to :sender, :class_name => "User", :foreign_key => "sender_id"

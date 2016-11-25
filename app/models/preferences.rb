@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Preferences < ActiveRecord::Base
+class Preferences < ApplicationRecord
   self.table_name = "preferences"
   belongs_to :user
 

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'time'
 
-class Deal::Base < ActiveRecord::Base
+class Deal::Base < ApplicationRecord
   self.table_name = "deals"
 
   include Booking

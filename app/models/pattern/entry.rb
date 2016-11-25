@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Pattern::Entry < ActiveRecord::Base
+class Pattern::Entry < ApplicationRecord
   self.table_name = 'entry_patterns'
 
   belongs_to :account,
