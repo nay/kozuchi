@@ -8,6 +8,3 @@ module InstanceHuman
     name
   end
 end
-ActiveRecord::Base.send(:include, ActionView::Helpers::TextHelper) # to use truncate
-
-ActiveRecord::Base.send(:include, InstanceHuman)
