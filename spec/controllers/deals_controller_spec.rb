@@ -15,7 +15,7 @@ describe DealsController, type: :controller do
   end
   describe "monthly" do
     it "成功する" do
-      get :monthly, :year => '2010', :month => '4'
+      get :monthly, params: {year: '2010', month: '4'}
       expect(response).to be_success
     end
   end
@@ -29,13 +29,16 @@ describe DealsController, type: :controller do
     it "成功する" do
       # 貸し方の金額ははいらない
       post :create_general_deal,
-        :deal => {
-          :year => '2010', :month => '7', :day => '7',
-          :summary => 'test',
-          :summary_mode => 'unify',
-          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id}],
-          :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000}]
-        }
+           params: {
+               deal: {
+                   year: '2010', month: '7', day: '7',
+                   summary: 'test',
+                   summary_mode: 'unify',
+                   creditor_entries_attributes: [{:account_id => :taro_cache.to_id}],
+                   debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000}]
+               }
+
+           }
       expect(response).to be_success
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       expect(deal).not_to be_nil
@@ -54,13 +57,15 @@ describe DealsController, type: :controller do
   describe "create_complex_deal" do
     it "成功する" do
       post :create_complex_deal,
-        :deal => {
-          :year => '2010', :month => '7', :day => '9',
-          :summary => 'test_complex',
-          :summary_mode => 'unify',
-          :creditor_entries_attributes => [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
-          :debtor_entries_attributes => [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
-        }
+           params: {
+               deal: {
+                   year: '2010', month: '7', day: '9',
+                   summary: 'test_complex',
+                   summary_mode: 'unify',
+                   creditor_entries_attributes: [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
+                   debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
+               }
+           }
       expect(response).to be_success
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
       expect(deal).not_to be_nil
@@ -79,10 +84,12 @@ describe DealsController, type: :controller do
   end
   describe "create_balance_deal" do
     it "成功する" do
-      post :create_balance_deal, :account_id => :taro_cache.to_id, :deal => {
-        :balance => 3000,
-        :account_id => :taro_cache.to_id,
-        :year => '2010', :month => '7', :day => '7'
+      post :create_balance_deal, params: {
+          :account_id => :taro_cache.to_id, :deal => {
+              :balance => 3000,
+              :account_id => :taro_cache.to_id,
+              :year => '2010', :month => '7', :day => '7'
+          }
       }
       expect(response).to be_success
       deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
@@ -93,7 +100,7 @@ describe DealsController, type: :controller do
 
   describe "search" do
     it "成功する" do
-      get :search, :keyword => 'test'
+      get :search, params: {:keyword => 'test'}
       expect(response).to be_success
     end
     it "キーワードなしだとエラーとなる" do
@@ -106,7 +113,7 @@ describe DealsController, type: :controller do
       @deal = create_deal
     end
     it "成功する" do
-      delete :destroy, :id => @deal.id
+      delete :destroy, params: {:id => @deal.id}
       expect(response).to be_success
       expect(Deal::Base.find_by(id: @deal.id)).to be_nil
     end
@@ -117,7 +124,7 @@ describe DealsController, type: :controller do
       @deal = create_deal(:confirmed => false)
     end
     it "成功する" do
-      post :confirm, :id => @deal.id
+      post :confirm, params: {:id => @deal.id}
       expect(response).to be_success
       @deal.reload
       expect(@deal).to be_confirmed
@@ -129,7 +136,7 @@ describe DealsController, type: :controller do
       @deal = create_deal(:confirmed => false)
     end
     it "成功する" do
-      get :edit, :id => @deal.id
+      get :edit, params:  {:id => @deal.id}
       expect(response).to be_success
     end
   end
@@ -139,12 +146,14 @@ describe DealsController, type: :controller do
       @deal = create_deal(:confirmed => false)
     end
     it "成功する" do
-      put :update, :id => @deal.id, :deal => {
-          :year => '2010', :month => '7', :day => '9',
-          :summary => 'changed like test_complex',
-          :summary_mode => 'unify',
-          :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
-          :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
+      put :update, params: {
+            :id => @deal.id, :deal => {
+            :year => '2010', :month => '7', :day => '9',
+            :summary => 'changed like test_complex',
+            :summary_mode => 'unify',
+            :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
+            :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
+          }
       }
       expect(response).to be_success
       @deal.reload
@@ -157,11 +166,13 @@ describe DealsController, type: :controller do
   describe "create_entry" do
     context "新しいDealに対して" do
       it "成功する" do
-        post :create_entry, :id => 'new', :deal => {
-          :year => '2010', :month => '7', :day => '9',
-          :summary => 'changed like test_complex',
-          :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
-          :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
+        post :create_entry, params: {
+            :id => 'new', :deal => {
+            :year => '2010', :month => '7', :day => '9',
+            :summary => 'changed like test_complex',
+            :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
+            :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
+            }
         }
         expect(response).to be_success
       end
@@ -172,11 +183,13 @@ describe DealsController, type: :controller do
         @deal = create_deal
       end
       it "成功する" do
-        post :create_entry, :id => @deal.id, :deal => {
-          :year => '2010', :month => '7', :day => '9',
-          :summary => 'changed like test_complex',
-          :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
-          :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
+        post :create_entry, params: {
+            :id => @deal.id, :deal => {
+            :year => '2010', :month => '7', :day => '9',
+            :summary => 'changed like test_complex',
+            :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200}},
+            :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
+            }
         }
         expect(response).to be_success
       end
