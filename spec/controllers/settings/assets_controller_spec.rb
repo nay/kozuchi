@@ -6,14 +6,6 @@ describe Settings::AccountsController, type: :controller do
   fixtures :users, :preferences, :accounts
   set_fixture_class :accounts => Account::Base, :preferences => Preferences
 
-  # TODO: 環境汚染対策
-  before do
-    Deal::Base.delete_all
-    Entry::Base.delete_all
-    Pattern::Deal.delete_all
-    Pattern::Entry.delete_all
-  end
-
   describe "/assets" do
 
     before do
