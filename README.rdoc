@@ -10,7 +10,7 @@ Master works in Rails 5.0.0.1 and Ruby >= 2.2.2.
 == Branches
 * master - The newest version.
 * testing - The version being used privately for testing.
-* hosting - The version running as https://host.kozuchi.net/
+* hosting - The version running in https://host.kozuchi.net
 
 == How to set up
 * Create your config/database.yml from examples, such as database.mysql.yml
