@@ -26,9 +26,9 @@ describe Settings::AccountsController, type: :controller do
         it "current_userのincomeが登録される" do
           expect(response).to redirect_to(settings_incomes_path)
           income = @current_user.incomes.find_by(name: '追加')
-          income.should_not be_nil
-          income.sort_key.should == 77
-          flash[:errors].should be_nil
+          expect(income).not_to be_nil
+          expect(income.sort_key).to eq 77
+          expect(flash[:errors]).to be_nil
         end
       end
       context "正しいパラメータ" do

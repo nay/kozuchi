@@ -12,7 +12,7 @@ describe User, :no_deals_and_patterns do
       it "成功する" do
         raise "前提エラー：Dealがある" unless Deal::General.where(user_id: @user.id).empty?
         @user.destroy
-        User.find_by(id: @user.id).should be_nil
+        expect(User.find_by(id: @user.id)).to be_nil
       end
     end
     describe "Dealがあるとき" do
@@ -21,10 +21,10 @@ describe User, :no_deals_and_patterns do
       end
       it "成功する" do
         @user.destroy
-        User.find_by(id: @user.id).should be_nil
+        expect(User.find_by(id: @user.id)).to be_nil
         # TODO AccountLinkRequest
         [Deal::Base, Entry::Base, AccountLink, AccountLinkRequest, Account::Base, Friend::Permission, Friend::Request, Settlement, Preferences].each do |klass|
-          klass.find_by(user_id: @user.id).should be_nil
+          expect(klass.find_by(user_id: @user.id)).to be_nil
         end
 #        AccountLinkRequest.find_by_sender_id(@user.id).should be_nil
 #        AccountLinkRequest.find(:first, :include => :account, :conditions => "accounts.user_id = #{@user.id}").should be_nil
@@ -45,8 +45,8 @@ describe User, :no_deals_and_patterns do
       end
       it "成功する" do
         @user.destroy
-        User.find_by(id: @user.id).should be_nil
-        Settlement.find_by(user_id: @user.id).should be_nil
+        expect(User.find_by(id: @user.id)).to be_nil
+        expect(Settlement.find_by(user_id: @user.id)).to be_nil
       end
     end
 

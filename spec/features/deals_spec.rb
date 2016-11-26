@@ -12,7 +12,7 @@ describe DealsController, type: :feature do
         visit "/deals/2012/7"
       end
       it "明細表示領域がある" do
-        page.should have_css('div#monthly_contents')
+        expect(page).to have_css('div#monthly_contents')
       end
       it "日ナビゲーターがある" do
         expect(page).to have_css('#day_navigator')
