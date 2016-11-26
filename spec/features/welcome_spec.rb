@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe WelcomeController, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   shared_examples "index" do
     it {expect(page).to have_content('きちんと。気楽に。')}

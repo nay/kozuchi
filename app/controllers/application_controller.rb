@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   include Messages
 
   include AuthenticatedSystem
-  before_filter :login_required, :load_user, :set_ssl
+  before_action :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
   attr_writer :menu_group, :menu, :title
@@ -13,15 +13,15 @@ class ApplicationController < ActionController::Base
 
   # メニューグループを指定する
   def self.menu_group(menu_group, options = {})
-    before_filter(options) {|controller| controller.send(:'menu_group=', menu_group) }
+    before_action(options) {|controller| controller.send(:'menu_group=', menu_group) }
   end
   # メニューを指定する
   def self.menu(menu, options = {})
-    before_filter(options) {|controller| controller.send(:'menu=', menu) }
+    before_action(options) {|controller| controller.send(:'menu=', menu) }
   end
 
   def self.title(title, options = {})
-    before_filter(options) {|controller| controller.send(:'title=', title)}
+    before_action(options) {|controller| controller.send(:'title=', title)}
   end
 
   protected

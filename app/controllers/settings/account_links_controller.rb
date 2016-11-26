@@ -3,11 +3,11 @@ class Settings::AccountLinksController < ApplicationController
   menu_group "連携"
   menu "連携"
 
-  before_filter :find_account, :only => [:destroy, :create]
+  before_action :find_account, :only => [:destroy, :create]
 
   # 取引連動初期表示画面
   def index
-    @accounts = current_user.accounts(true)
+    @accounts = current_user.accounts
     @friends = current_user.friends
     @linked_accounts = @accounts.select{|a| a.linked?}
   end

@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
 describe SettlementsController, type: :controller do
   fixtures :users, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
-  set_fixture_class  :accounts => Account::Base
 
   before do
     login_as :taro
@@ -14,21 +13,22 @@ describe SettlementsController, type: :controller do
 
   describe "new" do
     it "成功する" do
-      get :new, account_id: :taro_card.to_id
+      get :new, params: {account_id: :taro_card.to_id}
       expect(response).to be_success
     end
   end
 
   describe "target_deals" do
     it "十分なパラメータがないと例外" do
-      expect{ get :target_deals, account_id: :taro_card.to_id }.to raise_error(InvalidParameterError)
+      expect{ get :target_deals, params: {account_id: :taro_card.to_id} }.to raise_error(InvalidParameterError)
     end
     it "成功する" do
-      get :target_deals,
+      get :target_deals, params: {
         :start_date => {:year => '2010', :month => '5', :day => '1'},
         :end_date => {:year => '2010', :month => '5', :day => '1'},
         :settlement => {:account_id => :taro_cache.to_id},
         account_id: :taro_card.to_id
+      }
       expect(response).to be_success
     end
   end
@@ -44,7 +44,7 @@ describe SettlementsController, type: :controller do
 
   describe "account_settlements" do
     before do
-      get 'account_settlements', account_id: :taro_card.to_id
+      get 'account_settlements', params: {account_id: :taro_card.to_id}
     end
 
     it "成功する" do
@@ -62,15 +62,17 @@ describe SettlementsController, type: :controller do
       @deal.save!
     end
     it "成功する" do
-      post :create, :settlement => {
-        :account_id => :taro_hanako.to_id.to_s,
-        :name => 'テスト精算2010-5',
-        :description => '',
-        :result_partner_account_id => :taro_bank.to_id.to_s,
-        :deal_ids => {@deal.id.to_s => '1'}
-        }, :result_date => {:year => '2010', :month => '6', :day => '30'},
-        account_id: :taro_hanako.to_id
-
+      post :create, params: {
+          :settlement => {
+            :account_id => :taro_hanako.to_id.to_s,
+            :name => 'テスト精算2010-5',
+            :description => '',
+            :result_partner_account_id => :taro_bank.to_id.to_s,
+            :deal_ids => {@deal.id.to_s => '1'}
+            },
+          :result_date => {:year => '2010', :month => '6', :day => '30'},
+          account_id: :taro_hanako.to_id
+      }
       expect(response).to redirect_to(settlements_path)
       expect(@current_user.settlements.find_by(name: 'テスト精算2010-5')).not_to be_nil
     end
@@ -95,7 +97,7 @@ describe SettlementsController, type: :controller do
       @settlement.save!
     end
     it "成功する" do
-      post :submit, :id => @settlement.id
+      post :submit, params: {:id => @settlement.id}
       expect(response).to redirect_to(settlement_path(:id => @settlement.id))
       # TODO: 内部の変更確認
     end
@@ -107,7 +109,7 @@ describe SettlementsController, type: :controller do
       @settlement = create_taro_settlement
     end
     it "成功する" do
-      get :show, :id => @settlement.id
+      get :show, params: {:id => @settlement.id}
       expect(response).to be_success
     end
   end
@@ -117,7 +119,7 @@ describe SettlementsController, type: :controller do
       @settlement = create_taro_settlement
     end
     it "成功する" do
-      get :print_form, :id => @settlement.id
+      get :print_form, params: {:id => @settlement.id}
       expect(response).to be_success
     end
   end
@@ -125,7 +127,7 @@ describe SettlementsController, type: :controller do
   describe "destroy" do
     before do
       @settlement = create_taro_settlement
-      delete :destroy, :id => @settlement.id
+      delete :destroy, params: {:id => @settlement.id}
     end
     it "リダイレクトされる" do
       expect(response).to redirect_to(settlements_path)

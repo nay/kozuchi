@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Pattern::Deal < ActiveRecord::Base
+class Pattern::Deal < ApplicationRecord
   self.table_name = 'deal_patterns'
 
   belongs_to :user, :foreign_key => "user_id"

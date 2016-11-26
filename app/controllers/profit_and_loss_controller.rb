@@ -4,7 +4,7 @@ class ProfitAndLossController < ApplicationController
   menu_group "家計簿"
   menu "収支表"
 
-  before_filter :check_account
+  before_action :check_account
 
   def show
     year, month = read_target_date

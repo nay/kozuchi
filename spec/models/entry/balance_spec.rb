@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../entry_spec_helper')
 
 describe Entry::Balance do
   fixtures :accounts, :users
-  set_fixture_class  :accounts => Account::Base
   include EntrySpecHelper
 
   describe "#balance=" do

@@ -7,10 +7,10 @@ class SettlementsController < ApplicationController
   menu "精算の概況", :only => [:index]
   menu "精算の詳細", :only => [:show]
 
-  before_filter :check_credit_account, :except => [:show, :destroy, :print_form]
-  before_filter :find_account, only: [:new, :create, :target_deals, :account_settlements]
-  before_filter :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_filter :new_settlement, :only => [:new, :create, :target_deals]
+  before_action :check_credit_account, :except => [:show, :destroy, :print_form]
+  before_action :find_account, only: [:new, :create, :target_deals, :account_settlements]
+  before_action :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
+  before_action :new_settlement, :only => [:new, :create, :target_deals]
 
   # 新しい精算口座を作る
   def new

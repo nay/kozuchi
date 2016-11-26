@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe Settings::SingleLoginsController, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   describe "/settings/single_logins" do
     include_context "太郎 logged in"

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Settings::FriendRejectionsController < ApplicationController
-  before_filter :find_target_user
+  before_action :find_target_user
 
   # フレンド関係の拒否
   def create

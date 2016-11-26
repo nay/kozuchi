@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Settings::FriendAcceptancesController < ApplicationController
-  before_filter :find_target_user
+  before_action :find_target_user
 
   def create
     if !@target_user

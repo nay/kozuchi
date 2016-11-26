@@ -5,7 +5,6 @@ include DealsSpecHelper
 
 describe "user.deals" do
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
 
   describe "created_on" do
     before do

@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 class UsersController < ApplicationController
-  skip_before_filter :login_required, :except => [:destroy, :edit]
+  skip_before_action :login_required, :except => [:destroy, :edit]
   menu_group "設定"
   menu "プロフィール", :only => [:edit, :update]
 
-  before_filter :password_token_required, :only => [:edit_password, :update_password]
+  before_action :password_token_required, :only => [:edit_password, :update_password]
   cache_sweeper :export_sweeper, :only => [:destroy]
 
   # render new.rhtml

@@ -5,10 +5,10 @@ class DealsController < ApplicationController
   menu_group "家計簿"
   menu "家計簿"
   title '記入する', only: [:new]
-  before_filter :check_account
-  before_filter :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
-  before_filter :find_new_or_existing_deal, :only => [:create_entry]
-  before_filter :find_account_if_specified, only: [:index, :monthly]
+  before_action :check_account
+  before_action :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
+  before_action :find_new_or_existing_deal, :only => [:create_entry]
+  before_action :find_account_if_specified, only: [:index, :monthly]
 
   # 単数記入タブエリアの表示 (Ajax)
   def new_general_deal
@@ -62,7 +62,7 @@ class DealsController < ApplicationController
 
     # create_xxx
     define_method "create_#{deal_type}" do
-      size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
+      size = deal_params[:creditor_entries_attributes].kind_of?(Array) ? deal_params[:creditor_entries_attributes].size : deal_params[:creditor_entries_attributes].try(:to_h).try(:size)
       @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
 
       if @deal.save
@@ -155,7 +155,7 @@ class DealsController < ApplicationController
   # 記入欄を増やすアクション
   # @deal を作り直して書き直す
   def create_entry
-    entries_size = params[:deal][:debtor_entries_attributes].size
+    entries_size = deal_params[:debtor_entries_attributes].to_h.size
     @deal.attributes = deal_params
     @deal.fill_complex_entries(entries_size+1)
     if @deal.new_record?
@@ -243,7 +243,7 @@ class DealsController < ApplicationController
   def search
     raise InvalidParameterError if params[:keyword].blank?
     @keywords = params[:keyword].split(' ')
-    @deals = current_user.deals.time_ordering.including(@keywords).uniq # NOTE: Rails4.1.0 関連の直後だとuniqがスコープにならず発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう。countはDISTINCTが重なってSQLエラーになるので view でlength を使っている
+    @deals = current_user.deals.time_ordering.including(@keywords).distinct # NOTE: Rails4.1.0 関連の直後だとuniqがスコープにならず発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう。countはDISTINCTが重なってSQLエラーになるので view でlength を使っている
     @as_action = :index
   end
 
@@ -262,7 +262,7 @@ class DealsController < ApplicationController
   private
 
   def data_for_day_navigator
-    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).uniq
+    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).distinct
   end
 
   def find_deal

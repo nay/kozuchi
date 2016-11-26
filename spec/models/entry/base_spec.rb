@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Entry::Base do
   fixtures :accounts, :users, :account_links, :friend_permissions, :friend_requests
-  set_fixture_class  :accounts => Account::Base
 
   before do
     @cache = accounts(:account_enrty_test_cache)

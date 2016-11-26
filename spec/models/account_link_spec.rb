@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe AccountLink do
   fixtures :users, :friend_permissions, :friend_requests, :accounts
-  set_fixture_class  :accounts => Account::Base  
 
   before do
     # 前提条件
@@ -28,19 +27,19 @@ describe AccountLink do
       @link.should_not be_valid
     end
     it "user_id, target_user_id, target_ex_account_idがあれば検証を通る" do
-      @link.valid?.should be_truthy
+      expect(@link).to be_valid
     end
     it "user_idがなければ検証エラー" do
       @link.user_id = nil
-      @link.save.should be_falsey
+      expect(@link.save).to be_falsey
     end
     it "target_user_idがなければ検証エラー" do
       @link.target_user_id = nil
-      @link.save.should be_falsey
+      expect(@link.save).to be_falsey
     end
     it "target_ex_account_idがなければ検証エラー" do
       @link.target_ex_account_id = nil
-      @link.save.should be_falsey
+      expect(@link.save).to be_falsey
     end
   end
 
@@ -53,7 +52,7 @@ describe AccountLink do
       @link.save
     end
     it "例外が発生する" do
-      lambda{@link.save}.should raise_error(RuntimeError)
+      expect {@link.save}.to raise_error(RuntimeError)
     end
   end
   
@@ -63,7 +62,7 @@ describe AccountLink do
       @link.user_id = 3
       @link.target_user_id = 5
       @link.target_ex_account_id = 12
-      @link.save.should be_truthy
+      expect(@link.save).to be_truthy
     end
     describe "対応するフレンドな相手ユーザーオブジェクトが取得できる時" do
       before do
@@ -79,11 +78,11 @@ describe AccountLink do
         @link.target_ex_account_id = @target_user_account_for_user.id
       end
       it "成功して、相手側にaccount_link_requestが作られる" do
-        @link.save.should be_truthy
+        expect(@link.save).to be_truthy
         r = AccountLinkRequest.find_by(sender_id: @user.id)
-        r.should_not be_nil
-        r.account_id.should == @target_user_account_for_user.id
-        r.sender_ex_account_id.should == @user_account_for_target_user.id
+        expect(r).not_to be_nil
+        expect(r.account_id).to eq @target_user_account_for_user.id
+        expect(r.sender_ex_account_id).to eq @user_account_for_target_user.id
       end
     end
   end

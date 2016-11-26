@@ -4,7 +4,7 @@ class Settings::PreferencesController < ApplicationController
   menu_group "設定"
   menu "カスタマイズ"
 
-  before_filter :find_preferences
+  before_action :find_preferences
 
   def show
   end

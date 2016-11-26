@@ -14,7 +14,7 @@ class News
   def self.get
     begin
       Rails.logger.info "Started to get the news from #{rss_host}."
-      timeout(5) do
+      Timeout.timeout(5) do
         rss = RSS::Parser.parse(Net::HTTP.get(rss_host, rss_path, rss_port))
 
         content = ""

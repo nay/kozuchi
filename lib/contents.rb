@@ -10,7 +10,7 @@ module Contents
       query = Hash[URI.decode_www_form(uri.query || "")]
       uri.query = URI.encode_www_form(query)
       client = HTTPClient.new
-      resource = timeout(timeout_seconds) do
+      resource = Timeout.timeout(timeout_seconds) do
         client.get(uri, follow_redirect: true)
       end
       Kozuchi.send("#{cache_key}_updated_on=", Date.today)

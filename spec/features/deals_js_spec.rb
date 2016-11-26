@@ -2,9 +2,7 @@
 require 'spec_helper'
 
 describe DealsController, js: true, type: :feature do
-  self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   # 変更windowを開いたあとの記述。閲覧と記入でまったく同じなのでここで
   shared_examples_for "複数記入に変更できる" do
@@ -121,7 +119,7 @@ describe DealsController, js: true, type: :feature do
           expect(find("#edit_window #date_month").value).to eq "7"
           expect(find("#edit_window #date_day").value).to eq "10"
           expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
-          current_hash.should == "d#{deal.id}"
+          expect(current_hash).to eq "d#{deal.id}"
         end
         it_behaves_like "複数記入に変更できる"
         it_behaves_like "変更を実行できる"
@@ -270,7 +268,7 @@ describe DealsController, js: true, type: :feature do
         before do
           select_menu('家計簿')
           click_link "記入する"
-          click_link "*昼食" # パターンを指定
+          page.find("#recent_deal_patterns").click_link "*昼食" # パターンを指定
         end
         it "パターン登録した内容が入る" do
           sleep 1

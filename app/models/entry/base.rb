@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 # １口座への１記入を表す
-class Entry::Base < ActiveRecord::Base
+class Entry::Base < ApplicationRecord
   self.table_name = 'account_entries'
   unsavable
 
@@ -143,10 +143,10 @@ class Entry::Base < ActiveRecord::Base
     errors.add(:account_id, "が不正です。") if !user_id.nil? && account.user_id.to_i != user_id.to_i
   end
 
+  # TODO: Dealからもセットしているので要らないかとおもったが外すと結構動かないので精査が必要
   def copy_deal_attributes
     # 基本的にDealからコピーするがDealがないケースも許容する
-    # TODO: どうも Deal でも Entry でもやっているっぽいので何とかならないか？
-    if deal(true) && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
+    if deal && deal.kind_of?(Deal::General) # TODO: 残高では常に作り直す上にbefore系コールバックでbuildするため、これだと変更処理がうまくいかない
       self.user_id = deal.user_id
       self.date = deal.date
       self.daily_seq = deal.daily_seq

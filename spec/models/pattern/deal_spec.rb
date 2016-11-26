@@ -3,13 +3,7 @@ require 'spec_helper'
 
 describe Pattern::Deal do
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
 
-  # TODO: 環境が汚れた状態からスタートして落ちるのでとりあえず
-  before do
-    Pattern::Deal.destroy_all
-  end
-  
   describe ".new" do
     it do
       expect{Pattern::Deal.new}.not_to raise_error

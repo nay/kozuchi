@@ -5,8 +5,8 @@ class Settings::DealPatternsController < ApplicationController
   menu "記入パターンの新規登録", only: [:new, :create]
   menu "記入パターンの編集", only: [:show, :update]
 
-  before_filter :find_deal_pattern, :only => [:show, :update, :destroy]
-  before_filter :find_or_build_deal_pattern, :only => [:create_entry]
+  before_action :find_deal_pattern, :only => [:show, :update, :destroy]
+  before_action :find_or_build_deal_pattern, :only => [:create_entry]
 
   def index
     @deal_patterns = current_user.deal_patterns.order('updated_at desc') # TODO: paginate
@@ -80,7 +80,7 @@ class Settings::DealPatternsController < ApplicationController
 
   # 記入欄を増やす
   def create_entry
-    entries_size = params[:deal_pattern][:debtor_entries_attributes].size
+    entries_size = deal_pattern_params[:debtor_entries_attributes].kind_of?(Array) ? deal_pattern_params[:debtor_entries_attributes].size : deal_pattern_params[:debtor_entries_attributes].to_h.size
     @deal_pattern.attributes = deal_pattern_params
     @deal_pattern.fill_complex_entries(entries_size+1)
     render action: 'form', layout: false
@@ -91,9 +91,9 @@ class Settings::DealPatternsController < ApplicationController
     scope = current_user.deal_patterns
     scope = scope.where(["deal_patterns.id != ?", params[:except]]) if params[:except].present?
     if pattern_deal = scope.find_by(code: params[:code])
-      render :text => pattern_deal.code
+      render :plain => pattern_deal.code
     else
-      render :text => '' # :nothing => true だと半角スペースが入って返されてしまうので
+      render :plain => '' # :nothing => true だと半角スペースが入って返されてしまうので
     end
   end
 

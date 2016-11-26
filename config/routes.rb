@@ -109,9 +109,11 @@ Kozuchi::Application.routes.draw do
   end
 
   # AssetsController
-  controller :assets, :path => 'f' do # /assets はじまりは無視されるため
-    get 'assets/:year/:month', {:as => :monthly_assets, :action => :monthly}.merge(YEAR_MONTH_REQUIREMENTS)
-    resources :assets, :only => [:index]
+  controller :assets do
+    scope :path => 'f' do # /assets はじまりは無視されるため
+      get 'assets/:year/:month', {:as => :monthly_assets, :action => :monthly}.merge(YEAR_MONTH_REQUIREMENTS)
+      resources :assets, :only => [:index]
+    end
   end
 
   # BalanceSheetController
@@ -134,7 +136,9 @@ Kozuchi::Application.routes.draw do
 
   # HelpController
   controller :help do
-    get 'help/:action'
+    get 'help/index'
+    get 'help/functions'
+    get 'help/faq'
   end
 
 #  # TODO: except sessions,

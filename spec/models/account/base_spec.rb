@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../entry_spec_helper')
 
 describe "Account::Base", :no_deals_and_patterns do
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
 
   include EntrySpecHelper
 

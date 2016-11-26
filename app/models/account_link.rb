@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class AccountLink < ActiveRecord::Base
+class AccountLink < ApplicationRecord
   belongs_to :account, :class_name => "Account::Base", :foreign_key => "account_id"
   belongs_to :target_user, :foreign_key => "target_user_id", :class_name => "User"
 

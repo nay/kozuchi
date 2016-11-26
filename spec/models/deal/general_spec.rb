@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Deal::General do
   fixtures :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions, :users
-  set_fixture_class  :accounts => Account::Base, :deals => Deal::Base
 
   before do
     @cache = accounts(:deal_test_cache)
@@ -177,7 +176,7 @@ describe Deal::General do
 
   describe "update" do
     let!(:deal) do
-      Timecop.travel(Time.now - 10000) do
+      Timecop.travel(10.minutes.ago) do
         d = new_simple_deal(6, 1, @cache, @bank, 3500)
         d.save!
         d
@@ -186,16 +185,17 @@ describe Deal::General do
     let!(:old_time_stamp) { deal.created_at }
     before do
       @deal = deal # TODO: 互換性のためいったん残す
+      @deal.reload
     end
     # 複数記入への変更
     it "貸し方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries(true).first.id, :line_number => 0},
+          '0' => {:account_id => @cache.id, :amount => -3200, :id => @deal.creditor_entries.first.id, :line_number => 0},
           '1' => {:account_id => :deal_test_food.to_id, :amount => -300, :line_number => 1}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries(true).first.id, :line_number => 0}
+          '0' => {:account_id => @bank.id, :amount => 3500, :id => @deal.debtor_entries.first.id, :line_number => 0}
         }
       }
       @deal.creditor_entries.size.should == 3 # 一時的に３つになる
@@ -213,10 +213,10 @@ describe Deal::General do
     it "借り方の項目を足して複数記入に変更できる" do
       @deal.attributes = {
         :creditor_entries_attributes => {
-          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries(true).first.id, :line_number => 0}
+          '0' => {:account_id => @cache.id, :amount => -3500, :id => @deal.creditor_entries.first.id, :line_number => 0}
         },
         :debtor_entries_attributes => {
-          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries(true).first.id, :line_number => 0},
+          '0' => {:account_id => @bank.id, :amount => 3200, :id => @deal.debtor_entries.first.id, :line_number => 0},
           '1' => {:account_id => :deal_test_food.to_id, :amount => 300, :line_number => 1}
         }
       }
@@ -234,6 +234,7 @@ describe Deal::General do
     end
     context "日付を変更したとき" do
       before do
+        deal.reload # セーブ前の状態で deal 内の entry に deal が存在しているとentry保存時に日付が巻きもどるのでクリーンにしておく
         deal.date = deal.date - 7
         deal.save!
       end

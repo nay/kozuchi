@@ -233,7 +233,7 @@ class Deal::General < Deal::Base
 
   # 各 entry の口座情報をもとに、こちらから連携依頼を送るべきユーザーの配列を返す
   def updated_receiver_ids(reload = false)
-    receiver_ids = readonly_entries(reload).map{|e| e.account.destination_account}.compact.map(&:user_id)
+    receiver_ids = (reload ? readonly_entries.reload : readonly_entries).map{|e| e.account.destination_account}.compact.map(&:user_id)
     receiver_ids.uniq!
     receiver_ids
   end
@@ -280,10 +280,10 @@ class Deal::General < Deal::Base
     end
 
     if changed_self
-      debtor_entries(true)
-      creditor_entries(true)
-      readonly_entries(true)
-      entries(true)
+      debtor_entries.reload
+      creditor_entries.reload
+      readonly_entries.reload
+      entries.reload
     end
     true
   end

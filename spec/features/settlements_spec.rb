@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe SettlementsController, type: :feature do
   fixtures :users, :accounts, :account_links, :account_link_requests, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   include_context "太郎 logged in"
 
@@ -14,7 +13,7 @@ describe SettlementsController, type: :feature do
       before do
         AccountLink.destroy_all
         AccountLinkRequest.destroy_all
-        Account::Asset.delete_all("asset_kind != 'cache'") # TODO: destroyできない
+        Account::Asset.where("asset_kind != 'cache'").delete_all # TODO: destroyできない
         visit url
       end
 

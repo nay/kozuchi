@@ -3,11 +3,11 @@ class Settings::SingleLoginsController < ApplicationController
   menu_group "設定"
   menu "シングルログイン"
 
-  before_filter :find_single_login, :only => [:destroy]
+  before_action :find_single_login, :only => [:destroy]
 
   def index
     @single_login = current_user.single_logins.build
-    current_user.single_logins(true)
+    current_user.single_logins.reload
   end
 
   def create

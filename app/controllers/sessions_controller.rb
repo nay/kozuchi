@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  skip_before_filter :login_required, :only => [:new, :create, :destroy]
+  skip_before_action :login_required, :only => [:new, :create, :destroy]
   
   # functional test のために残している
   def new

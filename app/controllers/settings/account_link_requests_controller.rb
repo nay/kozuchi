@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Settings::AccountLinkRequestsController < ApplicationController
-  before_filter :find_account
+  before_action :find_account
 
   def destroy
     link_request = @account.link_requests.find(params[:id])

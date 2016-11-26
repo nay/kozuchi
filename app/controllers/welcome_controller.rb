@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class WelcomeController < ApplicationController
-  skip_before_filter :login_required
+  skip_before_action :login_required
     
   def index
     if !defined?(DISPLAY_NEWS) || DISPLAY_NEWS

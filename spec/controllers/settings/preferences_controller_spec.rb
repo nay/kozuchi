@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper
 
 describe Settings::PreferencesController, type: :controller do
   fixtures :users, :preferences
-  set_fixture_class :preferences => Preferences
 
   before do
     login_as :taro
@@ -21,12 +20,13 @@ describe Settings::PreferencesController, type: :controller do
 
   describe "update" do
     it "成功する" do
-      put :update, :preferences => {:business_use => '1', :bookkeeping_style => '1', :color => '#8a4b3f'}
+      put :update, params: {:preferences => {:business_use => '1', :bookkeeping_style => '1', :color => '#8a4b3f'}}
       expect(response).to redirect_to(settings_preferences_path)
-      @preferences = @current_user.preferences(true)
-      @preferences.should be_business_use
-      @preferences.should be_bookkeeping_style
-      @preferences.color.should == '#8a4b3f'
+      @preferences = @current_user.preferences
+      @preferences.reload
+      expect(@preferences).to be_business_use
+      expect(@preferences).to be_bookkeeping_style
+      expect(@preferences.color).to eq '#8a4b3f'
     end
   end
 

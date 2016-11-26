@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class SingleLogin < ActiveRecord::Base
+class SingleLogin < ApplicationRecord
   belongs_to :user
   attr_accessor :password
 #  attr_protected :user_id, :crypted_password

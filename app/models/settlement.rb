@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 #TODO: UserProxy対応
-class Settlement < ActiveRecord::Base
+class Settlement < ApplicationRecord
   belongs_to :account, :class_name => 'Account::Base', :foreign_key => 'account_id'
 
   has_many :target_entries,

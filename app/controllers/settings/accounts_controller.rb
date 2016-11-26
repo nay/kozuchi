@@ -2,8 +2,8 @@ class Settings::AccountsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "設定"
 
-  before_filter :set_account_class
-  before_filter :find_account, :only => [:destroy]
+  before_action :set_account_class
+  before_action :find_account, :only => [:destroy]
 
   # 一覧・登録フォーム
   def index
@@ -20,7 +20,7 @@ class Settings::AccountsController < ApplicationController
       flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
       redirect_to action: :index
     else
-      @accounts = user_accounts(true)
+      @accounts = user_accounts.reload
       set_asset_kinds_option_container if @account_class.has_kind?
       render action: :index
     end
@@ -60,8 +60,8 @@ class Settings::AccountsController < ApplicationController
 
   private
 
-  def user_accounts(*args)
-    current_user.send(params[:account_type].pluralize, *args)
+  def user_accounts
+    current_user.send(params[:account_type].pluralize)
   end
 
   def set_account_class

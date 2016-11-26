@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Settlement do
   fixtures :users, :accounts, :account_links, :account_link_requests, :friend_requests, :friend_permissions
-  set_fixture_class  :accounts => Account::Base
 
   before do
     @current_user = users(:taro)

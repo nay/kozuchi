@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'builder/xmlmarkup' # TODO:
 
-class Account::Base < ActiveRecord::Base
+class Account::Base < ApplicationRecord
 
   self.table_name = "accounts"
 

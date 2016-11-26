@@ -1,13 +1,7 @@
 require "spec_helper"
 
 describe "記入パターン", js: true, type: :feature do
-  self.use_transactional_fixtures = false
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
-
-  before do
-    Pattern::Deal.destroy_all # TODO: とりあえず RSpec3 でユニーク制約で引っかかるようになったので
-  end
 
   include_context "太郎 logged in"
 
