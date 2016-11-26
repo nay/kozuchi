@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe "sesstings/assets", js: true, type: :feature do
-  self.use_transactional_tests = false
   fixtures :users, :accounts, :preferences
   set_fixture_class  :accounts => Account::Base
 

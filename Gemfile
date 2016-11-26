@@ -50,6 +50,7 @@ end
 # and rake tasks are available in development mode:
 group :development, :test do
 #  gem 'selenium-webdriver'
+  gem 'database_cleaner'
   gem 'timecop'
   gem 'i18n_generators'
   gem "rspec-rails"

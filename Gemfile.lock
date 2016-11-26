@@ -77,6 +77,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.2)
+    database_cleaner (1.5.3)
     diff-lcs (1.2.5)
     dynamic_form (1.1.4)
     erubis (2.7.0)
@@ -233,6 +234,7 @@ DEPENDENCIES
   bootstrap-sass
   capybara
   coffee-rails
+  database_cleaner
   dynamic_form
   factory_girl_rails
   haml-rails
