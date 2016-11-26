@@ -119,7 +119,7 @@ describe DealsController, js: true, type: :feature do
           expect(find("#edit_window #date_month").value).to eq "7"
           expect(find("#edit_window #date_day").value).to eq "10"
           expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
-          current_hash.should == "d#{deal.id}"
+          expect(current_hash).to eq "d#{deal.id}"
         end
         it_behaves_like "複数記入に変更できる"
         it_behaves_like "変更を実行できる"

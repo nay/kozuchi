@@ -62,7 +62,7 @@ class DealsController < ApplicationController
 
     # create_xxx
     define_method "create_#{deal_type}" do
-      size = params[:deal] && params[:deal][:creditor_entries_attributes] ? params[:deal][:creditor_entries_attributes].size : nil
+      size = deal_params[:creditor_entries_attributes].kind_of?(Array) ? deal_params[:creditor_entries_attributes].size : deal_params[:creditor_entries_attributes].try(:to_h).try(:size)
       @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
 
       if @deal.save
@@ -155,7 +155,7 @@ class DealsController < ApplicationController
   # 記入欄を増やすアクション
   # @deal を作り直して書き直す
   def create_entry
-    entries_size = params[:deal][:debtor_entries_attributes].size
+    entries_size = deal_params[:debtor_entries_attributes].to_h.size
     @deal.attributes = deal_params
     @deal.fill_complex_entries(entries_size+1)
     if @deal.new_record?
