@@ -91,9 +91,9 @@ class Settings::DealPatternsController < ApplicationController
     scope = current_user.deal_patterns
     scope = scope.where(["deal_patterns.id != ?", params[:except]]) if params[:except].present?
     if pattern_deal = scope.find_by(code: params[:code])
-      render :text => pattern_deal.code
+      render :plain => pattern_deal.code
     else
-      render :text => '' # :nothing => true だと半角スペースが入って返されてしまうので
+      render :plain => '' # :nothing => true だと半角スペースが入って返されてしまうので
     end
   end
 
