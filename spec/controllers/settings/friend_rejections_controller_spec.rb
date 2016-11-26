@@ -10,7 +10,7 @@ describe Settings::FriendRejectionsController, type: :controller do
     @current_user.friend_acceptances.find_by(target_id: :hanako.to_id).destroy
   end
 
-  response_should_be_redirected_without_login {post :create, :target_login => 'hanako'}
+  response_should_be_redirected_without_login {post :create, params: {:target_login => 'hanako'}}
 
   describe "create" do
     it "成功する" do

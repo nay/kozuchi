@@ -12,7 +12,7 @@ describe Settings::AccountsController, type: :controller do
       login_as :taro
     end
 
-    response_should_be_redirected_without_login { get :index, account_type: 'income' }
+    response_should_be_redirected_without_login { get :index, params: {account_type: 'income'} }
 
     describe "index" do
       it "成功する" do
@@ -82,7 +82,7 @@ describe Settings::AccountsController, type: :controller do
 
     describe "destroy" do
       it "成功する" do
-        delete :destroy, :id => :taro_salary.to_id, account_type: 'income'
+        delete :destroy, params: {:id => :taro_salary.to_id, account_type: 'income'}
         expect(response).to redirect_to(settings_incomes_path)
         expect(flash[:errors]).to be_nil
         expect(Account::Base.find_by(id: :taro_salary.to_id)).to be_nil

@@ -7,7 +7,7 @@ class Settings::AccountLinksController < ApplicationController
 
   # 取引連動初期表示画面
   def index
-    @accounts = current_user.accounts(true)
+    @accounts = current_user.accounts
     @friends = current_user.friends
     @linked_accounts = @accounts.select{|a| a.linked?}
   end

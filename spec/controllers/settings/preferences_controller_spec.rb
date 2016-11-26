@@ -22,7 +22,8 @@ describe Settings::PreferencesController, type: :controller do
     it "成功する" do
       put :update, params: {:preferences => {:business_use => '1', :bookkeeping_style => '1', :color => '#8a4b3f'}}
       expect(response).to redirect_to(settings_preferences_path)
-      @preferences = @current_user.preferences(true)
+      @preferences = @current_user.preferences
+      @preferences.reload
       expect(@preferences).to be_business_use
       expect(@preferences).to be_bookkeeping_style
       expect(@preferences.color).to eq '#8a4b3f'

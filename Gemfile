@@ -10,7 +10,7 @@ gem 'jquery-rails'
 gem 'libv8'
 gem 'mysql2'
 gem 'passenger'
-gem 'rails', '5.0.0'
+gem 'rails', '5.0.0.1'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rails-controller-testing'

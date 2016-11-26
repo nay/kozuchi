@@ -33,7 +33,7 @@ describe Settings::PartnerAccountsController, type: :controller do
     end
     it "ほかのユーザーの勘定に対して設定できない" do
 
-      expect { put :update, :account_id => :hanako_taro.to_id }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { put :update, params: {:account_id => :hanako_taro.to_id} }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
