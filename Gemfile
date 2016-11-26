@@ -8,7 +8,7 @@ gem 'html5jp_graphs', '~> 0.0.3'
 gem 'httpclient'
 gem 'jquery-rails'
 gem 'libv8'
-gem 'mysql2', '~> 0.3.20' # TODO: Rails 4.2.5 以降でなおる
+gem 'mysql2'
 gem 'passenger'
 gem 'rails', '5.0.0'
 # Bundle edge Rails instead:
