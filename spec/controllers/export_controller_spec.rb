@@ -18,13 +18,13 @@ describe ExportController, type: :controller do
   describe "GET 'whole'" do
     describe "xml" do
       it "成功すること" do
-        get 'whole', :format => "xml", :filename => "export"
+        get 'whole', params: {:format => "xml", :filename => "export"}
         expect(response).to be_success
       end
     end
     describe "csv" do
       it "成功すること" do
-        get 'whole', :format => "csv", :filename => "export"
+        get 'whole', params: {:format => "csv", :filename => "export"}
         expect(response).to be_success
       end
     end

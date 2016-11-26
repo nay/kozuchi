@@ -24,7 +24,7 @@ describe Settings::AccountLinksController, type: :controller do
       @target_account_id = Fixtures.identify(:taro_hanako)
     end
     it "成功する" do
-      delete :destroy, :account_id => @target_account_id, :id => @target_id
+      delete :destroy, params: {:account_id => @target_account_id, :id => @target_id}
       expect(response).to redirect_to(settings_account_links_path)
       expect(AccountLink.find_by(id: @target_id)).to be_nil
     end
@@ -33,7 +33,7 @@ describe Settings::AccountLinksController, type: :controller do
   describe "create" do
     shared_examples_for 'createが成功する' do
       it "成功する" do
-        post :create, :linked_account_name => '太郎', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'
+        post :create, params: {:linked_account_name => '太郎', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'}
         expect(response).to redirect_to(settings_account_links_path)
         expect(flash[:errors]).to be_nil
         expect(AccountLink.find_by(account_id: Fixtures.identify(:taro_hanako), target_user_id: Fixtures.identify(:hanako))).not_to be_nil

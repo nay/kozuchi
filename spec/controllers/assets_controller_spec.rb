@@ -26,7 +26,7 @@ describe AssetsController, type: :controller do
   end
   describe "monthly" do
     it "成功する" do
-      get :monthly, {:year => Date.today.year.to_s, :month => Date.today.month.to_s}
+      get :monthly, params: {:year => Date.today.year.to_s, :month => Date.today.month.to_s}
       expect(response).to be_success
     end
   end

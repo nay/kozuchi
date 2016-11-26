@@ -27,7 +27,7 @@ describe ProfitAndLossController, type: :controller do
   end
   describe "monthly" do
     it "成功する" do
-      get :monthly, {:year => Date.today.year, :month => Date.today.month}
+      get :monthly, params: {:year => Date.today.year, :month => Date.today.month}
       expect(response).to be_success
     end
   end

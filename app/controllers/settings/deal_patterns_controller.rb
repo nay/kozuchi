@@ -80,7 +80,7 @@ class Settings::DealPatternsController < ApplicationController
 
   # 記入欄を増やす
   def create_entry
-    entries_size = params[:deal_pattern][:debtor_entries_attributes].size
+    entries_size = deal_pattern_params[:debtor_entries_attributes].kind_of?(Array) ? deal_pattern_params[:debtor_entries_attributes].size : deal_pattern_params[:debtor_entries_attributes].to_h.size
     @deal_pattern.attributes = deal_pattern_params
     @deal_pattern.fill_complex_entries(entries_size+1)
     render action: 'form', layout: false

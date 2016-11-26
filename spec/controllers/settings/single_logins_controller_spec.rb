@@ -20,16 +20,16 @@ describe Settings::SingleLoginsController, type: :controller do
 
   describe "create" do
     it "成功する" do
-      post :create, :single_login => {:login => 'hanako', :password => 'hanako'}
+      post :create, params: {:single_login => {:login => 'hanako', :password => 'hanako'}}
       expect(response).to redirect_to(settings_single_logins_path)
-      flash[:errors].should be_nil
-      @current_user.single_logins.find_by(login: 'hanako').should_not be_nil
+      expect(flash[:errors]).to be_nil
+      expect(@current_user.single_logins.find_by(login: 'hanako')).not_to be_nil
     end
     it "パスワードが違うと成功しない" do
-      post :create, :single_login => {:login => 'hanako', :password => 'hanako2'}
+      post :create, params: {:single_login => {:login => 'hanako', :password => 'hanako2'}}
       expect(response).to be_success
-      assigns(:single_login).errors.should_not be_empty
-      @current_user.single_logins.find_by(login: 'hanako').should be_nil
+      expect(assigns(:single_login).errors).not_to be_empty
+      expect(@current_user.single_logins.find_by(login: 'hanako')).to be_nil
     end
   end
 
