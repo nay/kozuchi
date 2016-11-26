@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe AssetsController, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   include_context "太郎 logged in"
 

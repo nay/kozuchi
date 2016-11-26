@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe Pattern::Deal do
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
 
   describe ".new" do
     it do

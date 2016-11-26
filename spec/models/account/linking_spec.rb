@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe "Account with Account::Linking" do
   fixtures :users, :friend_permissions, :friend_requests, :accounts
-  set_fixture_class :accounts => Account::Base
 
   before do
     @taro = users(:taro)

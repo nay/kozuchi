@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Deal::Balance do
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
 
   describe "#valid?" do
     context "account_idがないとき" do

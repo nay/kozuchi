@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe Pattern::Entry do
   fixtures :accounts, :users, :account_links, :friend_permissions, :friend_requests
-  set_fixture_class  :accounts => Account::Base
 
   describe ".new" do
     it do

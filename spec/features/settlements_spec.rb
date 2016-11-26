@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe SettlementsController, type: :feature do
   fixtures :users, :accounts, :account_links, :account_link_requests, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   include_context "太郎 logged in"
 

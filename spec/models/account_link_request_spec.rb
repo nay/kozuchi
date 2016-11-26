@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe AccountLinkRequest, :no_deals_and_patterns do
   fixtures :users, :accounts, :account_links, :account_link_requests
-  set_fixture_class  :accounts => Account::Base
 
   describe "create" do
     before do

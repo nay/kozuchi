@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe DealsController, js: true, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   # 変更windowを開いたあとの記述。閲覧と記入でまったく同じなのでここで
   shared_examples_for "複数記入に変更できる" do

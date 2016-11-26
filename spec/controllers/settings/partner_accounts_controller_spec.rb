@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper
 
 describe Settings::PartnerAccountsController, type: :controller do
   fixtures :users, :accounts
-  set_fixture_class :accounts => Account::Base
 
   before do
     login_as :taro

@@ -2,7 +2,6 @@ require "spec_helper"
 
 describe "記入パターン", js: true, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   include_context "太郎 logged in"
 

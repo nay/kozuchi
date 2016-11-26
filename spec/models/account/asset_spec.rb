@@ -4,8 +4,7 @@ require 'spec_helper'
 describe "Account::Asset", :no_deals_and_patterns do
   self.use_transactional_tests = true
   fixtures :users, :accounts
-  set_fixture_class  :accounts => Account::Base
-  
+
   before do
     @user = users(:taro)
     @capital_fund = @user.assets.create!(:name => "資本金", :asset_kind => "capital_fund")

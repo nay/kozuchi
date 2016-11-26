@@ -3,7 +3,6 @@ require 'spec_helper'
 
 describe DealsController, type: :feature do
   fixtures :users, :accounts, :preferences
-  set_fixture_class  :accounts => Account::Base
 
   # 一覧
   describe "/deals/2012/7" do

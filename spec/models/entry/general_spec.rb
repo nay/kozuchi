@@ -4,7 +4,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../entry_spec_helper')
 
 describe Entry::General do
   fixtures :accounts, :users, :account_links, :friend_permissions, :friend_requests
-  set_fixture_class  :accounts => Account::Base
   include EntrySpecHelper
 
   describe "#amount=" do

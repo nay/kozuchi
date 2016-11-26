@@ -32,6 +32,14 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = true
 
+  config.before(:all) do
+    self.class.set_fixture_class accounts:           Account::Base,
+                                 deals:              Deal::Base,
+                                 friend_requests:    Friend::Request,
+                                 friend_permissions: Friend::Permission,
+                                 preferences:        Preferences
+  end
+
   config.before(:each) do |example|
     if example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
