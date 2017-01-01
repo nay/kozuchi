@@ -1,0 +1,32 @@
+- if @patterns.blank?
+  = javascript_tag "$('#patterns').css('display','none');"
+- else
+  = javascript_tag "$('#patterns').css('display', 'block');"
+  %div{style: "background-color:white;"}
+    %table
+      - @patterns.each do |pattern|
+        %tr
+          - if pattern.simple?
+            %td
+              .clickable_text{onClick: "#{@general_callback}('#{j pattern.summary}', '#{pattern.debtor_entries.first.try(:amount)}', '#{pattern.creditor_entries.first.try(:account_id)}', '#{pattern.debtor_entries.first.try(:account_id)}', #{pattern.id}, '#{pattern.css_class}' );"}
+                %div{class: "#{pattern.css_class}"}= pattern.caption
+            %td= number_with_delimiter(pattern.debtor_entries.first.amount)
+            - if current_user.bookkeeping_style?
+              %td= "(借) #{pattern.debtor_account_name}"
+              %td= "(貸) #{pattern.creditor_account_name}"
+            - else
+              %td= "[#{pattern.creditor_account_name}]"
+              %td= " → "
+              %td= "[#{pattern.debtor_account_name}]"
+          - else
+            %td
+              .clickable_text{onClick: "fillForComplexDeal('#{pattern.id}', '#{pattern.css_class}');"}
+                %div{class: "#{pattern.css_class}"}= pattern.caption
+            %td= number_with_delimiter(pattern.debtor_amount)
+            - if current_user.bookkeeping_style?
+              %td= "(借) #{pattern.debtor_account_name}"
+              %td= "(貸) #{pattern.creditor_account_name}"
+            - else
+              %td= "[#{pattern.creditor_account_name}]"
+              %td= " → "
+              %td="[#{pattern.debtor_account_name}]"
