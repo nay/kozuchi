@@ -38,7 +38,7 @@ class DealSuggestionsController < ApplicationController
       @general_callback = 'onGeneralDealSelectedFromGeneral'
     end
 
-    render(:partial => 'patterns')
+    render partial: 'patterns'
   end
 
 end
