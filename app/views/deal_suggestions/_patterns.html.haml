@@ -6,15 +6,20 @@
     %table
       - @patterns.each do |pattern|
         %tr
-          - on_click = pattern.simple? ? "#{@general_callback}('#{j pattern.summary}', '#{pattern.debtor_entries.first.try(:amount)}', '#{pattern.creditor_entries.first.try(:account_id)}', '#{pattern.debtor_entries.first.try(:account_id)}', #{pattern.id}, '#{pattern.css_class}' );" : "fillForComplexDeal('#{pattern.id}', '#{pattern.css_class}');"
+          - on_click                = pattern.simple? ? "#{@general_callback}('#{j pattern.summary}', '#{pattern.debtor_entries.first.try(:amount)}', '#{pattern.creditor_entries.first.try(:account_id)}', '#{pattern.debtor_entries.first.try(:account_id)}', #{pattern.id}, '#{pattern.css_class}', true );" : "fillForComplexDeal('#{pattern.id}', '#{pattern.css_class}',  true);"
+          - on_click_without_amount = pattern.simple? ? "#{@general_callback}('#{j pattern.summary}', '#{pattern.debtor_entries.first.try(:amount)}', '#{pattern.creditor_entries.first.try(:account_id)}', '#{pattern.debtor_entries.first.try(:account_id)}', #{pattern.id}, '#{pattern.css_class}', false );" : "fillForComplexDeal('#{pattern.id}', '#{pattern.css_class}', false);"
           %td
             .clickable_text{onClick: on_click}
               %div{class: "#{pattern.css_class}"}= pattern.caption
-          %td= number_with_delimiter(pattern.debtor_amount)
+          %td{style: "text-align: right;"}= number_with_delimiter(pattern.debtor_amount)
           - if current_user.bookkeeping_style?
             %td= "(借) #{pattern.debtor_account_name}"
             %td= "(貸) #{pattern.creditor_account_name}"
           - else
             %td= "[#{pattern.creditor_account_name}]"
             %td= " → "
-            %td="[#{pattern.debtor_account_name}]"
+            %td= "[#{pattern.debtor_account_name}]"
+          %td
+            .clickable_text{onClick: on_click_without_amount, style: "margin-left: 2px;"}
+              %div{class: "#{pattern.css_class}"}
+                金額なし

@@ -52,7 +52,7 @@
           <%= tag(:br, :class => 'entry_summary', :style => deal.summary_unified? ? "display:none;" : nil) %>
           <div style="float:left;">
           <% amount_field_name = entry_types.first == :debtor_entries ? :amount : :reversed_amount %>
-          <%= e.text_field amount_field_name, {:size => "8", :disabled => fixed, :class => "amount#{fixed ? '' : ' pattern_field'}", :tabindex => tab_index += 1}.merge(fixed ? {:id => nil} : {}) %>
+          <%= e.text_field amount_field_name, {:size => "8", :disabled => fixed, :class => "amount#{fixed ? '' : ' pattern_field'}", :tabindex => tab_index += 1}.merge(fixed ? {:id => nil} : {}).merge(@with_amount ? {} : {value: ''}) %>
           <%= e.hidden_field amount_field_name, :class => 'pattern_field' if fixed %>
           </div>
           <div style="float:left;">円</div>
@@ -88,7 +88,7 @@
           <%= tag(:br, :class => 'entry_summary', :style => deal.summary_unified? ? "display:none;" : nil) %>
           <div style="float:left;">
             <% amount_field_name = entry_types.last == :creditor_entries ? :reversed_amount : :amount %>
-            <%= e.text_field amount_field_name, {:size => "8", :disabled => fixed, :class => "amount#{fixed ? '' : ' pattern_field'}", :tabindex => (tab_index += 1)}.merge(fixed ? {:id => nil} : {}) %>
+            <%= e.text_field amount_field_name, {:size => "8", :disabled => fixed, :class => "amount#{fixed ? '' : ' pattern_field'}", :tabindex => (tab_index += 1)}.merge(fixed ? {:id => nil} : {}).merge(@with_amount ? {} : {value: ''}) %>
             <%= e.hidden_field amount_field_name, :class => 'pattern_field' if fixed  %>
           </div>
           <div style="float:left;">円</div>
