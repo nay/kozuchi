@@ -31,6 +31,7 @@ end
 # and rake tasks are available in development mode:
 group :development, :test do
   gem "capybara"
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem "factory_girl_rails"
   gem 'i18n_generators'

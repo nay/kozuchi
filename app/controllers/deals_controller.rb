@@ -19,6 +19,7 @@ class DealsController < ApplicationController
   end
 
   def new_complex_deal
+    @with_amount = params[:with_amount] == 'true'
     @deal = current_user.general_deals.build
     load = params[:load].present? ? current_user.general_deals.find_by(id: params[:load]) : nil
     pattern = nil

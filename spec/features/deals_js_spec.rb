@@ -227,35 +227,81 @@ describe DealsController, js: true, type: :feature do
       end
 
       describe "通常明細のサジェッション" do
-        describe "'のない明細" do
-          before do
-            FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食のサンドイッチ")
-            fill_in 'deal_summary', :with => '朝食'
-            sleep 0.6
+        let(:deal_type) { :general_deal }
+        let(:summary) { "朝食のサンドイッチ" }
+        let(:suggestion_with_amount) { true }
+        before do
+          FactoryGirl.create(deal_type, :date => Date.today, :summary => summary)
+          fill_in 'deal_summary', :with => '朝食'
+          expect(page).to have_css("#patterns div.clickable_text") # サジェッションが表示される
+          clickable_text_index = suggestion_with_amount ? 0 : 1
+          page.all("#patterns div.clickable_text")[clickable_text_index].click # サジェッションをクリック
+        end
+
+        context "履歴の摘要に ' がないとき" do
+          context "金額ありのとき" do
+
+            it "金額つきでデータが入り、新たにサジェッションが表示されている" do
+              expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
+              expect(page.find("#deal_debtor_entries_attributes_0_amount").value).not_to be_empty
+              expect(page).to have_css("#patterns div.clickable_text")
+            end
           end
-          it "先に登録したデータがサジェッション表示される" do
-            expect(page).to have_css("#patterns div.clickable_text")
-          end
-          it "サジェッションをクリックするとデータが入る" do
-            page.find("#patterns div.clickable_text").click
-            expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
+          context "金額なしのとき" do
+            let(:suggestion_with_amount) { false }
+
+            it "金額抜きでデータが入り、新たにサジェッションが表示されている" do
+              expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
+              expect(page.find("#deal_debtor_entries_attributes_0_amount").value).to be_empty
+              expect(page).to have_css("#patterns div.clickable_text")
+            end
           end
         end
 
-        describe "'のある明細" do
-          before do
-            FactoryGirl.create(:general_deal, :date => Date.today, :summary => "朝食の'サンドイッチ'")
-            fill_in 'deal_summary', :with => '朝食'
-            sleep 0.6
+        context "履歴の摘要に ' があるとき" do
+          let(:summary) { "朝食の'サンドイッチ'" }
+
+          context "金額ありのとき" do
+
+            it "金額つきでデータが入り、新たにサジェッションが表示されている" do
+              expect(page.find("#deal_summary").value).to eq "朝食の'サンドイッチ'"
+              expect(page).to have_css("#patterns div.clickable_text")
+            end
           end
-          it "先に登録したデータがサジェッション表示される" do
-            expect(page).to have_css("#patterns div.clickable_text")
-          end
-          it "サジェッションをクリックするとデータが入る" do
-            page.find("#patterns div.clickable_text").click
-            expect(page.find("#deal_summary").value).to eq "朝食の'サンドイッチ'"
-          end
+
+          # 金額なしは ' のないケースと同じなので省略する
         end
+
+        context "履歴が複数明細のとき" do
+          let(:deal_type) { :complex_deal }
+
+          context "金額ありのとき" do
+
+            it "金額つきでデータが入り、新たにサジェッションが表示されている" do
+              expect(page).to have_css('#deal_creditor_entries_attributes_0_reversed_amount') # Ajaxで、呼び出し前から deal_summary があるため、ほかの欄の登場を待つ
+              expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
+              expect(page.find('#deal_creditor_entries_attributes_0_reversed_amount').value).not_to be_empty
+              expect(page).to have_css("#patterns div.clickable_text")
+            end
+          end
+
+          context "金額なしのとき" do
+            let(:suggestion_with_amount) { false }
+
+            it "金額抜きでデータが入り、新たにサジェッションが表示されている" do
+              expect(page).to have_css('#deal_creditor_entries_attributes_0_reversed_amount') # Ajaxで、呼び出し前から deal_summary があるため、ほかの欄の登場を待つ
+              expect(page.find("#deal_summary").value).to eq '朝食のサンドイッチ'
+              expect(page.find('#deal_creditor_entries_attributes_0_reversed_amount').value).to be_empty
+              expect(page).to have_css("#patterns div.clickable_text")
+            end
+          end
+
+        end
+
+        it "先に登録したデータがサジェッション表示される" do
+          expect(page).to have_css("#patterns div.clickable_text")
+        end
+
       end
 
       describe "通常明細のパターン指定(id)" do

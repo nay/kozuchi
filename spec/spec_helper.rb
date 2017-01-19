@@ -75,3 +75,5 @@ end
 
 require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
+
+require 'capybara-screenshot/rspec'

@@ -38,10 +38,7 @@ class DealSuggestionsController < ApplicationController
       @general_callback = 'onGeneralDealSelectedFromGeneral'
     end
 
-#    @patterns = summary_key.blank? ? [] : current_user.general_deals.with_summary_and_dates(
-#      current_user.general_deals.recent_summaries(summary_key)).ordered_by_date
-#    @patterns = Deal::General.search_by_summary(current_user.id, summary_key, 5, account.try(:id), params[:debtor] == 'true')
-    render(:partial => 'patterns')
+    render partial: 'patterns'
   end
 
 end
