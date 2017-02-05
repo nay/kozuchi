@@ -35,27 +35,25 @@ class SessionsController < ApplicationController
     if original_user && original_user.login == params[:login]
       self.current_user = original_user
       self.original_user = nil
+    elsif current_user.login == params[:login] # 古いページなどから実行して切り替え済みの場合、エラーにしない。表示を変える意味もあまりないので成功扱い。
+      flash[:notice] = "#{current_user.login}さんの家計簿に移動しました。"
+      redirect_to_target_feature
+      return
     else
       single_login = current_user.single_logins.find_by(login: params[:login])
-      raise IllegalStateError unless single_login
-      if !single_login.active?
-        flash[:errors] = ["#{single_login.login}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
-        redirect_to home_path # TODO:
+      if !single_login || !single_login.active?
+        flash[:errors] = ["#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
+        redirect_to_target_feature
         return
       end
       self.original_user ||= self.current_user
-      self.current_user = User.find_by(login: single_login.login) # TODO: きれいに
+      self.current_user = User.find_by(login: single_login.login)
     end
 
     # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
     clear_user_session
     flash[:notice] = "#{current_user.login}さんの家計簿に移動しました。"
-    redirect_to case params[:to]
-    when 'deals'
-      deals_path
-    else
-      home_path
-    end
+    redirect_to_target_feature
   end
 
   def destroy
@@ -64,6 +62,19 @@ class SessionsController < ApplicationController
     reset_session
     flash[:notice] = "ログアウトしました。"
     redirect_back_or_default(root_path)
+  end
+
+  private
+
+  def redirect_to_target_feature
+    redirect_to case params[:to]
+                when 'deals'
+                  deals_path
+                when 'new_deal'
+                  new_deal_path
+                else
+                  home_path
+                end
   end
 
 end
