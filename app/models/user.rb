@@ -356,7 +356,17 @@ class User < ApplicationRecord
     end
     [result, dates]
   end
-  
+
+  # 最古の記入のある年
+  def start_year
+    @start_year ||= entries.minimum(:date).year
+  end
+
+  # 最古の記入のある年、古すぎるときは100年前
+  def pragmatic_start_year
+    [start_year, Time.zone.now.year - 100].max
+  end
+
   protected
   # before filter 
   def encrypt_password
