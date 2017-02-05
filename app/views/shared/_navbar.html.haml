@@ -51,7 +51,10 @@
               = submit_tag '検索', class: %w(btn btn-default), :onClick => "if($('#keyword').val() == '') {alert('キーワードを入力してください。'); return false;}"
           .btn-group.navbar-left
             %button.btn.btn-default.dropdown-toggle.navbar-btn{type: 'button', data: {toggle:'dropdown'}, style: "background-color: #{current_user.preferences.color}"}
-              = "#{current_user.login}さんでログイン中"
+              - if original_user
+                = "#{current_user.login}さんに切り替え中"
+              - else
+                = "#{current_user.login}さんでログイン中"
               %span.caret
             %ul.dropdown-menu{role: 'menu'}
               %li= link_to 'ログアウト', logout_path, :method => :delete
