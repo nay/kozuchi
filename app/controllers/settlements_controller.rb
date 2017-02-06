@@ -91,8 +91,6 @@ class SettlementsController < ApplicationController
 
   # ある勘定の精算一覧を提供する
   def account_settlements
-    prepare_for_summary_months(5, 1)
-
     self.menu = "#{@account.name}の精算一覧"
 
     @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
