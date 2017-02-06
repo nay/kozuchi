@@ -72,6 +72,7 @@ class SettlementsController < ApplicationController
     end
   end
 
+  # 概況
   # TDOO: current_account まわりを強引に消したので見直す
   def index
     prepare_for_summary_months
@@ -183,7 +184,7 @@ class SettlementsController < ApplicationController
     end
   end
 
-  def prepare_for_summary_months(past = 7, future = 2)
+  def prepare_for_summary_months(past = 9, future = 1)
     # 月サマリー用の月情報
     @months = []
     date = start_date = Time.zone.today.beginning_of_month << past
@@ -214,4 +215,3 @@ class SettlementsController < ApplicationController
   end
   
 end
- 

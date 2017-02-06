@@ -14,9 +14,8 @@
     %tr
       - if with_account_headers
         %th
-          = account.name
+          = link_to account.name, account_settlements_path(account_id: account.id)
           .pull-right
-            = link_to '一覧', account_settlements_path(account_id: account.id), class: %w(btn btn-default btn-sm)
             = link_to '作成', new_account_settlement_path(account_id: account.id), class: %w(btn btn-default btn-sm)
       - @months.each do |monthly_date|
         %td.settlement
