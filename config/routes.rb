@@ -100,6 +100,7 @@ Kozuchi::Application.routes.draw do
         resources :settlements, only: [:new, :create]
       end
     end
+    get 'settlements/summary/:year/:month', action: :index, as: :settlements_summary
     resources :settlements, :only => [:index, :show, :destroy] do
       member do
         get 'print_form'

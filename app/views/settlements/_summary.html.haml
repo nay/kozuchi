@@ -1,23 +1,25 @@
-- with_account_headers ||= false
 %table.book.settlements_summary
   %tr
-    - if with_account_headers
-      %th
+    %th
     - @years.each do |year, months|
       %th{colspan: months.size}= "#{year}年"
   %tr
-    - if with_account_headers
-      %th
+    %th
+      .pull-right
+        - if @previous_target_date
+          = link_to '前へ', settlements_summary_path(@previous_target_date.year, @previous_target_date.month), class: %w(btn btn-info btn-sm)
     - @months.each do |monthly_date|
       %th= "#{monthly_date.month}月"
+    - if @next_target_date
+      %th
+        .pull-left
+          = link_to '後へ', settlements_summary_path(@next_target_date.year, @next_target_date.month), class: %w(btn btn-info btn-sm)
   - @summaries.each do |account, account_settlements|
     %tr
-      - if with_account_headers
-        %th
-          = account.name
-          .pull-right
-            = link_to '一覧', account_settlements_path(account_id: account.id), class: %w(btn btn-default btn-sm)
-            = link_to '作成', new_account_settlement_path(account_id: account.id), class: %w(btn btn-default btn-sm)
+      %th
+        = link_to account.name, account_settlements_path(account_id: account.id)
+        .pull-right
+          = link_to '作成', new_account_settlement_path(account_id: account.id), class: %w(btn btn-default btn-sm)
       - @months.each do |monthly_date|
         %td.settlement
           - if account_settlements.present?
@@ -25,3 +27,5 @@
               %div= link_to number_with_delimiter(s.amount), settlement_path(s.id)
           - else
             &nbsp;
+      - if @next_target_date
+        %th{width: "20px;"}
