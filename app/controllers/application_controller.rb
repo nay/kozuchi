@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
   end
 
   def clear_user_session
-    [:account_id].each{|key| session.delete(key)}
+    [:account_id, :account_selection_histories].each{|key| session.delete(key)}
   end
 
   def find_date
