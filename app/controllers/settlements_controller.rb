@@ -75,9 +75,14 @@ class SettlementsController < ApplicationController
   # 概況
   # TDOO: current_account まわりを強引に消したので見直す
   def index
-    prepare_for_summary_months
+    year, month = params.permit(:year, :month).values
+    @target_date = year && month ? Date.new(year.to_i, month.to_i, 1) : Time.zone.today
 
-    self.menu = "最近の精算情報"
+    prepare_for_summary_months(9, 1, @target_date)
+    @previous_target_date = @target_date << 10
+    @next_target_date = @target_date >> 10 if @target_date < Time.zone.today.beginning_of_month
+
+    self.menu = "精算情報の概況"
     @summaries = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
     @credit_accounts.each do |account|
       @summaries[account] = nil unless @summaries.keys.include?(account)
@@ -184,11 +189,11 @@ class SettlementsController < ApplicationController
     end
   end
 
-  def prepare_for_summary_months(past = 9, future = 1)
+  def prepare_for_summary_months(past = 9, future = 1, target_date = Time.zone.today)
     # 月サマリー用の月情報
     @months = []
-    date = start_date = Time.zone.today.beginning_of_month << past
-    end_date = Time.zone.today.beginning_of_month >> future
+    date = start_date = target_date.beginning_of_month << past
+    end_date = target_date.beginning_of_month >> future
 
     while date <= end_date
       @months << date

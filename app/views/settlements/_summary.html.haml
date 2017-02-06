@@ -8,8 +8,15 @@
   %tr
     - if with_account_headers
       %th
+        .pull-right
+          - if @previous_target_date
+            = link_to '前へ', settlements_summary_path(@previous_target_date.year, @previous_target_date.month), class: %w(btn btn-info btn-sm)
     - @months.each do |monthly_date|
       %th= "#{monthly_date.month}月"
+    - if with_account_headers && @next_target_date
+      %th
+        .pull-left
+          = link_to '後へ', settlements_summary_path(@next_target_date.year, @next_target_date.month), class: %w(btn btn-info btn-sm)
   - @summaries.each do |account, account_settlements|
     %tr
       - if with_account_headers
@@ -24,3 +31,5 @@
               %div= link_to number_with_delimiter(s.amount), settlement_path(s.id)
           - else
             &nbsp;
+      - if with_account_headers && @next_target_date
+        %th{width: "20px;"}
