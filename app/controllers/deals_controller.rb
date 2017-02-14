@@ -213,11 +213,26 @@ class DealsController < ApplicationController
 
   # 月表示 (すべての記入 & 口座別)
   def monthly
+    # 日付
     write_target_date(params[:year], params[:month])
     @year, @month, @day = read_target_date
 
     start_date = Date.new(@year.to_i, @month.to_i, 1)
     end_date = (start_date >> 1) - 1
+
+    # フォーム用
+    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
+    case flash[:"#{controller_name}_deal_type"]
+    when 'balance_deal'
+      @deal = Deal::Balance.new
+      # TODO: 口座
+    else
+      @deal = Deal::General.new
+      @deal.build_simple_entries
+    end
+
+    # 最近登録/更新された記入を常に5件まで表示する
+    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
 
     @bookings = if @account
       @account_entries = AccountEntries.new(@account, start_date, start_date.end_of_month)

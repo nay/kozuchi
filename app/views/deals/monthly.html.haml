@@ -39,6 +39,12 @@
         #calendar_in_navigator
           - url_for(year: '_YEAR_', month: '_MONTH_')
           = render partial: "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: url_for(year: '_YEAR_', month: '_MONTH_')}}
+      #new_deal_window
+        %h3 記入する
+        .deal_editor
+          - deal_type = flash[:"#{controller_name}_deal_type"]
+          = deal_editor 1, @year, @month, @day do
+            = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
       %h3
         = @account ? @account.name : "すべての記入"
         (#{@year}年 #{@month}月)
