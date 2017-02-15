@@ -211,7 +211,7 @@ class DealsController < ApplicationController
     redirect_to @account ? monthly_account_deals_path(account_id: @account.id, year: year, month: month) : monthly_deals_path(year: year, month: month)
   end
 
-  # 月表示 (すべての記入 & 口座別)
+  # 月表示 (総合 & 口座別)
   def monthly
     # 日付
     write_target_date(params[:year], params[:month])

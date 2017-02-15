@@ -132,7 +132,7 @@ $ ->
           resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
         else
           resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
-        resultUrlWithHash = resultUrl + "#d" + result.id
+        resultUrlWithHash = resultUrl + "#recent"
         prevUrl = location.pathname
         prevSearch = location.search
         if prevSearch && prevSearch != ""
@@ -322,3 +322,17 @@ $ ->
       $tr.next('.detail_row').show()
       location.hash = $(@).closest('tr').attr('id')
   )
+
+  # monthlyページのボディタブ切り替え
+  $(document).on('click', '.body_tab_link', (event)->
+    $('.body_tab li').removeClass('active')
+    $(@).closest('li').addClass('active')
+
+    $('.body_tab_area').hide()
+    $('#' + $(@).attr('data') + "_area").show()
+  )
+
+  # ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
+  if $('#monthly_deals_body_tab').size() > 0
+    if (window.location.hash == '#recent' || window.location.hash == '#monthly')
+      $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click()
