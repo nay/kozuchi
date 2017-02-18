@@ -9,7 +9,7 @@
 - data[:all_url] = monthly_deals_path(year: @year, month: @month) # 口座が解除されたとき
 #deal_form_option{ data: data }
 
-.for_monthly_deals
+.for_monthly_deals.for_deal_editor
   #deals_left
     = link_to '今日', deals_path(today: 1, account_id: @account ? @account.id : nil), class: %w(btn btn-primary btn-sm), id: :today
     #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:data => @bookings, path_proc: ->(date){ "#day#{date.day}" }}

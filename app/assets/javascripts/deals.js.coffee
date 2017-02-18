@@ -213,42 +213,6 @@ $ ->
     event.preventDefault()
   )
 
-  # カレンダー（月表示）
-
-#  $('.for_monthly_deals #calendar').change (event, month)->
-#    url = $('#month_submit_form').attr('action')
-#    url = url.replace('_YEAR_', month.year)
-#    url = url.replace('_MONTH_', month.month)
-#    $('#month_submit_form').attr('action', url)
-#    $('#month_submit_form').get(0).submit()
-#    $('#deals_right a.monthly_deals_link').each ->
-#      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
-
-  # カレンダー（登録フォーム）
-
-  $('.for_deal_editor #calendar').change (event, month) ->
-    $('input#date_year').val(month.year)
-    $('input#date_month').val(month.month)
-    today = new Date()
-    if today.getFullYear() == month.year && today.getMonth() + 1 == month.month
-      day = today.getDate()
-    else
-      day = ''
-    $('input#date_day').val(day)
-    url = $('#day_navigator').data('url')
-    url = url.replace('_YEAR_', month.year)
-    url = url.replace('_MONTH_', month.month)
-    $('#day_navigator_frame').load(url)
-    # TODO: 月表示と共通になった。別コールバックにする？
-    $('#deals_right a.monthly_deals_link').each ->
-      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
-
-  # 今日ボタン （登録フォーム）
-  $('.for_deal_editor #today').click (event) ->
-    today = new Date
-    document.calendar.selectMonth(today.getFullYear(), today.getMonth()+1, true)
-    event.preventDefault()
-
   # 記入パターンのロード（リターンキーが押されたとき）
   $(document).on('keypress', 'input#pattern_keyword', (event) ->
     if event.which && event.which == 13
