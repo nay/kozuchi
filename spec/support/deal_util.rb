@@ -51,3 +51,7 @@ def new_complex_deal(month, day, debtors, creditors, options = {})
   deal.user_id = account.user_id
   deal
 end
+
+def input_date_field_values
+  [find("input#date_year").value, find("input#date_month").value, find("input#date_day").value]
+end

@@ -63,10 +63,8 @@ describe DealsController, js: true, type: :feature do
       end
 
       it "カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
-        expect(find("td.selected_month").text).to eq "#{Date.today.month}月"
-        expect(find("input#date_year").value).to eq Date.today.year.to_s
-        expect(find("input#date_month").value).to eq Date.today.month.to_s
-        expect(find("input#date_day").value).to eq Date.today.day.to_s
+        expect(selected_month_text).to eq "#{Date.today.month}月"
+        expect(input_date_field_values).to eq [Date.today.year.to_s, Date.today.month.to_s, Date.today.day.to_s]
       end
     end
 
@@ -78,7 +76,7 @@ describe DealsController, js: true, type: :feature do
       end
 
       it "カレンダーの選択月が翌月に変わり、記入日の月が変わる" do
-        expect(find("td.selected_month").text).to eq "#{target_date.month}月"
+        expect(selected_month_text).to eq "#{target_date.month}月"
         expect(find("input#date_month").value).to eq target_date.month.to_s
       end
     end
