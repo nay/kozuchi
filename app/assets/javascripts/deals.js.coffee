@@ -209,8 +209,8 @@ $ ->
   # 日ナビゲーション
 
   $('.for_deal_editor').on('click', '#day_navigator td.day a', (event)->
+    $(".body_tab_link[data=monthly]").click()
     $('input#date_day').val($(@).data('day'))
-    event.preventDefault()
   )
 
   # 記入パターンのロード（リターンキーが押されたとき）
