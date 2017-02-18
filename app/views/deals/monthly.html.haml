@@ -28,7 +28,7 @@
       - if @account != a
         = account_button(a, @year, @month)
 
-    #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'occasional'}, style: "display: none;"}
+    #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'always'}}
       = render :partial => 'shared/deal_patterns/recent'
 
   #deals_main

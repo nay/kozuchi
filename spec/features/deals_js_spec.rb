@@ -4,6 +4,8 @@ require 'spec_helper'
 describe DealsController, js: true, type: :feature do
   fixtures :users, :accounts, :preferences
 
+  # ↓↓ shared
+
   # 変更windowを開いたあとの記述。閲覧と記入でまったく同じなのでここで
   shared_examples_for "複数記入に変更できる" do
     before do
@@ -37,6 +39,8 @@ describe DealsController, js: true, type: :feature do
     end
   end
 
+  # ↑↑ shared
+
   before do
     Deal::Base.destroy_all
   end
@@ -58,109 +62,6 @@ describe DealsController, js: true, type: :feature do
         find("#today").click
       end
 
-      it "カレンダーの選択月が今月に変わる" do
-        expect(find("td.selected_month").text).to eq("#{Date.today.month}月")
-      end
-    end
-
-
-    describe "カレンダー（翌月）のクリック" do
-      let(:target_date) {Date.today >> 1}
-      before do
-        click_calendar(target_date.year, target_date.month)
-      end
-
-      it "カレンダーの選択月が翌月に変わる" do
-        expect(find("td.selected_month").text).to eq("#{target_date.month}月")
-      end
-    end
-
-    describe "カレンダー（翌年）のクリック" do
-      before do
-        find("#next_year").click
-      end
-      it "URLに翌年を含む" do
-        expect(current_path =~ /\/#{(Date.today >> 12).year.to_s}\//).to be_truthy
-      end
-    end
-
-    describe "カレンダー（前年）のクリック" do
-      before do
-        find("#prev_year").click
-      end
-      it "URLに前年を含む" do
-        expect(current_path =~ /\/#{(Date.today << 12).year.to_s}\//).to be_truthy
-      end
-    end
-
-    describe "日ナビゲーターのクリック" do
-      let(:target_date) {Date.today << 1} # 前月
-      before do
-        click_calendar(target_date.year, target_date.month)
-        # 3日をクリック
-        date = Date.new((Date.today << 1).year, target_date.month, 3)
-        click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
-      end
-      it "URLに対応する日付ハッシュがつく" do
-        expect(current_hash).to eq('day3')
-      end
-    end
-
-    describe "変更" do
-      context "単純明細の変更ボタンをクリックしたとき" do
-        let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
-        before do
-          visit "/deals/2012/7"
-          click_link '変更'
-        end
-        it "URLにハッシュがつき、変更ウィンドウが表示される" do
-          expect(page).to have_css("#edit_window")
-          expect(find("#edit_window #date_year").value).to eq "2012"
-          expect(find("#edit_window #date_month").value).to eq "7"
-          expect(find("#edit_window #date_day").value).to eq "10"
-          expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
-          expect(current_hash).to eq "d#{deal.id}"
-        end
-        it_behaves_like "複数記入に変更できる"
-        it_behaves_like "変更を実行できる"
-        describe "実行できる" do
-          before do
-            find("#date_day[value='10']")
-            fill_in 'date_day', :with => '11'
-            fill_in 'deal_summary', :with => '冷やし中華'
-            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
-            select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
-            click_button '変更'
-          end
-
-          it "一覧に表示される" do
-            expect(flash_notice).to have_content("更新しました。")
-            expect(flash_notice).to have_content("2012/07/11")
-            expect(page).to have_content('冷やし中華')
-            expect(page).to have_content('920')
-            expect(page).to have_content('クレジットカードＸ')
-          end
-        end
-      end
-    end
-  end
-
-  describe "家計簿(記入)" do
-
-    before do
-      select_menu('家計簿')
-      click_link('記入する')
-    end
-
-    describe "今日エリアのクリック" do
-      let(:target_date) {Date.today << 1}
-      before do
-        # 前月にしておいて
-        click_calendar(target_date.year, target_date.month)
-
-        # クリック
-        find("#today").click
-      end
       it "カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
         expect(find("td.selected_month").text).to eq "#{Date.today.month}月"
         expect(find("input#date_year").value).to eq Date.today.year.to_s
@@ -169,11 +70,13 @@ describe DealsController, js: true, type: :feature do
       end
     end
 
+
     describe "カレンダー（翌月）のクリック" do
       let(:target_date) {Date.today >> 1}
       before do
         click_calendar(target_date.year, target_date.month)
       end
+
       it "カレンダーの選択月が翌月に変わり、記入日の月が変わる" do
         expect(find("td.selected_month").text).to eq "#{target_date.month}月"
         expect(find("input#date_month").value).to eq target_date.month.to_s
@@ -184,7 +87,8 @@ describe DealsController, js: true, type: :feature do
       before do
         find("#next_year").click
       end
-      it "記入日の年が変わる" do
+      it "URLに翌年を含み、記入日の年が変わる" do
+        expect(current_path =~ /\/#{(Date.today >> 12).year.to_s}\//).to be_truthy
         expect(find("input#date_year").value).to eq (Date.today >> 12).year.to_s
       end
     end
@@ -193,7 +97,8 @@ describe DealsController, js: true, type: :feature do
       before do
         find("#prev_year").click
       end
-      it "記入日の年が変わる" do
+      it "URLに前年を含み、記入日の年が変わる" do
+        expect(current_path =~ /\/#{(Date.today << 12).year.to_s}\//).to be_truthy
         expect(find("input#date_year").value).to eq (Date.today << 12).year.to_s
       end
     end
@@ -206,7 +111,8 @@ describe DealsController, js: true, type: :feature do
         date = Date.new((Date.today << 1).year, target_date.month, 3)
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
       end
-      it "日の欄に指定した日が入る" do
+      it "URLに対応する日付ハッシュがつき、日の欄に指定した日が入る" do
+        expect(current_hash).to eq('day3')
         expect(find("input#date_day").value).to eq '3'
       end
     end
@@ -313,7 +219,6 @@ describe DealsController, js: true, type: :feature do
         ) }
         before do
           select_menu('家計簿')
-          click_link "記入する"
           page.find("#recent_deal_patterns").click_link "*昼食" # パターンを指定
         end
         it "パターン登録した内容が入る" do
@@ -430,12 +335,11 @@ describe DealsController, js: true, type: :feature do
       context "単純明細の変更ボタンをクリックしたとき" do
         let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do
-          visit "/deals/new"
-          find("tr#d#{deal.id}").click_link '変更'
+          visit "/deals/2012/7"
+          click_link '変更'
         end
-        it "URLにハッシュがつき、登録エリアが隠され、変更ウィンドウが表示される" do
+        it "URLにハッシュがつき、変更ウィンドウが表示される" do
           expect(page).to have_css("#edit_window")
-          expect(page).to_not have_css("#new_deal_window")
           expect(find("#edit_window #date_year").value).to eq "2012"
           expect(find("#edit_window #date_month").value).to eq "7"
           expect(find("#edit_window #date_day").value).to eq "10"
@@ -444,9 +348,60 @@ describe DealsController, js: true, type: :feature do
         end
         it_behaves_like "複数記入に変更できる"
         it_behaves_like "変更を実行できる"
+        describe "実行できる" do
+          before do
+            find("#date_day[value='10']")
+            fill_in 'date_day', :with => '11'
+            fill_in 'deal_summary', :with => '冷やし中華'
+            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
+            select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+            click_button '変更'
+          end
+
+          it "一覧に表示される" do
+            expect(flash_notice).to have_content("更新しました。")
+            expect(flash_notice).to have_content("2012/07/11")
+            expect(page).to have_content('冷やし中華')
+            expect(page).to have_content('920')
+            expect(page).to have_content('クレジットカードＸ')
+          end
+        end
       end
     end
+
+    # TODO: 最近の記入に関するスペック。登録、変更についても。
+
   end
+
+  # describe "家計簿(記入)" do
+  #
+  #   before do
+  #     select_menu('家計簿')
+  #     click_link('記入する')
+  #   end
+  #
+  #
+  #   describe "変更" do
+  #     context "単純明細の変更ボタンをクリックしたとき" do
+  #       let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
+  #       before do
+  #         visit "/deals/new"
+  #         find("tr#d#{deal.id}").click_link '変更'
+  #       end
+  #       it "URLにハッシュがつき、登録エリアが隠され、変更ウィンドウが表示される" do
+  #         expect(page).to have_css("#edit_window")
+  #         expect(page).to_not have_css("#new_deal_window")
+  #         expect(find("#edit_window #date_year").value).to eq "2012"
+  #         expect(find("#edit_window #date_month").value).to eq "7"
+  #         expect(find("#edit_window #date_day").value).to eq "10"
+  #         expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
+  #         expect(current_hash).to eq "d#{deal.id}"
+  #       end
+  #       it_behaves_like "複数記入に変更できる"
+  #       it_behaves_like "変更を実行できる"
+  #     end
+  #   end
+  # end
   #
   # describe "変更" do
   #
