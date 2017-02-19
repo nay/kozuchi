@@ -70,8 +70,6 @@ class SessionsController < ApplicationController
     redirect_to case params[:to]
                 when 'deals'
                   deals_path
-                when 'new_deal'
-                  new_deal_path
                 else
                   home_path
                 end

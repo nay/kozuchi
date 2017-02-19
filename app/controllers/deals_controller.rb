@@ -104,30 +104,6 @@ class DealsController < ApplicationController
 
   RECENT_DEALS_SIZE = 5
 
-  # 登録画面
-  def new
-    @year, @month, @day = read_target_date
-
-    # 日ナビゲーター用
-    start_date = Date.new(@year.to_i, @month.to_i, 1)
-    end_date = (start_date >> 1) - 1
-    @deals = current_user.deals.in_a_time_between(start_date, end_date).order(:date, :daily_seq).select(:date)
-
-    # フォーム用
-    # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
-    case flash[:"#{controller_name}_deal_type"]
-    when 'balance_deal'
-      @deal = Deal::Balance.new
-    # TODO: 口座
-    else
-      @deal = Deal::General.new
-      @deal.build_simple_entries
-    end
-
-    # 最近登録/更新された記入を常に5件まで表示する
-    @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
-  end
-
   # 変更フォームを表示するAjaxアクション
   # :pattern_id が指定されていたら（TODO: I/F未実装、候補選択でできる予定）それをロードするが、なければもとのまま
   def edit
