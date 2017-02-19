@@ -330,6 +330,7 @@ describe DealsController, js: true, type: :feature do
     end
 
     describe "変更" do
+
       context "単純明細の変更ボタンをクリックしたとき" do
         let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do
@@ -346,26 +347,90 @@ describe DealsController, js: true, type: :feature do
         end
         it_behaves_like "複数記入に変更できる"
         it_behaves_like "変更を実行できる"
-        describe "実行できる" do
+      end
+
+      context "複数明細の変更ボタンをクリックしたとき" do
+        let!(:deal) { FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7)) }
+        before do
+          visit "/deals/2012/7"
+          click_link "変更"
+        end
+        it "URLにハッシュがつき、変更ウィンドウが表示される" do
+          expect(page).to have_css("#edit_window")
+          expect(find("#edit_window #date_year").value).to eq "2012"
+          expect(find("#edit_window #date_month").value).to eq "7"
+          expect(find("#edit_window #date_day").value).to eq "7"
+          expect(current_hash).to eq "d#{deal.id}"
+          expect(find("#deal_debtor_entries_attributes_0_amount").value).to be_present
+          expect(find("#deal_creditor_entries_attributes_0_reversed_amount").value).to be_present
+        end
+
+        describe "変更を実行できる" do
           before do
-            find("#date_day[value='10']")
-            fill_in 'date_day', :with => '11'
-            fill_in 'deal_summary', :with => '冷やし中華'
-            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '920'
-            select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_0_account_id'
+            find("#date_day[value='7']")
+            fill_in 'date_day', :with => '8'
+            fill_in 'deal_debtor_entries_attributes_2_amount', :with => '103'
+            select '食費', :from => 'deal_debtor_entries_attributes_2_account_id'
+            fill_in 'deal_creditor_entries_attributes_2_reversed_amount', :with => '103'
+            select 'クレジットカードＸ', :from => 'deal_creditor_entries_attributes_2_account_id'
+            click_button '変更'
+          end
+          it "一覧に表示される" do
+            expect(flash_notice).to have_content("更新しました。")
+            expect(flash_notice).to have_content("2012/07/08")
+            expect(page).to have_content('103')
+            expect(page).to have_content('クレジットカードＸ')
+          end
+        end
+
+        describe "カンマ入りの数字を入れて口座を変えても変更ができる" do
+          # reversed_amount の代入時にparseされていない不具合がたまたまこのスペックで発見できた
+          before do
+            fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1,200'
+            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '900'
+            fill_in 'deal_debtor_entries_attributes_1_amount', :with => '300'
+            select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
             click_button '変更'
           end
 
+          it "変更内容が一覧に表示される" do
+            expect(flash_notice).to have_content "更新しました。"
+            expect(page).to have_content '銀行'
+            expect(page).to have_content '1,200'
+            expect(page).to have_content '900'
+            expect(page).to have_content '300'
+          end
+        end
+      end
+
+      context "残高明細の変更ボタンをクリックしたとき" do
+        let!(:deal) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000') }
+        before do
+          visit "/deals/2012/7"
+          click_link '変更'
+        end
+        it "URLにハッシュがつき、変更ウィンドウが表示される" do
+          expect(page).to have_css("#edit_window")
+          expect(find("#edit_window #date_year").value).to eq "2012"
+          expect(find("#edit_window #date_month").value).to eq "7"
+          expect(find("#edit_window #date_day").value).to eq "20"
+          expect(current_hash).to eq "d#{deal.id}"
+          expect(page).to have_content "一万円札"
+          expect(find("#deal_balance").value).to eq "2000"
+        end
+        describe "実行できる" do
+          before do
+            fill_in 'deal_balance', :with => '2080'
+            click_button '変更'
+          end
           it "一覧に表示される" do
             expect(flash_notice).to have_content("更新しました。")
-            expect(flash_notice).to have_content("2012/07/11")
-            expect(page).to have_content('冷やし中華')
-            expect(page).to have_content('920')
-            expect(page).to have_content('クレジットカードＸ')
+            expect(page).to have_content('2,080')
           end
         end
       end
     end
+    # TODO: 削除について追加
 
     # TODO: 最近の記入に関するスペック。登録、変更についても。
 
@@ -378,125 +443,8 @@ describe DealsController, js: true, type: :feature do
   #     click_link('記入する')
   #   end
   #
-  #
-  #   describe "変更" do
-  #     context "単純明細の変更ボタンをクリックしたとき" do
-  #       let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
-  #       before do
-  #         visit "/deals/new"
-  #         find("tr#d#{deal.id}").click_link '変更'
-  #       end
-  #       it "URLにハッシュがつき、登録エリアが隠され、変更ウィンドウが表示される" do
-  #         expect(page).to have_css("#edit_window")
-  #         expect(page).to_not have_css("#new_deal_window")
-  #         expect(find("#edit_window #date_year").value).to eq "2012"
-  #         expect(find("#edit_window #date_month").value).to eq "7"
-  #         expect(find("#edit_window #date_day").value).to eq "10"
-  #         expect(find("#edit_window #deal_summary").value).to eq "ラーメン"
-  #         expect(current_hash).to eq "d#{deal.id}"
-  #       end
-  #       it_behaves_like "複数記入に変更できる"
-  #       it_behaves_like "変更を実行できる"
-  #     end
-  #   end
-  # end
-  #
   # describe "変更" do
   #
-  #   describe "複数明細" do
-  #     before do
-  #       FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))
-  #       visit "/deals/2012/7"
-  #       click_link "変更"
-  #     end
-  #
-  #     describe "タブを表示できる" do
-  #       it "タブが表示される" do
-  #         tab_window.should have_content("変更(2012-07-07-1)")
-  #         find("input#deal_creditor_entries_attributes_0_reversed_amount").value.should == '1000'
-  #         find("input#deal_debtor_entries_attributes_0_amount").value.should == '800'
-  #         find("input#deal_debtor_entries_attributes_1_amount").value.should == '200'
-  #       end
-  #     end
-  #
-  #     describe "記入欄を増やすことができる" do
-  #       before do
-  #         click_link '記入欄を増やす'
-  #       end
-  #
-  #       it "6つめの記入欄が表示される" do
-  #         expect(page).to have_css('input#deal_creditor_entries_attributes_5_reversed_amount')
-  #         expect(page).to have_css('select#deal_creditor_entries_attributes_5_account_id')
-  #         expect(page).to have_css('input#deal_debtor_entries_attributes_5_amount')
-  #         expect(page).to have_css('select#deal_debtor_entries_attributes_5_account_id')
-  #       end
-  #     end
-  #
-  #     describe "変更ができる" do
-  #       before do
-  #         fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1200'
-  #         fill_in 'deal_debtor_entries_attributes_0_amount', :with => '900'
-  #         fill_in 'deal_debtor_entries_attributes_1_amount', :with => '300'
-  #         select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
-  #         click_button '変更'
-  #       end
-  #
-  #       it "変更内容が一覧に表示される" do
-  #         expect(flash_notice).to have_content "更新しました。"
-  #         expect(page).to have_content '銀行'
-  #         expect(page).to have_content '1,200'
-  #         expect(page).to have_content '900'
-  #         expect(page).to have_content '300'
-  #       end
-  #     end
-  #
-  #     describe "カンマ入りの数字を入れて口座を変えても変更ができる" do
-  #       # reversed_amount の代入時にparseされていない不具合がたまたまこのスペックで発見できた
-  #       before do
-  #         fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1,200'
-  #         fill_in 'deal_debtor_entries_attributes_0_amount', :with => '900'
-  #         fill_in 'deal_debtor_entries_attributes_1_amount', :with => '300'
-  #         select '銀行', :from => 'deal_creditor_entries_attributes_0_account_id'
-  #         click_button '変更'
-  #       end
-  #
-  #       it "変更内容が一覧に表示される" do
-  #         expect(flash_notice).to have_content "更新しました。"
-  #         expect(page).to have_content '銀行'
-  #         expect(page).to have_content '1,200'
-  #         expect(page).to have_content '900'
-  #         expect(page).to have_content '300'
-  #       end
-  #     end
-  #
-  #   end
-  #
-  #   describe "残高" do
-  #     before do
-  #       FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000')
-  #       visit "/deals/2012/7"
-  #       click_link '変更'
-  #     end
-  #
-  #     describe "タブを表示できる" do
-  #       it "タブが表示される" do
-  #         tab_window.should have_content("変更(2012-07-20-1)")
-  #         find("input#deal_balance").value.should == '2000'
-  #       end
-  #     end
-  #
-  #     describe "実行できる" do
-  #       before do
-  #         fill_in 'deal_balance', :with => '2080'
-  #         click_button '変更'
-  #       end
-  #       it "一覧に表示される" do
-  #         expect(flash_notice).to have_content("更新しました。")
-  #         expect(page).to have_content('2,080')
-  #       end
-  #     end
-  #   end
-  # end
   #
   # describe "削除" do
   #
