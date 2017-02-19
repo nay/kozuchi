@@ -1,6 +1,7 @@
 <%
   # TODO: url や更新場所など、呼び出し元依存の分岐コードが入ってしまっているのを整理したい
   update_area = deal.kind_of?(Deal::Base) ? '#deal_forms' : '#form_frame'
+  @with_amount = true if @with_amount.nil? # false が設定されていなければ true
 %>
 <div class="deal_patterns">
   <div style="display:none;" id="load_pattern_url"><%=

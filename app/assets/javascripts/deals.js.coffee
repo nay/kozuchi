@@ -115,7 +115,7 @@ $ ->
     $('#deal_day').val($('#date_day').val())
 
     # 金額のチェック
-    amounts = $('input.amount')
+    amounts = $('#deal_form input.amount')
     if amounts.size() > 0 && $.grep(amounts.get(), (amount, index)-> $(amount).val() != '').length == 0
       alert('金額を入力してください。')
       return false
@@ -132,7 +132,7 @@ $ ->
           resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
         else
           resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
-        resultUrlWithHash = resultUrl + "#d" + result.id
+        resultUrlWithHash = resultUrl + "#recent"
         prevUrl = location.pathname
         prevSearch = location.search
         if prevSearch && prevSearch != ""
@@ -209,45 +209,9 @@ $ ->
   # 日ナビゲーション
 
   $('.for_deal_editor').on('click', '#day_navigator td.day a', (event)->
+    $(".body_tab_link[data=monthly]").click()
     $('input#date_day').val($(@).data('day'))
-    event.preventDefault()
   )
-
-  # カレンダー（月表示）
-
-#  $('.for_monthly_deals #calendar').change (event, month)->
-#    url = $('#month_submit_form').attr('action')
-#    url = url.replace('_YEAR_', month.year)
-#    url = url.replace('_MONTH_', month.month)
-#    $('#month_submit_form').attr('action', url)
-#    $('#month_submit_form').get(0).submit()
-#    $('#deals_right a.monthly_deals_link').each ->
-#      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
-
-  # カレンダー（登録フォーム）
-
-  $('.for_deal_editor #calendar').change (event, month) ->
-    $('input#date_year').val(month.year)
-    $('input#date_month').val(month.month)
-    today = new Date()
-    if today.getFullYear() == month.year && today.getMonth() + 1 == month.month
-      day = today.getDate()
-    else
-      day = ''
-    $('input#date_day').val(day)
-    url = $('#day_navigator').data('url')
-    url = url.replace('_YEAR_', month.year)
-    url = url.replace('_MONTH_', month.month)
-    $('#day_navigator_frame').load(url)
-    # TODO: 月表示と共通になった。別コールバックにする？
-    $('#deals_right a.monthly_deals_link').each ->
-      @href = $(@).data('url-template').replace('_YEAR_', month.year).replace('_MONTH_', month.month)
-
-  # 今日ボタン （登録フォーム）
-  $('.for_deal_editor #today').click (event) ->
-    today = new Date
-    document.calendar.selectMonth(today.getFullYear(), today.getMonth()+1, true)
-    event.preventDefault()
 
   # 記入パターンのロード（リターンキーが押されたとき）
   $(document).on('keypress', 'input#pattern_keyword', (event) ->
@@ -322,3 +286,17 @@ $ ->
       $tr.next('.detail_row').show()
       location.hash = $(@).closest('tr').attr('id')
   )
+
+  # monthlyページのボディタブ切り替え
+  $(document).on('click', '.body_tab_link', (event)->
+    $('.body_tab li').removeClass('active')
+    $(@).closest('li').addClass('active')
+
+    $('.body_tab_area').hide()
+    $('#' + $(@).attr('data') + "_area").show()
+  )
+
+  # ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
+  if $('#monthly_deals_body_tab').size() > 0
+    if (window.location.hash == '#recent' || window.location.hash == '#monthly')
+      $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click()

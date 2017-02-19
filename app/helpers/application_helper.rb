@@ -13,8 +13,6 @@ module ApplicationHelper
   def single_login_destination
     if controller_name == 'deals' && action_name == 'monthly'
       :deals
-    elsif controller_name == 'deals' && action_name == 'new'
-      :new_deal
     else
       nil
     end
