@@ -39,6 +39,18 @@ describe DealsController, js: true, type: :feature do
     end
   end
 
+  shared_examples_for "削除できる" do
+    before do
+      deal # create
+      visit "/deals/2012/7"
+      click_link('削除')
+    end
+    it do
+      expect(flash_notice).to have_content("削除しました。")
+    end
+  end
+
+
   # ↑↑ shared
 
   before do
@@ -126,6 +138,7 @@ describe DealsController, js: true, type: :feature do
         end
         it do
           expect(flash_notice).to have_content('追加しました。')
+          expect(current_hash).to eq "recent"
           expect(page).to have_content('朝食のおにぎり')
         end
       end
@@ -290,6 +303,7 @@ describe DealsController, js: true, type: :feature do
             expect(page).to have_content '1,000'
             expect(page).to have_content '800'
             expect(page).to have_content '200'
+            expect(current_hash).to eq "recent"
           end
         end
 
@@ -430,62 +444,50 @@ describe DealsController, js: true, type: :feature do
         end
       end
     end
-    # TODO: 削除について追加
 
-    # TODO: 最近の記入に関するスペック。登録、変更についても。
+    describe "削除" do
+      context "通常明細のとき" do
+        let(:deal) { FactoryGirl.create(:general_deal, date: Date.new(2012, 7, 10)) }
+        it_behaves_like "削除できる"
+      end
+
+      describe "複数明細" do
+        let(:deal) { FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))}
+        it_behaves_like "削除できる"
+      end
+
+      describe "残高" do
+        let(:deal) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20)) }
+        it_behaves_like "削除できる"
+      end
+    end
 
   end
 
-  # describe "家計簿(記入)" do
-  #
-  #   before do
-  #     select_menu('家計簿')
-  #     click_link('記入する')
-  #   end
-  #
-  # describe "変更" do
-  #
-  #
-  # describe "削除" do
-  #
-  #   describe "通常明細" do
-  #     before do
-  #       FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
-  #       visit "/deals/2012/7"
-  #       click_link('削除')
-  #       page.driver.browser.switch_to.alert.accept
-  #     end
-  #     it do
-  #       expect(flash_notice).to have_content("削除しました。")
-  #     end
-  #   end
-  #
-  #   describe "複数明細" do
-  #     before do
-  #       FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))
-  #       visit "/deals/2012/7"
-  #       click_link "削除"
-  #       page.driver.browser.switch_to.alert.accept
-  #     end
-  #
-  #     it do
-  #       expect(flash_notice).to have_content("削除しました。")
-  #     end
-  #
-  #   end
-  #
-  #   describe "残高" do
-  #     before do
-  #       FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
-  #       visit "/deals/2012/7"
-  #       click_link('削除')
-  #       page.driver.browser.switch_to.alert.accept
-  #     end
-  #     it do
-  #       expect(flash_notice).to have_content("削除しました。")
-  #     end
-  #   end
-  #
-  # end
+  describe "最近の記入" do
+    before do
+      FactoryGirl.create(:general_deal, summary: "昔の記入", date: Date.new(2012, 7, 10))
+      select_menu('家計簿')
+      click_link "最近の記入"
+    end
+
+    it "URLに #recent がつき、表示が変わる" do
+      expect(current_hash).to eq "recent"
+      expect(page).to have_content "昔の記入"
+    end
+
+    describe "月の一覧に戻せる" do
+      before do
+        click_link "総合(#{Date.today.year}年 #{Date.today.month}月)"
+      end
+      it "URLに #monthly がつき、表示が変わる" do
+        expect(current_hash).to eq "monthly"
+        expect(page).not_to have_content "昔の記入"
+      end
+    end
+
+    # TODO: 登録、変更、削除
+
+  end
 
 end
