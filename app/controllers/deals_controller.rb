@@ -88,7 +88,7 @@ class DealsController < ApplicationController
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
-            error_view: render_to_string(render_options)
+            error_view: render_to_string(partial: "#{deal_type}_form")
         }
       end
     end
