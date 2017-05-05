@@ -11,6 +11,6 @@
     %div{style: "text-align: center;"}
       %button#count_money_button.btn.btn-default 計算
   = f.label :balance, "残高"
-  = f.text_field :balance, size: 8, tabindex: 11
+  = f.text_field :balance, size: 8, tabindex: 11, class: :amount
   円
   %button.btn.btn-primary{type: "submit", tabindex: 12}= @deal.new_record? ? '記入' : '変更'
