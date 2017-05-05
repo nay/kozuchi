@@ -65,7 +65,6 @@ class DealsController < ApplicationController
     define_method "create_#{deal_type}" do
       size = deal_params[:creditor_entries_attributes].kind_of?(Array) ? deal_params[:creditor_entries_attributes].size : deal_params[:creditor_entries_attributes].try(:to_h).try(:size)
       @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
-
       if @deal.save
         flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
         flash[:"#{controller_name}_deal_type"] = deal_type
@@ -85,10 +84,10 @@ class DealsController < ApplicationController
         end
         render json: {
             id: @deal.id,
-            year: @deal.date.year,
-            month: @deal.date.month,
-            day: @deal.date.day,
-            error_view: render_to_string(render_options)
+            year: @deal.date&.year || deal_params[:year],
+            month: @deal.date&.month || deal_params[:month],
+            day: @deal.date&.day || deal_params[:day],
+            error_view: render_to_string(partial: "#{deal_type}_form")
         }
       end
     end

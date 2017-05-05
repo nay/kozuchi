@@ -102,23 +102,27 @@ $ ->
     return false
   )
 
-  # deal_form
-  $(document).on('submit', '#deal_form', ->
+# deal_form
+  # click (submitでreturn false すると disabled にされてしまうので submit イベントが送られないように先に処理する)
+  $(document).on('click', '#deal_form [type=submit]', (event)->
     # 日付のチェック
     if $('#date_day').val() == '' || $('#date_month').val() == '' || $('#date_year').val() == ''
       alert('日付を入れてください。')
       return false
-
-    # 日付の読み取り
-    $('#deal_year').val($('#date_year').val())
-    $('#deal_month').val($('#date_month').val())
-    $('#deal_day').val($('#date_day').val())
 
     # 金額のチェック
     amounts = $('#deal_form input.amount')
     if amounts.size() > 0 && $.grep(amounts.get(), (amount, index)-> $(amount).val() != '').length == 0
       alert('金額を入力してください。')
       return false
+  )
+
+  # submit
+  $(document).on('submit', '#deal_form', (event)->
+    # 日付の読み取り
+    $('#deal_year').val($('#date_year').val())
+    $('#deal_month').val($('#date_month').val())
+    $('#deal_day').val($('#date_day').val())
 
     # 記入登録/更新を試みる
     $.post(@action, $(@).serializeArray(), (result)->

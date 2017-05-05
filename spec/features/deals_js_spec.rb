@@ -129,17 +129,48 @@ describe DealsController, js: true, type: :feature do
 
     describe "登録" do
       describe "通常明細" do
-        before do
-          fill_in 'deal_summary', :with => '朝食のおにぎり'
-          fill_in 'deal_debtor_entries_attributes_0_amount', :with => '210'
-          select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
-          select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
-          click_button '記入'
+        context "日付欄（日）にアルファベットがあるとき" do
+          before do
+            fill_in 'date_day', with: 'a' # アルファベット
+            fill_in 'deal_summary', with: '朝食のおにぎり'
+            fill_in 'deal_debtor_entries_attributes_0_amount', with: '210'
+            select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+            select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+            click_button '記入'
+          end
+
+          it "エラーが表示され、入れたままの文字が欄にある" do
+            expect(page).to have_content('記入にエラーが発生しました。')
+            expect(page).to have_content('日付を入力してください。')
+            expect(find("input#date_day").value).to eq 'a'
+          end
         end
-        it do
-          expect(flash_notice).to have_content('追加しました。')
-          expect(current_hash).to eq "recent"
-          expect(page).to have_content('朝食のおにぎり')
+
+        describe "金額" do
+          before do
+            fill_in 'deal_summary', :with => '朝食のおにぎり'
+            fill_in 'deal_debtor_entries_attributes_0_amount', :with => amount
+            select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+            select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+            click_button '記入'
+          end
+
+          context "金額が正しいとき" do
+            let(:amount) { '210' }
+            it "登録できる" do
+              expect(flash_notice).to have_content('追加しました。')
+              expect(current_hash).to eq "recent"
+              expect(page).to have_content('朝食のおにぎり')
+            end
+          end
+
+          context "金額がアルファベットのとき" do
+            let(:amount) { 'abc' }
+            it "エラーが表示される" do
+              expect(page).to have_content('記入にエラーが発生しました。')
+              expect(page).to have_content('金額は数値で入力してください。')
+            end
+          end
         end
       end
 
@@ -284,29 +315,63 @@ describe DealsController, js: true, type: :feature do
           end
         end
 
-        describe "1対2の明細が登録できる" do
-          before do
-            find('a.entry_summary').click # unifyモードにする
-            fill_in 'deal_summary', :with => '買い物'
-            fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
-            select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
-            fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
-            select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
-            fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
-            select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
-            click_button '記入'
+        describe "1対2の明細の登録" do
+          context "日付欄（月）にアルファベットがあるとき" do
+            before do
+              fill_in 'date_month', with: 'a' # アルファベット
+
+              find('a.entry_summary').click # unifyモードにする
+              fill_in 'deal_summary', :with => '買い物'
+              fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => '1000'
+              select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+              fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
+              select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+              fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
+              select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
+              click_button '記入'
+            end
+
+            it "エラーが表示され、入れたままの文字が欄にある" do
+              expect(page).to have_content('記入にエラーが発生しました。')
+              expect(page).to have_content('日付を入力してください。')
+              expect(find("input#date_month").value).to eq 'a'
+            end
           end
 
-          it "明細が一覧に表示される" do
-            expect(flash_notice).to have_content('追加しました。')
-            expect(page).to have_content '買い物'
-            expect(page).to have_content '1,000'
-            expect(page).to have_content '800'
-            expect(page).to have_content '200'
-            expect(current_hash).to eq "recent"
+          describe "金額" do
+            before do
+              find('a.entry_summary').click # unifyモードにする
+              fill_in 'deal_summary', :with => '買い物'
+              fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => amount
+              select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
+              fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
+              select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
+              fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
+              select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
+              click_button '記入'
+            end
+
+            context "金額が正しいとき" do
+              let(:amount) { '1000' }
+              it "登録でき、明細が一覧に表示される" do
+                expect(flash_notice).to have_content('追加しました。')
+                expect(page).to have_content '買い物'
+                expect(page).to have_content '1,000'
+                expect(page).to have_content '800'
+                expect(page).to have_content '200'
+                expect(current_hash).to eq "recent"
+              end
+            end
+
+            context "金額がアルファベットのとき" do
+              let(:amount) { 'abc' }
+              it "エラーが表示される" do
+                expect(page).to have_content 'エラーが発生しました。'
+                expect(page).to have_content '金額は数値で入力してください。'
+              end
+            end
           end
         end
-
       end
 
       describe "残高" do
@@ -338,6 +403,48 @@ describe DealsController, js: true, type: :feature do
             expect(flash_notice).to have_content("追加しました。")
             expect(page).to have_content("残高確認")
             expect(page).to have_content("5,030")
+          end
+        end
+
+        context "日付欄（年）にアルファベットがあるとき" do
+          before do
+            fill_in 'date_year', with: 'a' # アルファベット
+
+            select '現金', :from => 'deal_account_id'
+            fill_in :deal_balance, with: '999'
+            click_button '記入'
+          end
+
+          # 0000年で登録できる。ひとまず
+          it "登録できる" do
+            expect(flash_notice).to have_content("追加しました。")
+            expect(page).to have_content("残高確認")
+            expect(page).to have_content("999")
+          end
+        end
+
+        describe "金額を入力した登録" do
+          before do
+            select '現金', :from => 'deal_account_id'
+            fill_in :deal_balance, with: amount
+            click_button '記入'
+          end
+
+          context "金額が正しいとき" do
+            let(:amount) { '1003' }
+            it "登録できる" do
+              expect(flash_notice).to have_content("追加しました。")
+              expect(page).to have_content("残高確認")
+              expect(page).to have_content("1,003")
+            end
+          end
+
+          context "金額がアルファベットのとき" do
+            let(:amount) { 'abc' }
+            it "エラーが表示される" do
+              expect(page).to have_content("残高記入にエラーが発生しました。")
+              expect(page).to have_content("残高は数値で入力してください。")
+            end
           end
         end
       end
