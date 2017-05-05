@@ -13,12 +13,12 @@ module Entry
   end
 
   def reversed_amount=(ra)
-    # まずそのまま入れて、コンパ入りの場合のパーズと、before_type_cast の保存をする
+    # まずそのまま入れて、コンマ入りの場合のパーズと、before_type_cast の保存をする
     # これによりフォーマット不正の検証がそのまま動く
     self.amount = ra
     @reversed_amount_before_type_cast = amount_before_type_cast
-    # 数値として意味があり、文字列でないか、正しい文字列である場合は符号逆転の値を入れ直す
-    self.amount *= -1 if ra.to_i != 0 && (!ra.kind_of?(String) || ra =~ /^-?([0-9]|,)*$/)
+    # ActiveRecord によりキャストされた数値の符号を逆転する
+    self.amount *= -1 unless amount.nil?
     # 正しい値であった場合は、amount_before_type_cast は変化する
   end
 
@@ -26,7 +26,7 @@ module Entry
     self.amount.blank? ? self.amount : self.amount.to_i * -1
   end
 
-  # 検証エラー時、フォーマット不正の状態を画面を残すため
+  # 検証エラー時、フォーマット不正の状態を画面に残すため
   def reversed_amount_before_type_cast
     @reversed_amount_before_type_cast || reversed_amount
   end
