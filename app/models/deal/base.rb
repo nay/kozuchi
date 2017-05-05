@@ -195,7 +195,7 @@ class Deal::Base < ApplicationRecord
     return if self[:date] # あるならそのまま
     
     begin
-      self[:date] = Date.new(self.year.to_i, self.month.to_i, self.day.to_i)
+      self[:date] = Date.new(self.year.to_i, self.month.to_i, self.day.to_i) # TODO: year は 不正な文字でも 0年として登録される
     rescue
       self[:date] = nil
     end
