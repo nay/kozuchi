@@ -171,14 +171,14 @@ describe DealsController, js: true, type: :feature do
               expect(page).to have_content('金額は数値で入力してください。')
             end
           end
-        end
 
-        context "金額の前後に半角スペースが含まれるとき" do
-          let(:amount) { ' 210 ' }
-          it "登録できる" do
-            expect(flash_notice).to have_content('追加しました。')
-            expect(current_hash).to eq "recent"
-            expect(page).to have_content('朝食のおにぎり')
+          context "金額の前後に半角スペースが含まれるとき" do
+            let(:amount) { ' 210 ' }
+            it "登録できる" do
+              expect(flash_notice).to have_content('追加しました。')
+              expect(current_hash).to eq "recent"
+              expect(page).to have_content('朝食のおにぎり')
+            end
           end
         end
       end
