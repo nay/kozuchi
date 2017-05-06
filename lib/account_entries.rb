@@ -26,7 +26,7 @@ class AccountEntries
 
   # entries を検索して時間順に取得
   def find_entries
-    @deals = account.user.deals.in_a_time_between(@from, @to).joins("INNER JOIN account_entries ON account_entries.deal_id = deals.id").on(@account).includes(:readonly_entries).order(:date, :daily_seq)
+    @deals = account.user.deals.in_a_time_between(@from, @to).joins("INNER JOIN account_entries ON account_entries.deal_id = deals.id").on(@account).includes(:readonly_entries).distinct.order(:date, :daily_seq)
     @entries = @deals.map{|d| d.readonly_entries.find_all{|e| e.account_id == @account.id}}.flatten
   end
 
