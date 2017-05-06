@@ -133,8 +133,8 @@ $ ->
         resultUrl = null
         resultUrlWithHash = null
         if result.redirect_to
-          resultUrl = result.redirect_to
-          resultUrlWithHash = resultUrl
+          resultUrlWithHash = result.redirect_to
+          resultUrl = resultUrlWithHash.split('#')[0]
         else
           if dealHasAccountId(result.deal, $('#deal_form_option').data("condition-account-id")) # 遷移先に条件がついていて適合していればそちらのURLにする
             resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
