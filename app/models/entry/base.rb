@@ -68,9 +68,9 @@ class Entry::Base < ApplicationRecord
     !!balance
   end
 
-  # StringならString のまま , はとる
+  # StringならString のまま 前後のスペースを削除して , をとる
   def self.parse_amount(value)
-    value.kind_of?(String) ? value.gsub(/,/, '') : value
+    value.kind_of?(String) ? value.strip.gsub(/,/, '') : value
   end
 
   def amount=(a)

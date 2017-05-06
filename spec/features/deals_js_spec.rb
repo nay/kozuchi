@@ -171,6 +171,15 @@ describe DealsController, js: true, type: :feature do
               expect(page).to have_content('金額は数値で入力してください。')
             end
           end
+
+          context "金額の前後に半角スペースが含まれるとき" do
+            let(:amount) { ' 210 ' }
+            it "登録できる" do
+              expect(flash_notice).to have_content('追加しました。')
+              expect(current_hash).to eq "recent"
+              expect(page).to have_content('朝食のおにぎり')
+            end
+          end
         end
       end
 
@@ -342,9 +351,9 @@ describe DealsController, js: true, type: :feature do
             before do
               find('a.entry_summary').click # unifyモードにする
               fill_in 'deal_summary', :with => '買い物'
-              fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => amount
+              fill_in 'deal_creditor_entries_attributes_0_reversed_amount', :with => reversed_amount
               select '現金', :from => 'deal_creditor_entries_attributes_0_account_id'
-              fill_in 'deal_debtor_entries_attributes_0_amount', :with => '800'
+              fill_in 'deal_debtor_entries_attributes_0_amount', :with => amount
               select '食費', :from => 'deal_debtor_entries_attributes_0_account_id'
               fill_in 'deal_debtor_entries_attributes_1_amount', :with => '200'
               select '雑費', :from => 'deal_debtor_entries_attributes_1_account_id'
@@ -352,7 +361,8 @@ describe DealsController, js: true, type: :feature do
             end
 
             context "金額が正しいとき" do
-              let(:amount) { '1000' }
+              let(:reversed_amount) { '1000' }
+              let(:amount) { '800' }
               it "登録でき、明細が一覧に表示される" do
                 expect(flash_notice).to have_content('追加しました。')
                 expect(page).to have_content '買い物'
@@ -363,11 +373,34 @@ describe DealsController, js: true, type: :feature do
               end
             end
 
-            context "金額がアルファベットのとき" do
+            context "貸方金額がアルファベットのとき" do
+              let(:reversed_amount) { 'abc' }
+              let(:amount) { '800' }
+              it "エラーが表示される" do
+                expect(page).to have_content 'エラーが発生しました。'
+                expect(page).to have_content '金額は数値で入力してください。'
+              end
+            end
+
+            context "借方金額がアルファベットのとき" do
+              let(:reversed_amount) { '1000' }
               let(:amount) { 'abc' }
               it "エラーが表示される" do
                 expect(page).to have_content 'エラーが発生しました。'
                 expect(page).to have_content '金額は数値で入力してください。'
+              end
+            end
+
+            context "金額の前後に半角スペースが含まれるとき" do
+              let(:reversed_amount) { ' 1000 ' }
+              let(:amount) { '    800' }
+              it "登録でき、明細が一覧に表示される" do
+                expect(flash_notice).to have_content('追加しました。')
+                expect(page).to have_content '買い物'
+                expect(page).to have_content '1,000'
+                expect(page).to have_content '800'
+                expect(page).to have_content '200'
+                expect(current_hash).to eq "recent"
               end
             end
           end
@@ -446,6 +479,16 @@ describe DealsController, js: true, type: :feature do
               expect(page).to have_content("残高は数値で入力してください。")
             end
           end
+
+          context "金額の前後に半角スペースが含まれるとき" do
+            let(:amount) { '   1003' }
+            it "登録できる" do
+              expect(flash_notice).to have_content("追加しました。")
+              expect(page).to have_content("残高確認")
+              expect(page).to have_content("1,003")
+            end
+          end
+
         end
       end
     end

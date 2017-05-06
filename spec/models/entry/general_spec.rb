@@ -69,8 +69,8 @@ describe Entry::General do
       before do
         entry.reversed_amount = '1.10'
       end
-      it "amountは1になる" do
-        entry.amount.should == 1
+      it "amountは-1になる" do # -1.10 を入れるため
+        entry.amount.should == -1
       end
       it "reversed_amount_before_type_castは'1.10'になる" do
         entry.reversed_amount_before_type_cast.should == '1.10'
