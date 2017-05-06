@@ -131,12 +131,16 @@ $ ->
         $('#deal_forms').append(result.error_view)
       else
         resultUrl = null
-        # 遷移先に条件がついていて適合していればそちらのURLにする
-        if dealHasAccountId(result.deal, $('#deal_form_option').data("condition-account-id"))
-          resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+        resultUrlWithHash = null
+        if result.redirect_to
+          resultUrl = result.redirect_to
+          resultUrlWithHash = resultUrl
         else
-          resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
-        resultUrlWithHash = resultUrl + "#recent"
+          if dealHasAccountId(result.deal, $('#deal_form_option').data("condition-account-id")) # 遷移先に条件がついていて適合していればそちらのURLにする
+            resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+          else
+            resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month)
+          resultUrlWithHash = resultUrl + "#recent"
         prevUrl = location.pathname
         prevSearch = location.search
         if prevSearch && prevSearch != ""
