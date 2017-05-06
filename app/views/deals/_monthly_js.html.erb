@@ -4,6 +4,8 @@
         selectList('#deal_creditor_entries_attributes_0_account_id', minus_account_id);
         selectList('#deal_debtor_entries_attributes_0_account_id', plus_account_id);
         $('#deal_summary').val(summary);
+
+        $('#deal_forms input.amount').focus();
     }
     function selectList(name, value) {
         $(name).val(value);
