@@ -5,6 +5,10 @@ class Account::Expense < Account::Base
   short_name '支出'
   connectable_type Account::Income
 
+  def expense?
+    true
+  end
+
   # TODO: Rails 2.2
   def self.human_name
     '費目'

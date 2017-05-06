@@ -1,5 +1,5 @@
 .deal_fields
-  = f.select :account_id, options_from_collection_for_select(current_user.assets, :id, :name, @deal.account_id), tabindex: 13, class: %w(account_selector)
+  = f.select :account_id, options_from_collection_for_select((@account && @account.asset?) ? [@account] : current_user.assets, :id, :name, @deal.account_id), tabindex: 13, class: %w(account_selector)
   #money_counting
     - [[:man, :gosen, :nisen, :sen, :gohyaku],[:hyaku, :gojyu, :jyu, :go, :ichi]].each do |units|
       - units.each do |name|

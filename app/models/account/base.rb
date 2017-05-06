@@ -14,6 +14,18 @@ class Account::Base < ApplicationRecord
 
   has_many :result_settlements, through: :entries
 
+  def asset?
+    false
+  end
+
+  def expense?
+    false
+  end
+
+  def income?
+    false
+  end
+
   def self.has_kind?
     false
   end

@@ -18,6 +18,10 @@ class Account::Asset < Account::Base
     where("accounts.asset_kind in (?)", kinds)
   }
 
+  def asset?
+    true
+  end
+
   def self.has_kind?
     true
   end

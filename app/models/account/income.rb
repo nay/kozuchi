@@ -5,6 +5,10 @@ class Account::Income < Account::Base
   short_name '収入'
   connectable_type Account::Expense
 
+  def income?
+    true
+  end
+
   # TODO: Rails 2.2 で国際化対応
   def self.human_name
     '収入内訳'
