@@ -19,8 +19,6 @@
         jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', params, function() {
           displaySuggestionsForComplex()
         })
-
-        $('#deal_forms input.amount').focus();
     }
     function fillForComplexDeal(id, type, with_amount) {
         if($('#notice')){ $('#notice').hide();}
@@ -31,8 +29,6 @@
         jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', params, function() {
           displaySuggestionsForComplex();
         })
-
-        $('#deal_forms input.amount').focus();
     }
     function displaySuggestionsForComplex() {
         jQuery('#patterns').load('<%= deal_suggestions_path(:from => 'complex_deal') %>', 'keyword=' + encodeURIComponent($('#deal_summary').val()))
