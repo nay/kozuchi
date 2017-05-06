@@ -12,14 +12,17 @@ module Entry
     HashWithIndifferentAccess.new(attributes).slice(:account_id, :amount, :line_number, :summary)
   end
 
+  # strip は parse_amount (amount= ) でやっているが行きがかり上ここでも一部やる
   def reversed_amount=(ra)
-    # まずそのまま入れて、コンマ入りの場合のパーズと、before_type_cast の保存をする
-    # これによりフォーマット不正の検証がそのまま動く
-    self.amount = ra
-    @reversed_amount_before_type_cast = amount_before_type_cast
-    # ActiveRecord によりキャストされた数値の符号を逆転する
-    self.amount *= -1 unless amount.nil?
-    # 正しい値であった場合は、amount_before_type_cast は変化する
+    self.amount = case ra
+    when Numeric
+      ra * -1
+    when /\A-/
+      ra.gsub(/\s*-/, '')
+    when String
+      "-#{ra.strip}"
+    end
+    @reversed_amount_before_type_cast = Entry::Base.parse_amount(ra)
   end
 
   def reversed_amount
