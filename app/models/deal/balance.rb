@@ -20,6 +20,10 @@ class Deal::Balance < Deal::Base
 
   delegate :account_id=, :account_id, :account, :balance=, :balance, :balance_before_type_cast, :amount, :summary, :initial_balance?, :balance_before, :to => :prepared_entry
 
+  def balance?
+    true
+  end
+
   def build_entry
     super
     # あれば入れる。登録前にも入れる

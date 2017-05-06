@@ -34,6 +34,14 @@ class Deal::Base < ApplicationRecord
     where("account_entries.account_id = ?", account_id)
   }
 
+  def balance?
+    false
+  end
+
+  def general?
+    false
+  end
+
   def human_name
     "記入 #{I18n.l(date)}-#{daily_seq}"
   end

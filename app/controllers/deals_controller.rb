@@ -76,6 +76,7 @@ class DealsController < ApplicationController
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
+            redirect_to: @deal.balance? ? monthly_account_deals_path(account_id: @deal.account.id, year: @deal.date.year, month: @deal.date.month, anchor: 'monthly') : nil,
             error_view: false
         }
       else

@@ -24,6 +24,10 @@ class Deal::General < Deal::Base
   after_destroy :request_unlinkings
   attr_accessor :for_linking # リンクのための save かどうかを見分ける
 
+  def general?
+    true
+  end
+
   # 貸借1つずつentry（未保存）を作成する
   def build_simple_entries
     error_if_not_empty
