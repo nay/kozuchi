@@ -11,6 +11,10 @@
           %td
             .clickable_text{onClick: on_click}
               %div{class: "#{pattern.css_class}"}= pattern.caption
+          %td
+            .clickable_text{onClick: on_click_without_amount, style: "margin-left: 4px; margin-right; 4px;"}
+              %div{class: "#{pattern.css_class}"}
+                ¥__&nbsp;
           %td{style: "text-align: right;"}= number_with_delimiter(pattern.debtor_amount)
           - if current_user.bookkeeping_style?
             %td= "(借) #{pattern.debtor_account_name}"
@@ -19,7 +23,3 @@
             %td= "[#{pattern.creditor_account_name}]"
             %td= " → "
             %td= "[#{pattern.debtor_account_name}]"
-          %td
-            .clickable_text{onClick: on_click_without_amount, style: "margin-left: 2px;"}
-              %div{class: "#{pattern.css_class}"}
-                金額なし

@@ -4,6 +4,8 @@
         selectList('#deal_creditor_entries_attributes_0_account_id', minus_account_id);
         selectList('#deal_debtor_entries_attributes_0_account_id', plus_account_id);
         $('#deal_summary').val(summary);
+
+        $('#deal_forms input.amount').focus();
     }
     function selectList(name, value) {
         $(name).val(value);
@@ -17,6 +19,8 @@
         jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', params, function() {
           displaySuggestionsForComplex()
         })
+
+        $('#deal_forms input.amount').focus();
     }
     function fillForComplexDeal(id, type, with_amount) {
         if($('#notice')){ $('#notice').hide();}
@@ -27,6 +31,8 @@
         jQuery('#deal_forms').load('<%= url_for(:action => 'new_complex_deal', :controller => 'deals') %>', params, function() {
           displaySuggestionsForComplex();
         })
+
+        $('#deal_forms input.amount').focus();
     }
     function displaySuggestionsForComplex() {
         jQuery('#patterns').load('<%= deal_suggestions_path(:from => 'complex_deal') %>', 'keyword=' + encodeURIComponent($('#deal_summary').val()))
