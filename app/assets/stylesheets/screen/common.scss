@@ -288,3 +288,18 @@ td.icon_to_deal {
     margin-bottom: 4px;
   }
 }
+
+#simple_main {
+  float:left;
+  width: 88%;
+}
+
+#simple_right {
+  float:right;
+  width: 12%;
+
+  .btn {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+}

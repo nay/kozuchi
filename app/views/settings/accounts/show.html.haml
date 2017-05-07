@@ -1,31 +1,34 @@
-.col-sm-offset-1
-  %p
-    = link_to '一覧へ戻る', action: :index
-.panel.panel-default.col-sm-offset-1.col-sm-10
-  .panel-body
-    = form_for :account, method: :patch, html: {class: "form-horizontal"} do |f|
-      .form-group
-        = f.label :name, class: "col-sm-3"
-        .col-sm-9
-          = @account.name
-      - if @account.class.has_kind?
+#simple_right
+  = link_to "#{@account.class.type_name}一覧", {action: :index}, class: %w(btn btn-default)
+  - if @account.any_credit?
+    = link_to "新しい精算", new_account_settlement_path(account_id: @account.id), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+
+#simple_main
+  .panel.panel-default.col-sm-offset-1.col-sm-10
+    .panel-body
+      = form_for :account, method: :patch, html: {class: "form-horizontal"} do |f|
         .form-group
-          = f.label :asset_kind, class: "col-sm-3"
+          = f.label :name, class: "col-sm-3"
           .col-sm-9
-            = @account.human_asset_kind
-      .form-group
-        = f.label :active, class: "col-sm-3"
-        .col-sm-9
-          = f.check_box :active
-      - if @account.any_credit?
+            = @account.name
+        - if @account.class.has_kind?
+          .form-group
+            = f.label :asset_kind, class: "col-sm-3"
+            .col-sm-9
+              = @account.human_asset_kind
         .form-group
-          = f.label :settlement_order_asc, class: "col-sm-3"
+          = f.label :active, class: "col-sm-3"
           .col-sm-9
-            = f.check_box :settlement_order_asc
-      .form-group
-        = f.label :description, class: "col-sm-3"
-        .col-sm-9
-          = f.text_area :description, rows: 5, class: "form-control"
-      .form-group
-        .col-sm-offset-3.col-sm-9
-          = f.submit "設定を更新する", class: %w(btn btn-primary)
+            = f.check_box :active
+        - if @account.any_credit?
+          .form-group
+            = f.label :settlement_order_asc, class: "col-sm-3"
+            .col-sm-9
+              = f.check_box :settlement_order_asc
+        .form-group
+          = f.label :description, class: "col-sm-3"
+          .col-sm-9
+            = f.text_area :description, rows: 5, class: "form-control"
+        .form-group
+          .col-sm-offset-3.col-sm-9
+            = f.submit "設定を更新する", class: %w(btn btn-primary)
