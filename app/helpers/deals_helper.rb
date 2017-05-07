@@ -50,7 +50,7 @@ module DealsHelper
             e.hidden_field(:account_id, :value => fixed_account.id, :class => 'pattern_field')).html_safe
           }
         else
-          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(false), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.active.grouped_options(false), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
         end
       end
     end
@@ -68,7 +68,7 @@ module DealsHelper
             e.hidden_field(:account_id, :value => fixed_account.id, :class => 'pattern_field')).html_safe
           }
         else
-          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.grouped_options(true), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
+          lambda{|tabindex| (e.select :account_id, grouped_options_for_select(@user.accounts.active.grouped_options(true), e.object.account_id), {}, :tabindex => tabindex, :class => 'pattern_field').html_safe }
         end
       end
     end
