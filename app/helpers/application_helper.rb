@@ -3,6 +3,10 @@ module ApplicationHelper
 
   include LoginEngine
 
+  def setting_account_path(account)
+    send("settings_#{account.class.to_sym.to_s}_path", id: account.id)
+  end
+
   def active_class_if(condition, classes = [])
     classes << 'active' if condition
     classes

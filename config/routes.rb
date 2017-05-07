@@ -10,7 +10,7 @@ Kozuchi::Application.routes.draw do
       %w(asset income expense).each do |type|
         with_options account_type: type do |with_type|
           with_type.put type.pluralize, :action => :update_all
-          with_type.resources type.pluralize, controller: :accounts
+          with_type.resources type.pluralize, controller: :accounts, only: [:index, :show, :create, :update, :destroy]
         end
       end
     end

@@ -17,13 +17,21 @@
   #deals_right
     #account_selector
       = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: '総合', class: "form-control"
-      = link_to '総合', monthly_deals_path(year: @year, month: @month), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')} if @account
+      %div{style: "padding: 4px 0 4px 0;"}
+        - if @account
+          .col-sm-1
+            %a{href: setting_account_path(@account)}
+              %span.glyphicon.glyphicon-wrench
+          .col-sm-1
+            - if @account.description.present?
+              = render partial: 'shared/account_memo', locals: {account: @account}
     - if @account
       - if @account.kind_of?(Account::Asset) && @account.any_credit?
         %hr
-        = link_to '精算一覧', account_settlements_path(account_id: @account.id), class: %w(btn btn-default)
         = link_to '新しい精算', new_account_settlement_path(account_id: @account.id), class: 'btn btn-default'
         %hr
+    - if @account
+      = link_to '総合', monthly_deals_path(year: @year, month: @month), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
     - account_selection_histories.each do |a|
       - if @account != a
         = account_button(a, @year, @month)

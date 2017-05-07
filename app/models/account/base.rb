@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'builder/xmlmarkup' # TODO:
 
 class Account::Base < ApplicationRecord
@@ -14,6 +13,9 @@ class Account::Base < ApplicationRecord
 
   has_many :result_settlements, through: :entries
 
+  scope :active,   -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+
   def asset?
     false
   end
@@ -23,6 +25,10 @@ class Account::Base < ApplicationRecord
   end
 
   def income?
+    false
+  end
+
+  def any_credit?
     false
   end
 

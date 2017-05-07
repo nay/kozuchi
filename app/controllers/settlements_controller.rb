@@ -118,7 +118,7 @@ class SettlementsController < ApplicationController
       return
     end
   end
-  
+
   # 立替精算依頼書
   def print_form
     render :layout => false
@@ -212,7 +212,8 @@ class SettlementsController < ApplicationController
   end
 
   def load_deals
-    @entries = Entry::General.includes(:deal => {:entries => :account}).where("deals.user_id = ? and account_entries.account_id = ? and deals.date >= ? and deals.date <= ? and account_entries.settlement_id is null and account_entries.result_settlement_id is null and account_entries.balance is null", @user.id, @settlement.account.id, @start_date, @end_date).order("deals.date, deals.daily_seq")
+    ordering = @settlement.account.settlement_order_asc ? 'asc' : 'desc'
+    @entries = Entry::General.includes(:deal => {:entries => :account}).where("deals.user_id = ? and account_entries.account_id = ? and deals.date >= ? and deals.date <= ? and account_entries.settlement_id is null and account_entries.result_settlement_id is null and account_entries.balance is null", @user.id, @settlement.account.id, @start_date, @end_date).order("deals.date #{ordering}, deals.daily_seq #{ordering}")
     @deals = @entries.map{|e| e.deal}
     @selected_deals = Array.new(@deals)
   end

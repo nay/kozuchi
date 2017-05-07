@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Account::Expense < Account::Base
   type_order 2
   type_name '費目'

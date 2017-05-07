@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Account::Income < Account::Base
   type_order 3
   type_name '収入内訳'

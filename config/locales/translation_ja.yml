@@ -26,9 +26,9 @@ ja:
 
     attributes:
       account/asset:
-        name: "名"  #g
+        name: "口座名"
         sort_key: "ソートキー"  #g
-        asset_kind: "資産の種類"  #g
+        asset_kind: "種別"  #g
         deals: "お得な情報"  #g
         balances: "残高"  #g
         user: "ユーザー"  #g
@@ -39,7 +39,10 @@ ja:
         link_requests: "リンク要求"  #g
 
       account/base:
+        active: "新たな記入に利用する"
+        description: "メモ"
         name: "名"  #g
+        settlement_order_asc: "精算項目を古い順に並べる"
         sort_key: "ソートキー"  #g
         asset_kind: "資産の種類"  #g
         deals: "お得な情報"  #g
