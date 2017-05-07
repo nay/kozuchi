@@ -16,6 +16,7 @@ gem 'rails', '5.0.0.1'
 gem 'rails-controller-testing'
 gem 'rails-observers', git: 'git://github.com/rails/rails-observers.git' # TODO: なくしたい
 gem 'rake', '11.3.0'
+gem 'rails_autolink'
 gem 'rb-readline'
 gem 'sass'
 gem 'therubyracer'

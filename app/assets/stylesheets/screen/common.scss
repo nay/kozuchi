@@ -303,3 +303,18 @@ td.icon_to_deal {
     margin-bottom: 4px;
   }
 }
+
+.account-memo {
+  font-size: 11px;
+  width: 140px;
+  text-align: left;
+  position: absolute;
+  top: 0px;
+  left: -50px;
+  z-index: 100;
+  padding: 4px;
+  background-color: #FFFFCC;
+  color: #000000;
+  border: 1px solid #FFDDBC;
+  display: none;
+}

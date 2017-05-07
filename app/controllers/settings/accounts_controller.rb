@@ -65,7 +65,7 @@ class Settings::AccountsController < ApplicationController
 
   def update
     if @account.update(account_details_params)
-      redirect_to({action: :index}, notice: "「#{@account.name}」の詳しい設定を更新しました。")
+      redirect_to({action: :show}, notice: "「#{@account.name}」の詳しい設定を更新しました。")
     else
       render :show
     end

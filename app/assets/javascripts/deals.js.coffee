@@ -214,6 +214,10 @@ $ ->
 
   $(document).on('mouseout', 'td.number', -> $('.timestamps', this).hide())
 
+  # 口座情報の表示
+  $(document).on('mouseover', '.account-memo-trigger', -> $('.account-memo', this).show())
+  $(document).on('mouseout',  '.account-memo-trigger',-> $('.account-memo', this).hide())
+
   # 日ナビゲーション
 
   $('.for_deal_editor').on('click', '#day_navigator td.day a', (event)->

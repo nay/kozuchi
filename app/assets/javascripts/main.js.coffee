@@ -1,4 +1,5 @@
 $ ->
+
   $('#user_and_today').click ->
     window.location.href = $(@).attr('link')
 
