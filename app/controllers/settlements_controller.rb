@@ -87,6 +87,7 @@ class SettlementsController < ApplicationController
     @credit_accounts.each do |account|
       @summaries[account] = nil unless @summaries.keys.include?(account)
     end
+    @summaries = @summaries.sort{|(a, av), (b, bv)| a.sort_key <=> b.sort_key}
   end
 
   # ある勘定の精算一覧を提供する
