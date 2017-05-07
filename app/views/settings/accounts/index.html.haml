@@ -6,6 +6,9 @@
     .col-md-9
       .bottom_box
         = form_tag url_for, method: :put do
+          .pull-right
+            %button.btn.btn-primary{type: "submit"} 変更内容を反映する
+            = link_to "編集を中止して再表示", url_for, class: %w(btn btn-default)
           %table.table.accounts
             %tr
               %th= "#{@account_class.human_name}名"
@@ -13,10 +16,8 @@
                 %th 種別
               %th 詳細
               %th 並び順
-              %th 変更
               %th 削除
             = render partial: "account", collection: @accounts, as: :account
-          .operation= link_to "編集を中止して再表示", url_for
 
     .col-md-3
       = render :partial => "new_form"

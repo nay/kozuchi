@@ -3,7 +3,7 @@ class Settings::AccountsController < ApplicationController
   menu_group "設定"
 
   before_action :set_account_class
-  before_action :find_account, :only => [:destroy]
+  before_action :find_account, :only => [:show, :update, :destroy]
 
   # 一覧・登録フォーム
   def index
@@ -17,7 +17,7 @@ class Settings::AccountsController < ApplicationController
   def create
     @account = user_accounts.build(account_params)
     if @account.save
-      flash[:notice]="「#{ERB::Util.h @account.name}」を登録しました。"
+      flash[:notice]="「#{@account.name}」を登録しました。"
       redirect_to action: :index
     else
       @accounts = user_accounts.reload
@@ -51,14 +51,33 @@ class Settings::AccountsController < ApplicationController
   def destroy
     begin
       @account.destroy
-      flash[:notice]="「#{ERB::Util.h @account.name}」を削除しました。"
+      flash[:notice]="「#{@account.name}」を削除しました。"
     rescue Account::Base::UsedAccountException => err
       flash[:errors]= [err.message]
     end
     redirect_to action: :index
   end
 
+  # 詳細・変更開始兼用
+  def show
+    @menu = "#{@account_class.human_name} - 詳しい設定 - #{@account.name}"
+  end
+
+  def update
+    if @account.update(account_details_params)
+      redirect_to({action: :index}, notice: "「#{@account.name}」の詳しい設定を更新しました。")
+    else
+      render :show
+    end
+  end
+
   private
+
+  def account_details_params
+    permitted = [:active, :description]
+    permitted << :settlement_order_asc if @account.any_credit?
+    params.require(:account).permit(*permitted)
+  end
 
   def user_accounts
     current_user.send(params[:account_type].pluralize)

@@ -26,6 +26,10 @@ class Account::Base < ApplicationRecord
     false
   end
 
+  def any_credit?
+    false
+  end
+
   def self.has_kind?
     false
   end

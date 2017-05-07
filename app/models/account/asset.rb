@@ -26,6 +26,12 @@ class Account::Asset < Account::Base
     true
   end
 
+  # TODO: 翻訳を使う感じにしたい
+  def human_asset_kind
+    attributes = BASIC_KINDS[asset_kind.to_sym]
+    attributes ? attributes[:name] : nil
+  end
+
   def capital_fund?
     asset_kind == "capital_fund"
   end
@@ -88,17 +94,6 @@ class Account::Asset < Account::Base
     super
   end
 
-  def self.asset_name(asset_name = nil)
-    return @asset_name unless asset_name
-    @asset_name = asset_name
-  end
-  
-  # 口座種類名からクラスを得る。
-  # asset_name:: 口座種類名
-  def self.asset_name_to_class(asset_name)
-    types.detect{|a| a.asset_name == asset_name}  
-  end
-
   # ---------- 機能
 
   validate :validates_partner_account
@@ -109,11 +104,6 @@ class Account::Asset < Account::Base
       self.create(:user_id => user_id, :name => name, :asset_kind => asset_kind.to_s, :sort_key => sort_key)
       sort_key += 1
     end
-  end
-
-
-  def asset_name
-    self.class.asset_name
   end
 
   private
