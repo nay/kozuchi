@@ -12,6 +12,25 @@ class Entry::Balance < Entry::Base
   # amountが変わるような更新はされない（作り直しになる）想定
   before_create :set_amount
 
+  # システム内の全残高の含み損益を再計算して更新する
+  def self.adjust_all!
+    entries_per_user = where(initial_balance: false).order("date, daily_seq").includes(:deal).group_by(&:user_id)
+    entries_per_user.each do |user_id, entries|
+      next if entries.empty?
+      Rails.logger.info "Start adjustment for User #{user_id}. entries: #{entries.size}  acounts: #{entries.group_by(&:account_id).keys}"
+      begin
+        transaction do
+          entries.each do |e|
+            e.deal.update_amount
+          end
+        end
+      rescue Exception => e
+        Rails.logger.error "Adjustment Error in User #{user_id}: #{e} #{e.backtrace.join("\n")}"
+      end
+    end
+    true
+  end
+
   def balance=(a)
     self[:balance] = self.class.parse_amount(a)
   end

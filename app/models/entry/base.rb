@@ -29,6 +29,7 @@ class Entry::Base < ApplicationRecord
   # deal_id, creditor, line_number の一意性はユーザーがコントロールすることではないので検証はせず、DB任せにする
 
   before_save :copy_deal_attributes
+  before_update :set_next_balance_entry_before_move # before_saveより後に呼ばれる
   # check_amount_exists は 派生クラスの before_create (before_saveよりおそい) より後に行う必要があるため after_save で
   after_save :check_amount_exists, :update_balance #, #:request_linking
 
@@ -167,11 +168,29 @@ class Entry::Base < ApplicationRecord
     raise "#{self.inspect} は精算データ #{(self.settlement || self.result_settlement).inspect} に紐づいているため削除できません。さきに精算データを削除してください。" if self.settlement || self.result_settlement
   end
 
+  # 更新の場合、位置を移動していれば、移動前の位置の直後の残高記入の含み損益にも影響があるので、影響のある残高記入を探しておく
+  def set_next_balance_entry_before_move
+    if date_changed? || daily_seq_changed?
+      @next_balance_entry_before_move = Entry::Balance.of(account_id).after(Entry::Base.find(id)).ordered.includes(:deal).first
+    end
+  end
+
   # 直後の残高記入のamountを再計算する
   def update_balance
     next_balance_entry = Entry::Balance.of(account_id).after(self).ordered.includes(:deal).first
-    return unless next_balance_entry
-    next_balance_entry.deal.update_amount # TODO: 効率
+
+    # 影響を受けた残高は、前から処理しないと、後ろの残高が正しく計算されない
+    balance_entries = [next_balance_entry, @next_balance_entry_before_move].compact.uniq.sort do |a, b|
+      if a.date != b.date
+        a.date <=> b.date
+      else
+        a.daily_seq <=> b.daily_seq
+      end
+    end
+
+    balance_entries.each do |e|
+      e.deal.update_amount
+    end
   end
 
 end
