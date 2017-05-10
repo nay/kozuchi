@@ -1,5 +1,5 @@
 <%= deal_form '残高',
-              :url => balance_deals_path do |f| %>
+              :url => {action: :create_balance_deal} do |f| %>
   <%= render :partial => 'balance_deal_form_contents', :locals => {:f => f} %>
 <% end %>
 <%= error_messages_for :deal %>

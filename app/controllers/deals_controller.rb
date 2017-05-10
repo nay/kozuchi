@@ -8,7 +8,8 @@ class DealsController < ApplicationController
   before_action :check_account
   before_action :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_action :find_new_or_existing_deal, :only => [:create_entry]
-  before_action :find_account_if_specified, only: [:index, :monthly]
+  before_action :find_account_if_specified, only: [:index, :monthly, :new_general_deal, :new_complex_deal, :new_balance_deal, :create_general_deal, :create_complex_deal, :create_balance_deal]
+  # NOTE: create_xxx_deal では @account はアクションでは使わないが、例えば残高記入で記入エラーが合った際の render で new の時点と画面が変わる恐れがあるため、元画面にあれば ajax でも伝わってくるようにしておく
 
   # 単数記入タブエリアの表示 (Ajax)
   def new_general_deal
