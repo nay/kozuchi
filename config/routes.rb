@@ -76,6 +76,8 @@ Kozuchi::Application.routes.draw do
     ['general', 'balance', 'complex'].each do |t|
       post "#{t}_deals", :action => "create_#{t}_deal", :as => :"#{t}_deals"
       get "#{t}_deals/new", :action => "new_#{t}_deal", :as => :"new_#{t}_deal"
+      post "accounts/:account_id/#{t}_deals", :action => "create_#{t}_deal", :as => :"account_#{t}_deals"
+      get "accounts/:account_id/#{t}_deals/new", :action => "new_#{t}_deal", :as => :"new_account_#{t}_deal"
     end
 
     get 'deals/:year/:month/days', :as => :monthly_deal_days, :action => 'day_navigator'
