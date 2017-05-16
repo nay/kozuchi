@@ -33,6 +33,7 @@ class Deal::Base < ApplicationRecord
     account_id = account_or_account_id.kind_of?(Account::Base) ? account_or_account_id.id : account_or_account_id
     where("account_entries.account_id = ?", account_id)
   }
+  scope :confirmed, -> { where(confirmed: true) }
 
   def balance?
     false

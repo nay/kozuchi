@@ -36,6 +36,19 @@ class Account::Base < ApplicationRecord
     false
   end
 
+  # TODO: with_joined_scope 相当
+  scope :join_entries_and_deals, -> { joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id") }
+
+  # flow_sum を関連起点で無くした版
+  # 指定した期間における指定した口座のフロー合計を得る。
+  def self.total_flow(start_date, end_date)
+    join_entries_and_deals.merge(Deal::Base.confirmed).merge(Entry::Base.in_a_time_between(start_date, end_date).not_initial_balance).sum("account_entries.amount").to_i
+  end
+
+  def total_flow(start_date, end_date)
+    self.class.where(id: id).total_flow(start_date, end_date)
+  end
+
   # この勘定の残高記入を日時のはやいほうからsaveしなおしていくことで、残高計算を正しくする
   # ツールとして利用する
   def fix_balance!
@@ -191,7 +204,17 @@ class Account::Base < ApplicationRecord
   end
 
   # 口座別計算メソッド
-  
+
+  # TODO: 資産合計はこれを使ったほうがはやそう
+  def self.balance_before_date(date)
+    join_entries_and_deals.merge(Deal::Base.confirmed).merge(Entry::Base.before_or_initial(date)).sum(:amount) || 0
+  end
+
+  # おそらく balance_before とほぼ同じ
+  def balance_before_date(date)
+    self.class.where(id: id).balance_before_date(date)
+  end
+
   # 指定された日付より前の時点での残高を計算して balance に格納する
   def balance_before(date, daily_seq = 0, ignore_initial = false)
 #    p "balance_before : #{date.to_s(:db)} - #{daily_seq} : #{ignore_initial}"

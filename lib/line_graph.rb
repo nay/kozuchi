@@ -4,7 +4,11 @@ class LineGraph
   attr_accessor :items_values, :item_labels, :x_values, :x_label, :unit, :grid, :y_values, :y_label, :min, :max
   
   # [[1, 4, 2], [2, 4, 3], ...]
-  def initialize(item_values, item_labels)
+  # options
+  #   y_label: 縦軸ラベル
+  #   max_grid: 縦軸の目盛り。デフォルト5
+  def initialize(item_values, item_labels, options = {})
+    options = {max_grid: 5}.merge(options)
     @item_labels = item_labels
     @max = nil
     @min = nil
@@ -16,20 +20,22 @@ class LineGraph
 
     # 値の最小値が10,000以上なら、万単位とする
     # TODO: 設定で変えられるようにする
-    if @min >= 10000
-      @item_values = item_values.map{|values| values.map{|v| (v.to_f / 10000).round}}
-      @max /= 10000
-      @min /= 10000
-      @unit = "万円"
-    else
+    # とりあえず動きがないときに微妙なので外す
+#    if @min >= 10000
+#      @item_values = item_values.map{|values| values.map{|v| (v.to_f / 10000).round}}
+#      @max /= 10000
+#      @min /= 10000
+#      @unit = "万円"
+#    else
       @item_values = item_values.dup
       @unit = "円"
-    end
-    @y_label = "単位：#{@unit}"
+#    end
+    @y_label = options[:y_label] || "単位：#{@unit}"
 
-    # 横軸の目盛りは、minとmaxの間の線が5個以内になるような10の倍数（540 と 780 なら、1→240、10→24、100→2となり 100）を使う
+
+    # 横軸の目盛りは、minとmaxの間の線が5（max_grid）個以内になるような10の倍数（540 と 780 なら、1→240、10→24、100→2となり 100）を使う
     @grid = 1
-    @grid *= 10 until(((@max - @min)/@grid) <= 5)
+    @grid *= 10 until(((@max - @min)/@grid) <= options[:max_grid])
     @y_values = []
 
     value = (@min.to_f/@grid).ceil * @grid
