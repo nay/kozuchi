@@ -224,7 +224,18 @@ class DealsController < ApplicationController
     Booking.set_anchor_dates_to(@bookings, @year, @month)
 
     # 上部折れ線グラフ
-    expenses, expenses_dates, label = @user.recent_from(start_date, 6) do |user, d|
+    expenses, expenses_dates, label = @user.recent_from(start_date, 4) do |user, d|
+      if @account&.asset?
+        @account.balance_before_date(d.end_of_month + 1)
+      elsif @account&.expense?
+        @account.total_flow(d.beginning_of_month, d.end_of_month)
+      elsif @account&.income?
+        @account.total_flow(d.beginning_of_month, d.end_of_month) * -1
+      else
+        user.expenses_summary(d.year, d.month)
+      end
+    end
+    last_expenses, last_expenses_dates, label = @user.recent_from(start_date << 12, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -242,10 +253,9 @@ class DealsController < ApplicationController
     elsif @account&.income?
       "収入"
     else
-      "支出合計"
+      "支出"
     end
-
-    @expenses_summary = LineGraph.new([expenses], [label])
+    @expenses_summary = LineGraph.new([expenses], [label], y_label: "", max_grid: 3)
     @months_for_expenses = [""].concat(expenses_dates.map{|d| "#{d.month}月"})
   end
 
