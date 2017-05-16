@@ -38,11 +38,12 @@ class Account::Base < ApplicationRecord
 
   # TODO: with_joined_scope 相当
   scope :join_entries_and_deals, -> { joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id") }
+  scope :join_confirmed_entries, -> { joins(sanitize_sql_array(["INNER JOIN account_entries on accounts.id = account_entries.account_id AND account_entries.confirmed = ?", TRUE]))  }
 
   # flow_sum を関連起点で無くした版
   # 指定した期間における指定した口座のフロー合計を得る。
   def self.total_flow(start_date, end_date)
-    join_entries_and_deals.merge(Deal::Base.confirmed).merge(Entry::Base.in_a_time_between(start_date, end_date).not_initial_balance).sum("account_entries.amount").to_i
+    join_confirmed_entries.merge(Entry::Base.in_a_time_between(start_date, end_date).not_initial_balance).sum("account_entries.amount").to_i
   end
 
   def total_flow(start_date, end_date)
@@ -205,9 +206,10 @@ class Account::Base < ApplicationRecord
 
   # 口座別計算メソッド
 
+  # NOTE: 最新版...^^;
   # TODO: 資産合計はこれを使ったほうがはやそう
   def self.balance_before_date(date)
-    join_entries_and_deals.merge(Deal::Base.confirmed).merge(Entry::Base.before_or_initial(date)).sum(:amount) || 0
+    join_confirmed_entries.merge(Entry::Base.before_or_initial(date)).sum(:amount) || 0
   end
 
   # おそらく balance_before とほぼ同じ
