@@ -153,6 +153,7 @@ class Entry::Base < ApplicationRecord
       self.user_id = deal.user_id
       self.date = deal.date
       self.daily_seq = deal.daily_seq
+      self.confirmed = deal.confirmed
     end
     raise "no user_id" unless self.user_id
     raise "no date" unless self.date

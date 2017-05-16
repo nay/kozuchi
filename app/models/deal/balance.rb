@@ -30,6 +30,7 @@ class Deal::Balance < Deal::Base
     entry.user_id = user_id
     entry.date = date
     entry.daily_seq = daily_seq
+    entry.confirmed = confirmed
     entry
   end
 
@@ -88,6 +89,7 @@ class Deal::Balance < Deal::Base
     entry.date = date
     raise "no daily_seq" unless daily_seq
     entry.daily_seq = daily_seq
+    entry.confirmed = confirmed
   end
 
   def cache_account_id
