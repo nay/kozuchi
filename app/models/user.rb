@@ -345,11 +345,14 @@ class User < ApplicationRecord
 
   
   def recent(months, &block)
+    recent_from(Date.today, months, &block)
+  end
+
+  def recent_from(start_date, months, &block)
     result = []
     dates = []
-    today = Date.today
-    day = today << (months-1)
-    while(day <= Date.today)
+    day = start_date << (months-1)
+    while(day <= start_date)
       result << yield(self, day)
       dates << day
       day >>= 1

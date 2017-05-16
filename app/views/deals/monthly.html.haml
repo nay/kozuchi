@@ -46,6 +46,9 @@
           - url_for(year: '_YEAR_', month: '_MONTH_')
           = render partial: "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: url_for(year: '_YEAR_', month: '_MONTH_')}}
       #new_deal_window
+        .chart{style: "margin-top: 20px;"}
+          = line_chart @expenses_summary.items , :width => 900, :height => 80, :canvas_id => 'expense_summary_graph', :x => @months_for_expenses, :gbackgroundColor => "'#ffe5f2'", :y => @expenses_summary.y, :yMin => @expenses_summary.y_min, :yMax => @expenses_summary.y_max
+
         - # ここに h3 してもいい
         .deal_editor
           - deal_type = flash[:"#{controller_name}_deal_type"]

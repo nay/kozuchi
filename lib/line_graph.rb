@@ -16,15 +16,16 @@ class LineGraph
 
     # 値の最小値が10,000以上なら、万単位とする
     # TODO: 設定で変えられるようにする
-    if @min >= 10000
-      @item_values = item_values.map{|values| values.map{|v| (v.to_f / 10000).round}}
-      @max /= 10000
-      @min /= 10000
-      @unit = "万円"
-    else
+    # とりあえず動きがないときに微妙なので外す
+#    if @min >= 10000
+#      @item_values = item_values.map{|values| values.map{|v| (v.to_f / 10000).round}}
+#      @max /= 10000
+#      @min /= 10000
+#      @unit = "万円"
+#    else
       @item_values = item_values.dup
       @unit = "円"
-    end
+#    end
     @y_label = "単位：#{@unit}"
 
     # 横軸の目盛りは、minとmaxの間の線が5個以内になるような10の倍数（540 と 780 なら、1→240、10→24、100→2となり 100）を使う
