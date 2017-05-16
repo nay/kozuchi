@@ -19,7 +19,8 @@ class HomeController < ApplicationController
   end
   
   def prepare_expenses_summary
-    expenses, expenses_dates = @user.recent(6) {|user, d| user.expenses_summary(d.year, d.month)}
+    # expenses, expenses_dates = @user.recent(6) {|user, d| user.expenses_summary(d.year, d.month)}
+    expenses, expenses_dates = @user.recent(6) {|user, d| user.accounts.expense_sum(d.beginning_of_month, d.end_of_month+1)}
     expenses = [expenses]
     @expenses_summary = LineGraph.new(expenses, ["支出合計"])
     @months_for_expenses = ["月"].concat(expenses_dates.map{|d| "#{d.month}月"})

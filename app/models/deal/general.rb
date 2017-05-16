@@ -204,6 +204,7 @@ class Deal::General < Deal::Base
     super
     entry.date = date
     entry.daily_seq = daily_seq
+    entry.confirmed = confirmed
     entry
   end
 

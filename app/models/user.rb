@@ -66,8 +66,14 @@ class User < ApplicationRecord
     end
 
     # 指定した期間における支出口座のフロー合計を得る。支出の不明金も含める。
+    # end_date は exclusive
+    # NOTE: 不明金は正負逆転するとか、正負をそれぞれよせるかまとめてよせるかなどがあり、SQL一発でやるのは難しい
+    #   例えば 擬似的に views を作り、asset 勘定ごとに任意の方向で amount がとれるようにするといいのかもしれない
+    #   不明金を合体させて扱うのは総合的なところに限られるので、Accountクラスに引っ越す必要性は高くなさそう
     def expense_sum(start_date, end_date)
-      result = flow_sum(start_date, end_date, "accounts.type = 'Account::Expense'")
+#      TODO: 旧 flow_sum から 新 total_flow （accounts関連から accountsクラスメソッド系へ）へ移行中。参考のため残しておく
+#      result = flow_sum(start_date, end_date, "accounts.type = 'Account::Expense'")
+      result = expense.total_flow(start_date, end_date-1) # inclusive に修正...
       unknowns(start_date, end_date).delete_if{|a| a.unknown <= 0}.each{|a| result += a.unknown}
       result
     end
