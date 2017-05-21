@@ -1,31 +1,37 @@
 %table.book.settlements_summary
-  %tr
-    %th
-    - @settlement_summaries.years.each do |year, months|
-      %th{colspan: months.size}= "#{year}年"
-  %tr
-    %th
-      .pull-right
-        - if @settlement_summaries.previous_target_date
-          = link_to '前へ', settlements_summary_path(@settlement_summaries.previous_target_date.year, @settlement_summaries.previous_target_date.month), class: %w(btn btn-info btn-sm)
-    - @settlement_summaries.months.each do |monthly_date|
-      %th= "#{monthly_date.month}月"
-    - if @settlement_summaries.next_target_date
-      %th
-        .pull-left
-          = link_to '後へ', settlements_summary_path(@settlement_summaries.next_target_date.year, @settlement_summaries.next_target_date.month), class: %w(btn btn-info btn-sm)
-  - @settlement_summaries.each do |account, account_settlements|
+  - unless @settlement_summaries.target_account
     %tr
       %th
-        = link_to account.name, account_settlements_path(account_id: account.id)
+      - @settlement_summaries.years.each do |year, months|
+        %th{colspan: months.size}= "#{year}年"
+  %tr
+    - unless @settlement_summaries.target_account
+      %th
         .pull-right
-          = link_to '作成', new_account_settlement_path(account_id: account.id), class: %w(btn btn-default btn-sm)
-      - @settlement_summaries.months.each do |monthly_date|
+          - if @settlement_summaries.previous_target_date
+            = link_to '前へ', settlements_summary_path(@settlement_summaries.previous_target_date.year, @settlement_summaries.previous_target_date.month), class: %w(btn btn-info btn-sm)
+    - @settlement_summaries.months.each do |monthly_date|
+      %th
+        - caption = "#{monthly_date.month}月"
+        - caption << "の精算" if @settlement_summaries.target_account
+        = caption
+    - unless @settlement_summaries.target_account
+      - if @settlement_summaries.next_target_date
+        %th
+          .pull-left
+            = link_to '後へ', settlements_summary_path(@settlement_summaries.next_target_date.year, @settlement_summaries.next_target_date.month), class: %w(btn btn-info btn-sm)
+  - @settlement_summaries.each do |account, account_settlements_per_months|
+    %tr
+      - unless @settlement_summaries.target_account
+        %th
+          = link_to account.name, account_settlements_path(account_id: account.id)
+      - account_settlements_per_months.each do |monthly_date, account_settlements|
         %td.settlement
           - if account_settlements.present?
-            - account_settlements.find_all{|s| s.result_entry.date.year == monthly_date.year && s.result_entry.date.month == monthly_date.month}.each do |s|
+            - account_settlements.each do |s|
               %div= link_to number_with_delimiter(s.amount), settlement_path(s.id)
           - else
-            &nbsp;
-      - if @settlement_summaries.next_target_date
-        %th{width: "20px;"}
+            = link_to '作成', new_account_settlement_path(account_id: account.id, year: monthly_date.year, month: monthly_date.month), class: %w(btn btn-default btn-sm)
+      - unless @settlement_summaries.target_account
+        - if @settlement_summaries.next_target_date
+          %th{width: "20px;"}

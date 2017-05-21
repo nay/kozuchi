@@ -46,9 +46,16 @@
           - url_for(year: '_YEAR_', month: '_MONTH_')
           = render partial: "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: url_for(year: '_YEAR_', month: '_MONTH_')}}
       #new_deal_window
+        - # 折れ線グラフ
         #chart{style: "margin-top: 0px; width: 55%; height: 50px; float: left;"}
           = line_chart @expenses_summary.items , :width => 550, :height => 80, :canvas_id => 'expense_summary_graph', :x => @months_for_expenses, :gbackgroundColor => "'#ffe5f2'", :y => @expenses_summary.y, :yMin => @expenses_summary.y_min, :yMax => @expenses_summary.y_max
-        %div{style: "clear: left;"}
+
+        - # 精算
+        - if @settlement_summaries
+          #settlements{style: "float: right; width: 35%;"}
+            = render partial: '/settlements/summary'
+
+        %div{style: "clear: both;"}
 
         - # ここに h3 してもいい
         .deal_editor

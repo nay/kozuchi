@@ -223,6 +223,11 @@ class DealsController < ApplicationController
     # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
     Booking.set_anchor_dates_to(@bookings, @year, @month)
 
+    # 上部精算概況
+    if @account && @account.any_credit?
+      @settlement_summaries = SettlementSummaries.new(current_user, past: 1, future: 1, target_account: @account, target_date: start_date)
+    end
+
     # 上部折れ線グラフ
     expenses, expenses_dates, label = @user.recent_from(start_date, 4) do |user, d|
       if @account&.asset?
