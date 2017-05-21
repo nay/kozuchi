@@ -97,9 +97,10 @@ Kozuchi::Application.routes.draw do
   controller :settlements do
     scope path: 'accounts/:account_id' do
       get 'settlements/new/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
+      get 'new/:year/:month', as: :new_account_settlement, action: :new
       scope as: :account do
         get 'settlements', as: :settlements, action: :account_settlements
-        resources :settlements, only: [:new, :create]
+        resources :settlements, only: [:create]
       end
     end
     get 'settlements/summary/:year/:month', action: :index, as: :settlements_summary
