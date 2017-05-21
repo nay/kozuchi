@@ -6,6 +6,7 @@ class SettlementsController < ApplicationController
   menu "新しい精算", :only => [:new, :cerate]
   menu "精算の概況", :only => [:index]
   menu "精算の詳細", :only => [:show]
+  helper_method :unsaved_settlement
 
   before_action :check_credit_account, :except => [:show, :destroy, :print_form]
   before_action :find_account, only: [:new, :create, :target_deals, :account_settlements]

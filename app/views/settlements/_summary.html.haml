@@ -31,7 +31,7 @@
             - account_settlements.each do |s|
               %div= link_to number_with_delimiter(s.amount), settlement_path(s.id)
           - else
-            = link_to '作成', new_account_settlement_path(account_id: account.id, year: monthly_date.year, month: monthly_date.month), class: %w(btn btn-default btn-sm)
+            = link_to '作成', new_account_settlement_path(account_id: account.id, year: monthly_date.year, month: monthly_date.month), class: %w(btn btn-sm) + [unsaved_settlement(account, monthly_date.year, monthly_date.month).present? ? 'btn-warning' : 'btn-default']
       - unless @settlement_summaries.target_account
         - if @settlement_summaries.next_target_date
           %th{width: "20px;"}
