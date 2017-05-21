@@ -3,6 +3,10 @@ module ApplicationHelper
 
   include LoginEngine
 
+  def date_selector_options
+    (1..31).map{|day| [day, day]}
+  end
+
   def setting_account_path(account)
     send("settings_#{account.class.to_sym.to_s}_path", id: account.id)
   end

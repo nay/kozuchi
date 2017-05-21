@@ -26,6 +26,18 @@
             = f.label :settlement_order_asc, class: "col-sm-3"
             .col-sm-9
               = f.check_box :settlement_order_asc
+          .form-group
+            = f.label :settlement_paid_on, class: "col-sm-3"
+            .col-sm-9
+              = f.select :settlement_paid_on, date_selector_options
+          .form-group
+            = f.label :settlement_closed_on_month, class: "col-sm-3"
+            .col-sm-9
+              = f.select :settlement_closed_on_month, [["当月", 0], ["前月", "1"], ["前々月", "2"]]
+          .form-group
+            = f.label :settlement_closed_on_day, class: "col-sm-3"
+            .col-sm-9
+              = f.select :settlement_closed_on_day, date_selector_options
         .form-group
           = f.label :description, class: "col-sm-3"
           .col-sm-9

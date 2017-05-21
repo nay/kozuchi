@@ -43,6 +43,9 @@ ja:
         description: "メモ"
         name: "名"  #g
         settlement_order_asc: "精算項目を古い順に並べる"
+        settlement_paid_on: "精算支払日"
+        settlement_closed_on_month: "精算締日（月）"
+        settlement_closed_on_day:   "精算締日（日）"
         sort_key: "ソートキー"  #g
         asset_kind: "資産の種類"  #g
         deals: "お得な情報"  #g
