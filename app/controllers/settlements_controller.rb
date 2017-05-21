@@ -78,16 +78,7 @@ class SettlementsController < ApplicationController
     year, month = params.permit(:year, :month).values
     @target_date = year && month ? Date.new(year.to_i, month.to_i, 1) : Time.zone.today
 
-    prepare_for_summary_months(9, 1, @target_date)
-    @previous_target_date = @target_date << 10
-    @next_target_date = @target_date >> 10 if @target_date < Time.zone.today.beginning_of_month
-
-    self.menu = "精算情報の概況"
-    @summaries = current_user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC').group_by(&:account)
-    @credit_accounts.each do |account|
-      @summaries[account] = nil unless @summaries.keys.include?(account)
-    end
-    @summaries = @summaries.sort{|(a, av), (b, bv)| a.sort_key <=> b.sort_key}
+    @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date)
   end
 
   # ある勘定の精算一覧を提供する
