@@ -43,7 +43,13 @@
                 %td= text_area('settlement', 'description', :rows => 3)
               %tr
                 %th 精算予定日:
-                %td= select_date(@result_date, :use_month_numbers => true, :prefix => 'result_date')
+                %td
+                  = "#{@result_date.year}年"
+                  = hidden_field_tag("result_date[year]", @result_date.year)
+                  = "#{@result_date.month}月"
+                  = hidden_field_tag("result_date[month]", @result_date.month)
+                  = select_day(@result_date, :prefix => 'result_date')
+                  日
               %tr
                 %th 精算内容
                 %td

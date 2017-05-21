@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
+  helper_method :unsaved_settlement
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
 
@@ -38,6 +39,18 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+  def unsaved_settelemnts
+    session[:unsaved_settlements] ||= {}
+  end
+
+  def unsaved_settlement(account, year, month)
+    account_unsaved_settlements(account)[year.to_s + month.to_s] ||= {}
+  end
+
+  def account_unsaved_settlements(account)
+    unsaved_settelemnts[account.id] ||= {}
+  end
 
   def dummy_year_and_month
     {year: "_YEAR_", month: "_MONTH_"}
