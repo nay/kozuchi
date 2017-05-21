@@ -43,7 +43,7 @@
                 %td= text_area('settlement', 'description', :rows => 3)
               %tr
                 %th 精算予定日:
-                %td= select_date(Date.today, :use_month_numbers => true, :prefix => 'result_date')
+                %td= select_date(@result_date, :use_month_numbers => true, :prefix => 'result_date')
               %tr
                 %th 精算内容
                 %td
