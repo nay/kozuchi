@@ -6,8 +6,9 @@ class Account::Base < ApplicationRecord
 
   include Account::Common
   
-  has_many :entries, :class_name => "Entry::Base", :foreign_key => "account_id"
-  has_many :balances, :class_name => "Entry::Balance", :foreign_key => "account_id"
+  has_many :entries,         :class_name => "Entry::Base",    :foreign_key => "account_id"
+  has_many :general_entries, :class_name => "Entry::General", :foreign_key => "account_id"
+  has_many :balances,        :class_name => "Entry::Balance", :foreign_key => "account_id"
 
   has_many :deals,  ->{ order(:date, :daily_seq) }, through: :entries
 
@@ -42,6 +43,21 @@ class Account::Base < ApplicationRecord
     false
   end
 
+<<<<<<< HEAD
+=======
+  # クレジットカード用 デフォルトの記入探索期間を返す
+  def term_for_settlement_paid_on(monthly_date)
+    # TODO: 設定に出す
+    term_margin = 7
+
+    end_month = monthly_date.beginning_of_month << settlement_closed_on_month
+    end_date = [end_month + (settlement_closed_on_day - 1), end_month.end_of_month].min
+    start_date = (end_date << 1) - term_margin
+
+    [start_date, end_date]
+  end
+
+>>>>>>> Hide button when unsettled entry does not exist
   # flow_sum を関連起点で無くした版
   # 指定した期間における指定した口座のフロー合計を得る。end_date は exclusive なので注意
   def self.total_flow(start_date, end_date)

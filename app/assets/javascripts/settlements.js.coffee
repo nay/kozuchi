@@ -107,14 +107,18 @@ $ ->
   refreshMonthNavigator()
   refreshDayOptions()
 
-  $('#start_date_year').change(onSpanChange)
-  $('#start_date_month').change(onSpanChange)
-  $('#start_date_day').change(onSpanChange)
-  $('#end_date_year').change(onSpanChange)
-  $('#end_date_month').change(onSpanChange)
-  $('#end_date_day').change(onSpanChange)
-  $('#result_date_day').change(onSpanChange)
-  $('#settlement_result_partner_account_id').change(onSpanChange)
+  $('#target_deals_form select').change(onSpanChange)
+  $("#target_deals_form input[type='text']").change(onSpanChange)
+  $('#target_deals_form textarea').change(onSpanChange)
+
+#  $('#start_date_year').change(onSpanChange)
+#  $('#start_date_month').change(onSpanChange)
+#  $('#start_date_day').change(onSpanChange)
+#  $('#end_date_year').change(onSpanChange)
+#  $('#end_date_month').change(onSpanChange)
+#  $('#end_date_day').change(onSpanChange)
+#  $('#result_date_day').change(onSpanChange)
+#  $('#settlement_result_partner_account_id').change(onSpanChange)
 
   # まだ選択されていない領域がクリックされたら、範囲が月まで選択されていれば、近い方の端を伸ばす。
   # 選択されている領域がクリックされたら、その月のみが選択された状態にする。

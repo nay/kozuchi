@@ -18,8 +18,6 @@ class SettlementsController < ApplicationController
     unsaved_info = unsaved_settlement(@account, @year, @month)
 
     # end_date は厳密に、start_date は上まで見る
-    # TODO: 設定に出す
-    term_margin = 7
 
     if unsaved_info.present?
       @settlement.name                      = unsaved_info[:name]
@@ -27,12 +25,12 @@ class SettlementsController < ApplicationController
       @start_date                           = unsaved_info[:start_date]
       @result_date                          = unsaved_info[:paid_on]
       @settlement.result_partner_account_id = unsaved_info[:paid_from]
+      @settlement.description               = unsaved_info[:description]
     else
       @settlement.name = "#{@settlement.account.name} #{@year}/#{"%02d" % @month.to_i}" # 設定に出したいかも
-      end_month = (Date.new(@year.to_i, @month.to_i, 1) << @account.settlement_closed_on_month).beginning_of_month
-      @end_date = [end_month + (@account.settlement_closed_on_day - 1), end_month.end_of_month].min
-      @start_date = (@end_date << 1) - term_margin
+      @start_date, @end_date = @account.term_for_settlement_paid_on(Date.new(@year.to_i, @month.to_i, 1))
       @result_date = [Date.new(@year.to_i, @month.to_i, 1) + @account.settlement_paid_on - 1, Date.new(@year.to_i, @month.to_i, 1).end_of_month].min
+      # description はなし
     end
 
     load_deals
@@ -52,15 +50,17 @@ class SettlementsController < ApplicationController
       return
     end
 
-    # 勘定、精算期間を保存する
+    # 精算の内容を保存する
     content = {start_date: @start_date, end_date: @end_date}
     content[:name] = params[:settlement][:name]
-    content[:paid_from] = params[:settlement][:result_partner_account_id]
     content[:paid_on] = Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1
+    content[:paid_from] = params[:settlement][:result_partner_account_id]
+    content[:description] = params[:settlement][:description]
     store_unsaved_settlement(@account, @year, @month, content)
 
     @settlement.name = content[:name] || "#{@settlement.account.name} #{year}/#{"%02d" % month.to_i}"
     @settlement.result_partner_account_id = content[:paid_from]
+    @settlement.description = content[:description]
     @result_date = content[:paid_on]
 
     load_deals

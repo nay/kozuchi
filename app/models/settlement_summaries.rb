@@ -27,12 +27,16 @@ class SettlementSummaries
       all_summaries = all_summaries.sort{|(a, av), (b, bv)| a.sort_key <=> b.sort_key}
     end
 
-    # summaries の values が、月 - 精算リストのハッシュになるようにする
+    # summaries の values が、月 - [精算リスト, 未精算金額] のハッシュになるようにする
     @summaries = {}
     all_summaries.each do |account, values|
       grouped = {}
       months.each do |monthly_date|
-        grouped[monthly_date] = values.find_all{|s| s.result_entry.date.year == monthly_date.year && s.result_entry.date.month == monthly_date.month}
+        # NOTE: 残高による不明金は今のところ精算不能なので無視
+        # NOTE: 記入はあって結果差し引き0になっているものは精算の可能性があるとして、nilと0で結果を区別する
+        unsettled_entry_exists = account.general_entries.in_a_time_between(*account.term_for_settlement_paid_on(monthly_date)).unsettled.exists?
+        unsettled_amount = unsettled_entry_exists ? account.general_entries.in_a_time_between(*account.term_for_settlement_paid_on(monthly_date)).unsettled.sum(:amount) : nil
+        grouped[monthly_date] = [values.find_all{|s| s.result_entry.date.year == monthly_date.year && s.result_entry.date.month == monthly_date.month}, unsettled_amount]
       end
       @summaries[account] = grouped
     end

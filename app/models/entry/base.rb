@@ -52,6 +52,7 @@ class Entry::Base < ApplicationRecord
   scope :after, ->(e) { where("date > ? or (date = ? and daily_seq > ?)", e.date, e.date, e.daily_seq) }
   scope :in_a_time_between, ->(from, to) { where("account_entries.date >= ? and account_entries.date <= ?", from, to) }
   scope :not_initial_balance, -> { where(initial_balance: false) }
+  scope :unsettled, -> { where(settlement_id: nil, result_settlement_id: nil) }
 
   delegate :year, :month, :day, :to => :date
 
