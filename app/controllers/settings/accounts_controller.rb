@@ -75,7 +75,7 @@ class Settings::AccountsController < ApplicationController
 
   def account_details_params
     permitted = [:active, :description]
-    permitted.concat([:settlement_order_asc, :settlement_paid_on, :settlement_closed_on_month, :settlement_closed_on_day]) if @account.any_credit?
+    permitted.concat([:settlement_order_asc, :settlement_target_account_id, :settlement_paid_on, :settlement_closed_on_month, :settlement_closed_on_day, :settlement_term_margin]) if @account.any_credit?
     params.require(:account).permit(*permitted)
   end
 

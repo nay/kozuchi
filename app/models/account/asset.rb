@@ -17,6 +17,20 @@ class Account::Asset < Account::Base
     where("accounts.asset_kind in (?)", kinds)
   }
 
+  with_options foreign_key: "settlement_paid_from_account_id", class_name: "Account::Asset" do |s|
+    s.belongs_to :settlement_paid_from
+    s.has_many   :settlement_paid_for, dependent: :nullify # 自分が消されたら、自分を精算口座にしているカードの精算口座をnilにする
+  end
+
+  # クレジットカード用 デフォルトの記入探索期間を返す
+  def term_for_settlement_paid_on(monthly_date)
+    end_month = monthly_date.beginning_of_month << settlement_closed_on_month
+    end_date = [end_month + (settlement_closed_on_day - 1), end_month.end_of_month].min
+    start_date = (end_date << 1) - settlement_term_margin
+
+    [start_date, end_date]
+  end
+
   def asset?
     true
   end

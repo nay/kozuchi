@@ -43,8 +43,6 @@ class Account::Base < ApplicationRecord
     false
   end
 
-<<<<<<< HEAD
-=======
   # クレジットカード用 デフォルトの記入探索期間を返す
   def term_for_settlement_paid_on(monthly_date)
     # TODO: 設定に出す
@@ -57,7 +55,6 @@ class Account::Base < ApplicationRecord
     [start_date, end_date]
   end
 
->>>>>>> Hide button when unsettled entry does not exist
   # flow_sum を関連起点で無くした版
   # 指定した期間における指定した口座のフロー合計を得る。end_date は exclusive なので注意
   def self.total_flow(start_date, end_date)
