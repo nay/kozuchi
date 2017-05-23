@@ -3,7 +3,7 @@ class SettlementSummaries
   attr_reader :years, :months, :previous_target_date, :next_target_date, :target_account
 
   # target_account がある場合は前・次の移動を出さない想定
-  def initialize(user, target_account: nil, past: 8, future: 2, target_date: Time.zone.today)
+  def initialize(user, target_account: nil, past: 6, future: 2, target_date: Time.zone.today)
     @target_date = target_date
     prepare_months(past: past, future: future, target_date: @target_date)
 
