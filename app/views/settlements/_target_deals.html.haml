@@ -56,7 +56,7 @@
                   #settlementSummary
                     = @account.name
                     %span#target_description= debtor_sum + creditor_sum < 0 ? 'に' : 'から'
-                    = select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, true)
+                    = select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, false)
                     - if debtor_sum + creditor_sum < 0
                       %span#result= " から #{number_with_delimiter((debtor_sum + creditor_sum) * (-1)) }円　を入金する。"
                     - else

@@ -20,7 +20,7 @@
     #select_credit_account
       .row
         .col-xs-4
-          = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.id), class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
+          = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name, a.id]}, @account.id), class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
         .col-xs-1
           .row
             .col-xs-3
@@ -29,10 +29,12 @@
             .col-xs-3
               %a{href: setting_account_path(@account)}
                 %span.glyphicon.glyphicon-wrench
-        .col-xs-6
+        .col-xs-5{style: "margin-top: 8px;"}
           = select_date(@start_date, prefix: 'start_date', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
           ～
           = select_date(@end_date, prefix: 'end_date', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
+        .col-xs-1
+          = link_to '初期化する', url_for, method: :delete, class: 'btn-danger btn', type: 'button', data: {confirm: "作成途中の内容を破棄して内容を初期化します。よろしいですか？"}
 
     - unless @settlement.errors.empty?
       %div= error_messages_for 'settlement'

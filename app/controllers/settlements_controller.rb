@@ -8,9 +8,10 @@ class SettlementsController < ApplicationController
   menu "精算の詳細", :only => [:show]
 
   before_action :check_credit_account, :except => [:show, :destroy, :print_form]
-  before_action :find_account, only: [:new, :create, :target_deals, :account_settlements]
-  before_action :load_settlement, :only => [:show, :destroy, :print_form, :submit, :confirm]
-  before_action :new_settlement, :read_year_month, :only => [:new, :create, :target_deals]
+  before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals, :account_settlements]
+  before_action :new_settlement,  only: [:new,               :create, :target_deals]
+  before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals]
+  before_action :load_settlement, only: [:show, :destroy, :print_form, :submit, :confirm]
 
   # 新しい精算口座を作る
   def new
@@ -37,6 +38,13 @@ class SettlementsController < ApplicationController
     load_deals
 
     prepare_for_month_navigator
+  end
+
+  # 記憶している作成途中の精算を削除して new へリダイレクトする
+  # 記憶がなくても気にしない
+  def destroy_new
+    clear_unsaved_settlement(@account, @year, @month)
+    redirect_to url_for
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
