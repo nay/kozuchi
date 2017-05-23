@@ -104,7 +104,8 @@ class SettlementsController < ApplicationController
   # 月を指定した概況
   def summary
     @target_date = Date.new(@year.to_i, @month.to_i, 1)
-    @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date)
+    @account = current_user.assets.credit.find(params[:account_id]) if params[:account_id]
+    @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date, target_account: @account)
   end
 
   # ある勘定の精算一覧を提供する

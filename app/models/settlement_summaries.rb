@@ -9,10 +9,8 @@ class SettlementSummaries
 
     @target_account = target_account
 
-    unless @target_account
-      @previous_target_date = @target_date << (past + future)
-      @next_target_date = @target_date >> (past + future) if @target_date < Time.zone.today.beginning_of_month
-    end
+    @previous_target_date = @target_date << (past + future)
+    @next_target_date = @target_date >> (past + future) if @target_date < Time.zone.today.beginning_of_month
 
 
     scope = user.settlements.includes(:account, :result_entry => :deal).order('deals.date DESC, settlements.id DESC')

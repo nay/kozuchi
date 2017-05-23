@@ -1,3 +1,4 @@
+- gadget ||= false
 %table.book.settlements_summary
   - unless @settlement_summaries.target_account
     %tr
@@ -5,26 +6,26 @@
       - @settlement_summaries.years.each do |year, months|
         %th{colspan: months.size}= "#{year}年"
   %tr
-    - unless @settlement_summaries.target_account
+    - unless gadget
       %th
         .pull-right
           - if @settlement_summaries.previous_target_date
-            = link_to '前へ', settlements_summary_path(@settlement_summaries.previous_target_date.year, @settlement_summaries.previous_target_date.month), class: %w(btn btn-info btn-sm)
+            = link_to '前へ', {year: @settlement_summaries.previous_target_date.year, month: @settlement_summaries.previous_target_date.month}, class: %w(btn btn-info btn-sm)
     - @settlement_summaries.months.each do |monthly_date|
       %th
         - caption = "#{monthly_date.month}月"
-        - caption << "の精算" if @settlement_summaries.target_account
+        - caption << "の精算" if gadget
         = caption
-    - unless @settlement_summaries.target_account
+    - unless gadget
       - if @settlement_summaries.next_target_date
         %th
           .pull-left
-            = link_to '後へ', settlements_summary_path(@settlement_summaries.next_target_date.year, @settlement_summaries.next_target_date.month), class: %w(btn btn-info btn-sm)
+            = link_to '後へ', {year: @settlement_summaries.next_target_date.year, month: @settlement_summaries.next_target_date.month}, class: %w(btn btn-info btn-sm)
   - @settlement_summaries.each do |account, account_settlements_per_months|
     %tr
-      - unless @settlement_summaries.target_account
+      - unless gadget
         %th
-          = link_to account.name, account_settlements_path(account_id: account.id)
+          = link_to_if !@settlement_summaries.target_account, "#{account.name}の精算", account_settlements_summary_path(account_id: account.id)
       - account_settlements_per_months.each do |monthly_date, (settlements, unsettled_entries_amount)|
         %td.settlement{class: monthly_date.year == @year.to_i && monthly_date.month == @month.to_i ? "target_month" : nil}
           - shown = false
@@ -39,6 +40,6 @@
             - shown = true
           - unless shown
             &nbsp;
-      - unless @settlement_summaries.target_account
+      - unless gadget
         - if @settlement_summaries.next_target_date
           %th{width: "20px;"}
