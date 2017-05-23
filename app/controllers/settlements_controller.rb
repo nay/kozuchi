@@ -10,7 +10,7 @@ class SettlementsController < ApplicationController
   before_action :check_credit_account, :except => [:show, :destroy, :print_form]
   before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals, :account_settlements]
   before_action :new_settlement,  only: [:new,               :create, :target_deals]
-  before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals]
+  before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals, :summary]
   before_action :load_settlement, only: [:show, :destroy, :print_form, :submit, :confirm]
 
   # 新しい精算口座を作る
@@ -95,12 +95,15 @@ class SettlementsController < ApplicationController
     end
   end
 
-  # 概況
-  # TDOO: current_account まわりを強引に消したので見直す
+  # 月を指定していない概況
   def index
-    year, month = params.permit(:year, :month).values
-    @target_date = year && month ? Date.new(year.to_i, month.to_i, 1) : Time.zone.today
+    year, month = read_target_date
+    redirect_to action: :summary, year: year, month: month
+  end
 
+  # 月を指定した概況
+  def summary
+    @target_date = Date.new(@year.to_i, @month.to_i, 1)
     @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date)
   end
 

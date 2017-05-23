@@ -26,7 +26,7 @@
         %th
           = link_to account.name, account_settlements_path(account_id: account.id)
       - account_settlements_per_months.each do |monthly_date, (settlements, unsettled_entries_amount)|
-        %td.settlement
+        %td.settlement{class: monthly_date.year == @year.to_i && monthly_date.month == @month.to_i ? "target_month" : nil}
           - shown = false
           - if settlements.present?
             - settlements.each do |s|
