@@ -99,10 +99,10 @@ Kozuchi::Application.routes.draw do
       get 'settlements/new/:year/:month/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
       get 'settlements/new/:year/:month', as: :new_account_settlement, action: :new
       delete 'settlements/new/:year/:month', action: :destroy_new
-      get 'settlements/:year/:month', as: :account_settlement, action: :create
-      scope as: :account do
-        get 'settlements', as: :settlements, action: :account_settlements
-      end
+      post 'settlements/:year/:month', as: :account_settlements, action: :create
+      # scope as: :account do
+      #   get 'settlements', as: :settlements, action: :account_settlements
+      # end
     end
     get 'settlements/summary/:year/:month',             action: :summary, as: :settlements_summary
     get 'settlements/summary/:year/:month/:account_id', action: :summary, as: :account_settlements_summary

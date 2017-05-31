@@ -8,8 +8,10 @@
         = button_to "提出する", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"}, class: %w(btn btn-warning)
   - if @settlement.deletable? || !@settlement.kind_of?(SubmittedSettlement)
     %hr
-  = link_to '精算一覧', account_settlements_path(@settlement.account.id), class: %w(btn btn-default)
-  = link_to '概況', settlements_path, class: %w(btn btn-default)
+  = account_button(@settlement.account, @settlement.result_entry.date.year, @settlement.result_entry.date.month)
+  %hr
+  = link_to "#{@settlement.account.name}の精算", account_settlements_summary_path(account_id: @settlement.account.id, year: @settlement.result_entry.date.year, month: @settlement.result_entry.date.month), class: %w(btn btn-default)
+  = link_to 'すべての精算', settlements_path, class: %w(btn btn-default)
 
 #settlements_main
   %h3 精算の基本情報
