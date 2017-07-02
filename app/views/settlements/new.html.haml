@@ -34,7 +34,7 @@
           ～
           = select_date(@end_date, prefix: 'end_date', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
         .col-xs-1
-          = link_to '初期化する', url_for, method: :delete, class: 'btn-danger btn', type: 'button', data: {confirm: "作成途中の内容を破棄して内容を初期化します。よろしいですか？"}
+          = link_to '初期化する', {action: :destroy_new}, method: :delete, class: 'btn-danger btn', type: 'button', data: {confirm: "作成途中の内容を破棄して内容を初期化します。よろしいですか？"}
 
     - unless @settlement.errors.empty?
       %div= error_messages_for 'settlement'

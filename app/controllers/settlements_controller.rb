@@ -13,7 +13,7 @@ class SettlementsController < ApplicationController
   # 新しい精算口座を作る
   def new
     # 現在記憶している精算があればそれを使う。
-    unsaved_info = unsaved_settlement(@account, @year, @month)
+    unsaved_info = unsaved_settlement(@account, current_year, current_month)
 
     # end_date は厳密に、start_date は上まで見る
 
@@ -25,9 +25,9 @@ class SettlementsController < ApplicationController
       @settlement.result_partner_account_id = unsaved_info[:target_account_id]
       @settlement.description               = unsaved_info[:description]
     else
-      @settlement.name = "#{@settlement.account.name} #{@year}/#{"%02d" % @month.to_i}" # 設定に出したいかも
-      @start_date, @end_date = @account.term_for_settlement_paid_on(Date.new(@year.to_i, @month.to_i, 1))
-      @result_date = [Date.new(@year.to_i, @month.to_i, 1) + @account.settlement_paid_on - 1, Date.new(@year.to_i, @month.to_i, 1).end_of_month].min
+      @settlement.name = "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}" # 設定に出したいかも
+      @start_date, @end_date = @account.term_for_settlement_paid_on(Date.new(current_year.to_i, current_month.to_i, 1))
+      @result_date = [Date.new(current_year.to_i, current_month.to_i, 1) + @account.settlement_paid_on - 1, Date.new(current_year.to_i, current_month.to_i, 1).end_of_month].min
       @settlement.result_partner_account_id = @account.settlement_target_account_id
       # description はなし
     end
@@ -40,7 +40,7 @@ class SettlementsController < ApplicationController
   # 記憶している作成途中の精算を削除して new へリダイレクトする
   # 記憶がなくても気にしない
   def destroy_new
-    clear_unsaved_settlement(@account, @year, @month)
+    clear_unsaved_settlement(@account, current_year, current_month)
     redirect_to url_for
   end
   
@@ -62,7 +62,7 @@ class SettlementsController < ApplicationController
     content[:paid_on] = Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1
     content[:target_account_id] = params[:settlement][:result_partner_account_id]
     content[:description] = params[:settlement][:description]
-    store_unsaved_settlement(@account, @year, @month, content)
+    store_unsaved_settlement(@account, current_year, current_month, content)
 
     @settlement.name = content[:name] || "#{@settlement.account.name} #{year}/#{"%02d" % month.to_i}"
     @settlement.result_partner_account_id = content[:target_account_id]
@@ -80,21 +80,23 @@ class SettlementsController < ApplicationController
     @settlement.result_date = to_date(params[:result_date])
     if @settlement.save
       # 覚えた精算情報を消す
-      clear_unsaved_settlement(@account, @year, @month)
+      clear_unsaved_settlement(@account, current_year, current_month)
       redirect_to settlements_path(year: current_year, month: current_month)
     else
+      # TODO: チェック外していてもついてしまうなど不完全っぽい
       @start_date = to_date(params[:start_date])
       @end_date = to_date(params[:end_date])
       load_deals
       @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
       prepare_for_month_navigator
+      @result_date = @settlement.result_date
       render :action => 'new'
     end
   end
 
   # 月を指定した概況
   def summary
-    @target_date = Date.new(@year.to_i, @month.to_i, 1)
+    @target_date = Date.new(current_year.to_i, current_month.to_i, 1)
     @account = current_user.assets.credit.find(params[:account_id]) if params[:account_id]
     @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date, target_account: @account)
     self.menu = @account ? "#{@account.name}の精算" : "すべての精算"
@@ -151,11 +153,7 @@ class SettlementsController < ApplicationController
     @settlement.user = current_user
     @settlement.account = @account
   end
-  
-  def find_settlement
-    @settlement = current_user.settlements.find(params[:id])
-  end
-  
+
   # 未精算記入の有無を表示するための月データを作成する
   def prepare_for_month_navigator
     entry_dates = current_user.entries.of(@account.id).where(:settlement_id => nil).where(:result_settlement_id => nil).select("distinct date").order(:date)
@@ -201,8 +199,15 @@ class SettlementsController < ApplicationController
     @selected_deals = Array.new(@deals)
   end
 
+  # パラメータの年月から現在年月を更新
   def read_year_month
     write_target_date(params[:year], params[:month])
-    @year, @month = read_target_date
   end
+
+  # 精算を取得し、精算の年月から現在年月を更新
+  def find_settlement
+    @settlement = current_user.settlements.find(params[:id])
+    write_target_date(@settlement.year, @settlement.month)
+  end
+
 end

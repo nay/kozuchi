@@ -27,7 +27,7 @@
         %th
           = link_to_if !@settlement_summaries.target_account, "#{account.name}の精算", account_settlements_path(account_id: account.id)
       - account_settlements_per_months.each do |monthly_date, (settlements, unsettled_entries_amount)|
-        %td.settlement{class: monthly_date.year == @year.to_i && monthly_date.month == @month.to_i ? "target_month" : nil}
+        %td.settlement{class: monthly_date.year == current_year.to_i && monthly_date.month == current_month.to_i ? "target_month" : nil}
           - shown = false
           - if settlements.present?
             - settlements.each do |s|

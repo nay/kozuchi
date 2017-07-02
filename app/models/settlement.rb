@@ -27,6 +27,8 @@ class Settlement < ApplicationRecord
   attr_reader :deal_ids
 
   before_validation :set_target_entries, :on => :create
+  validate :validate_target_entries
+
   after_save :create_result_deal
   before_destroy :check_submitted
   after_destroy :destroy_reuslt_deal
@@ -65,7 +67,15 @@ class Settlement < ApplicationRecord
   def amount
     result_entry.amount * -1
   end
-  
+
+  def year
+    result_entry.date.year
+  end
+
+  def month
+    result_entry.date.month
+  end
+
   # 相手に提出済にする
   def submit
     # すでに提出済ならエラー
@@ -105,13 +115,11 @@ class Settlement < ApplicationRecord
     result_entry.deal.confirmed?
   end
   
-  protected
-  
-  def validate
-    errors.add(:base, "対象取引が１件もありません。") if self.target_entries.empty?
-  end
-    
   private
+
+  def validate_target_entries
+    errors.add(:base, "対象取引が１件もありません。") if target_entries.empty?
+  end
 
   def destroy_reuslt_deal
     self.result_entry.deal.destroy if self.result_entry
