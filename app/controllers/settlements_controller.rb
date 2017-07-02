@@ -64,7 +64,7 @@ class SettlementsController < ApplicationController
     content[:description] = params[:settlement][:description]
     store_unsaved_settlement(@account, current_year, current_month, content)
 
-    @settlement.name = content[:name] || "#{@settlement.account.name} #{year}/#{"%02d" % month.to_i}"
+    @settlement.name = content[:name] || "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}"
     @settlement.result_partner_account_id = content[:target_account_id]
     @settlement.description = content[:description]
     @result_date = content[:paid_on]

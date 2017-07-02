@@ -8,12 +8,11 @@ class SubmittedSettlement < Settlement
     raise "相手から提出済にされることによってできた精算データを提出することはできません。"
   end
   
-  protected
-  def validate
-    
-  end
-
   private
+
+  def validate_target_entries
+    # まず作成してから足すため検証しない
+  end
 
   def create_result_deal
   end
