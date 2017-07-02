@@ -11,7 +11,7 @@
       .col-xs-4
         = form_tag '' do
           #account_options
-            = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
+            = select_tag :account_id, options_for_select(current_user.assets.credit.map{|a| [a.name_with_asset_type, a.id]}, @account.try(:id).to_s), class: %w(switcher form-control), data: {url_template: account_settlements_path(account_id: "_SWITCHER_VALUE_")}
       .col-xs-8
 
     %h3 一覧

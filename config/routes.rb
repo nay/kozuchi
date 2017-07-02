@@ -101,17 +101,14 @@ Kozuchi::Application.routes.draw do
       delete 'settlements/new/:year/:month', action: :destroy_new
       post 'settlements/:year/:month', as: :account_settlements, action: :create
       get  'settlements/:year/:month', action: :summary
-      # scope as: :account do
-      #   get 'settlements', as: :settlements, action: :account_settlements
-      # end
     end
-    get 'settlements/:year/:month', as: :settlements, action: :summary
     resources :settlements, :only => [:show, :destroy] do
       member do
         get 'print_form'
         put 'submit'
       end
     end
+    get 'settlements/:year/:month', as: :settlements, action: :summary
   end
 
   # AssetsController

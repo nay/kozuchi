@@ -1,5 +1,4 @@
 #deals_left
-  %h3= @account ? "#{@account.name} の精算" : "すべての精算"
   = render partial: 'summary'
 #deals_right
   - if @account

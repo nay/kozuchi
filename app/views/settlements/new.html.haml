@@ -20,7 +20,7 @@
     #select_credit_account
       .row
         .col-xs-4
-          = select_tag :account_id, options_for_select(@credit_accounts.map{|a| [a.name, a.id]}, @account.id), class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
+          = select_tag :account_id, options_for_select(current_user.assets.credit.map{|a| [a.name, a.id]}, @account.id), class: 'form-control account_selector', data: {url_template: new_account_settlement_path(account_id: "_ACCOUNT_ID_")}
         .col-xs-1
           .row
             .col-xs-3

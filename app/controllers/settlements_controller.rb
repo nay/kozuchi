@@ -3,15 +3,12 @@
 class SettlementsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "精算"
-  menu "新しい精算", :only => [:new, :cerate]
-  menu "精算の概況", :only => [:index]
-  menu "精算の詳細", :only => [:show]
+  menu "新しい精算", :only => [:new, :create]
 
-  before_action :check_credit_account, :except => [:show, :destroy, :print_form]
-  before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals, :account_settlements]
+  before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals]
   before_action :new_settlement,  only: [:new,               :create, :target_deals]
   before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals, :summary]
-  before_action :load_settlement, only: [:show, :destroy, :print_form, :submit, :confirm]
+  before_action :find_settlement, only: [:show, :destroy, :print_form, :submit]
 
   # 新しい精算口座を作る
   def new
@@ -95,27 +92,14 @@ class SettlementsController < ApplicationController
     end
   end
 
-  # 月を指定していない概況
-  def index
-    year, month = read_target_date
-    redirect_to action: :summary, year: year, month: month
-  end
-
   # 月を指定した概況
   def summary
     @target_date = Date.new(@year.to_i, @month.to_i, 1)
     @account = current_user.assets.credit.find(params[:account_id]) if params[:account_id]
     @settlement_summaries = SettlementSummaries.new(current_user, target_date: @target_date, target_account: @account)
+    self.menu = @account ? "#{@account.name}の精算" : "すべての精算"
   end
 
-  # ある勘定の精算一覧を提供する
-  def account_settlements
-    self.menu = "#{@account.name}の精算一覧"
-
-    @settlements = current_user.settlements.on(@account).includes(:result_entry => :deal).order('deals.date DESC, settlements.id DESC')
-    @summaries = {@account => @settlements}
-  end
-  
   # 1件を削除する
   def destroy
     if @settlement
@@ -168,21 +152,8 @@ class SettlementsController < ApplicationController
     @settlement.account = @account
   end
   
-  def check_credit_account
-    @credit_accounts = current_user.assets.credit
-    if @credit_accounts.empty?
-      render :action => 'no_credit_account'
-      return false
-    end
-  end
-
-  # TODO: 名前をかえて関連つかってDRYにしたい
-  def load_settlement
-    unless params[:id]
-      @settlement = Settlement.where("settlements.user_id = ?", @user.id).order("settlements.created_at").first
-    else
-      @settlement = Settlement.where("settlements.user_id = ? and settlements.id = ?", @user.id, params[:id]).first
-    end
+  def find_settlement
+    @settlement = current_user.settlements.find(params[:id])
   end
   
   # 未精算記入の有無を表示するための月データを作成する
