@@ -84,7 +84,7 @@ class SettlementsController < ApplicationController
     if @settlement.save
       # 覚えた精算情報を消す
       clear_unsaved_settlement(@account, @year, @month)
-      redirect_to :action => 'index'
+      redirect_to settlements_path(year: current_year, month: current_month)
     else
       @start_date = to_date(params[:start_date])
       @end_date = to_date(params[:end_date])
@@ -126,7 +126,7 @@ class SettlementsController < ApplicationController
     else
       flash[:notice] = "精算データを削除できませんでした。"
     end
-    redirect_to :action => 'index'
+    redirect_to settlements_path(year: current_year, month: current_month)
   end
 
   # TODO: 例外にしたいが、目にしがちな画面なので、エラーページをきれいにしてからのほうがいいかも

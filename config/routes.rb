@@ -100,13 +100,13 @@ Kozuchi::Application.routes.draw do
       get 'settlements/new/:year/:month', as: :new_account_settlement, action: :new
       delete 'settlements/new/:year/:month', action: :destroy_new
       post 'settlements/:year/:month', as: :account_settlements, action: :create
+      get  'settlements/:year/:month', action: :summary
       # scope as: :account do
       #   get 'settlements', as: :settlements, action: :account_settlements
       # end
     end
-    get 'settlements/summary/:year/:month',             action: :summary, as: :settlements_summary
-    get 'settlements/summary/:year/:month/:account_id', action: :summary, as: :account_settlements_summary
-    resources :settlements, :only => [:index, :show, :destroy] do
+    get 'settlements/:year/:month', as: :settlements, action: :summary
+    resources :settlements, :only => [:show, :destroy] do
       member do
         get 'print_form'
         put 'submit'

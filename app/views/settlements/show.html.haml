@@ -10,8 +10,8 @@
     %hr
   = account_button(@settlement.account, @settlement.result_entry.date.year, @settlement.result_entry.date.month)
   %hr
-  = link_to "#{@settlement.account.name}の精算", account_settlements_summary_path(account_id: @settlement.account.id, year: @settlement.result_entry.date.year, month: @settlement.result_entry.date.month), class: %w(btn btn-default)
-  = link_to 'すべての精算', settlements_path, class: %w(btn btn-default)
+  = link_to "#{@settlement.account.name}の精算", account_settlements_path(account_id: @settlement.account.id, year: @settlement.result_entry.date.year, month: @settlement.result_entry.date.month), class: %w(btn btn-default)
+  = link_to 'すべての精算', settlements_path(year: current_year, month: current_month), class: %w(btn btn-default)
 
 #settlements_main
   %h3 精算の基本情報

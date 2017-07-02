@@ -73,7 +73,7 @@ describe SettlementsController, type: :controller do
           :result_date => {:year => '2010', :month => '6', :day => '30'},
           account_id: :taro_hanako.to_id
       }
-      expect(response).to redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path(year: '2010', month: '6'))
       expect(@current_user.settlements.find_by(name: 'テスト精算2010-5')).not_to be_nil
     end
   end
@@ -130,7 +130,7 @@ describe SettlementsController, type: :controller do
       delete :destroy, params: {:id => @settlement.id}
     end
     it "リダイレクトされる" do
-      expect(response).to redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path(year: @settlement.year, month: @settlement.month))
     end
     it "実際に削除されている" do
       expect(Settlement.find_by(id: @settlement.id)).to be_nil
