@@ -122,7 +122,6 @@ class SettlementsController < ApplicationController
       render :action => 'no_settlement'
       return
     end
-    write_target_date(@settlement.result_entry.year, @settlement.result_entry.month)
   end
 
   # 立替精算依頼書
