@@ -17,7 +17,7 @@ class Account::Asset < Account::Base
     where("accounts.asset_kind in (?)", kinds)
   }
 
-  with_options foreign_key: "settlement_paid_from_account_id", class_name: "Account::Asset" do |s|
+  with_options foreign_key: "settlement_target_account_id", class_name: "Account::Asset" do |s|
     s.belongs_to :settlement_paid_from
     s.has_many   :settlement_paid_for, dependent: :nullify # 自分が消されたら、自分を精算口座にしているカードの精算口座をnilにする
   end
