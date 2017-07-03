@@ -20,7 +20,13 @@
               %li= link_to '貸借対照表', balance_sheet_path
 
           %li.dropdown{class: active_class_if(controller_name == 'settlements')}
-            = link_to "精算", settlements_path
+            - if @account && @account.kind_of?(Account::Asset) && @account.any_credit?
+              = link_to "精算<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
+              %ul.dropdown-menu
+                %li= link_to "#{@account.name}の精算", account_settlements_path(account_id: @account.id, year: current_year, month: current_month)
+                %li= link_to 'すべての精算', settlements_path(year: current_year, month: current_month)
+            - else
+              = link_to "精算", settlements_path(year: current_year, month: current_month)
           %li.dropdown{class: active_class_if(%w|expenses incomes deal_patterns preferences friends account_links partner_accounts single_logins export|.include?(controller_name) || (controller_name.include?("assets") && controller_path.include?("settings")))}
             = link_to "設定<b class='caret'></b>".html_safe, '#', class: 'dropdown-toggle', data: {toggle: "dropdown"}
             %ul.dropdown-menu

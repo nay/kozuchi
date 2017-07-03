@@ -43,14 +43,20 @@
                 %td= text_area('settlement', 'description', :rows => 3)
               %tr
                 %th 精算予定日:
-                %td= select_date(Date.today, :use_month_numbers => true, :prefix => 'result_date')
+                %td
+                  = "#{@result_date.year}年"
+                  = hidden_field_tag("result_date[year]", @result_date.year)
+                  = "#{@result_date.month}月"
+                  = hidden_field_tag("result_date[month]", @result_date.month)
+                  = select_day(@result_date, :prefix => 'result_date')
+                  日
               %tr
                 %th 精算内容
                 %td
                   #settlementSummary
                     = @account.name
                     %span#target_description= debtor_sum + creditor_sum < 0 ? 'に' : 'から'
-                    = select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, true)
+                    = select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, false)
                     - if debtor_sum + creditor_sum < 0
                       %span#result= " から #{number_with_delimiter((debtor_sum + creditor_sum) * (-1)) }円　を入金する。"
                     - else

@@ -9,44 +9,37 @@ describe SettlementsController, type: :controller do
     login_as :taro
   end
 
-  response_should_be_redirected_without_login {get :index}
+  response_should_be_redirected_without_login {get :summary, params: {year: Time.zone.today.year, month: Time.zone.today.month}}
 
   describe "new" do
     it "成功する" do
-      get :new, params: {account_id: :taro_card.to_id}
+      get :new, params: {account_id: :taro_card.to_id, year: '2010', month: '6'}
       expect(response).to be_success
     end
   end
 
   describe "target_deals" do
     it "十分なパラメータがないと例外" do
-      expect{ get :target_deals, params: {account_id: :taro_card.to_id} }.to raise_error(InvalidParameterError)
+      expect{ get :target_deals, params: {account_id: :taro_card.to_id, year: '2010', month: '6'} }.to raise_error(InvalidParameterError)
     end
     it "成功する" do
       get :target_deals, params: {
         :start_date => {:year => '2010', :month => '5', :day => '1'},
         :end_date => {:year => '2010', :month => '5', :day => '1'},
         :settlement => {:account_id => :taro_cache.to_id},
-        account_id: :taro_card.to_id
+        result_date: {year: '2010', month: '6', day: '1'},
+        account_id: :taro_card.to_id,
+        year: '2010',
+        month: '6'
       }
       expect(response).to be_success
     end
   end
 
-  describe "index" do
+  describe "summary" do
     before do
-      get 'index'
+      get 'summary', params: {year: Time.zone.today.year, month: Time.zone.today.month}
     end
-    it "成功する" do
-      expect(response).to be_success
-    end
-  end
-
-  describe "account_settlements" do
-    before do
-      get 'account_settlements', params: {account_id: :taro_card.to_id}
-    end
-
     it "成功する" do
       expect(response).to be_success
     end
@@ -71,9 +64,11 @@ describe SettlementsController, type: :controller do
             :deal_ids => {@deal.id.to_s => '1'}
             },
           :result_date => {:year => '2010', :month => '6', :day => '30'},
-          account_id: :taro_hanako.to_id
+          account_id: :taro_hanako.to_id,
+          year: '2010',
+          month: '6'
       }
-      expect(response).to redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path(year: '2010', month: '6'))
       expect(@current_user.settlements.find_by(name: 'テスト精算2010-5')).not_to be_nil
     end
   end
@@ -130,7 +125,7 @@ describe SettlementsController, type: :controller do
       delete :destroy, params: {:id => @settlement.id}
     end
     it "リダイレクトされる" do
-      expect(response).to redirect_to(settlements_path)
+      expect(response).to redirect_to(settlements_path(year: @settlement.year, month: @settlement.month))
     end
     it "実際に削除されている" do
       expect(Settlement.find_by(id: @settlement.id)).to be_nil

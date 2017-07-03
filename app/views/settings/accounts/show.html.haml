@@ -1,7 +1,5 @@
 #simple_right
   = link_to "#{@account.class.type_name}一覧", {action: :index}, class: %w(btn btn-default)
-  - if @account.any_credit?
-    = link_to "新しい精算", new_account_settlement_path(account_id: @account.id), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
   = account_button(@account, current_year, current_month)
 
 #simple_main
@@ -9,27 +7,49 @@
     .panel-body
       = form_for :account, method: :patch, html: {class: "form-horizontal"} do |f|
         .form-group
-          = f.label :name, class: "col-sm-3"
-          .col-sm-9
+          = f.label :name, class: "col-sm-4"
+          .col-sm-8
             = @account.name
         - if @account.class.has_kind?
           .form-group
-            = f.label :asset_kind, class: "col-sm-3"
-            .col-sm-9
+            = f.label :asset_kind, class: "col-sm-4"
+            .col-sm-8
               = @account.human_asset_kind
         .form-group
-          = f.label :active, class: "col-sm-3"
-          .col-sm-9
+          = f.label :active, class: "col-sm-4"
+          .col-sm-8
             = f.check_box :active
         - if @account.any_credit?
           .form-group
-            = f.label :settlement_order_asc, class: "col-sm-3"
-            .col-sm-9
+            = f.label :settlement_order_asc, class: "col-sm-4"
+            .col-sm-8
               = f.check_box :settlement_order_asc
+          .form-group
+            = f.label :settlement_paid_on, class: "col-sm-4"
+            .col-sm-8
+              = f.select :settlement_paid_on, date_selector_options
+          .form-group
+            = f.label :settlement_target_account_id, class: "col-sm-4"
+            .col-sm-8
+              = select_account('account', 'settlement_target_account_id', asset_kinds{|attributes| attributes[:banking]}, true)
+          .form-group
+            = f.label :settlement_closed_on_month, class: "col-sm-4"
+            .col-sm-8
+              = f.select :settlement_closed_on_month, [["当月", 0], ["前月", "1"], ["前々月", "2"]]
+          .form-group
+            = f.label :settlement_closed_on_day, class: "col-sm-4"
+            .col-sm-8
+              = f.select :settlement_closed_on_day, date_selector_options
+          .form-group
+            = f.label :settlement_term_margin, class: "col-sm-4"
+            .col-sm-8
+              = "前回締め日の"
+              = f.select :settlement_term_margin, (0..50).map{|v| [v, v]}
+              = "日前から精算対象となる記入を検索する"
         .form-group
-          = f.label :description, class: "col-sm-3"
-          .col-sm-9
+          = f.label :description, class: "col-sm-4"
+          .col-sm-8
             = f.text_area :description, rows: 5, class: "form-control"
         .form-group
-          .col-sm-offset-3.col-sm-9
+          .col-sm-offset-3.col-sm-8
             = f.submit "設定を更新する", class: %w(btn btn-primary)

@@ -1,0 +1,11 @@
+#deals_left
+  = render partial: 'summary'
+#deals_right
+  - if @account
+    = account_button(@account, current_year, current_month)
+    %hr
+    = link_to 'すべての精算', settlements_path(year: current_year, month: current_month), class: %w(btn btn-default)
+  - else
+    = link_to '総合', monthly_deals_path(year: current_year, month: current_month), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+    - account_selection_histories.each do |a|
+      = account_button(a, current_year, current_month)

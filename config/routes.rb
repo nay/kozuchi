@@ -96,19 +96,19 @@ Kozuchi::Application.routes.draw do
   # SettlementsController
   controller :settlements do
     scope path: 'accounts/:account_id' do
-      get 'settlements/new/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
-      scope as: :account do
-        get 'settlements', as: :settlements, action: :account_settlements
-        resources :settlements, only: [:new, :create]
-      end
+      get 'settlements/new/:year/:month/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
+      get 'settlements/new/:year/:month', as: :new_account_settlement, action: :new
+      delete 'settlements/new/:year/:month', action: :destroy_new
+      post 'settlements/:year/:month', as: :account_settlements, action: :create
+      get  'settlements/:year/:month', action: :summary
     end
-    get 'settlements/summary/:year/:month', action: :index, as: :settlements_summary
-    resources :settlements, :only => [:index, :show, :destroy] do
+    resources :settlements, :only => [:show, :destroy] do
       member do
         get 'print_form'
         put 'submit'
       end
     end
+    get 'settlements/:year/:month', as: :settlements, action: :summary
   end
 
   # AssetsController
