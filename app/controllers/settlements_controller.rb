@@ -57,6 +57,10 @@ class SettlementsController < ApplicationController
     end
 
     # 精算の内容を保存する
+    # TODO: こういうふうにしたい
+    # unsaved = UnsavedSettlement.new(params[:unsaved_settlement])
+    # store_unsaved_settlement(unsaved)
+
     content = {start_date: @start_date, end_date: @end_date}
     content[:name] = params[:settlement][:name]
     content[:paid_on] = Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1
