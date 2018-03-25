@@ -302,6 +302,51 @@ describe Deal::General do
       end
     end
 
+    context "複数仕訳で口座と金額の組み合わせが同じ項目が複数あるとき" do
+      let!(:deal) {
+        FactoryGirl.create(:complex_deal,
+          :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 0}, {:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 1}],
+          :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 0]
+        )
+      }
+      it "NestedAttributesを使って変更なしでsave!されたとき、entryが変化しない" do
+        old_debtor_entries = deal.debtor_entries.to_a
+        old_creditor_entry = deal.creditor_entries.first
+        deal.attributes = {
+          :debtor_entries_attributes => {
+            '0' => {:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 0, :id => old_debtor_entries[0].id},
+            '1' => {:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 1, :id => old_debtor_entries[1].id}
+          },
+          :creditor_entries_attributes => {
+            '0' => {:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 0, :id => old_creditor_entry.id}
+          }
+        }
+        expect{ deal.save! }.not_to raise_error
+
+        deal.reload
+        deal.debtor_entries.size.should == 2
+        new_debtor_entries = deal.debtor_entries.to_a
+        new_debtor_entries[0].id.should == old_debtor_entries[0].id
+        new_debtor_entries[0].amount.should == old_debtor_entries[0].amount
+        new_debtor_entries[0].account_id.should == old_debtor_entries[0].account_id
+        new_debtor_entries[0].user_id.should == old_debtor_entries[0].user_id
+        new_debtor_entries[0].line_number.should == old_debtor_entries[0].line_number
+        new_debtor_entries[1].id.should == old_debtor_entries[1].id
+        new_debtor_entries[1].amount.should == old_debtor_entries[1].amount
+        new_debtor_entries[1].account_id.should == old_debtor_entries[1].account_id
+        new_debtor_entries[1].user_id.should == old_debtor_entries[1].user_id
+        new_debtor_entries[1].line_number.should == old_debtor_entries[1].line_number
+
+        deal.creditor_entries.size.should == 1
+        new_creditor_entry = deal.creditor_entries.first
+        new_creditor_entry.id.should == old_creditor_entry.id
+        new_creditor_entry.amount.should == old_creditor_entry.amount
+        new_creditor_entry.account_id.should == old_creditor_entry.account_id
+        new_creditor_entry.user_id.should == old_creditor_entry.user_id
+        new_creditor_entry.line_number.should == old_creditor_entry.line_number
+      end
+    end
+
   end
 
   describe "#destroy" do
