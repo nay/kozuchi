@@ -16,7 +16,7 @@ module Deal
           matched_old_entries = []
           matched_new_entries = []
           old_entries.each do |old|
-            if matched_hash = attributes.detect{|new_entry_hash| old.matched_with_attributes?(new_entry_hash) }
+            if matched_hash = attributes.detect{|new_entry_hash| !matched_new_entries.include?(new_entry_hash) && old.matched_with_attributes?(new_entry_hash) }
               matched_hash[:id] = old.id.to_s # IDを付け替える
               matched_old_entries << old
               matched_new_entries << matched_hash
