@@ -15,14 +15,15 @@ module Deal
           # attirbutes の中と引き当てていく
           matched_old_entries = []
           matched_new_entries = []
+          not_matched_new_entries = attributes.dup
           old_entries.each do |old|
-            if matched_hash = attributes.detect{|new_entry_hash| !matched_new_entries.include?(new_entry_hash) && old.matched_with_attributes?(new_entry_hash) }
+            if matched_hash = not_matched_new_entries.detect{|new_entry_hash| old.matched_with_attributes?(new_entry_hash) }
+              not_matched_new_entries.delete_if{|entry_hash| entry_hash.equal?(matched_hash)}
               matched_hash[:id] = old.id.to_s # IDを付け替える
               matched_old_entries << old
               matched_new_entries << matched_hash
             end
           end
-          not_matched_new_entries = attributes - matched_new_entries
           not_matched_old_entries = old_entries - matched_old_entries
 
           # 引き当てられなかったhashからは :id をなくす
