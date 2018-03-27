@@ -40,5 +40,4 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-rails"
   gem 'timecop'
-  gem "timecop"
 end
