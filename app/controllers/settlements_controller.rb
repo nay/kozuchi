@@ -17,20 +17,12 @@ class SettlementsController < ApplicationController
 
     # end_date は厳密に、start_date は上まで見る
 
-    if unsaved_info.present?
-      @settlement.name                      = unsaved_info[:name]
-      @end_date                             = unsaved_info[:end_date]
-      @start_date                           = unsaved_info[:start_date]
-      @result_date                          = unsaved_info[:paid_on]
-      @settlement.result_partner_account_id = unsaved_info[:target_account_id]
-      @settlement.description               = unsaved_info[:description]
-    else
-      @settlement.name = "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}" # 設定に出したいかも
-      @start_date, @end_date = @account.term_for_settlement_paid_on(Date.new(current_year.to_i, current_month.to_i, 1))
-      @result_date = [Date.new(current_year.to_i, current_month.to_i, 1) + @account.settlement_paid_on - 1, Date.new(current_year.to_i, current_month.to_i, 1).end_of_month].min
-      @settlement.result_partner_account_id = @account.settlement_target_account_id
-      # description はなし
-    end
+    @settlement.name                      = unsaved_info.name
+    @end_date                             = unsaved_info.end_date
+    @start_date                           = unsaved_info.start_date
+    @result_date                          = unsaved_info.paid_on
+    @settlement.result_partner_account_id = unsaved_info.target_account_id
+    @settlement.description               = unsaved_info.description
 
     load_deals
 
@@ -61,17 +53,18 @@ class SettlementsController < ApplicationController
     # unsaved = UnsavedSettlement.new(params[:unsaved_settlement])
     # store_unsaved_settlement(unsaved)
 
-    content = {start_date: @start_date, end_date: @end_date}
-    content[:name] = params[:settlement][:name]
-    content[:paid_on] = Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1
-    content[:target_account_id] = params[:settlement][:result_partner_account_id]
-    content[:description] = params[:settlement][:description]
-    store_unsaved_settlement(@account, current_year, current_month, content)
+    unsaved = UnsavedSettlement.new(account: @account,
+                                    start_date: @start_date, end_date: @end_date,
+                                    name: params[:settlement][:name],
+                                    paid_on: Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1,
+                                    target_account_id: params[:settlement][:result_partner_account_id],
+                                    description: params[:settlement][:description])
+    store_unsaved_settlement(@account, current_year, current_month, unsaved)
 
-    @settlement.name = content[:name] || "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}"
-    @settlement.result_partner_account_id = content[:target_account_id]
-    @settlement.description = content[:description]
-    @result_date = content[:paid_on]
+    @settlement.name = unsaved.name
+    @settlement.result_partner_account_id = unsaved.target_account_id
+    @settlement.description = unsaved.description
+    @result_date = unsaved.paid_on
 
     load_deals
     @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
