@@ -17,13 +17,16 @@ class SettlementSummaries
     scope = scope.where(account_id: target_account.id) if target_account
     all_summaries = scope.group_by(&:account)
 
-    unless target_account
-      @credit_accounts = user.assets.credit
-      @credit_accounts.each do |account|
-        all_summaries[account] = [] unless all_summaries.keys.include?(account)
-      end
-      all_summaries = all_summaries.sort{|(a, av), (b, bv)| a.sort_key <=> b.sort_key}
+    @credit_accounts = if target_account
+                         [target_account]
+                       else
+                         user.assets.credit
+                       end
+
+    @credit_accounts.each do |account|
+      all_summaries[account] = [] unless all_summaries.keys.include?(account)
     end
+    all_summaries = all_summaries.sort{|(a, av), (b, bv)| a.sort_key <=> b.sort_key}
 
     # summaries の values が、月 - [精算リスト, 未精算金額] のハッシュになるようにする
     @summaries = {}
