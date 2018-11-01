@@ -2,6 +2,7 @@
 class SettlementSource
   include ActiveModel::Model
   include ActiveModel::AttributeMethods
+  include ActiveModel::Validations
 
   attr_accessor :account
   attr_accessor :start_date, :end_date # 精算対象となる取引の期間（必ず存在）
@@ -22,10 +23,34 @@ class SettlementSource
   def self.prepare(account:, year:, month:)
     us = new(account: account, year: year.to_i, month: month.to_i)
 
-    us.start_date, us.end_date = account.term_for_settlement_paid_on(Date.new(year, month, 1))
-    us.paid_on = [Date.new(year, month, 1) + account.settlement_paid_on - 1, Date.new(year, month, 1).end_of_month].min
+    us.start_date, us.end_date = account.term_for_settlement_paid_on(Date.new(us.year, us.month, 1))
+    us.paid_on = [Date.new(us.year, us.month, 1) + account.settlement_paid_on - 1, Date.new(us.year, us.month, 1).end_of_month].min
     us.target_account_id = account.settlement_target_account_id
     us
+  end
+
+  def refresh
+    account.reload
+    @ordering = nil
+    @entries = nil
+    @deals = nil
+    selected_deal_ids
+  end
+
+  def ordering
+    @ordering ||= account.settlement_order_asc ? 'asc' : 'desc'
+  end
+
+  def entries
+    @entries ||= Entry::General.includes(:deal => {:entries => :account}).where("deals.user_id = ? and account_entries.account_id = ? and deals.date >= ? and deals.date <= ? and account_entries.settlement_id is null and account_entries.result_settlement_id is null and account_entries.balance is null", account.user_id, account.id, start_date, end_date).order("deals.date #{ordering}, deals.daily_seq #{ordering}")
+  end
+
+  def deals
+    @deals ||= entries.map(&:deal)
+  end
+
+  def selected_deal_ids
+    @selected_deal_ids ||= deals.map(&:id)
   end
 
   def name

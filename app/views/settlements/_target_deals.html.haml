@@ -2,8 +2,8 @@
 - creditor_sum = 0
 
 %p
-  = "#{format_date(@start_date)}から#{format_date(@end_date)}の#{@account.name}の未精算取引は#{@deals.empty? ? "ありません。" : "全#{@deals.size}件あります。"}"
-- unless @entries.empty?
+  = "#{format_date(@source.start_date)}から#{format_date(@source.end_date)}の#{@source.account.name}の未精算取引は#{@source.deals.empty? ? "ありません。" : "全#{@source.deals.size}件あります。"}"
+- unless @source.entries.empty?
   %div
     #select_and_clear
       = link_to 'すべて選択', '#', class: %w(btn btn-default selectAll)
@@ -13,8 +13,8 @@
       %tr
         %th{style: "width: 3em;"} 登録
         = display_account_entry_header
-      - for entry in @entries
-        - selected = @selected_deals.include?(entry.deal)
+      - for entry in @source.entries
+        - selected = @source.selected_deal_ids.include?(entry.deal_id)
         %tr
           %td{style: selected ? nil: "background-color: #dddddd;"}
             = check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})", data: {amount: entry.amount})
@@ -37,18 +37,18 @@
             %table
               %tr
                 %th 精算データ名:
-                %td= text_field 'settlement', 'name'
+                %td= text_field 'source', 'name'
               %tr
                 %th コメント:
-                %td= text_area('settlement', 'description', :rows => 3)
+                %td= text_area('source', 'description', :rows => 3)
               %tr
                 %th 精算予定日:
                 %td
-                  = "#{@result_date.year}年"
-                  = hidden_field_tag("result_date[year]", @result_date.year)
-                  = "#{@result_date.month}月"
-                  = hidden_field_tag("result_date[month]", @result_date.month)
-                  = select_day(@result_date, :prefix => 'result_date')
+                  = "#{@source.paid_on.year}年"
+                  = hidden_field_tag("result_date[year]", @source.paid_on.year)
+                  = "#{@source.paid_on.month}月"
+                  = hidden_field_tag("result_date[month]", @source.paid_on.month)
+                  = select_day(@source.paid_on, :prefix => 'result_date')
                   日
               %tr
                 %th 精算内容
@@ -56,7 +56,7 @@
                   #settlementSummary
                     = @account.name
                     %span#target_description= debtor_sum + creditor_sum < 0 ? 'に' : 'から'
-                    = select_account('settlement', 'result_partner_account_id', asset_kinds{|attributes| attributes[:banking]}, false)
+                    = select_account('source', 'target_account_id', asset_kinds{|attributes| attributes[:banking]}, false)
                     - if debtor_sum + creditor_sum < 0
                       %span#result= " から #{number_with_delimiter((debtor_sum + creditor_sum) * (-1)) }円　を入金する。"
                     - else

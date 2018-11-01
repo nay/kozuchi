@@ -6,7 +6,7 @@ class SettlementsController < ApplicationController
   menu "新しい精算", :only => [:new, :create]
 
   before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals]
-  before_action :new_settlement,  only: [:new,               :create, :target_deals]
+  before_action :new_settlement,  only: [                    :create, :target_deals]
   before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals, :summary]
   before_action :find_settlement, only: [:show, :destroy, :print_form, :submit]
 
@@ -14,17 +14,6 @@ class SettlementsController < ApplicationController
   def new
     # 現在記憶している精算があればそれを使う。
     @source = unsaved_settlement(@account, current_year, current_month)
-
-    # end_date は厳密に、start_date は上まで見る
-
-    @settlement.name                      = @source.name
-    @end_date                             = @source.end_date
-    @start_date                           = @source.start_date
-    @result_date                          = @source.paid_on
-    @settlement.result_partner_account_id = @source.target_account_id
-    @settlement.description               = @source.description
-
-    load_deals
 
     prepare_for_month_navigator
   end
@@ -52,22 +41,15 @@ class SettlementsController < ApplicationController
     # TODO: こういうふうにしたい
     # source = SettlementSource.new(params[:unsaved_settlement])
     # store_unsaved_settlement(source)
-
-    source = SettlementSource.new(account: @account,
+    @source = SettlementSource.new(account: @account,
                                     start_date: @start_date, end_date: @end_date,
-                                    name: params[:settlement][:name],
+                                    name: params[:source][:name],
                                     paid_on: Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1,
-                                    target_account_id: params[:settlement][:result_partner_account_id],
-                                    description: params[:settlement][:description])
-    store_unsaved_settlement(@account, current_year, current_month, source)
+                                    target_account_id: params[:source][:target_account_id],
+                                    description: params[:source][:description])
+    store_unsaved_settlement(@account, current_year, current_month, @source)
 
-    @settlement.name = source.name
-    @settlement.result_partner_account_id = source.target_account_id
-    @settlement.description = source.description
-    @result_date = source.paid_on
-
-    load_deals
-    @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
+    @source.selected_deal_ids.delete_if{|id| params[:settlement][:deal_ids][id.to_s] != "1"}
 
     render :partial => 'target_deals'
   end
@@ -182,7 +164,7 @@ class SettlementsController < ApplicationController
   end
 
   def settlement_params
-    result = params.require(:settlement).permit(:name, :description, :result_partner_account_id)
+    result = params.require(:source).permit(:name, :description, :result_partner_account_id)
     # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
     result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
     result
