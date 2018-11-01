@@ -129,7 +129,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.10.1)
     multi_json (1.12.1)
-    mysql2 (0.4.5)
+    mysql2 (0.4.10)
     nio4r (1.2.1)
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
@@ -253,7 +253,7 @@ DEPENDENCIES
   i18n_generators
   jquery-rails
   libv8
-  mysql2
+  mysql2 (~> 0.4.10)
   passenger
   poltergeist
   pry-rails
@@ -271,4 +271,4 @@ DEPENDENCIES
   uglifier
 
 BUNDLED WITH
-   1.13.6
+   1.17.1
