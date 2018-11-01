@@ -13,16 +13,16 @@ class SettlementsController < ApplicationController
   # 新しい精算口座を作る
   def new
     # 現在記憶している精算があればそれを使う。
-    unsaved_info = unsaved_settlement(@account, current_year, current_month)
+    @source = unsaved_settlement(@account, current_year, current_month)
 
     # end_date は厳密に、start_date は上まで見る
 
-    @settlement.name                      = unsaved_info.name
-    @end_date                             = unsaved_info.end_date
-    @start_date                           = unsaved_info.start_date
-    @result_date                          = unsaved_info.paid_on
-    @settlement.result_partner_account_id = unsaved_info.target_account_id
-    @settlement.description               = unsaved_info.description
+    @settlement.name                      = @source.name
+    @end_date                             = @source.end_date
+    @start_date                           = @source.start_date
+    @result_date                          = @source.paid_on
+    @settlement.result_partner_account_id = @source.target_account_id
+    @settlement.description               = @source.description
 
     load_deals
 
