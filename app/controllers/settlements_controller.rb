@@ -50,21 +50,21 @@ class SettlementsController < ApplicationController
 
     # 精算の内容を保存する
     # TODO: こういうふうにしたい
-    # unsaved = UnsavedSettlement.new(params[:unsaved_settlement])
-    # store_unsaved_settlement(unsaved)
+    # source = SettlementSource.new(params[:unsaved_settlement])
+    # store_unsaved_settlement(source)
 
-    unsaved = UnsavedSettlement.new(account: @account,
+    source = SettlementSource.new(account: @account,
                                     start_date: @start_date, end_date: @end_date,
                                     name: params[:settlement][:name],
                                     paid_on: Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1,
                                     target_account_id: params[:settlement][:result_partner_account_id],
                                     description: params[:settlement][:description])
-    store_unsaved_settlement(@account, current_year, current_month, unsaved)
+    store_unsaved_settlement(@account, current_year, current_month, source)
 
-    @settlement.name = unsaved.name
-    @settlement.result_partner_account_id = unsaved.target_account_id
-    @settlement.description = unsaved.description
-    @result_date = unsaved.paid_on
+    @settlement.name = source.name
+    @settlement.result_partner_account_id = source.target_account_id
+    @settlement.description = source.description
+    @result_date = source.paid_on
 
     load_deals
     @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]

@@ -1,5 +1,5 @@
 # 未保存の精算を表すモデル。登録時に利用する。
-class UnsavedSettlement
+class SettlementSource
   include ActiveModel::Model
   include ActiveModel::AttributeMethods
 
