@@ -5,10 +5,11 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :create]
 
-  before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals]
-  before_action :new_settlement,  only: [                    :create, :target_deals]
-  before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals, :summary]
-  before_action :find_settlement, only: [:show, :destroy, :print_form, :submit]
+  before_action :find_account,          only: [:new, :destroy_new, :create, :target_deals]
+  before_action :new_settlement,        only: [                    :create, :target_deals]
+  before_action :set_settlement_source, only: [:target_deals, :create]
+  before_action :read_year_month,       only: [:new, :destroy_new, :create, :target_deals, :summary]
+  before_action :find_settlement,       only: [:show, :destroy, :print_form, :submit]
 
   # 新しい精算口座を作る
   def new
@@ -27,31 +28,17 @@ class SettlementsController < ApplicationController
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
   def target_deals
-    @source = unsaved_settlement(@account, current_year, current_month)
-
-    @source.attributes = source_params
-    @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
-
-    store_unsaved_settlement(@account, current_year, current_month, @source)
-
     render :partial => 'target_deals'
   end
 
   def create
-    @settlement.attributes = settlement_params
-    @settlement.result_date = to_date(params[:result_date])
+    @settlement = @source.new_settlement
     if @settlement.save
       # 覚えた精算情報を消す
       clear_unsaved_settlement(@account, current_year, current_month)
       redirect_to settlements_path(year: current_year, month: current_month)
     else
-      # TODO: チェック外していてもついてしまうなど不完全っぽい
-      @start_date = to_date(params[:start_date])
-      @end_date = to_date(params[:end_date])
-      load_deals
-      @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
       prepare_for_month_navigator
-      @result_date = @settlement.result_date
       render :action => 'new'
     end
   end
@@ -100,6 +87,12 @@ class SettlementsController < ApplicationController
   end
   
   private
+
+  def set_settlement_source
+    @source = unsaved_settlement(@account, current_year, current_month)
+    @source.attributes = source_params
+    @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
+  end
 
   def store_unsaved_settlement(account, year, month, content)
     account_unsaved_settlements(account)[year.to_s + month.to_s] = content

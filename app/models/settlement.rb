@@ -39,8 +39,8 @@ class Settlement < ApplicationRecord
   # 同上
   scope :recent, ->(limit) { order("account_entries.date desc").limit(limit) }
 
-  def deal_ids=(ids_hash)
-    @deal_ids = ids_hash.keys.map{|k| k.to_i}
+  def deal_ids=(ids)
+    @deal_ids = ids
   end
 
   def to_xml(options = {})

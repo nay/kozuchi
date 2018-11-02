@@ -36,7 +36,7 @@
         .col-xs-1
           = link_to '初期化する', {action: :destroy_new}, method: :delete, class: 'btn-danger btn', type: 'button', data: {confirm: "作成途中の内容を破棄して内容を初期化します。よろしいですか？"}
 
-    - unless @source.errors.empty?
-      %div= error_messages_for 'source'
+    - if @settlement&.errors&.present?
+      %div= error_messages_for 'settlement'
     #target_deals
       = render partial: 'target_deals'

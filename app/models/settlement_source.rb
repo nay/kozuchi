@@ -3,7 +3,6 @@ class SettlementSource
   include ActiveModel::Model
   include ActiveModel::AttributeMethods
   include ActiveModel::AttributeAssignment
-  include ActiveModel::Validations
 
   attr_accessor :account
   attr_accessor :start_date, :end_date # 精算対象となる取引の期間（必ず存在）
@@ -55,6 +54,7 @@ class SettlementSource
     @ordering = nil
     @entries = nil
     @deals = nil
+    @settlement = nil
   end
 
   def deal_ids=(deal_ids)
@@ -75,6 +75,15 @@ class SettlementSource
 
   def selected_deal_ids
     deals.map(&:id) & checked_deal_ids
+  end
+
+  def new_settlement
+    Settlement.new(
+        user_id: account.user_id,
+        account: account,
+        result_date: paid_on,
+        result_partner_account_id: target_account_id,
+        deal_ids: selected_deal_ids)
   end
 
   private
