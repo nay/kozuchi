@@ -27,29 +27,12 @@ class SettlementsController < ApplicationController
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
   def target_deals
-    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date]
+    @source = unsaved_settlement(@account, current_year, current_month)
 
-    begin
-      @start_date = to_date(params[:start_date])
-      @end_date = to_date(params[:end_date])
-    rescue InvalidDateError => e
-      render :text => e.message
-      return
-    end
+    @source.attributes = source_params
+    @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
 
-    # 精算の内容を保存する
-    # TODO: こういうふうにしたい
-    # source = SettlementSource.new(params[:unsaved_settlement])
-    # store_unsaved_settlement(source)
-    @source = SettlementSource.new(account: @account,
-                                    start_date: @start_date, end_date: @end_date,
-                                    name: params[:source][:name],
-                                    paid_on: Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1,
-                                    target_account_id: params[:source][:target_account_id],
-                                    description: params[:source][:description])
     store_unsaved_settlement(@account, current_year, current_month, @source)
-
-    @source.selected_deal_ids.delete_if{|id| params[:settlement][:deal_ids][id.to_s] != "1"}
 
     render :partial => 'target_deals'
   end
@@ -163,11 +146,9 @@ class SettlementsController < ApplicationController
     @account = current_user.assets.credit.find(params[:account_id])
   end
 
-  def settlement_params
-    result = params.require(:source).permit(:name, :description, :result_partner_account_id)
-    # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
-    result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
-    result
+  def source_params
+    deal_ids = params[:source][:deal_ids]&.permit!&.keys
+    params.require(:source).permit(:name, :description, :target_account_id, deal_ids: deal_ids, paid_on: [:day], start_date: [:year, :month, :day], end_date: [:year, :month, :day])
   end
 
   def load_deals

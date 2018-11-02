@@ -17,7 +17,7 @@
         - selected = @source.selected_deal_ids.include?(entry.deal_id)
         %tr
           %td{style: selected ? nil: "background-color: #dddddd;"}
-            = check_box_tag("settlement[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})", data: {amount: entry.amount})
+            = check_box_tag("source[deal_ids][#{entry.deal.id}]", "1", selected, :onClick => "settlement.toggle(this, #{entry.amount})", data: {amount: entry.amount})
           = display_account_entry entry, selected ? "" : "style='background-color: #dddddd;'"
         - if selected
           - debtor_sum += entry.amount if entry.amount < 0
@@ -37,18 +37,16 @@
             %table
               %tr
                 %th 精算データ名:
-                %td= text_field 'source', 'name'
+                %td= text_field :source, :name
               %tr
                 %th コメント:
-                %td= text_area('source', 'description', :rows => 3)
+                %td= text_area :source, :description, rows: 3
               %tr
                 %th 精算予定日:
                 %td
                   = "#{@source.paid_on.year}年"
-                  = hidden_field_tag("result_date[year]", @source.paid_on.year)
                   = "#{@source.paid_on.month}月"
-                  = hidden_field_tag("result_date[month]", @source.paid_on.month)
-                  = select_day(@source.paid_on, :prefix => 'result_date')
+                  = select_day(@source.paid_on, :prefix => 'source[paid_on]')
                   日
               %tr
                 %th 精算内容

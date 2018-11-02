@@ -2,6 +2,7 @@
 class SettlementSource
   include ActiveModel::Model
   include ActiveModel::AttributeMethods
+  include ActiveModel::AttributeAssignment
   include ActiveModel::Validations
 
   attr_accessor :account
@@ -10,9 +11,22 @@ class SettlementSource
   attr_writer   :name            # 名前
   attr_accessor :description     # 説明
   attr_accessor :year, :month, :paid_on # 精算年（必ず存在）、精算月（必ず存在）、精算日付
+  # TODO: paid_on は直接設定しないようにしたいが、prepare時の操作が理解できていない
   attr_accessor :target_account_id      # 精算を行う相手勘定（必ず存在）
+  attr_writer   :checked_deal_ids
+  attr_reader :selected_deal_ids
 
-  %w(start_date end_date paid_on).each do |attribute_name|
+  # 最初に作成するとき
+  def self.prepare(account:, year:, month:)
+    us = new(account: account, year: year.to_i, month: month.to_i)
+    us.start_date, us.end_date = account.term_for_settlement_paid_on(Date.new(us.year, us.month, 1))
+    us.paid_on = [Date.new(us.year, us.month, 1) + account.settlement_paid_on - 1, Date.new(us.year, us.month, 1).end_of_month].min
+    us.target_account_id = account.settlement_target_account_id
+    us.checked_deal_ids = us.deals.map(&:id)
+    us
+  end
+
+  %w(start_date end_date).each do |attribute_name|
     class_eval <<-METHOD
       def #{attribute_name}=(_date)
         @#{attribute_name} = cast_date(_date)
@@ -20,25 +34,31 @@ class SettlementSource
     METHOD
   end
 
-  def self.prepare(account:, year:, month:)
-    us = new(account: account, year: year.to_i, month: month.to_i)
-
-    us.start_date, us.end_date = account.term_for_settlement_paid_on(Date.new(us.year, us.month, 1))
-    us.paid_on = [Date.new(us.year, us.month, 1) + account.settlement_paid_on - 1, Date.new(us.year, us.month, 1).end_of_month].min
-    us.target_account_id = account.settlement_target_account_id
-    us
+  def attributes=(_attributes)
+    @entries = nil
+    @deals = nil
+    assign_attributes(_attributes)
   end
 
-  def refresh
-    account.reload
+  def paid_on=(_paid_on)
+    case _paid_on
+    when Hash, ActionController::Parameters
+      # 画面からは day だけを送るのでその際は請求月の情報を足す
+      _paid_on[:year] ||= year
+      _paid_on[:month] ||= month
+    end
+    @paid_on = cast_date(_paid_on)
+  end
+
+  def refresh(_account = nil)
+    _account ? self.account = _account : account.reload
     @ordering = nil
     @entries = nil
     @deals = nil
-    selected_deal_ids
   end
 
-  def ordering
-    @ordering ||= account.settlement_order_asc ? 'asc' : 'desc'
+  def deal_ids=(deal_ids)
+    @checked_deal_ids = deal_ids.keys.map(&:to_i)
   end
 
   def entries
@@ -49,18 +69,27 @@ class SettlementSource
     @deals ||= entries.map(&:deal)
   end
 
-  def selected_deal_ids
-    @selected_deal_ids ||= deals.map(&:id)
-  end
-
   def name
     @name ||= "#{account.name} #{year}/#{"%02d" % month}"
   end
 
+  def selected_deal_ids
+    deals.map(&:id) & checked_deal_ids
+  end
+
   private
+
+  def checked_deal_ids
+    @checked_deal_ids ||= []
+  end
+
+  def ordering
+    @ordering ||= account.settlement_order_asc ? 'asc' : 'desc'
+  end
+
   def cast_date(_date)
     case _date
-    when Hash
+    when Hash, ActionController::Parameters
       begin
         Date.new(_date[:year].to_i, _date[:month].to_i, _date[:day].to_i)
       rescue

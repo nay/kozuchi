@@ -107,9 +107,10 @@ $ ->
   refreshMonthNavigator()
   refreshDayOptions()
 
-  $('#target_deals_form select').change(onSpanChange)
-  $("#target_deals_form input[type='text']").change(onSpanChange)
-  $('#target_deals_form textarea').change(onSpanChange)
+  $('#target_deals_form').on('change', 'select', onSpanChange)
+  $('#target_deals_form').on('change', "input[type='text']", onSpanChange)
+  $('#target_deals_form').on('change', "input[type='checkbox']", onSpanChange)
+  $('#target_deals_form').on('change', 'textarea', onSpanChange)
 
   # まだ選択されていない領域がクリックされたら、範囲が月まで選択されていれば、近い方の端を伸ばす。
   # 選択されている領域がクリックされたら、その月のみが選択された状態にする。

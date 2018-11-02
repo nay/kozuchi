@@ -16,7 +16,7 @@
         %li= link_to "#{s.name} - #{s.result_entry.date}", settlement_path(s)
 
 #settlements_main
-  = form_tag account_settlements_path, :id => 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)} do
+  = form_for :source, url: account_settlements_path, html: {id: 'target_deals_form', data: {url: url_for(:action => 'target_deals', :clear_selection => true)}} do |f|
     #select_credit_account
       .row
         .col-xs-4
@@ -30,13 +30,13 @@
               %a{href: setting_account_path(@source.account)}
                 %span.glyphicon.glyphicon-wrench
         .col-xs-5{style: "margin-top: 8px;"}
-          = select_date(@source.start_date, prefix: 'start_date', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
+          = select_date(@source.start_date, prefix: 'source[start_date]', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
           ～
-          = select_date(@source.end_date, prefix: 'end_date', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
+          = select_date(@source.end_date, prefix: 'source[end_date]', use_month_numbers: true, start_year: current_user.pragmatic_start_year, end_year: Time.zone.now.year+1)
         .col-xs-1
           = link_to '初期化する', {action: :destroy_new}, method: :delete, class: 'btn-danger btn', type: 'button', data: {confirm: "作成途中の内容を破棄して内容を初期化します。よろしいですか？"}
 
     - unless @source.errors.empty?
       %div= error_messages_for 'source'
     #target_deals
-      = render :partial => 'target_deals'
+      = render partial: 'target_deals'

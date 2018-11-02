@@ -45,7 +45,14 @@ class ApplicationController < ActionController::Base
   end
 
   def unsaved_settlement(account, year, month)
-    account_unsaved_settlements(account)[year.to_s + month.to_s] ||= SettlementSource.prepare(account: account, year: year, month: month)
+    source = account_unsaved_settlements(account)[year.to_s + month.to_s]
+    if source
+      source.refresh(account)
+    else
+      source = SettlementSource.prepare(account: account, year: year, month: month)
+      account_unsaved_settlements(account)[year.to_s + month.to_s] = source
+    end
+    source
   end
 
   def account_unsaved_settlements(account)
