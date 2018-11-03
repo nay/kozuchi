@@ -39,7 +39,9 @@ numToFormattedString = (num) ->
 
 $ ->
   refreshTargets = ->
-    $('#target_deals').load($('#target_deals_form').data('url'), $('#target_deals_form').serialize(), ->
+    data = $('#target_deals_form').serializeArray()
+    data.push({name: '_method', value: 'PUT'})
+    $('#target_deals').load($('#target_deals_form').data('url'), data, ->
       settlement.debtorSum = $('#settlement_sums').data("debtor-sum")
       settlement.creditorSum = $('#settlement_sums').data("creditor-sum")
     )

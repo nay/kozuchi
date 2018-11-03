@@ -5,11 +5,10 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :create]
 
-  before_action :find_account,          only: [:new, :destroy_new, :create, :target_deals]
-  before_action :new_settlement,        only: [                    :create, :target_deals]
-  before_action :set_settlement_source, only: [:target_deals, :create]
-  before_action :read_year_month,       only: [:new, :destroy_new, :create, :target_deals, :summary]
-  before_action :find_settlement,       only: [:show, :destroy, :print_form, :submit]
+  before_action :find_account,          only: [:new, :create, :update_source, :create, :destroy_source]
+  before_action :set_settlement_source, only: [               :update_source, :create]
+  before_action :read_year_month,       only: [:new, :create, :update_source, :create, :destroy_source, :summary]
+  before_action :find_settlement,       only: [:destroy, :print_form, :submit, :show]
 
   # 新しい精算口座を作る
   def new
@@ -21,13 +20,13 @@ class SettlementsController < ApplicationController
 
   # 記憶している作成途中の精算を削除して new へリダイレクトする
   # 記憶がなくても気にしない
-  def destroy_new
+  def destroy_source
     clear_unsaved_settlement(@account, current_year, current_month)
     redirect_to url_for
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
-  def target_deals
+  def update_source
     render :partial => 'target_deals'
   end
 
@@ -140,6 +139,7 @@ class SettlementsController < ApplicationController
   end
 
   def source_params
+    raise InvalidParameterError unless params[:source]
     deal_ids = params[:source][:deal_ids]&.permit!&.keys
     params.require(:source).permit(:name, :description, :target_account_id, deal_ids: deal_ids, paid_on: [:day], start_date: [:year, :month, :day], end_date: [:year, :month, :day])
   end
