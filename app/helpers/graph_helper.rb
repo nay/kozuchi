@@ -39,7 +39,7 @@ $ (function() {
 	cg.draw(items);
 })
     EOS
-    s << %Q(<div><canvas width="400" height="200" id="#{id}"></canvas></div>).html_safe
+    s << %Q(<div style="margin: 0 auto; width: 400px;"><canvas width="400" height="200" id="#{id}"></canvas></div>).html_safe
     s
   end
   
