@@ -36,11 +36,23 @@ table.book {
   margin-bottom: 4px;
 }
 
-div#header {
+header {
   display: none;
 }
 
-div#sidebar {
+div.for_deal_editor div#deals_left {
+  display: none;
+}
+
+div#deals_right {
+  display: none;
+}
+
+div#settlements_left {
+  display: none;
+}
+
+div#settlements_right {
   display: none;
 }
 
@@ -48,11 +60,19 @@ div#calendar_form {
   display: none;
 }
 
-div#edit_box {
+div#new_deal_window {
   display: none;
 }
 
-#footer {
+ul#monthly_deals_body_tab li {
+  display: none;
+}
+
+ul#monthly_deals_body_tab li.active {
+  display: block;
+}
+
+footer {
   margin-top: 16px;
   text-align:right;
   font-size:small;
