@@ -1,6 +1,6 @@
 - gadget ||= false
 %table.book.settlements_summary
-  - unless @settlement_summaries.target_account
+  - unless gadget
     %tr
       %th
       - @settlement_summaries.years.each do |year, months|
