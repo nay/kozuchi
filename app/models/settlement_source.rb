@@ -79,11 +79,14 @@ class SettlementSource
 
   def new_settlement
     Settlement.new(
-        user_id: account.user_id,
-        account: account,
-        result_date: paid_on,
-        result_partner_account_id: target_account_id,
-        deal_ids: selected_deal_ids)
+                  name: name,
+                  description: description,
+                  user_id: account.user_id,
+                  account: account,
+                  result_date: paid_on,
+                  result_partner_account_id: target_account_id,
+                  deal_ids: selected_deal_ids
+    )
   end
 
   private

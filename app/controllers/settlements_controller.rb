@@ -31,6 +31,7 @@ class SettlementsController < ApplicationController
   end
 
   def create
+    # TODO: start_date / end_date でのロードは不要？
     @settlement = @source.new_settlement
     if @settlement.save
       # 覚えた精算情報を消す
