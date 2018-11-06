@@ -59,7 +59,7 @@
             = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
       %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;"}
         %li{roll: "presentation", class: 'active'}
-          %a.body_tab_link{data: "monthly", href: "#monthly"} 総合(#{@year}年 #{@month}月)
+          %a.body_tab_link{data: "monthly", href: "#monthly"} #{@account ? @account.name : '総合'}(#{@year}年 #{@month}月)
         %li{roll: "presentation"}
           %a.body_tab_link{data: "recent", href: "#recent"} 最近の記入
       #monthly_contents
