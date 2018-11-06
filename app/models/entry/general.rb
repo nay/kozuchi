@@ -12,7 +12,6 @@ class Entry::General < Entry::Base
 
   attr_writer :partner_account_name # 相手勘定名
 
-
   scope :recent_summaries, ->(keyword) {
     select("summary, deal_id"
     ).group("summary, deal_id"
