@@ -18,7 +18,7 @@ describe Settlement do
       :name => 'テスト精算2010-5',
       :description => '',
       :result_partner_account_id => :taro_bank.to_id.to_s,
-      :deal_ids => {@deal.id.to_s => '1'},
+      :deal_ids => [@deal.id],
       :result_date => Date.new(2010, 6, 30)
     )
     @settlement.save!

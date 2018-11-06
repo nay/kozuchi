@@ -64,7 +64,7 @@ describe SettlementsController, type: :controller do
             name: 'テスト精算2010-5',
             description: '',
             target_account_id: :taro_bank.to_id.to_s,
-            deal_ids: {@deal.id.to_s => '1'},
+            deal_ids: {@deal.id.to_s => "1"},
             paid_on: {year: '2010', month: '6', day: '30'},
             },
           account_id: :taro_hanako.to_id,
@@ -89,7 +89,7 @@ describe SettlementsController, type: :controller do
         :name => 'テスト精算2010-5',
         :description => '',
         :result_partner_account_id => :taro_bank.to_id.to_s,
-        :deal_ids => {@deal.id.to_s => '1'},
+        :deal_ids => [@deal.id],
         :result_date => Date.new(2010, 6, 30)
       )
       @settlement.save!
@@ -139,7 +139,7 @@ describe SettlementsController, type: :controller do
   def create_taro_settlement
     d = new_deal(3, 1, accounts(:taro_card), accounts(:taro_food), 6000)
     d.save!
-    s = users(:taro).settlements.build(:deal_ids => {d.id.to_s => "1"}, :account_id => accounts(:taro_card).id, :name => "テスト精算", :result_date => Date.new(2008, 3, 5), :result_partner_account_id => accounts(:taro_bank).id)
+    s = users(:taro).settlements.build(:deal_ids => [d.id], :account_id => accounts(:taro_card).id, :name => "テスト精算", :result_date => Date.new(2008, 3, 5), :result_partner_account_id => accounts(:taro_bank).id)
     s.save!
     s
   end
