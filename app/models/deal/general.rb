@@ -95,22 +95,7 @@ class Deal::General < Deal::Base
       creditor_entries.size > 1 ? '諸口' : creditor_entries.first.account.name
     end
   end
-
-  # 後の検索効率のため、idで妥協する
-  scope :recent_summaries, ->(keyword) {
-    select("account_entries.summary, max(deals.id) as id"
-    ).joins("inner join account_entries on account_entries.deal_id = deals.id"
-    ).group("account_entries.summary"
-    ).where("account_entries.summary like ?", "#{keyword}%"
-    ).order("deals.id desc"
-    ).limit(5)
-  }
-
-  scope :with_account, ->(account_id, debtor) {
-    # account_entries との join はされている想定
-    where("account_entries.account_id = ? and account_entries.creditor = ?", account_id, !debtor)
-  }
-
+  
   # summary の前方一致で検索する
   def self.search_by_summary(user_id, summary_key, limit, account_id = nil, debtor = true)
     begin
