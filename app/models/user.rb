@@ -154,7 +154,8 @@ class User < ApplicationRecord
   has_many :general_deals, :class_name => "Deal::General", :foreign_key => "user_id"
   has_many :balance_deals, :class_name => "Deal::Balance", :foreign_key => "user_id"
 
-  has_many :entries, :class_name => "Entry::Base"
+  has_many :entries,         class_name: "Entry::Base"
+  has_many :general_entries, class_name: "Entry::General"
   
   def default_asset
     assets.first
