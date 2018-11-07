@@ -49,15 +49,15 @@ $ ->
   $('#select_credit_account select.account_selector').change ->
     location.href = $(@).data("url-template").replace("_ACCOUNT_ID_", $(@).val())
 
-  $('#target_deals').on('click', 'a.selectAll', (e)->
-    $('table.book input[type=checkbox]').each ->
-      $(@).click() if !@checked
-    e.preventDefault()
-  )
-  $('#target_deals').on('click', 'a.clearAll', (e)->
-    $('table.book input[type=checkbox]').each ->
-      $(@).click() if @checked
-    e.preventDefault()
+  $('#target_deals').on('click', 'a.toggleDeals', (e)->
+    data = $('#target_deals_form').serializeArray()
+    data.push({name: '_method', value: $(@).data('method')})
+
+    $('#target_deals').load($(@).attr('href'), data, ->
+      settlement.debtorSum = $('#settlement_sums').data("debtor-sum")
+      settlement.creditorSum = $('#settlement_sums').data("creditor-sum")
+    )
+    return false
   )
 
   adjustDayOptions = (option_selector, lastDay) ->

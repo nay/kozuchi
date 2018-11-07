@@ -6,9 +6,9 @@
 - unless @source.entries.empty?
   %div
     #select_and_clear
-      = link_to 'すべて選択', '#', class: %w(btn btn-default selectAll)
+      = link_to 'すべて選択', new_account_settlement_deals_path, method: :post, class: %w(btn btn-default toggleDeals)
       &nbsp;
-      = link_to 'すべて解除', '#', class: %w(btn btn-default clearAll)
+      = link_to 'すべて解除', new_account_settlement_deals_path, method: :delete, class: %w(btn btn-default toggleDeals)
     %table.book
       %tr
         %th{style: "width: 3em;"} 登録
