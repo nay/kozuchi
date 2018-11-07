@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   cache_sweeper :export_sweeper
@@ -13,7 +12,7 @@ class SettlementsController < ApplicationController
   # 新しい精算口座を作る
   def new
     # 現在記憶している精算があればそれを使う。
-    @source = unsaved_settlement(@account, current_year, current_month)
+    @source = settlement_source(@account, current_year, current_month)
 
     prepare_for_month_navigator
   end
@@ -21,7 +20,7 @@ class SettlementsController < ApplicationController
   # 記憶している作成途中の精算を削除して new へリダイレクトする
   # 記憶がなくても気にしない
   def destroy_source
-    clear_unsaved_settlement(@account, current_year, current_month)
+    clear_settlement_source(@account, current_year, current_month)
     redirect_to url_for
   end
   
@@ -35,7 +34,7 @@ class SettlementsController < ApplicationController
     @settlement = @source.new_settlement
     if @settlement.save
       # 覚えた精算情報を消す
-      clear_unsaved_settlement(@account, current_year, current_month)
+      clear_settlement_source(@account, current_year, current_month)
       redirect_to settlements_path(year: current_year, month: current_month)
     else
       prepare_for_month_navigator
@@ -89,17 +88,17 @@ class SettlementsController < ApplicationController
   private
 
   def set_settlement_source
-    @source = unsaved_settlement(@account, current_year, current_month)
+    @source = settlement_source(@account, current_year, current_month)
     @source.attributes = source_params
     @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
   end
 
-  def store_unsaved_settlement(account, year, month, content)
-    account_unsaved_settlements(account)[year.to_s + month.to_s] = content
+  def store_settlement_source(account, year, month, content)
+    account_settlement_sources(account)[year.to_s + month.to_s] = content
   end
 
-  def clear_unsaved_settlement(account, year, month)
-    account_unsaved_settlements(account).delete(year.to_s + month.to_s)
+  def clear_settlement_source(account, year, month)
+    account_settlement_sources(account).delete(year.to_s + month.to_s)
   end
 
   def new_settlement
