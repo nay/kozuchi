@@ -89,12 +89,14 @@ class SettlementsController < ApplicationController
 
   def set_settlement_source
     @source = settlement_source(@account, current_year, current_month)
+    store_settlement_source(@account, current_year, current_month, @source)
+
     @source.attributes = source_params
     @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
   end
 
-  def store_settlement_source(account, year, month, content)
-    account_settlement_sources(account)[year.to_s + month.to_s] = content
+  def store_settlement_source(account, year, month, source)
+    account_settlement_sources(account)[year.to_s + month.to_s] = source
   end
 
   def clear_settlement_source(account, year, month)

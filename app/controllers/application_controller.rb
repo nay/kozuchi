@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
-  helper_method :settlement_source
+  helper_method :settlement_source_exists?
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
 
@@ -44,13 +44,17 @@ class ApplicationController < ActionController::Base
     session[:settlement_sources] ||= {}
   end
 
+  def settlement_source_exists?(account, year, month)
+    account_settlement_sources(account)[year.to_s + month.to_s].present?
+  end
+
   def settlement_source(account, year, month)
     source = account_settlement_sources(account)[year.to_s + month.to_s]
     if source
       source.refresh(account)
     else
       source = SettlementSource.prepare(account: account, year: year, month: month)
-      account_settlement_sources(account)[year.to_s + month.to_s] = source
+      # 敢えてセッションには入れない。prepareしたてのもの = 初期化状態としたいので、何か手が加わるまで保存しない。
     end
     source
   end
