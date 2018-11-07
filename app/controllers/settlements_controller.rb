@@ -4,9 +4,9 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :create]
 
-  before_action :find_account,          only: [:new, :create, :update_source, :create, :destroy_source]
-  before_action :set_settlement_source, only: [               :update_source, :create]
-  before_action :read_year_month,       only: [:new, :create, :update_source, :create, :destroy_source, :summary]
+  before_action :find_account,          only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create, :destroy_source]
+  before_action :set_settlement_source, only: [               :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create]
+  before_action :read_year_month,       only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create, :destroy_source, :summary]
   before_action :find_settlement,       only: [:destroy, :print_form, :submit, :show]
 
   # 新しい精算口座を作る
@@ -29,8 +29,22 @@ class SettlementsController < ApplicationController
     render :partial => 'target_deals'
   end
 
+  # 編集中の SettlementSource ですべての記入を選択する
+  # 新たな記入があったらそれも含めて選択する
+  def select_all_deals_in_source
+    @source.check_all_deals
+
+    render :partial => 'target_deals'
+  end
+
+  # 編集中の SettlementSource ですべての記入の選択を解除する
+  def remove_all_deals_in_source
+    @source.remove_all_deals
+
+    render :partial => 'target_deals'
+  end
+
   def create
-    # TODO: start_date / end_date でのロードは不要？
     @settlement = @source.new_settlement
     if @settlement.save
       # 覚えた精算情報を消す
@@ -89,12 +103,14 @@ class SettlementsController < ApplicationController
 
   def set_settlement_source
     @source = settlement_source(@account, current_year, current_month)
+    store_settlement_source(@account, current_year, current_month, @source)
+
     @source.attributes = source_params
     @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
   end
 
-  def store_settlement_source(account, year, month, content)
-    account_settlement_sources(account)[year.to_s + month.to_s] = content
+  def store_settlement_source(account, year, month, source)
+    account_settlement_sources(account)[year.to_s + month.to_s] = source
   end
 
   def clear_settlement_source(account, year, month)

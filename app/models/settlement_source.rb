@@ -12,6 +12,9 @@ class SettlementSource
   attr_accessor :year, :month, :paid_on # 精算年（必ず存在）、精算月（必ず存在）、精算日付
   # TODO: paid_on は直接設定しないようにしたいが、prepare時の操作が理解できていない
   attr_accessor :target_account_id      # 精算を行う相手勘定（必ず存在）
+
+  # checked はユーザーが画面上で「選択する」ことを確認した状態（不正なdeal_idが混じり得る情報）
+  # selected はDB上存在し、かつユーザーが画面上で「選択する」ことを確認した状態
   attr_writer   :checked_deal_ids
   attr_reader :selected_deal_ids
 
@@ -55,6 +58,14 @@ class SettlementSource
     @entries = nil
     @deals = nil
     @settlement = nil
+  end
+
+  def check_all_deals
+    @checked_deal_ids = deals.map(&:id)
+  end
+
+  def remove_all_deals
+    @checked_deal_ids = []
   end
 
   def deal_ids=(deal_ids)
