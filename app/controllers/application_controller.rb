@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
-  helper_method :unsaved_settlement
+  helper_method :settlement_source
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
 
@@ -40,16 +40,23 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def unsaved_settelemnts
-    session[:unsaved_settlements] ||= {}
+  def settelemnt_sources
+    session[:settlement_sources] ||= {}
   end
 
-  def unsaved_settlement(account, year, month)
-    account_unsaved_settlements(account)[year.to_s + month.to_s] ||= {}
+  def settlement_source(account, year, month)
+    source = account_settlement_sources(account)[year.to_s + month.to_s]
+    if source
+      source.refresh(account)
+    else
+      source = SettlementSource.prepare(account: account, year: year, month: month)
+      account_settlement_sources(account)[year.to_s + month.to_s] = source
+    end
+    source
   end
 
-  def account_unsaved_settlements(account)
-    unsaved_settelemnts[account.id] ||= {}
+  def account_settlement_sources(account)
+    settelemnt_sources[account.id] ||= {}
   end
 
   def dummy_year_and_month

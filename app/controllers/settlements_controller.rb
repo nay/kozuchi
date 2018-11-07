@@ -1,95 +1,43 @@
-# -*- encoding : utf-8 -*-
 # 精算（決済）処理のコントローラ
 class SettlementsController < ApplicationController
   cache_sweeper :export_sweeper
   menu_group "精算"
   menu "新しい精算", :only => [:new, :create]
 
-  before_action :find_account,    only: [:new, :destroy_new, :create, :target_deals]
-  before_action :new_settlement,  only: [:new,               :create, :target_deals]
-  before_action :read_year_month, only: [:new, :destroy_new, :create, :target_deals, :summary]
-  before_action :find_settlement, only: [:show, :destroy, :print_form, :submit]
+  before_action :find_account,          only: [:new, :create, :update_source, :create, :destroy_source]
+  before_action :set_settlement_source, only: [               :update_source, :create]
+  before_action :read_year_month,       only: [:new, :create, :update_source, :create, :destroy_source, :summary]
+  before_action :find_settlement,       only: [:destroy, :print_form, :submit, :show]
 
   # 新しい精算口座を作る
   def new
     # 現在記憶している精算があればそれを使う。
-    unsaved_info = unsaved_settlement(@account, current_year, current_month)
-
-    # end_date は厳密に、start_date は上まで見る
-
-    if unsaved_info.present?
-      @settlement.name                      = unsaved_info[:name]
-      @end_date                             = unsaved_info[:end_date]
-      @start_date                           = unsaved_info[:start_date]
-      @result_date                          = unsaved_info[:paid_on]
-      @settlement.result_partner_account_id = unsaved_info[:target_account_id]
-      @settlement.description               = unsaved_info[:description]
-    else
-      @settlement.name = "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}" # 設定に出したいかも
-      @start_date, @end_date = @account.term_for_settlement_paid_on(Date.new(current_year.to_i, current_month.to_i, 1))
-      @result_date = [Date.new(current_year.to_i, current_month.to_i, 1) + @account.settlement_paid_on - 1, Date.new(current_year.to_i, current_month.to_i, 1).end_of_month].min
-      @settlement.result_partner_account_id = @account.settlement_target_account_id
-      # description はなし
-    end
-
-    load_deals
+    @source = settlement_source(@account, current_year, current_month)
 
     prepare_for_month_navigator
   end
 
   # 記憶している作成途中の精算を削除して new へリダイレクトする
   # 記憶がなくても気にしない
-  def destroy_new
-    clear_unsaved_settlement(@account, current_year, current_month)
+  def destroy_source
+    clear_settlement_source(@account, current_year, current_month)
     redirect_to url_for
   end
   
   # Ajaxメソッド。口座や日付が変更されたときに呼ばれる
-  def target_deals
-    raise InvalidParameterError, 'start_date, end_date and settlement are required' unless params[:start_date] && params[:end_date]
-
-    begin
-      @start_date = to_date(params[:start_date])
-      @end_date = to_date(params[:end_date])
-    rescue InvalidDateError => e
-      render :text => e.message
-      return
-    end
-
-    # 精算の内容を保存する
-    content = {start_date: @start_date, end_date: @end_date}
-    content[:name] = params[:settlement][:name]
-    content[:paid_on] = Date.new(params[:result_date][:year].to_i, params[:result_date][:month].to_i, 1) + params[:result_date][:day].to_i - 1
-    content[:target_account_id] = params[:settlement][:result_partner_account_id]
-    content[:description] = params[:settlement][:description]
-    store_unsaved_settlement(@account, current_year, current_month, content)
-
-    @settlement.name = content[:name] || "#{@settlement.account.name} #{current_year}/#{"%02d" % current_month.to_i}"
-    @settlement.result_partner_account_id = content[:target_account_id]
-    @settlement.description = content[:description]
-    @result_date = content[:paid_on]
-
-    load_deals
-    @selected_deals.delete_if{|d| params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
-
+  def update_source
     render :partial => 'target_deals'
   end
 
   def create
-    @settlement.attributes = settlement_params
-    @settlement.result_date = to_date(params[:result_date])
+    # TODO: start_date / end_date でのロードは不要？
+    @settlement = @source.new_settlement
     if @settlement.save
       # 覚えた精算情報を消す
-      clear_unsaved_settlement(@account, current_year, current_month)
+      clear_settlement_source(@account, current_year, current_month)
       redirect_to settlements_path(year: current_year, month: current_month)
     else
-      # TODO: チェック外していてもついてしまうなど不完全っぽい
-      @start_date = to_date(params[:start_date])
-      @end_date = to_date(params[:end_date])
-      load_deals
-      @selected_deals.delete_if{|d| params[:settlement][:deal_ids] && params[:settlement][:deal_ids][d.id.to_s] != "1"} unless params[:clear_selection]
       prepare_for_month_navigator
-      @result_date = @settlement.result_date
       render :action => 'new'
     end
   end
@@ -139,12 +87,18 @@ class SettlementsController < ApplicationController
   
   private
 
-  def store_unsaved_settlement(account, year, month, content)
-    account_unsaved_settlements(account)[year.to_s + month.to_s] = content
+  def set_settlement_source
+    @source = settlement_source(@account, current_year, current_month)
+    @source.attributes = source_params
+    @source.deal_ids = {} unless source_params[:deal_ids] # １つも明細が選択されていないと代入が起きないことを回避する
   end
 
-  def clear_unsaved_settlement(account, year, month)
-    account_unsaved_settlements(account).delete(year.to_s + month.to_s)
+  def store_settlement_source(account, year, month, content)
+    account_settlement_sources(account)[year.to_s + month.to_s] = content
+  end
+
+  def clear_settlement_source(account, year, month)
+    account_settlement_sources(account).delete(year.to_s + month.to_s)
   end
 
   def new_settlement
@@ -184,11 +138,10 @@ class SettlementsController < ApplicationController
     @account = current_user.assets.credit.find(params[:account_id])
   end
 
-  def settlement_params
-    result = params.require(:settlement).permit(:name, :description, :result_partner_account_id)
-    # TODO: うまい書き方がよくわからない。一括代入しないとおもうのでとりあえず以下は全部許可
-    result[:deal_ids] = params[:settlement][:deal_ids].try(:permit!) || {}
-    result
+  def source_params
+    raise InvalidParameterError unless params[:source]
+    deal_ids = params[:source][:deal_ids]&.permit!&.keys
+    params.require(:source).permit(:name, :description, :target_account_id, deal_ids: deal_ids, paid_on: [:day], start_date: [:year, :month, :day], end_date: [:year, :month, :day])
   end
 
   def load_deals

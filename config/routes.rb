@@ -96,9 +96,9 @@ Kozuchi::Application.routes.draw do
   # SettlementsController
   controller :settlements do
     scope path: 'accounts/:account_id' do
-      get 'settlements/new/:year/:month/target_deals', :as => :new_account_settlement_target_deals, :action => :target_deals
       get 'settlements/new/:year/:month', as: :new_account_settlement, action: :new
-      delete 'settlements/new/:year/:month', action: :destroy_new
+      put 'settlements/new/:year/:month', :action => :update_source
+      delete 'settlements/new/:year/:month', action: :destroy_source
       post 'settlements/:year/:month', as: :account_settlements, action: :create
       get  'settlements/:year/:month', action: :summary
     end
