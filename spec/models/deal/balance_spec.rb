@@ -9,7 +9,7 @@ describe Deal::Balance do
       let(:deal) { FactoryGirl.build(:balance_deal, :account_id => nil) }
       it "検証エラーとなる" do
         deal.valid?
-        deal.errors[:'entry.account_id'].should_not be_empty
+        expect(deal.errors[:'entry.account_id']).not_to be_empty
       end
     end
     describe "balance" do
@@ -17,21 +17,21 @@ describe Deal::Balance do
         let(:deal) { FactoryGirl.build(:balance_deal, :balance => nil) }
         it "検証エラーとなる" do
           deal.valid?
-          deal.errors[:'entry.balance'].should_not be_empty
+          expect(deal.errors[:'entry.balance']).not_to be_empty
         end
       end
       context "'foo'が入っているとき" do
         let(:deal) { FactoryGirl.build(:balance_deal, :balance => 'foo') }
         it "検証エラーとなる" do
           deal.valid?
-          deal.errors[:'entry.balance'].should_not be_empty
+          expect(deal.errors[:'entry.balance']).not_to be_empty
         end
       end
       context "'1.1'が入っているとき" do
         let(:deal) { FactoryGirl.build(:balance_deal, :balance => '1.1') }
         it "検証エラーとなる" do
           deal.valid?
-          deal.errors[:'entry.balance'].should_not be_empty
+          expect(deal.errors[:'entry.balance']).not_to be_empty
         end
       end
     end
@@ -39,7 +39,7 @@ describe Deal::Balance do
       let(:deal) { FactoryGirl.build(:balance_deal, :date => nil) }
       it "検証エラーとなる" do
         deal.valid?
-        deal.errors[:date].should_not be_empty
+        expect(deal.errors[:date]).not_to be_empty
       end
     end
   end
@@ -51,7 +51,7 @@ describe Deal::Balance do
         deal.entry.initial_balance = true
       end
       it do
-        deal.summary.should == "残高確認（初回）"
+        expect(deal.summary).to eq "残高確認（初回）"
       end
     end
     context "初回残高記入でない場合" do
@@ -59,7 +59,7 @@ describe Deal::Balance do
         deal.entry.initial_balance = false
       end
       it do
-        deal.summary.should == "残高確認"
+        expect(deal.summary).to eq "残高確認"
       end
     end
   end
@@ -68,7 +68,7 @@ describe Deal::Balance do
     context "balanceに'foo'が入っている場合" do
       let(:deal) { FactoryGirl.build(:balance_deal, :balance => 'foo') }
       it "saveに失敗する（Dealだけ保存されたりしない）" do
-        deal.save.should be_falsey
+        expect(deal.save).to be_falsey
       end
     end
 
@@ -76,7 +76,7 @@ describe Deal::Balance do
       let(:deal) { FactoryGirl.build(:balance_deal, :balance => '800') }
       
       it "成功する" do
-        deal.save.should be_truthy
+        expect(deal.save).to be_truthy
       end
       
       context "成功後" do
@@ -85,12 +85,12 @@ describe Deal::Balance do
         end
         
         it "適切なentryがある" do
-          deal.entry.should_not be_nil
+          expect(deal.entry).not_to be_nil
           deal.entry.kind_of?(Entry::Balance)
-          deal.entry.should_not be_new_record
-          deal.entry.date.should == deal.date
-          deal.entry.daily_seq.should == deal.daily_seq
-          deal.entry.user_id.should == deal.user_id
+          expect(deal.entry).not_to be_new_record
+          expect(deal.entry.date).to eq deal.date
+          expect(deal.entry.daily_seq).to eq deal.daily_seq
+          expect(deal.entry.user_id).to eq deal.user_id
         end
       end
     end
@@ -98,10 +98,10 @@ describe Deal::Balance do
     context "コンマ付き文字列でbalanceを入れたとき" do
       let(:deal) { FactoryGirl.create(:balance_deal, :balance => '30,333') }
       it "entryに正しいbalanceが入る" do
-        deal.entry.balance.should == 30333
+        expect(deal.entry.balance).to eq 30333
       end
       it "dealからも正しいbalanceが取得できる" do
-        deal.balance.should == 30333
+        expect(deal.balance).to eq 30333
       end
     end
 
@@ -123,19 +123,19 @@ describe Deal::Balance do
         context "2012/3/3に初期残高 100円を登録する場合" do
           let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 100, :date => Date.new(2012, 3, 3)) }
           it "amount は 100" do
-            balance_deal.amount.should == 100
+            expect(balance_deal.amount).to eq 100
           end
           it "initial_balanceである" do
-            balance_deal.entry.should be_initial_balance
+            expect(balance_deal.entry).to be_initial_balance
           end
         end
         context "2012/5/1に初期残高 100円を登録する場合" do
           let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 100, :date => Date.new(2012, 5, 1)) }
           it "amount は 1100" do
-            balance_deal.amount.should == 1100
+            expect(balance_deal.amount).to eq 1100
           end
           it "initial_balanceである" do
-            balance_deal.entry.should be_initial_balance
+            expect(balance_deal.entry).to be_initial_balance
           end
         end
         context "2012/1/1に初期残高 10000円が登録ずみの場合" do
@@ -144,19 +144,19 @@ describe Deal::Balance do
           context "2012/4/2 に残高記入が 9000円（不明なし）がある場合" do
             let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 9000, :date => Date.new(2012, 4, 2)) }
             it "amount は 0" do
-              balance_deal.amount.should == 0
+              expect(balance_deal.amount).to eq 0
             end
             it "initial balanceでない" do
-              balance_deal.entry.should_not be_initial_balance
+              expect(balance_deal.entry).not_to be_initial_balance
             end
           end
           context "2012/4/2 に残高記入が 7000円（予測より2000円少ない）がある場合" do
             let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 7000, :date => Date.new(2012, 4, 2)) }
             it "amount は -2000" do
-              balance_deal.amount.should == -2000
+              expect(balance_deal.amount).to eq -2000
             end
             it "initial balanceでない" do
-              balance_deal.entry.should_not be_initial_balance
+              expect(balance_deal.entry).not_to be_initial_balance
             end
 
             context "初期残高が削除されたとき" do
@@ -165,23 +165,23 @@ describe Deal::Balance do
                 balance_deal.reload
               end
               it "balanceは変化しない" do
-                balance_deal.balance.should == 7000
+                expect(balance_deal.balance).to eq 7000
               end
               it "amountが 8000円に変わっている" do
-                balance_deal.amount.should == 8000
+                expect(balance_deal.amount).to eq 8000
               end
               it "initial_balanceになる" do
-                balance_deal.entry.should be_initial_balance
+                expect(balance_deal.entry).to be_initial_balance
               end
             end
           end
           context "2012/4/2 に残高記入が 9500円（予測より500円多い）がある場合" do
             let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 9500, :date => Date.new(2012, 4, 2)) }
             it "amount は 500" do
-              balance_deal.amount.should == 500
+              expect(balance_deal.amount).to eq 500
             end
             it "initial balanceでない" do
-              balance_deal.entry.should_not be_initial_balance
+              expect(balance_deal.entry).not_to be_initial_balance
             end
             context "初期残高が削除されたとき" do
               before do
@@ -189,13 +189,13 @@ describe Deal::Balance do
                 balance_deal.reload
               end
               it "balanceは変化しない" do
-                balance_deal.balance.should == 9500
+                expect(balance_deal.balance).to eq 9500
               end
               it "amountが 10500円に変わっている" do
-                balance_deal.amount.should == 10500
+                expect(balance_deal.amount).to eq 10500
               end
               it "initial_balanceになる" do
-                balance_deal.entry.should be_initial_balance
+                expect(balance_deal.entry).to be_initial_balance
               end
             end
           end
@@ -203,16 +203,16 @@ describe Deal::Balance do
             let!(:balance_deal) { FactoryGirl.create(:balance_deal, :balance => 500, :date => Date.new(2011, 12, 10)) }
             let!(:old_initial) { initial_balance.reload; initial_balance }
             it "initial_balanceである" do
-              balance_deal.entry.should be_initial_balance
+              expect(balance_deal.entry).to be_initial_balance
             end
             it "amountは500" do
-              balance_deal.amount.should == 500
+              expect(balance_deal.amount).to eq 500
             end
             it "2012/1/1の残高はinitial_balanceでない" do
-              old_initial.entry.should_not be_initial_balance
+              expect(old_initial.entry).not_to be_initial_balance
             end
             it "2012/1/1の残高のamountは9500に変わる" do
-              old_initial.amount.should == 9500
+              expect(old_initial.amount).to eq 9500
             end
           end
         end
@@ -225,9 +225,9 @@ describe Deal::Balance do
 
     it "日付を変えたらentryも追随する" do
       balance_deal.date += 1
-      balance_deal.save.should be_truthy
+      expect(balance_deal.save).to be_truthy
       balance_deal.reload
-      balance_deal.entry.date.to_s.should == Date.new(2012, 4, 2).to_s
+      expect(balance_deal.entry.date.to_s).to eq Date.new(2012, 4, 2).to_s
     end
 
     context "initialだったBalanceをinitialじゃない位置に移動したとき" do
@@ -256,10 +256,10 @@ describe Deal::Balance do
         #           記入   amount
         # balance2  1333   1333    (initial)
         # balance   1000   -333
-        balance_deal_2.entry.amount.should == 1333
-        balance_deal.entry.amount.should == -333
-        balance_deal_2.entry.should be_initial_balance
-        balance_deal.entry.should_not be_initial_balance
+        expect(balance_deal_2.entry.amount).to eq 1333
+        expect(balance_deal.entry.amount).to eq -333
+        expect(balance_deal_2.entry).to be_initial_balance
+        expect(balance_deal.entry).not_to be_initial_balance
       end
     end
 

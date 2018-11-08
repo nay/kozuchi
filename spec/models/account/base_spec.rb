@@ -14,19 +14,19 @@ describe "Account::Base", :no_deals_and_patterns do
     it "Userを削除したらAccountも削除されること" do
       raise "前提エラー：taroに口座があること" if Account::Base.where(user_id: @user.id).empty?
       @user.destroy
-      Account::Base.where(user_id: @user.id).should be_empty
+      expect(Account::Base.where(user_id: @user.id)).to be_empty
     end
     it "使われていなければ消せること" do
       account = accounts(:taro_cache)
-      lambda{account.destroy}.should_not raise_error
-      Account::Base.find_by(id: account.id).should be_nil
+      expect{ account.destroy }.not_to raise_error
+      expect(Account::Base.find_by(id: account.id)).to be_nil
     end
     it "使われていたら消せないこと" do
       entry = new_general_entry(:taro_cache, 300)
       entry.save!
       account = entry.account
-      lambda{account.destroy}.should raise_error(Account::Base::UsedAccountException)
-      Account::Base.find_by(id: account.id).should_not be_nil
+      expect{ account.destroy }.to raise_error(Account::Base::UsedAccountException)
+      expect(Account::Base.find_by(id: account.id)).not_to be_nil
     end
   end
 end

@@ -24,7 +24,7 @@ describe AccountLink do
       already.target_ex_account_id = 24
       already.save!
       @link.account_id = 7
-      @link.should_not be_valid
+      expect(@link).not_to be_valid
     end
     it "user_id, target_user_id, target_ex_account_idがあれば検証を通る" do
       expect(@link).to be_valid
