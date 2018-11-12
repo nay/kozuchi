@@ -49,48 +49,48 @@ describe "Deal Linking" do
     it "シンプルな片面連携取引が作成できること" do
       prepare_simple_taro_deal_with_one_link
       # セーブが成功する
-      lambda{@taro_deal.save!}.should_not raise_error
+      expect{ @taro_deal.save! }.not_to raise_error
       # 太郎側の記入に連携情報が入る
       taro_linked_entry = @taro_deal.debtor_entries.first
-      taro_linked_entry.linked_ex_deal_id.should_not be_nil
-      taro_linked_entry.linked_ex_entry_id.should_not be_nil
-      taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
-      taro_linked_entry.linked_user_id.should == @hanako.id
+      expect(taro_linked_entry.linked_ex_deal_id).not_to be_nil
+      expect(taro_linked_entry.linked_ex_entry_id).not_to be_nil
+      expect(taro_linked_entry.linked_ex_entry_confirmed).to be_falsey
+      expect(taro_linked_entry.linked_user_id).to eq @hanako.id
       # 太郎側の相手記入には連携情報が入らない
       taro_partner_entry = @taro_deal.creditor_entries.first
-      taro_partner_entry.linked_ex_entry_id.should be_nil
-      taro_partner_entry.linked_ex_deal_id.should be_nil
-      taro_partner_entry.linked_user_id.should be_nil
-      taro_partner_entry.linked_ex_entry_confirmed.should be_falsey
+      expect(taro_partner_entry.linked_ex_entry_id).to be_nil
+      expect(taro_partner_entry.linked_ex_deal_id).to be_nil
+      expect(taro_partner_entry.linked_user_id).to be_nil
+      expect(taro_partner_entry.linked_ex_entry_confirmed).to be_falsey
 
       # 花子側に連携した取引が記入される
       hanako_deal = @hanako.general_deals.find_by(id: taro_linked_entry.linked_ex_deal_id)
-      hanako_deal.should_not be_nil
-      hanako_deal.should_not be_confirmed
-      hanako_deal.date.should == @taro_deal.date
-      hanako_deal.summary.should == @taro_deal.summary
+      expect(hanako_deal).not_to be_nil
+      expect(hanako_deal).not_to be_confirmed
+      expect(hanako_deal.date).to eq @taro_deal.date
+      expect(hanako_deal.summary).to eq @taro_deal.summary
       # 花子側の記入が基本的に正しい
       hanako_linked_entry = hanako_deal.creditor_entries.first
-      hanako_linked_entry.amount.should == taro_linked_entry.amount * -1
-      hanako_linked_entry.account_id.should == @hanako_taro.id
+      expect(hanako_linked_entry.amount).to eq taro_linked_entry.amount * -1
+      expect(hanako_linked_entry.account_id).to eq @hanako_taro.id
       # 花子側の記入に連携情報が入る
-      hanako_linked_entry.linked_ex_deal_id.should == @taro_deal.id
-      hanako_linked_entry.linked_ex_entry_id.should == taro_linked_entry.id
-      hanako_linked_entry.linked_user_id.should == @taro.id
-      hanako_linked_entry.linked_ex_entry_confirmed.should be_truthy
+      expect(hanako_linked_entry.linked_ex_deal_id).to eq @taro_deal.id
+      expect(hanako_linked_entry.linked_ex_entry_id).to eq taro_linked_entry.id
+      expect(hanako_linked_entry.linked_user_id).to eq @taro.id
+      expect(hanako_linked_entry.linked_ex_entry_confirmed).to be_truthy
       # 花子側の相手記入が正しい
       hanako_partner_entry = hanako_deal.debtor_entries.first
-      hanako_partner_entry.account_id.should == @hanako.default_asset.id
-      hanako_partner_entry.amount.should == taro_linked_entry.amount
+      expect(hanako_partner_entry.account_id).to eq @hanako.default_asset.id
+      expect(hanako_partner_entry.amount).to eq taro_linked_entry.amount
     end
 
     it "シンプルな両面連携取引が作成できること" do
       prepare_simpe_taro_deal_with_two_links
-      lambda{@taro_deal.save!}.should_not raise_error
+      expect{ @taro_deal.save! }.not_to raise_error
 
       # 対応する取引が作成される
       @home_deal = @home.linked_deal_for(@taro.id, @taro_deal.id)
-      @home_deal.should_not be_nil
+      expect(@home_deal).not_to be_nil
 
       # 対応する取引内のそれぞれの記入が対応する
       taro_home_cost_entry = @taro_deal.debtor_entries.first
@@ -99,25 +99,25 @@ describe "Deal Linking" do
       home_taro_entry = @home_deal.debtor_entries.first
       home_income_from_two_entry = @home_deal.creditor_entries.first
 
-      taro_home_cost_entry.linked_ex_entry_id.should == home_income_from_two_entry.id
-      taro_home_cost_entry.linked_ex_deal_id.should == @home_deal.id
-      taro_home_cost_entry.linked_user_id.should == @home.id
-      taro_home_cost_entry.linked_ex_entry_confirmed.should be_falsey
+      expect(taro_home_cost_entry.linked_ex_entry_id).to eq home_income_from_two_entry.id
+      expect(taro_home_cost_entry.linked_ex_deal_id).to eq @home_deal.id
+      expect(taro_home_cost_entry.linked_user_id).to eq @home.id
+      expect(taro_home_cost_entry.linked_ex_entry_confirmed).to be_falsey
 
-      taro_home_entry.linked_ex_entry_id.should == home_taro_entry.id
-      taro_home_entry.linked_ex_deal_id.should == @home_deal.id
-      taro_home_entry.linked_user_id == @home.id
-      taro_home_entry.linked_ex_entry_confirmed.should be_falsey
+      expect(taro_home_entry.linked_ex_entry_id).to eq home_taro_entry.id
+      expect(taro_home_entry.linked_ex_deal_id).to eq @home_deal.id
+      expect(taro_home_entry.linked_user_id).to eq @home.id
+      expect(taro_home_entry.linked_ex_entry_confirmed).to be_falsey
 
-      home_taro_entry.linked_ex_entry_id.should == taro_home_entry.id
-      home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
-      home_taro_entry.linked_user_id.should == @taro.id
-      home_taro_entry.linked_ex_entry_confirmed.should be_truthy
+      expect(home_taro_entry.linked_ex_entry_id).to eq taro_home_entry.id
+      expect(home_taro_entry.linked_ex_deal_id).to eq @taro_deal.id
+      expect(home_taro_entry.linked_user_id).to eq @taro.id
+      expect(home_taro_entry.linked_ex_entry_confirmed).to be_truthy
 
-      home_income_from_two_entry.linked_ex_entry_id.should == taro_home_cost_entry.id
-      home_income_from_two_entry.linked_ex_deal_id.should == @taro_deal.id
-      home_income_from_two_entry.linked_user_id.should == @taro.id
-      home_income_from_two_entry.linked_ex_entry_confirmed.should be_truthy
+      expect(home_income_from_two_entry.linked_ex_entry_id).to eq taro_home_cost_entry.id
+      expect(home_income_from_two_entry.linked_ex_deal_id).to eq @taro_deal.id
+      expect(home_income_from_two_entry.linked_user_id).to eq @taro.id
+      expect(home_income_from_two_entry.linked_ex_entry_confirmed).to be_truthy
     end
 
     context "サマリー分割モードで記入された連携Entryを１つ含む複数明細" do
@@ -126,16 +126,16 @@ describe "Deal Linking" do
       }
 
       describe "valid?" do
-        it { deal.valid?.should be_truthy }
+        it { expect(deal.valid?).to be_truthy }
       end
 
       describe "save (create)" do
         it "登録が成功し、正しいサマリーが連携記入に含まれる" do
-          deal.save.should be_truthy
+          expect(deal.save).to be_truthy
           linked_deal = hanako.linked_deal_for(taro.id, deal.id)
-          linked_deal.should_not be_nil
+          expect(linked_deal).not_to be_nil
           # 花子側の借方に連携が入る
-          linked_deal.debtor_entries.map(&:summary).should == ['[太郎]ラーメン', '[太郎]菓子']
+          expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]ラーメン', '[太郎]菓子']
         end
       end
 
@@ -152,11 +152,11 @@ describe "Deal Linking" do
             }
           end
           it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
-            deal.save.should be_truthy
+            expect(deal.save).to be_truthy
             linked_deal = hanako.linked_deal_for(taro.id, deal.id)
-            linked_deal.should_not be_nil
+            expect(linked_deal).not_to be_nil
             # 花子側の借方に連携が入る
-            linked_deal.debtor_entries.map(&:summary).should == ['[太郎]味噌ラーメン', '[太郎]菓子']
+            expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン', '[太郎]菓子']
           end
         end
 
@@ -170,12 +170,12 @@ describe "Deal Linking" do
             }
           end
           it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
-            deal.save.should be_truthy
+            expect(deal.save).to be_truthy
             linked_deal = hanako.linked_deal_for(taro.id, deal.id)
-            linked_deal.should_not be_nil
+            expect(linked_deal).not_to be_nil
             # 花子側の借方に連携が入る
-            linked_deal.debtor_entries.map(&:summary).should == ['ラーメンと菓子', 'ラーメンと菓子']
-            linked_deal.summary_unified?.should be_truthy
+            expect(linked_deal.debtor_entries.map(&:summary)).to eq ['ラーメンと菓子', 'ラーメンと菓子']
+            expect(linked_deal.summary_unified?).to be_truthy
           end
         end
       end
@@ -196,8 +196,8 @@ describe "Deal Linking" do
 
         # リンク状態が壊れていないこと
         @taro_deal.reload
-        @taro.linked_deal_for(@home.id, @home_deal).should == @taro_deal
-        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
+        expect(@taro.linked_deal_for(@home.id, @home_deal)).to eq @taro_deal
+        expect(@home.linked_deal_for(@taro.id, @taro_deal)).to eq @home_deal
       end
 
       it "相手が確認する前に摘要を変えたら摘要が変わること" do
@@ -205,16 +205,16 @@ describe "Deal Linking" do
         @taro_deal.save!
 
         @home_deal.reload
-        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
-        @home_deal.summary.should == "やっぱ変えました"
+        expect(@home.linked_deal_for(@taro.id, @taro_deal)).to eq @home_deal
+        expect(@home_deal.summary).to eq "やっぱ変えました"
       end
       it "相手が確認する前に日にちを変えたら日にちが変わること" do
         @taro_deal.date = @taro_deal.date + 3
         @taro_deal.save!
 
         @home_deal.reload
-        @home.linked_deal_for(@taro.id, @taro_deal).should == @home_deal
-        @home_deal.date.should == @taro_deal.date
+        expect(@home.linked_deal_for(@taro.id, @taro_deal)).to eq @home_deal
+        expect(@home_deal.date).to eq @taro_deal.date
       end
     end
 
@@ -232,34 +232,34 @@ describe "Deal Linking" do
       end
       it "作成できる" do
         @home_deal.valid?
-        lambda{@home_deal.save!}.should_not raise_error
+        expect{ @home_deal.save! }.not_to raise_error
         home_taro_entry = @home_deal.creditor_entries.find_by(account_id: @home_taro.id)
         home_hanako_entry = @home_deal.creditor_entries.find_by(account_id: @home_hanako.id)
         @taro_deal = @taro.linked_deal_for(@home.id, @home_deal.id)
-        @taro_deal.should_not be_nil
+        expect(@taro_deal).not_to be_nil
         @hanako_deal = @hanako.linked_deal_for(@home.id, @home_deal.id)
-        @hanako_deal.should_not be_nil
+        expect(@hanako_deal).not_to be_nil
         taro_linked_entry = @taro_deal.debtor_entries.first
         hanako_linked_entry = @hanako_deal.debtor_entries.first
         # 家計側の太郎への記入
-        home_taro_entry.linked_ex_entry_id.should == taro_linked_entry.id
-        home_taro_entry.linked_ex_deal_id.should == @taro_deal.id
-        home_taro_entry.linked_user_id.should == @taro.id
-        home_taro_entry.linked_ex_entry_confirmed.should be_falsey
+        expect(home_taro_entry.linked_ex_entry_id).to eq taro_linked_entry.id
+        expect(home_taro_entry.linked_ex_deal_id).to eq @taro_deal.id
+        expect(home_taro_entry.linked_user_id).to eq @taro.id
+        expect(home_taro_entry.linked_ex_entry_confirmed).to be_falsey
         # 太郎側の家計側の記入
-        taro_linked_entry.linked_ex_entry_id.should == home_taro_entry.id
-        taro_linked_entry.linked_ex_deal_id.should == @home_deal.id
-        taro_linked_entry.linked_user_id.should == @home.id
-        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
+        expect(taro_linked_entry.linked_ex_entry_id).to eq home_taro_entry.id
+        expect(taro_linked_entry.linked_ex_deal_id).to eq @home_deal.id
+        expect(taro_linked_entry.linked_user_id).to eq @home.id
+        expect(taro_linked_entry.linked_ex_entry_confirmed).to be_truthy
         # 太郎側の相手側の記入
         taro_partner_entry = @taro_deal.creditor_entries.first
-        taro_partner_entry.amount.should == taro_linked_entry.amount * -1
-        taro_partner_entry.linked_ex_entry_id.should be_nil
+        expect(taro_partner_entry.amount).to eq taro_linked_entry.amount * -1
+        expect(taro_partner_entry.linked_ex_entry_id).to be_nil
         # 家計側の花子への記入
-        home_hanako_entry.linked_ex_entry_id.should == hanako_linked_entry.id
-        home_hanako_entry.linked_ex_deal_id.should == @hanako_deal.id
-        home_hanako_entry.linked_user_id.should == @hanako.id
-        home_hanako_entry.linked_ex_entry_confirmed.should be_falsey
+        expect(home_hanako_entry.linked_ex_entry_id).to eq hanako_linked_entry.id
+        expect(home_hanako_entry.linked_ex_deal_id).to eq @hanako_deal.id
+        expect(home_hanako_entry.linked_user_id).to eq @hanako.id
+        expect(home_hanako_entry.linked_ex_entry_confirmed).to be_falsey
         # TODO: 花子側の家計側の記入、花子側の相手側の記入
       end
 
@@ -272,11 +272,11 @@ describe "Deal Linking" do
       end
 
       describe "valid?" do
-        it { deal.valid?.should be_truthy }
+        it { expect(deal.valid?).to be_truthy }
       end
 
       describe "save" do
-        it { deal.save.should be_truthy }
+        it { expect(deal.save).to be_truthy }
       end
     end
 
@@ -296,7 +296,7 @@ describe "Deal Linking" do
         raise "前提エラー：相手が未確認ということになっていない" if taro_linked_entry.linked_ex_entry_confirmed
         @hanako_deal.confirm!
         taro_linked_entry.reload
-        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
+        expect(taro_linked_entry.linked_ex_entry_confirmed).to be_truthy
       end
 
       # 一方向リンクのとき、destination_accountがないのに使っている不具合(#187)があったのでその確認スペック
@@ -306,33 +306,33 @@ describe "Deal Linking" do
         @hanako_deal.confirm!
         @taro_deal.reload
         taro_linked_entry = @taro_deal.debtor_entries.first
-        taro_linked_entry.linked_ex_entry_confirmed.should be_truthy
+        expect(taro_linked_entry.linked_ex_entry_confirmed).to be_truthy
       end
 
       describe "相手が確認済みでないとき" do
         it "相手が消したら自分のリンク情報が更新される" do
           @hanako_deal.destroy
           @taro_deal.reload
-          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+          expect(@taro_deal.debtor_entries.first.linked_ex_entry_id).to be_nil
         end
         it "entriesをロードしていないまま相手が消したら自分のリンク情報が更新される" do
           @hanako_deal.reload # entries がキャッシュされていない状態にする
           @hanako_deal.destroy
           @taro_deal.reload
-          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+          expect(@taro_deal.debtor_entries.first.linked_ex_entry_id).to be_nil
         end
         it "相手から自分が連携しないとき、相手が消したら自分のリンク情報が更新される" do
           @hanako_taro.link.destroy
           @hanako_deal.destroy
           @taro_deal.reload
-          @taro_deal.debtor_entries.first.linked_ex_entry_id.should be_nil
+          expect(@taro_deal.debtor_entries.first.linked_ex_entry_id).to be_nil
         end
         it "自分の連携情報がなにかの理由でなくなった場合に、変更したら復活する" do
           @taro_deal.unlink_entries(@hanako.id, @hanako_deal.id)
           @taro_deal.reload
           @taro_deal.save!
           @taro_deal.reload
-          @taro.linked_deal_for(@hanako.id, @hanako_deal.id).should_not be_nil
+          expect(@taro.linked_deal_for(@hanako.id, @hanako_deal.id)).not_to be_nil
         end
 
         it "金額を変更したら、相手のdealが削除された上で新しく作られる" do
@@ -341,8 +341,8 @@ describe "Deal Linking" do
             :debtor_entries_attributes => {'1' => {:account_id => @taro_hanako.id, :amount => 320}}
           }
           @taro_deal.save!
-          Deal::General.find_by(id: @hanako_deal.id).should be_nil
-          @hanako.linked_deal_for(@taro.id, @taro_deal.id).should_not be_nil
+          expect(Deal::General.find_by(id: @hanako_deal.id)).to be_nil
+          expect(@hanako.linked_deal_for(@taro.id, @taro_deal.id)).not_to be_nil
         end
 
         it "連携がなくなる変更をしたら、相手のdealが消される" do
@@ -354,7 +354,7 @@ describe "Deal Linking" do
           @taro_deal.save!
           @taro_deal.reload
 
-          @hanako.linked_deal_for(@taro.id, @taro_deal.id).should be_nil
+          expect(@hanako.linked_deal_for(@taro.id, @taro_deal.id)).to be_nil
         end
       end
 
@@ -369,35 +369,35 @@ describe "Deal Linking" do
             :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -500}],
             :debtor_entries_attributes => [{:account_id => @taro_hanako.id, :amount => 500}]
           }
-          lambda{@taro_deal.save!}.should_not raise_error
+          expect{ @taro_deal.save! }.not_to raise_error
 
           @taro_deal.reload
 
           new_hanako_deal = @hanako.linked_deal_for(@taro.id, @taro_deal.id)
-          new_hanako_deal.should_not be_nil
-          new_hanako_deal.id.should_not == @hanako_deal.id
+          expect(new_hanako_deal).not_to be_nil
+          expect(new_hanako_deal.id).not_to eq @hanako_deal.id
 
           # 新しいほうとリンクしていることの確認
           # 花子側
           taro_linked_entry = @taro_deal.debtor_entries.first
           new_hanako_linked_entry = new_hanako_deal.creditor_entries.first
-          new_hanako_linked_entry.linked_ex_entry_id.should == taro_linked_entry.id
-          new_hanako_linked_entry.linked_ex_deal_id.should == @taro_deal.id
-          new_hanako_linked_entry.linked_ex_entry_confirmed.should be_truthy
-          new_hanako_linked_entry.linked_user_id.should == @taro.id
+          expect(new_hanako_linked_entry.linked_ex_entry_id).to eq taro_linked_entry.id
+          expect(new_hanako_linked_entry.linked_ex_deal_id).to eq @taro_deal.id
+          expect(new_hanako_linked_entry.linked_ex_entry_confirmed).to be_truthy
+          expect(new_hanako_linked_entry.linked_user_id).to eq @taro.id
           # 太郎側
-          taro_linked_entry.linked_ex_entry_id.should == new_hanako_linked_entry.id
-          taro_linked_entry.linked_ex_deal_id.should == new_hanako_deal.id
-          taro_linked_entry.linked_ex_entry_confirmed.should be_falsey
-          taro_linked_entry.linked_user_id.should == @hanako.id
+          expect(taro_linked_entry.linked_ex_entry_id).to eq new_hanako_linked_entry.id
+          expect(taro_linked_entry.linked_ex_deal_id).to eq new_hanako_deal.id
+          expect(taro_linked_entry.linked_ex_entry_confirmed).to be_falsey
+          expect(taro_linked_entry.linked_user_id).to eq @hanako.id
 
           # 古いほうのリンクが切れていることの確認
           # 花子側
           old_hanako_linked_entry = @hanako_deal.debtor_entries.first
-          old_hanako_linked_entry.linked_ex_entry_id.should be_nil
-          old_hanako_linked_entry.linked_ex_deal_id.should be_nil
-          old_hanako_linked_entry.linked_user_id.should be_nil
-          old_hanako_linked_entry.linked_ex_entry_confirmed.should be_falsey
+          expect(old_hanako_linked_entry.linked_ex_entry_id).to be_nil
+          expect(old_hanako_linked_entry.linked_ex_deal_id).to be_nil
+          expect(old_hanako_linked_entry.linked_user_id).to be_nil
+          expect(old_hanako_linked_entry.linked_ex_entry_confirmed).to be_falsey
         end
       end
     end
@@ -411,7 +411,7 @@ describe "Deal Linking" do
       end
 
       it "正しく取得できる" do
-        @taro_deal.send('linked_receiver_ids').should == [@hanako.id]
+        expect(@taro_deal.send('linked_receiver_ids')).to eq [@hanako.id]
       end
     end
   end
@@ -426,7 +426,7 @@ describe "Deal Linking" do
       end
       it "連携したDealの片方を消したら確認してない相手のdealも消される" do
         @taro_deal.destroy
-        Deal::General.find_by(id: @hanako_deal.id).should be_nil
+        expect(Deal::General.find_by(id: @hanako_deal.id)).to be_nil
       end
       it "連携したDealの片方を消したら確認している相手とのリンクが消される" do
         @hanako_deal.confirm!
@@ -434,10 +434,10 @@ describe "Deal Linking" do
         @hanako_deal.reload
         @hanako_unlinked_entry = @hanako_deal.entries.detect{|e| e.account_id == @hanako_taro.id}
         @hanako_unlinked_entry.reload
-        @hanako_unlinked_entry.linked_ex_entry_id.should be_nil
-        @hanako_unlinked_entry.linked_ex_deal_id.should be_nil
-        @hanako_unlinked_entry.linked_user_id.should be_nil
-        @hanako_unlinked_entry.linked_ex_entry_confirmed.should be_falsey
+        expect(@hanako_unlinked_entry.linked_ex_entry_id).to be_nil
+        expect(@hanako_unlinked_entry.linked_ex_deal_id).to be_nil
+        expect(@hanako_unlinked_entry.linked_user_id).to be_nil
+        expect(@hanako_unlinked_entry.linked_ex_entry_confirmed).to be_falsey
       end
     end
   end
