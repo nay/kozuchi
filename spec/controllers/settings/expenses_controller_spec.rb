@@ -34,13 +34,13 @@ describe Settings::AccountsController, type: :controller do
         before do
           post :create, params: {account: {:name => '追加', :sort_key => 77}, account_type: 'expense'}
         end
-        it_should_behave_like 'current_userのexpenseが登録される'
+        it_behaves_like 'current_userのexpenseが登録される'
       end
       context "別のuser_idを指定" do
         before do
           post :create, params: {account: {:name => '追加', :sort_key => 77, :user_id => :hanako.to_id}, account_type: 'expense'}
         end
-        it_should_behave_like 'current_userのexpenseが登録される'
+        it_behaves_like 'current_userのexpenseが登録される'
       end
       context "重複した名前" do
         before do

@@ -44,11 +44,11 @@ describe Settings::AccountLinksController, type: :controller do
       before do
         account_links(:taro_to_hanako).destroy
       end
-      it_should_behave_like 'createが成功する'
+      it_behaves_like 'createが成功する'
     end
 
     context "すでにあるとき" do
-      it_should_behave_like 'createが成功する'
+      it_behaves_like 'createが成功する'
     end
   end
 
