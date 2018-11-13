@@ -37,6 +37,7 @@ group :development, :test do
   gem "factory_girl_rails"
   gem 'i18n_generators'
   gem 'poltergeist'
+  gem 'puma'
   gem "pry-rails"
   gem "rspec-rails"
   gem 'timecop'
