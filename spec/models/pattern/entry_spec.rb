@@ -14,7 +14,7 @@ describe Pattern::Entry do
     let(:entry) {FactoryGirl.build(:entry_pattern)}
 
     it "正しい情報を与えたときにtrueとなる" do
-      entry.should be_valid
+      expect(entry).to be_valid
     end
 
     it_behaves_like "valid? when including ::Entry"
