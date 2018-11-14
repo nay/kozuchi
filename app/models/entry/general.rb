@@ -13,8 +13,8 @@ class Entry::General < Entry::Base
   attr_writer :partner_account_name # 相手勘定名
 
   scope :recent_summaries, ->(keyword) {
-    select("summary, deal_id"
-    ).group("summary, deal_id"
+    select("summary, max(deal_id) as deal_id"
+    ).group("summary"
     ).where("summary like ?", "#{keyword}%"
     ).order("deal_id desc"
     ).limit(5)
