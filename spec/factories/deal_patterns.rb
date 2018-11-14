@@ -2,7 +2,7 @@
 # 
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :deal_pattern, :class => Pattern::Deal do
     user_id Fixtures.identify(:taro)
     code "001"

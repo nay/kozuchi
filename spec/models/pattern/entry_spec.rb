@@ -11,7 +11,7 @@ describe Pattern::Entry do
   end
 
   describe "#valid?" do
-    let(:entry) {FactoryGirl.build(:entry_pattern)}
+    let(:entry) {build(:entry_pattern)}
 
     it "正しい情報を与えたときにtrueとなる" do
       expect(entry).to be_valid
@@ -21,12 +21,12 @@ describe Pattern::Entry do
   end
 
   describe "create" do
-    let(:entry) {FactoryGirl.build(:entry_pattern)}
+    let(:entry) {build(:entry_pattern)}
     it_behaves_like "save when including ::Entry"
   end
 
   describe "update" do
-    let(:entry) {FactoryGirl.build(:entry_pattern)}
+    let(:entry) {build(:entry_pattern)}
     it_behaves_like "save when including ::Entry"
   end
 

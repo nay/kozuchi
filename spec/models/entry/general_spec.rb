@@ -8,14 +8,14 @@ describe Entry::General do
 
   describe "#amount=" do
     context "コンマ入りの数値が代入されたとき" do
-      let(:entry) { FactoryGirl.build(:general_entry, :amount => '10,000') }
+      let(:entry) { build(:general_entry, :amount => '10,000') }
       it { expect(entry.amount).to eq 10000 }
     end
   end
 
   describe "#reversed_amount=" do
     context "コンマ入りの数値が代入されたとき" do
-      let(:entry) { FactoryGirl.build(:general_entry, :amount => nil) }
+      let(:entry) { build(:general_entry, :amount => nil) }
       before do
         entry.reversed_amount = '10,000'
       end
@@ -33,7 +33,7 @@ describe Entry::General do
       end
     end
     context "生の数値が代入されたとき" do
-      let(:entry) { FactoryGirl.build(:general_entry, :amount => nil) }
+      let(:entry) { build(:general_entry, :amount => nil) }
       before do
         entry.reversed_amount = 3800
       end
@@ -49,7 +49,7 @@ describe Entry::General do
       end
     end
     context "数値でない文字列が代入されたとき" do
-      let(:entry) { FactoryGirl.build(:general_entry, :amount => nil) }
+      let(:entry) { build(:general_entry, :amount => nil) }
       before do
         entry.reversed_amount = 'aaa'
       end
@@ -65,7 +65,7 @@ describe Entry::General do
       end
     end
     context "少数点付きの文字列が代入されたとき" do
-      let(:entry) { FactoryGirl.build(:general_entry, :amount => nil) }
+      let(:entry) { build(:general_entry, :amount => nil) }
       before do
         entry.reversed_amount = '1.10'
       end

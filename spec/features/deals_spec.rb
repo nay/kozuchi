@@ -21,7 +21,7 @@ describe DealsController, type: :feature do
 
     context "with one balance deal" do
       before do
-        FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20))
+        create(:balance_deal, :date => Date.new(2012, 7, 20))
         visit "/deals/2012/7"
       end
       it do
@@ -49,7 +49,7 @@ describe DealsController, type: :feature do
 
     context "when one deal with the keyword exists" do
       before do
-        @deal = FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10))
+        @deal = create(:general_deal, :date => Date.new(2012, 7, 10))
         fill_in 'keyword', :with => 'ランチ'
         click_button('検索')
       end

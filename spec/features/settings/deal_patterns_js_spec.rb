@@ -45,7 +45,7 @@ describe "記入パターン", js: true, type: :feature do
 
     # TODO: DRY （更新側と）
     describe "パターン呼び出し" do
-      let!(:deal_pattern) { FactoryGirl.create(:deal_pattern, code: "001") }
+      let!(:deal_pattern) { create(:deal_pattern, code: "001") }
 
       # ここがきちんと動作していないかほかの理由により数値が入らないのでスキップ
       before do
@@ -62,7 +62,7 @@ describe "記入パターン", js: true, type: :feature do
   end
 
   describe "更新" do
-    let!(:deal_pattern) { FactoryGirl.create(:deal_pattern) }
+    let!(:deal_pattern) { create(:deal_pattern) }
 
     before do
       visit "/settings/deals/patterns"

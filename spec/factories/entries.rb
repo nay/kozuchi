@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-FactoryGirl.define do
+FactoryBot.define do
   factory :general_entry, :class => Entry::General do
     user_id Fixtures.identify(:taro)
     account_id Fixtures.identify(:taro_cache)

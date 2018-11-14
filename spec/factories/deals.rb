@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-FactoryGirl.define do
+FactoryBot.define do
 
   # 単純な記入
   # デフォルトでは太郎の現金→食費
