@@ -285,7 +285,7 @@ class Deal::General < Deal::Base
   # destination_account に指定されている先へは request_linkings の処理で confirmed は反映されるので
   # 指定されていない先へ連絡する
   def respond_to_sender_when_confirmed
-    return true unless confirmed_changed?
+    return true unless saved_change_to_attribute?(:confirmed)
     sender_ids = linked_receiver_ids - updated_receiver_ids
     sender_ids.each do |sender_id|
       sender = User.find(sender_id)
