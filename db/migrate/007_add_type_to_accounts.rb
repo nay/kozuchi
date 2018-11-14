@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddTypeToAccounts < ActiveRecord::Migration
+class AddTypeToAccounts < ActiveRecord::Migration[5.0]
   def self.up
     add_column(:accounts, :type, :text)
     execute("update accounts set type = 'Income' where account_type_code = 3;")

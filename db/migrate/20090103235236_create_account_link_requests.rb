@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateAccountLinkRequests < ActiveRecord::Migration
+class CreateAccountLinkRequests < ActiveRecord::Migration[5.0]
   def self.up
     create_table :account_link_requests do |t|
       t.integer :account_id

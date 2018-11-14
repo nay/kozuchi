@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateSettlements < ActiveRecord::Migration
+class CreateSettlements < ActiveRecord::Migration[5.0]
   def self.up
     create_table :settlements do |t|
       t.column :user_id, :integer

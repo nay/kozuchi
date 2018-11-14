@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateEntryPatterns < ActiveRecord::Migration
+class CreateEntryPatterns < ActiveRecord::Migration[5.0]
   def up
     create_table :entry_patterns do |t|
       t.integer :user_id, :null => false

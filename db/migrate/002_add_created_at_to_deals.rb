@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddCreatedAtToDeals < ActiveRecord::Migration
+class AddCreatedAtToDeals < ActiveRecord::Migration[5.0]
   def self.up
     add_column(:deals, :created_at, :timestamp)
     add_column(:deals, :updated_at, :timestamp)

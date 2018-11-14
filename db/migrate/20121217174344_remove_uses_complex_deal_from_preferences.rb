@@ -1,4 +1,4 @@
-class RemoveUsesComplexDealFromPreferences < ActiveRecord::Migration
+class RemoveUsesComplexDealFromPreferences < ActiveRecord::Migration[5.0]
   def up
     remove_column :preferences, :uses_complex_deal
   end

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddLinkedExAccountIdToAccountEntries < ActiveRecord::Migration
+class AddLinkedExAccountIdToAccountEntries < ActiveRecord::Migration[5.0]
   def self.up
     add_column :account_entries, :linked_ex_entry_id, :integer
     add_column :account_entries, :linked_ex_deal_id, :integer

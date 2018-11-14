@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DropAccountRules < ActiveRecord::Migration
+class DropAccountRules < ActiveRecord::Migration[5.0]
   def self.up
     drop_table :account_rules
   end

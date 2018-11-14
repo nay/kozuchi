@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DropAdminUsers < ActiveRecord::Migration
+class DropAdminUsers < ActiveRecord::Migration[5.0]
   def self.up
     drop_table :admin_users
   end

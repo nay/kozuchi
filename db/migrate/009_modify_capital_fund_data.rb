@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ModifyCapitalFundData < ActiveRecord::Migration
+class ModifyCapitalFundData < ActiveRecord::Migration[5.0]
   def self.up
     execute("update accounts set type = 'CapitalFund' where type = 'CaptitalFund';")
   end

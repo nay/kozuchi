@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class LooseAccountEtries < ActiveRecord::Migration
+class LooseAccountEtries < ActiveRecord::Migration[5.0]
   def self.up
     change_column :account_entries, :user_id, :integer, :null => true
     change_column :account_entries, :account_id, :integer, :null => true

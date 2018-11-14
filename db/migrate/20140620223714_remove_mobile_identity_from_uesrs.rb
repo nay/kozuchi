@@ -1,4 +1,4 @@
-class RemoveMobileIdentityFromUesrs < ActiveRecord::Migration
+class RemoveMobileIdentityFromUesrs < ActiveRecord::Migration[5.0]
   def up
     remove_column :users, :mobile_identity
   end

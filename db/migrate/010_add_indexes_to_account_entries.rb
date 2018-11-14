@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 # ざっくりindexをはる
-class AddIndexesToAccountEntries < ActiveRecord::Migration
+class AddIndexesToAccountEntries < ActiveRecord::Migration[5.0]
   def self.up
     add_index :account_entries, :account_id
     add_index :account_entries, :deal_id

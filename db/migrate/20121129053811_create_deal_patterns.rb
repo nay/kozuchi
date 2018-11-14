@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateDealPatterns < ActiveRecord::Migration
+class CreateDealPatterns < ActiveRecord::Migration[5.0]
   def up
     create_table :deal_patterns do |t|
       t.integer :user_id, :null => false
