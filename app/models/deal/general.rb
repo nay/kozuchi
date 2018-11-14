@@ -152,9 +152,8 @@ class Deal::General < Deal::Base
 
   # 指定したユーザーの指定した取引に紐づいたentryの配列を返す
   def linked_entries(remote_user_id, remote_ex_deal_id, reload = false)
-    readonly_entries(reload).find_all{|e| e.linked_user_id == remote_user_id && e.linked_ex_deal_id == remote_ex_deal_id}
+    (reload ? readonly_entries.reload : readonly_entries).find_all{|e| e.linked_user_id == remote_user_id && e.linked_ex_deal_id == remote_ex_deal_id}
   end
-
 
   def unlink(sender_id, sender_ex_deal_id)
     if confirmed?
@@ -216,7 +215,7 @@ class Deal::General < Deal::Base
 
   # 完成された entry 情報をもとに、紐づいている（と認識している）ユーザーの配列を返す
   def linked_receiver_ids(reload = false)
-    receiver_ids = readonly_entries(reload).map{|e| e.linked_user_id}.compact
+    receiver_ids = (reload ? readonly_entries.reload : readonly_entries).map{|e| e.linked_user_id}.compact
     receiver_ids.uniq!
     receiver_ids
   end
@@ -230,7 +229,7 @@ class Deal::General < Deal::Base
 
   # 各 entry の口座情報をもとに、相手から連携依頼が来ると認識しているユーザーの配列を返す
   def updated_sender_ids(reload = false)
-    sender_ids = readonly_entries(reload).map{|e| e.account.link_requests.map(&:sender_id)}.flatten
+    sender_ids = (reload ? readonly_entries.reload : readonly_entries).map{|e| e.account.link_requests.map(&:sender_id)}.flatten
     sender_ids.uniq!
     sender_ids
   end
