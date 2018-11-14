@@ -10,12 +10,12 @@ gem 'jquery-rails'
 gem 'libv8'
 gem 'mysql2', '~> 0.4.10'
 gem 'passenger'
-gem 'rails', '5.0.0.1'
+gem 'rails', '~> 5.0.0'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rails-controller-testing'
 gem 'rails-observers', git: 'git://github.com/rails/rails-observers.git' # TODO: なくしたい
-gem 'rake', '11.3.0'
+gem 'rake'
 gem 'rails_autolink'
 gem 'rb-readline'
 gem 'sass'
@@ -37,6 +37,7 @@ group :development, :test do
   gem "factory_girl_rails"
   gem 'i18n_generators'
   gem 'poltergeist'
+  gem 'puma'
   gem "pry-rails"
   gem "rspec-rails"
   gem 'timecop'

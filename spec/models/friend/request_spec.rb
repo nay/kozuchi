@@ -15,13 +15,12 @@ describe Friend::Request do
       new_request(@user.id, @sender.id).save!
     end
     it "Permissionのあるtarget_idに対応するRequestは含まれない" do
-      @user.friend_requests.not_determined.size.should == 1
-      @user.friend_requests.not_determined.first.sender_id.should == @sender.id
+      expect(@user.friend_requests.not_determined.first.sender_id).to eq @sender.id
     end
   end
   describe "create" do
     it "user_id と sender_id が同じだと例外が発生する" do
-      lambda{new_request(@user.id, @user.id).save}.should raise_error(RuntimeError)
+      expect{ new_request(@user.id, @user.id).save }.to raise_error(RuntimeError)
     end
   end
 end

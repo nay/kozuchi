@@ -35,13 +35,13 @@ describe Settings::AccountsController, type: :controller do
         before do
           post :create, params: {account: {:name => '追加', :sort_key => 77, :asset_kind => 'cache'}, account_type: 'asset'}
         end
-        it_should_behave_like 'current_userのassetが登録される'
+        it_behaves_like 'current_userのassetが登録される'
       end
       context "別のuser_idを指定" do
         before do
           post :create, params: {account: {:name => '追加', :sort_key => 77, :asset_kind => 'cache', :user_id => Fixtures.identify(:hanako)}, account_type: 'asset'}
         end
-        it_should_behave_like 'current_userのassetが登録される'
+        it_behaves_like 'current_userのassetが登録される'
       end
       context "重複した名前" do
         before do

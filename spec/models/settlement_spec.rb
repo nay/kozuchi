@@ -27,7 +27,7 @@ describe Settlement do
     it "成功する" do
       expect {@settlement.submit}.not_to raise_error
       @settlement.reload
-      @settlement.submitted_settlement.should_not be_nil
+      expect(@settlement.submitted_settlement).not_to be_nil
     end
     context "連携がすべてきれたentryの含まれた精算で" do
       before do
@@ -36,7 +36,7 @@ describe Settlement do
       it "成功する" do
         @settlement.submit
         @settlement.reload
-        @settlement.submitted_settlement.should_not be_nil
+        expect(@settlement.submitted_settlement).not_to be_nil
       end
     end
     context "結果の連携だけがきれたentryの含まれた精算で" do
@@ -49,7 +49,7 @@ describe Settlement do
       it "成功する" do
         @settlement.submit
         @settlement.reload
-        @settlement.submitted_settlement.should_not be_nil
+        expect(@settlement.submitted_settlement).not_to be_nil
       end
     end
   end

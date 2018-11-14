@@ -12,13 +12,13 @@ describe "user.deals" do
       @deal.save!
     end
     it "成功すること" do
-      users(:taro).deals.created_on(Date.today).include?(@deal).should be_truthy
+      expect(users(:taro).deals.created_on(Date.today).include?(@deal)).to be_truthy
     end
   end
 
   describe "empty?" do
     it "成功すること" do
-      lambda {users(:taro).deals.empty?}.should_not raise_error
+      expect{ users(:taro).deals.empty? }.not_to raise_error
     end
   end
   
