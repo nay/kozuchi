@@ -18,7 +18,6 @@ gem 'rails-observers', git: 'git://github.com/rails/rails-observers.git' # TODO:
 gem 'rake'
 gem 'rails_autolink'
 gem 'rb-readline'
-gem 'sass'
 gem 'therubyracer'
 
 group :assets do

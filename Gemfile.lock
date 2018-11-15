@@ -285,7 +285,6 @@ DEPENDENCIES
   rake
   rb-readline
   rspec-rails
-  sass
   sass-rails
   therubyracer
   timecop
