@@ -1,46 +1,18 @@
-# MySQL (default setup).  Versions 4.1 and 5.0 are recommended.
-#
-# Install the MySQL driver:
-#   gem install mysql
-# On MacOS X:
-#   gem install mysql -- --include=/usr/local/lib
-# On Windows:
-#   gem install mysql
-#       Choose the win32 build.
-#       Install MySQL and put its /bin directory on your path.
-#
-# And be sure to use new-style password hashing:
-#   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
-development:
-  adapter: mysql2
-  database: kozuchi_dev
-  username: root
-  encoding: utf8
-  password:
-  # socket: /tmp/mysql.sock
-  # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
-  socket: /var/run/mysqld/mysqld.sock # for TravisCI
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-# Warning: The database defined as 'test' will be erased and
-# re-generated from your development database when you run 'rake'.
-# Do not set this db to the same as development or production.
+development:
+  <<: *default
+  database: kozuchi_dev
+
 test:
-  adapter: mysql2
+  <<: *default
   database: kozuchi_test
-  username: root
-  encoding: utf8
-  password:
-  # socket: /tmp/mysql.sock
-  # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
-  socket: /var/run/mysqld/mysqld.sock # for TravisCI
 
 production:
-  adapter: mysql2
+  <<: *default
   database: kozuchi_production
-  username: root
-  encoding: utf8
-  password:
-  # socket: /tmp/mysql.sock
-  # socket: /opt/local/var/run/mysql5/mysqld.sock # for MacPorts
-  socket: /var/run/mysqld/mysqld.sock # for TravisCI
-
