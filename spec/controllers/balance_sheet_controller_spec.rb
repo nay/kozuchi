@@ -16,7 +16,7 @@ describe BalanceSheetController, type: :controller do
   describe "monthly" do
     it "成功する" do
       get :monthly, params: {:year => Date.today.year, :month => Date.today.month}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

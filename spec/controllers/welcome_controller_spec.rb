@@ -11,7 +11,7 @@ describe WelcomeController, type: :controller do
           get :index
         end
         it "成功する" do
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
       describe "ログインしているとき" do
@@ -20,7 +20,7 @@ describe WelcomeController, type: :controller do
           get :index
         end
         it "成功する" do
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
     end

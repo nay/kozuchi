@@ -14,7 +14,7 @@ describe Settings::SingleLoginsController, type: :controller do
   describe "index" do
     it "成功する" do
       get :index
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -27,7 +27,7 @@ describe Settings::SingleLoginsController, type: :controller do
     end
     it "パスワードが違うと成功しない" do
       post :create, params: {:single_login => {:login => 'hanako', :password => 'hanako2'}}
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(assigns(:single_login).errors).not_to be_empty
       expect(@current_user.single_logins.find_by(login: 'hanako')).to be_nil
     end

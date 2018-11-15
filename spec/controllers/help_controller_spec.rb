@@ -11,19 +11,19 @@ describe HelpController, type: :controller do
     describe "index" do
       it "成功する" do
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     describe "functions" do
       it "成功する" do
         get :functions
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     describe "faq" do
       it "成功する" do
         get :faq
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -31,19 +31,19 @@ describe HelpController, type: :controller do
     describe "index" do
       it "成功する" do
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     describe "functions" do
       it "成功する" do
         get :functions
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     describe "faq" do
       it "成功する" do
         get :faq
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

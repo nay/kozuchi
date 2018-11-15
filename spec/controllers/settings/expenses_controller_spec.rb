@@ -16,7 +16,7 @@ describe Settings::AccountsController, type: :controller do
     describe "index" do
       it "成功する" do
         get :index, params: {account_type: 'expense'}
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -47,7 +47,7 @@ describe Settings::AccountsController, type: :controller do
           post :create, params: {account: {:name => '食費', :sort_key => 77}, account_type: 'expense'}
         end
         it "エラーメッセージ" do
-          expect(response).to be_success
+          expect(response).to be_successful
           expect(assigns(:account).errors).not_to be_empty
         end
       end
@@ -69,7 +69,7 @@ describe Settings::AccountsController, type: :controller do
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_food.to_id.to_s][:name] = ""
         put :update_all, params: {account: @current_values, account_type: 'expense'}
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(@current_user.expenses.find_by(name: '食費')).not_to be_nil
         expect(assigns(:accounts).any?{|a| !a.errors.empty?}).to be_truthy
       end
