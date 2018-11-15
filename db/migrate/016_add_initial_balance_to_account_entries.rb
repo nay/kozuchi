@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddInitialBalanceToAccountEntries < ActiveRecord::Migration
+class AddInitialBalanceToAccountEntries < ActiveRecord::Migration[5.0]
   def self.up
     add_column :account_entries, :initial_balance, :boolean, :null => false, :default => false
     for account_id in execute("select id from accounts;")

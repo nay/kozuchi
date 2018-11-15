@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class RemoveAccountTypeCodeFromAccounts < ActiveRecord::Migration
+class RemoveAccountTypeCodeFromAccounts < ActiveRecord::Migration[5.0]
   def self.up
     remove_column :accounts, :account_type_code
     remove_column :accounts, :asset_type_code

@@ -42,20 +42,22 @@ class User < ApplicationRecord
 
     # 指定した日の最初における指定した口座の残高合計を得る
     def balance_sum(date, conditions = nil)
-      with_joined_scope(conditions) do
-        where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true).sum("account_entries.amount").to_i
-      end
+      where(conditions)
+          .join_entries_and_deals
+          .where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true)
+          .sum("account_entries.amount")
+          .to_i
     end
     
     # 指定した日の最初における指定した口座の残高をAccountモデルの一覧として得る
     def balances(date, conditions = nil)
-      with_joined_scope(conditions) do
-        select("accounts.*, sum(account_entries.amount) as balance"
-        ).includes(nil
-        ).where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true
-        ).group('accounts.id'
-        ).each{|a| a.balance = a.balance.to_i }
-      end
+      where(conditions)
+          .join_entries_and_deals
+          .select("accounts.*, sum(account_entries.amount) as balance")
+          .includes(nil)
+          .where("(deals.confirmed = ? and deals.date < ?) or account_entries.initial_balance = ?", true, date, true)
+          .group('accounts.id')
+          .each{|a| a.balance = a.balance.to_i }
     end
     
     # 指定した期間における収入口座のフロー合計を得る。収入の不明金も含める。
@@ -80,35 +82,37 @@ class User < ApplicationRecord
     
     # 指定した期間における指定した口座のフロー合計を得る。不明金は扱わない。
     def flow_sum(start_date, end_date, conditions = nil)
-      with_joined_scope(conditions) do
-        where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true).sum("account_entries.amount").to_i
-      end
+      where(conditions)
+          .join_entries_and_deals
+          .where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true)
+          .sum("account_entries.amount")
+          .to_i
     end
     
     # 指定した期間における指定した口座のフローをAccountモデルの一覧として得る。flowカラムに格納される。
     # 資産口座の不明金を結果に足すことはしない。
     # 記入のない口座は取得されない。
     def flows(start_date, end_date, conditions = nil)
-      with_joined_scope(conditions) do
-        select("accounts.*, sum(account_entries.amount) as flow"
-        ).includes(nil
-        ).where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
-        ).group('accounts.id'
-        ).to_a.each{|a| a.flow = a.flow.to_i}
-      end
+      where(conditions)
+          .join_entries_and_deals
+          .select("accounts.*, sum(account_entries.amount) as flow")
+          .includes(nil)
+          .where("deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true)
+          .group('accounts.id')
+          .to_a.each{|a| a.flow = a.flow.to_i}
     end
 
     # 指定した期間における指定した口座の不明金を Accountモデルの一覧として得る。不明金は unknown カラムに格納される。
     # 不明金勘定の視点から、正負は逆にする。つまり、支出の不明金はプラスで出る。
     def unknowns(start_date, end_date, conditions = nil)
-      with_joined_scope(conditions) do
-        select("accounts.*, sum(account_entries.amount) as unknown"
-        ).includes(nil
-        ).where("deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true
-        ).group('accounts.id'
-        ).to_a.each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
+      where(conditions)
+          .join_entries_and_deals
+          .select("accounts.*, sum(account_entries.amount) as unknown")
+          .includes(nil)
+          .where("deals.type = 'Deal::Balance' and deals.confirmed = ? and deals.date >= ? and deals.date < ? and account_entries.initial_balance != ?", true, start_date, end_date, true)
+          .group('accounts.id')
+          .to_a.each{|a| a.unknown = a.unknown.to_i; a.unknown *= -1 }
         # Rails5.0にあげたとき、to_a をはさまずに each すると結果が frozen になってしまった
-      end
     end
   
     # 指定した account_type のものだけを抽出する
@@ -118,12 +122,6 @@ class User < ApplicationRecord
 #      self.select{|a| account_types.detect{|t| a.type_in?(t)} }
 #    end
     
-    private
-    def with_joined_scope(conditions, &block)
-      where(conditions).joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id").scoping do
-        yield
-      end
-    end
   end
 
   after_create :create_defaults

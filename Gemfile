@@ -10,7 +10,7 @@ gem 'jquery-rails'
 gem 'libv8'
 gem 'mysql2', '~> 0.4.10'
 gem 'passenger'
-gem 'rails', '~> 5.0.0'
+gem 'rails', '~> 5.1.0'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rails-controller-testing'
@@ -34,7 +34,7 @@ group :development, :test do
   gem "capybara"
   gem 'capybara-screenshot'
   gem 'database_cleaner'
-  gem "factory_girl_rails"
+  gem "factory_bot_rails"
   gem 'i18n_generators'
   gem 'poltergeist'
   gem 'puma'

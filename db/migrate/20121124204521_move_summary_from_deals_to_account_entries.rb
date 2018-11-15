@@ -1,4 +1,4 @@
-class MoveSummaryFromDealsToAccountEntries < ActiveRecord::Migration
+class MoveSummaryFromDealsToAccountEntries < ActiveRecord::Migration[5.0]
   def up
     add_column :account_entries, :summary, :string, :limit => 64, :default => "", :null => false
     for deal_id, summary in execute "SELECT id, summary FROM deals;"

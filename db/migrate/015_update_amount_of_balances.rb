@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class UpdateAmountOfBalances < ActiveRecord::Migration
+class UpdateAmountOfBalances < ActiveRecord::Migration[5.0]
   
   def self.up
     for account_id, date, daily_seq, real_balance, entry_id in execute("select account_entries.account_id, deals.date, deals.daily_seq, account_entries.balance, account_entries.id from deals inner join account_entries on account_entries.deal_id = deals.id where type = 'Balance' order by date, daily_seq;")

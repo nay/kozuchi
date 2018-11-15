@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateAdminUsers < ActiveRecord::Migration
+class CreateAdminUsers < ActiveRecord::Migration[5.0]
 
   def self.up
     create_table :admin_users do |t|

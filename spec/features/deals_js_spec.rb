@@ -188,7 +188,7 @@ describe DealsController, js: true, type: :feature do
         let(:summary) { "朝食のサンドイッチ" }
         let(:suggestion_with_amount) { true }
         before do
-          FactoryGirl.create(deal_type, :date => Date.today, :summary => summary)
+          create(deal_type, :date => Date.today, :summary => summary)
           fill_in 'deal_summary', :with => '朝食'
           expect(page).to have_css("#patterns div.clickable_text") # サジェッションが表示される
           clickable_text_index = suggestion_with_amount ? 0 : 1
@@ -262,11 +262,11 @@ describe DealsController, js: true, type: :feature do
       end
 
       describe "通常明細のパターン指定(id)" do
-        let!(:pattern) { FactoryGirl.create(:deal_pattern,
-                                            :code => '',
-                                            :name => '',
-                                            :debtor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_food), :amount => 800}],
-                                            :creditor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_cache), :amount => -800}]
+        let!(:pattern) { create(:deal_pattern,
+                                :code => '',
+                                :name => '',
+                                :debtor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_food), :amount => 800}],
+                                :creditor_entries_attributes => [{:summary => '昼食', :account_id => Fixtures.identify(:taro_cache), :amount => -800}]
         ) }
         before do
           select_menu('家計簿')
@@ -496,7 +496,7 @@ describe DealsController, js: true, type: :feature do
     describe "変更" do
 
       context "単純明細の変更ボタンをクリックしたとき" do
-        let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
+        let!(:deal) { create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do
           visit "/deals/2012/7"
           click_link '変更'
@@ -514,7 +514,7 @@ describe DealsController, js: true, type: :feature do
       end
 
       context "複数明細の変更ボタンをクリックしたとき" do
-        let!(:deal) { FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7)) }
+        let!(:deal) { create(:complex_deal, :date => Date.new(2012, 7, 7)) }
         before do
           visit "/deals/2012/7"
           click_link "変更"
@@ -568,7 +568,7 @@ describe DealsController, js: true, type: :feature do
       end
 
       context "残高明細の変更ボタンをクリックしたとき" do
-        let!(:deal) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000') }
+        let!(:deal) { create(:balance_deal, :date => Date.new(2012, 7, 20), :balance => '2000') }
         before do
           visit "/deals/2012/7"
           click_link '変更'
@@ -597,17 +597,17 @@ describe DealsController, js: true, type: :feature do
 
     describe "削除" do
       context "通常明細のとき" do
-        let(:deal) { FactoryGirl.create(:general_deal, date: Date.new(2012, 7, 10)) }
+        let(:deal) { create(:general_deal, date: Date.new(2012, 7, 10)) }
         it_behaves_like "削除できる"
       end
 
       describe "複数明細" do
-        let(:deal) { FactoryGirl.create(:complex_deal, :date => Date.new(2012, 7, 7))}
+        let(:deal) { create(:complex_deal, :date => Date.new(2012, 7, 7))}
         it_behaves_like "削除できる"
       end
 
       describe "残高" do
-        let(:deal) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 7, 20)) }
+        let(:deal) { create(:balance_deal, :date => Date.new(2012, 7, 20)) }
         it_behaves_like "削除できる"
       end
     end
@@ -616,7 +616,7 @@ describe DealsController, js: true, type: :feature do
 
   describe "最近の記入" do
     before do
-      FactoryGirl.create(:general_deal, summary: "昔の記入", date: Date.new(2012, 7, 10))
+      create(:general_deal, summary: "昔の記入", date: Date.new(2012, 7, 10))
       select_menu('家計簿')
       click_link "最近の記入"
     end

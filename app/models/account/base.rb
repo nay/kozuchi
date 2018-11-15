@@ -19,7 +19,6 @@ class Account::Base < ApplicationRecord
 
   scope :expense,           -> { where(type: "Account::Expense") }
 
-  # TODO: with_joined_scope 相当
   scope :join_entries_and_deals, -> { joins("inner join account_entries on accounts.id = account_entries.account_id inner join deals on account_entries.deal_id = deals.id") }
   scope :join_confirmed_entries, -> { joins(sanitize_sql_array(["INNER JOIN account_entries on accounts.id = account_entries.account_id AND account_entries.confirmed = ?", TRUE])) }
 

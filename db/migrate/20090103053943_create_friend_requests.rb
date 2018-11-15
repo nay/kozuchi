@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateFriendRequests < ActiveRecord::Migration
+class CreateFriendRequests < ActiveRecord::Migration[5.0]
   def self.up
     create_table :friend_requests do |t|
       t.integer :user_id

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateSingleLogins < ActiveRecord::Migration
+class CreateSingleLogins < ActiveRecord::Migration[5.0]
   def self.up
     create_table :single_logins do |t|
       t.string :login

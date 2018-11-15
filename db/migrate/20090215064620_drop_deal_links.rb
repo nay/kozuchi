@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DropDealLinks < ActiveRecord::Migration
+class DropDealLinks < ActiveRecord::Migration[5.0]
   def self.up
     drop_table :deal_links
     remove_column :account_entries, :friend_link_id

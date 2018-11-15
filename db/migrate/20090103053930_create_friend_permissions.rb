@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateFriendPermissions < ActiveRecord::Migration
+class CreateFriendPermissions < ActiveRecord::Migration[5.0]
   def self.up
     create_table :friend_permissions do |t|
       t.integer :user_id

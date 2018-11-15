@@ -12,8 +12,8 @@ describe Deal::General do
   describe "#confirm!" do
     context "初回残高記入よりも前に未確定記入があるとき" do
       # 800円 現金→食費
-      let!(:deal) { FactoryGirl.create(:general_deal, :date => Date.new(2012, 12, 1), :confirmed => false) }
-      let!(:initial_balance) { FactoryGirl.create(:balance_deal, :date => Date.new(2012, 12, 5), :balance => 1000)}
+      let!(:deal) { create(:general_deal, :date => Date.new(2012, 12, 1), :confirmed => false) }
+      let!(:initial_balance) { create(:balance_deal, :date => Date.new(2012, 12, 5), :balance => 1000)}
 
       it "現金の初回残高記入のamountは1000である" do
         expect(initial_balance.amount).to eq 1000
@@ -113,7 +113,7 @@ describe Deal::General do
       expect(c.amount).to eq -100
     end
     it "片側に空白欄のある複合Dealが作成でき、空白欄の分が維持される" do
-      deal = FactoryGirl.build(:complex_deal,
+      deal = build(:complex_deal,
         :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}],
         :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 1] # 0でない
       )
@@ -121,7 +121,7 @@ describe Deal::General do
       expect(deal.creditor_entries.first.line_number).to eq 1
     end
     it "両側に空白欄のある複合Dealが作成でき、空白分が詰められる" do
-      deal = FactoryGirl.build(:complex_deal,
+      deal = build(:complex_deal,
         :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 2}],
         :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 2] # 0, 1でない
       )
@@ -284,7 +284,7 @@ describe Deal::General do
   
     context "with a complex deal" do
       let!(:deal) {
-        FactoryGirl.create(:complex_deal,
+        create(:complex_deal,
           :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}],
           :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 1] # 0でない
         )
@@ -304,7 +304,7 @@ describe Deal::General do
 
     context "複数仕訳で口座と金額の組み合わせが同じ項目が複数あるとき" do
       let!(:deal) {
-        FactoryGirl.create(:complex_deal,
+        create(:complex_deal,
           :debtor_entries_attributes =>  [{:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 0}, {:account_id => Fixtures.identify(:taro_food), :amount => 500, :line_number => 1}],
           :creditor_entries_attributes => [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 0]
         )

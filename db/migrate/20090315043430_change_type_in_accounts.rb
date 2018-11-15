@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ChangeTypeInAccounts < ActiveRecord::Migration
+class ChangeTypeInAccounts < ActiveRecord::Migration[5.0]
   def self.up
     # Income, Expense 以外を Assetにする。
     for id in execute "select id from accounts where type not in ('Income', 'Account::Income', 'Expense', 'Account::Expense')"

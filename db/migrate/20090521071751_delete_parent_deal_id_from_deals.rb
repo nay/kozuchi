@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 # SubordinateDeal 削除に伴うデータ整理
-class DeleteParentDealIdFromDeals < ActiveRecord::Migration
+class DeleteParentDealIdFromDeals < ActiveRecord::Migration[5.0]
   def self.up
     remove_column :deals, :parent_deal_id
     execute "update deals set type='Deal::General' where type='SubordinateDeal'"

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddBusinessUseToPreferences < ActiveRecord::Migration
+class AddBusinessUseToPreferences < ActiveRecord::Migration[5.0]
   def self.up
     add_column(:preferences, :business_use, :boolean, :default => false, :null => false)
   end

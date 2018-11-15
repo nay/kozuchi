@@ -1,4 +1,4 @@
-class RemoveDealsScrollHeight < ActiveRecord::Migration
+class RemoveDealsScrollHeight < ActiveRecord::Migration[5.0]
   def up
     remove_column :preferences, :deals_scroll_height
   end

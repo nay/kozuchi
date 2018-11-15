@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class AddCreditorAndLineNumberToAccountEntries < ActiveRecord::Migration
+class AddCreditorAndLineNumberToAccountEntries < ActiveRecord::Migration[5.0]
   def up
     # type値をRails3仕様に変える（忘れていたのでここで）
     # これはdownでも戻さない

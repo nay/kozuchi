@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateSessions < ActiveRecord::Migration
+class CreateSessions < ActiveRecord::Migration[5.0]
   def self.up
     create_table :sessions do |t|
       t.string :session_id, :null => false

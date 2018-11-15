@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DropFriends < ActiveRecord::Migration
+class DropFriends < ActiveRecord::Migration[5.0]
   def self.up
     drop_table :friends
   end
