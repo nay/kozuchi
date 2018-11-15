@@ -20,14 +20,14 @@ describe AssetsController, type: :controller do
       end
       it "エラーページが表示される" do
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
   describe "monthly" do
     it "成功する" do
       get :monthly, params: {:year => Date.today.year.to_s, :month => Date.today.month.to_s}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

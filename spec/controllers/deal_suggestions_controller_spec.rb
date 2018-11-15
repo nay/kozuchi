@@ -11,7 +11,7 @@ describe DealSuggestionsController, type: :controller do
   describe "index" do
     it "成功する" do
       get :index, params: {:keyword => 'テスト'}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   

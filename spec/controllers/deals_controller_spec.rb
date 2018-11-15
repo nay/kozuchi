@@ -16,13 +16,13 @@ describe DealsController, type: :controller do
   describe "monthly" do
     it "成功する" do
       get :monthly, params: {year: '2010', month: '4'}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   describe "new_general_deal" do
     it "成功する" do
       get :new_general_deal
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   describe "create_general_deal" do
@@ -39,7 +39,7 @@ describe DealsController, type: :controller do
                }
 
            }
-      expect(response).to be_success
+      expect(response).to be_successful
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       expect(deal).not_to be_nil
       expect(deal.debtor_entries.size).to eq 1
@@ -51,7 +51,7 @@ describe DealsController, type: :controller do
   describe "new_complex_deal" do
     it "成功する" do
       get :new_complex_deal
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   describe "create_complex_deal" do
@@ -66,7 +66,7 @@ describe DealsController, type: :controller do
                    debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
                }
            }
-      expect(response).to be_success
+      expect(response).to be_successful
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
       expect(deal).not_to be_nil
       expect(deal.debtor_entries.size).to eq 1
@@ -79,7 +79,7 @@ describe DealsController, type: :controller do
   describe "new_balance_deal" do
     it "成功する" do
       get :new_balance_deal
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   describe "create_balance_deal" do
@@ -91,7 +91,7 @@ describe DealsController, type: :controller do
               :year => '2010', :month => '7', :day => '7'
           }
       }
-      expect(response).to be_success
+      expect(response).to be_successful
       deal = @current_user.balance_deals.find_by(date: Date.new(2010, 7, 7))
       expect(deal).not_to be_nil
       expect(deal.balance).to eq 3000
@@ -101,7 +101,7 @@ describe DealsController, type: :controller do
   describe "search" do
     it "成功する" do
       get :search, params: {:keyword => 'test'}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
     it "キーワードなしだとエラーとなる" do
       expect{get :search}.to raise_error(InvalidParameterError)
@@ -114,7 +114,7 @@ describe DealsController, type: :controller do
     end
     it "成功する" do
       delete :destroy, params: {:id => @deal.id}
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(Deal::Base.find_by(id: @deal.id)).to be_nil
     end
   end
@@ -125,7 +125,7 @@ describe DealsController, type: :controller do
     end
     it "成功する" do
       post :confirm, params: {:id => @deal.id}
-      expect(response).to be_success
+      expect(response).to be_successful
       @deal.reload
       expect(@deal).to be_confirmed
     end
@@ -137,7 +137,7 @@ describe DealsController, type: :controller do
     end
     it "成功する" do
       get :edit, params:  {:id => @deal.id}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -155,7 +155,7 @@ describe DealsController, type: :controller do
             :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
           }
       }
-      expect(response).to be_success
+      expect(response).to be_successful
       @deal.reload
       expect(@deal.creditor_entries.size).to eq 2
       expect(@deal.summary).to eq 'changed like test_complex'
@@ -174,7 +174,7 @@ describe DealsController, type: :controller do
             :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
             }
         }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -191,7 +191,7 @@ describe DealsController, type: :controller do
             :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000}}
             }
         }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

@@ -10,15 +10,14 @@ gem 'jquery-rails'
 gem 'libv8'
 gem 'mysql2', '~> 0.4.10'
 gem 'passenger'
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 5.2.0'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rails-controller-testing'
-gem 'rails-observers', git: 'git://github.com/rails/rails-observers.git' # TODO: なくしたい
+gem 'rails-observers'
 gem 'rake'
 gem 'rails_autolink'
 gem 'rb-readline'
-gem 'sass'
 gem 'therubyracer'
 
 group :assets do

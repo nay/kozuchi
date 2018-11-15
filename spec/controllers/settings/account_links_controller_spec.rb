@@ -14,7 +14,7 @@ describe Settings::AccountLinksController, type: :controller do
   describe "GET 'index'" do
     it "成功する" do
       get :index
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 

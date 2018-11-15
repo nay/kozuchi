@@ -12,7 +12,7 @@ describe HomeController, type: :controller do
       end
       it "成功する" do
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 

@@ -11,7 +11,7 @@ describe ExportController, type: :controller do
   describe "GET 'index'" do
     it "成功すること" do
       get 'index'
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -19,13 +19,13 @@ describe ExportController, type: :controller do
     describe "xml" do
       it "成功すること" do
         get 'whole', params: {:format => "xml", :filename => "export"}
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
     describe "csv" do
       it "成功すること" do
         get 'whole', params: {:format => "csv", :filename => "export"}
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

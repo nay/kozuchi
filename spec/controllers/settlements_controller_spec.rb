@@ -14,7 +14,7 @@ describe SettlementsController, type: :controller do
   describe "new" do
     it "成功する" do
       get :new, params: {account_id: :taro_card.to_id, year: '2010', month: '6'}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -34,7 +34,7 @@ describe SettlementsController, type: :controller do
           year: '2010',
           month: '6'
       }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -43,7 +43,7 @@ describe SettlementsController, type: :controller do
       get 'summary', params: {year: Time.zone.today.year, month: Time.zone.today.month}
     end
     it "成功する" do
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -108,7 +108,7 @@ describe SettlementsController, type: :controller do
     end
     it "成功する" do
       get :show, params: {:id => @settlement.id}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -118,7 +118,7 @@ describe SettlementsController, type: :controller do
     end
     it "成功する" do
       get :print_form, params: {:id => @settlement.id}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 

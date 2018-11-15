@@ -14,7 +14,7 @@ describe Settings::PreferencesController, type: :controller do
   describe "show" do
     it "成功する" do
       get :show
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 

@@ -21,14 +21,14 @@ describe ProfitAndLossController, type: :controller do
       end
       it "エラーページが表示される" do
         get :show
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
   describe "monthly" do
     it "成功する" do
       get :monthly, params: {:year => Date.today.year, :month => Date.today.month}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end
