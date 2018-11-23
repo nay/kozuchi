@@ -225,7 +225,7 @@ class DealsController < ApplicationController
 
     # 上部精算概況
     if @account && @account.any_credit?
-      @settlement_summaries = SettlementSummaries.new(current_user, past: 1, future: 1, target_account: @account, target_date: start_date)
+      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: start_date)
     end
 
     # 上部折れ線グラフ
