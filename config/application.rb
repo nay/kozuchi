@@ -49,7 +49,7 @@ module Kozuchi
     # This is necessary if your schema can't be completely dumped by the schema dumper,
     # like if you have constraints or database-specific column types
     # BINARY属性を文字列カラムに指定している部分があるため
-    config.active_record.schema_format = :sql
+    config.active_record.schema_format = :ruby
 
     # Enable the asset pipeline
     config.assets.enabled = true

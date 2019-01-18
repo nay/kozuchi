@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "account_id"
     t.integer "sender_id"
     t.integer "sender_ex_account_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "user_id"
   end
 
@@ -58,8 +58,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "account_id"
     t.integer "target_user_id"
     t.integer "target_ex_account_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_account_links_on_account_id"
     t.index ["target_ex_account_id"], name: "index_account_links_on_target_ex_account_id"
   end
@@ -88,8 +88,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "user_id", null: false
     t.string "code", limit: 10, collation: "utf8_bin"
     t.string "name", default: "", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.datetime "used_at"
     t.index ["user_id", "code"], name: "index_deal_patterns_on_user_id_and_code", unique: true
   end
@@ -101,8 +101,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "daily_seq", null: false
     t.string "old_summary", limit: 64, default: "", null: false
     t.boolean "confirmed", default: true, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.timestamp "created_at"
+    t.timestamp "updated_at"
     t.index ["user_id"], name: "index_deals_on_user_id"
   end
 
@@ -121,15 +121,15 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "user_id"
     t.integer "target_id"
     t.string "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "friend_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "sender_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "preferences", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -143,8 +143,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
   create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data", limit: 16777215
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id"
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
@@ -153,8 +153,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.integer "user_id"
     t.integer "account_id"
     t.text "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.timestamp "created_at"
+    t.timestamp "updated_at"
     t.text "description"
     t.integer "submitted_settlement_id"
     t.string "type", limit: 40
@@ -164,8 +164,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.string "login"
     t.string "crypted_password"
     t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -174,9 +174,9 @@ ActiveRecord::Schema.define(version: 2018_11_17_082413) do
     t.string "salt", limit: 40, default: "", null: false
     t.string "role", limit: 40
     t.string "activation_code", limit: 40
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "logged_in_at"
+    t.timestamp "created_at"
+    t.timestamp "updated_at"
+    t.timestamp "logged_in_at"
     t.string "crypted_password", limit: 40
     t.string "remember_token"
     t.datetime "remember_token_expires_at"
