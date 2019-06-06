@@ -8,7 +8,7 @@ gem 'html5jp_graphs', '~> 0.0.3'
 gem 'httpclient'
 gem 'jquery-rails'
 gem 'libv8'
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2'
 gem 'passenger'
 gem 'rails', '~> 5.2.3'
 # Bundle edge Rails instead:
