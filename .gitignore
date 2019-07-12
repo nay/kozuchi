@@ -4,7 +4,6 @@ log
 .*/
 public/assets/*
 doc/app/*
-config/database.yml
 config/mongrel_cluster.yml
 config/initializers/hosting.rb
 db/development_structure.sql
