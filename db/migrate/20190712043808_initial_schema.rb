@@ -1,3 +1,4 @@
+# MySQLからのデータを受け取れるように加工している。このままではアプリは動かない。
 class InitialSchema < ActiveRecord::Migration[5.2]
   def change
     create_table "account_entries" do |t|
@@ -8,18 +9,22 @@ class InitialSchema < ActiveRecord::Migration[5.2]
       t.integer "balance"
       t.integer "settlement_id"
       t.integer "result_settlement_id"
-      t.boolean "initial_balance", default: false, null: false
+      # t.boolean "initial_balance", default: false, null: false
+      t.integer "initial_balance", default: 0, null: false
       t.date "date", null: false
       t.integer "daily_seq", null: false
       t.integer "linked_ex_entry_id"
       t.integer "linked_ex_deal_id"
       t.integer "linked_user_id"
       t.string "type", limit: 20
-      t.boolean "linked_ex_entry_confirmed", default: false, null: false
+      # t.boolean "linked_ex_entry_confirmed", default: false, null: false
+      t.integer "linked_ex_entry_confirmed", default: 0, null: false
       t.string "summary", limit: 64, default: "", null: false
-      t.boolean "creditor", default: false, null: false
+      # t.boolean "creditor", default: false, null: false
+      t.integer "creditor", default: 0, null: false
       t.integer "line_number", default: 0, null: false
-      t.boolean "confirmed", default: true, null: false
+      # t.boolean "confirmed", default: true, null: false
+      t.integer "confirmed", default: 1, null: false
       t.index ["account_id"], name: "index_account_entries_on_account_id"
       t.index ["confirmed"], name: "index_account_entries_on_confirmed"
       t.index ["date", "daily_seq"], name: "index_account_entries_on_date_and_daily_seq"
@@ -59,9 +64,11 @@ class InitialSchema < ActiveRecord::Migration[5.2]
       t.integer "partner_account_id"
       t.string "type", limit: 20
       t.string "asset_kind"
-      t.boolean "active", default: true, null: false
+      # t.boolean "active", default: true, null: false
+      t.integer "active", default: 1, null: false
       t.text "description"
-      t.boolean "settlement_order_asc", default: true, null: false
+      # t.boolean "settlement_order_asc", default: true, null: false
+      t.integer "settlement_order_asc", default: 1, null: false
       t.integer "settlement_paid_on", default: 31, null: false
       t.integer "settlement_closed_on_month", default: 1, null: false
       t.integer "settlement_closed_on_day", default: 31, null: false
@@ -88,7 +95,8 @@ class InitialSchema < ActiveRecord::Migration[5.2]
       t.date "date", null: false
       t.integer "daily_seq", null: false
       t.string "old_summary", limit: 64, default: "", null: false
-      t.boolean "confirmed", default: true, null: false
+      # t.boolean "confirmed", default: true, null: false
+      t.integer "confirmed", default: 1, null: false
       t.datetime "created_at"
       t.datetime "updated_at"
       t.index ["user_id"], name: "index_deals_on_user_id"
@@ -97,7 +105,8 @@ class InitialSchema < ActiveRecord::Migration[5.2]
     create_table "entry_patterns" do |t|
       t.integer "user_id", null: false
       t.integer "deal_pattern_id", null: false
-      t.boolean "creditor", default: false, null: false
+      # t.boolean "creditor", default: false, null: false
+      t.integer "creditor", default: 0, null: false
       t.integer "line_number", null: false
       t.string "summary", default: "", null: false
       t.integer "account_id"
@@ -123,9 +132,12 @@ class InitialSchema < ActiveRecord::Migration[5.2]
     create_table "preferences" do |t|
       t.integer "user_id", null: false
       t.string "color", limit: 32
-      t.boolean "business_use", default: false, null: false
-      t.boolean "use_daily_booking", default: true, null: false
-      t.boolean "bookkeeping_style", default: false, null: false
+      # t.boolean "business_use", default: false, null: false
+      t.integer "business_use", default: 0, null: false
+      # t.boolean "use_daily_booking", default: true, null: false
+      t.integer "use_daily_booking", default: 1, null: false
+      # t.boolean "bookkeeping_style", default: false, null: false
+      t.integer "bookkeeping_style", default: 0, null: false
     end
 
     create_table "sessions" do |t|
