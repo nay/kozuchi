@@ -42,3 +42,7 @@ group :development, :test do
   gem "rspec-rails"
   gem 'timecop'
 end
+
+group :production do
+  gem 'sendgrid-ruby'
+end
