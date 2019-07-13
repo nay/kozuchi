@@ -1,19 +1,16 @@
-# -*- encoding : utf-8 -*-
-
-# Please change this file to your hosting.rb.
-
 # Hosting Configurations
 
+ROOT_URL              = ENV['ROOT_URL']              || "http://localhost:3000"
 SUPPORT_EMAIL_ADDRESS = ENV['SUPPORT_EMAIL_ADDRESS'] || "support@example.com"
-ROOT_URL              = ENV['ROOT_URL'] || "http://localhost:3000"
-LOGIN_ENGINE_SALT     = ENV['LOGIN_ENGINE_SALT'] || "koban"
-KOZUCHI_SSL           = (ENV['KOZUCHI_SSL'] || 'false') == 'true'
 
-SKIP_MAIL             = (ENV['SKIP_MAIL'] || 'true') == 'true'
-# GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
+SKIP_MAIL             = (ENV['SKIP_MAIL']            || 'true') == 'true'
+DISPLAY_NEWS          = ENV['DISPLAY_NEWS']          if ENV['DISPLAY_NEWS']
 
-# Remove # if you don't want to display news.
-# DISPLAY_NEWS = false
+GOOGLE_ANALYTICS_CODE = ENV['GOOGLE_ANALYTICS_CODE'] if ENV['GOOGLE_ANALYTICS_CODE']
+
+KOZUCHI_SSL           = (ENV['KOZUCHI_SSL']          || 'false') == 'true'
+LOGIN_ENGINE_SALT     = ENV['LOGIN_ENGINE_SALT']     || "koban"
+
 
 # Personal information policy settings
 PERSONAL_INFO_POLICY_SHOW    = (ENV['PERSONAL_INFO_POLICY_SHOW'] || 'false') == 'true'
