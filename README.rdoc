@@ -40,10 +40,3 @@ You can specify your google analytics code here.
 
 GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
 
-=== USER_MANAGEMENT_TYPE
-
-It's intended to control self-signup, but it is not implemeneted yet.
-Just leave it.
-
-KOZUCHI_USER_MANAGEMENT_TYPE = 'open'
-

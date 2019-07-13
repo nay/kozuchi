@@ -12,11 +12,6 @@ KOZUCHI_SSL           = (ENV['KOZUCHI_SSL'] || 'false') == 'true'
 SKIP_MAIL             = (ENV['SKIP_MAIL'] || 'true') == 'true'
 # GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
 
-# USER_MANAGEMENT_TYPE
-#   open : Anybody can make new user.
-#   closed : Admin function only.
-KOZUCHI_USER_MANAGEMENT_TYPE = ENV['KOZUCHI_USER_MANAGEMENT_TYPE'] || 'open'
-
 # Remove # if you don't want to display news.
 # DISPLAY_NEWS = false
 
