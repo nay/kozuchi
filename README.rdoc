@@ -3,14 +3,10 @@
 = Kozuchi
 
 Kozuchi is a home-accounting web application. ('家計簿' in Japanese.)
-It supports Japanese only.
 
-Master works in Rails 5.0.0.1 and Ruby >= 2.2.2.
-
-== Branches
-* master - The newest version.
-* testing - The version being used privately for testing.
-* hosting - The version running in https://host.kozuchi.net .
+* It supports Japanese only.
+* It works in Rails 5.2.3 and Ruby >= 2.6.3.
+* It uses MySQL.
 
 == How to set up
 * Create your config/database.yml from examples, such as database.mysql.yml
