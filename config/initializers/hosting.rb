@@ -4,7 +4,6 @@ ROOT_URL                               = ENV['ROOT_URL']                        
 SUPPORT_EMAIL_ADDRESS                  = ENV['SUPPORT_EMAIL_ADDRESS']                   || "support@example.com"
 
 SKIP_MAIL                              = (ENV['SKIP_MAIL']                              || 'true') == 'true'
-DISPLAY_NEWS                           = ENV['DISPLAY_NEWS']                            if ENV['DISPLAY_NEWS']
 
 GOOGLE_ANALYTICS_CODE                  = ENV['GOOGLE_ANALYTICS_CODE']                   if ENV['GOOGLE_ANALYTICS_CODE']
 

@@ -24,7 +24,7 @@ default: &default
 
 development:
   <<: *default
-  database: kozuchi_dev
+  database: kozuchi_dev2
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
