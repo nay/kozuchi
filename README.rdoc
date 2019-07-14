@@ -6,37 +6,9 @@ Kozuchi is a home-accounting web application. ('家計簿' in Japanese.)
 
 * It supports Japanese only.
 * It works in Rails 5.2.3 and Ruby >= 2.6.3.
-* It uses MySQL.
+* It uses PostgreSQL.
 
 == How to set up
-* Create your config/database.yml from examples, such as database.mysql.yml
-* Create your config/initializers/hosting.rb from hosting.rb.example
 
-== hosting.rb
-
-=== LOGIN_ENGINE_SALT
-
-This is required for support of old users (from Login Engine era).
-If you are new to kozuchi set up, just leave it.
-
-LOGIN_ENGINE_SALT     = "koban"
-
-=== KOZUCHI_SSL
-
-Set true if you want to use SSL.
-You may also have to configure other things.
-
-KOZUCHI_SSL           = false
-
-=== SKIP_MAIL
-
-Set true if you want to skip sending email for signup, etc.
-
-SKIP_MAIL             = true
-
-=== GOOGLE_ANALYTICS_CODE
-
-You can specify your google analytics code here.
-
-GOOGLE_ANALYTICS_CODE = 'XXXXXX-X'
-
+* Set some enviroment variables for your needs. see [Environment Variables](https://github.com/everyleaf/kozuchi/wiki/%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0)
+* If you need to migrate from MySQL version, see [How to migrate from MySQL](https://github.com/everyleaf/kozuchi/wiki/MySQL%E7%89%88%E3%81%8B%E3%82%89PostgreSQL%E7%89%88%E3%81%B8%E3%81%AE%E7%A7%BB%E8%A1%8C%E6%89%8B%E9%A0%86) .
