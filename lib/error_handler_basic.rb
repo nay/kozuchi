@@ -4,8 +4,6 @@ class ActionController::Base
     return if exception.kind_of?( ActionController::RoutingError )
     return if exception.kind_of?( ActionController::UnknownAction )
 
-    ExceptionMailer.deliver_emergency(exception)
-
     redirect_to(:controller => 'user', :action => 'home')
 #    render :text => <<END
 #<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
