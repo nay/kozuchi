@@ -134,13 +134,13 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     multi_json (1.13.1)
-    mysql2 (0.5.2)
     nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     passenger (6.0.2)
       rack
       rake (>= 0.8.1)
+    pg (0.21.0)
     poltergeist (1.18.1)
       capybara (>= 2.1, < 4)
       cliver (~> 0.3.1)
@@ -211,6 +211,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
+    ruby_http_client (3.3.0)
     ruby_parser (3.13.1)
       sexp_processor (~> 4.9)
     sass (3.7.4)
@@ -227,6 +228,8 @@ GEM
     sassc (2.0.1)
       ffi (~> 1.9)
       rake
+    sendgrid-ruby (6.0.0)
+      ruby_http_client (~> 3.3.0)
     sexp_processor (4.12.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
@@ -271,8 +274,8 @@ DEPENDENCIES
   i18n_generators
   jquery-rails
   libv8
-  mysql2
   passenger
+  pg (~> 0.18)
   poltergeist
   pry-rails
   puma
@@ -284,9 +287,13 @@ DEPENDENCIES
   rb-readline
   rspec-rails
   sass-rails
+  sendgrid-ruby
   therubyracer
   timecop
   uglifier
+
+RUBY VERSION
+   ruby 2.6.3p62
 
 BUNDLED WITH
    1.17.2

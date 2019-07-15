@@ -3,7 +3,7 @@
 class SessionSweeper
   def self.delete
     c = ActiveRecord::Base.connection
-    r = c.execute "delete from sessions where DATE(updated_at) <= SUBDATE(CURRENT_DATE,INTERVAL 7 DAY);"
+    r = c.execute "delete from sessions where DATE(updated_at) <= NOW() - INTERVAL '1 week';"
   end
 end
 

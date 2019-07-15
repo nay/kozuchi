@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
+ruby '2.6.3'
 
 gem 'activerecord-session_store'
 gem 'bootstrap-sass'
@@ -8,8 +9,8 @@ gem 'html5jp_graphs', '~> 0.0.3'
 gem 'httpclient'
 gem 'jquery-rails'
 gem 'libv8'
-gem 'mysql2'
 gem 'passenger'
+gem 'pg', '~> 0.18'
 gem 'rails', '~> 5.2.3'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -40,4 +41,8 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-rails"
   gem 'timecop'
+end
+
+group :production do
+  gem 'sendgrid-ruby'
 end
