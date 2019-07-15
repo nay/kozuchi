@@ -38,20 +38,20 @@ no_mobile_ident_user:
   salt: test
   crypted_password: <%= User.encrypt('test', 'test') %>
 #  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
-  email: no_mobile_ident_user@everyleaf.com
+  email: no_mobile_ident_user@example.com
   activated_at: "2009-04-01 10:00:00"
 docomo1_user:
   login: docomo1_user
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
-  email: docomo1@everyleaf.com
+  email: docomo1@example.com
 docomo2_user:
   login: docomo2_user
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
-  email: docomo2@everyleaf.com
+  email: docomo2@example.com
 au1_user:
   login: au1_user
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
-  email: au1@everyleaf.com
+  email: au1@example.com
 
 # one:
 #   column: value
