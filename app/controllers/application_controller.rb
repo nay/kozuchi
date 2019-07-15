@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
 class ApplicationController < ActionController::Base
+  if ENV['BASIC_AUTH_NAME'].present? &&  ENV['BASIC_AUTH_PASSWORD'].present?
+    http_basic_authenticate_with name: ENV['BASIC_AUTH_NAME'], password: ENV['BASIC_AUTH_PASSWORD']
+  end
+
   protect_from_forgery
   include Messages
 
