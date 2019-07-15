@@ -1,4 +1,4 @@
-{<img src="https://travis-ci.org/everyleaf/kozuchi.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/everyleaf/kozuchi]
+{<img src="https://travis-ci.org/nay/kozuchi.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/nay/kozuchi]
 
 = Kozuchi
 
@@ -10,5 +10,5 @@ Kozuchi is a home-accounting web application. ('家計簿' in Japanese.)
 
 == How to set up
 
-* Set some enviroment variables for your needs. see https://github.com/everyleaf/kozuchi/wiki/%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0 .
-* If you need to migrate from MySQL version, see https://github.com/everyleaf/kozuchi/wiki/MySQL%E7%89%88%E3%81%8B%E3%82%89PostgreSQL%E7%89%88%E3%81%B8%E3%81%AE%E7%A7%BB%E8%A1%8C%E6%89%8B%E9%A0%86 .
+* Set some enviroment variables for your needs. see https://github.com/nay/kozuchi/wiki/%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0 .
+* If you need to migrate from MySQL version, see https://github.com/nay/kozuchi/wiki/MySQL%E7%89%88%E3%81%8B%E3%82%89PostgreSQL%E7%89%88%E3%81%B8%E3%81%AE%E7%A7%BB%E8%A1%8C%E6%89%8B%E9%A0%86 .
