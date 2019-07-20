@@ -12,7 +12,7 @@ describe AssetsController, type: :feature do
 
   describe "メニュー「資産表」のクリック" do
     it "今月の資産表が表示される" do
-      expect(page).to have_content("#{Date.today.year}年#{Date.today.month}月末日の資産表")
+      expect(page).to have_content("#{Time.zone.today.year}年#{Time.zone.today.month}月末日の資産表")
     end
   end
 

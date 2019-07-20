@@ -12,7 +12,7 @@ describe BalanceSheetController, type: :feature do
 
   describe "メニュー「貸借対照表」のクリック" do
     it "今月の貸借対照表が表示される" do
-      expect(page).to have_content("#{Date.today.year}年#{Date.today.month}月末日の貸借対照表")
+      expect(page).to have_content("#{Time.zone.today.year}年#{Time.zone.today.month}月末日の貸借対照表")
     end
   end
 

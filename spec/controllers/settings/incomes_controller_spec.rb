@@ -93,7 +93,7 @@ describe Settings::AccountsController, type: :controller do
       it "使っている口座は削除できない" do
         @current_user.general_deals.create!(:debtor_entries_attributes => [{:amount => 100, :account_id => :taro_cache.to_id}],
           :creditor_entries_attributes => [{:amount => -100, :account_id => :taro_salary.to_id}],
-          :date => Date.today
+          :date => Time.zone.today
           )
         delete :destroy, params: {:id => :taro_salary.to_id, account_type: 'income'}
         expect(response).to redirect_to(settings_incomes_path)

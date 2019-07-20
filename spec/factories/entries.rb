@@ -5,7 +5,7 @@ FactoryBot.define do
     account_id { Fixtures.identify(:taro_cache) }
     amount     { '800' }
     summary    { "ランチ" }
-    date       { Date.today }
+    date       { Time.zone.today }
     daily_seq  { 1 }
   end
 
@@ -14,7 +14,7 @@ FactoryBot.define do
     account_id { Fixtures.identify(:taro_cache) }
     balance    { '800' }
     summary    { "ランチ" }
-    date       { Date.today }
+    date       { Time.zone.today }
     daily_seq  { 1 }
   end
 end

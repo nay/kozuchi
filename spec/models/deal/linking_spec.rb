@@ -224,7 +224,7 @@ describe "Deal Linking" do
         # 太郎と花子から借りた
         @home_deal = @home.general_deals.build(
           :summary => 'complex',
-          :date => Date.today,
+          :date => Time.zone.today,
           :debtor_entries_attributes => [{:account_id => @home_cache.id, :amount => 10000, :line_number => 0}],
           :creditor_entries_attributes => [{:account_id => @home_taro.id, :amount => -4000, :line_number => 0}, {:account_id => @home_hanako.id, :amount => -6000, :line_number => 1}]
         )
@@ -336,7 +336,7 @@ describe "Deal Linking" do
         end
 
         it "金額を変更したら、相手のdealが削除された上で新しく作られる" do
-          @taro_deal.attributes =  {:summary => 'test', :date => Date.today,
+          @taro_deal.attributes =  {:summary => 'test', :date => Time.zone.today,
             :creditor_entries_attributes => {'1' => {:account_id => @taro_cache.id, :amount => -320}},
             :debtor_entries_attributes => {'1' => {:account_id => @taro_hanako.id, :amount => 320}}
           }
@@ -444,7 +444,7 @@ describe "Deal Linking" do
 
   private
   def prepare_simple_taro_deal_with_one_link
-    @taro_deal = @taro.general_deals.build(:summary => 'test', :summary_mode => 'unify', :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => 'test', :summary_mode => 'unify', :date => Time.zone.today,
       :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -300}],
       :debtor_entries_attributes => [{:account_id => @taro_hanako.id, :amount => 300}]
     )
@@ -452,7 +452,7 @@ describe "Deal Linking" do
 
   def prepare_simpe_taro_deal_with_two_links
     # taro_home と taro_home_cost
-    @taro_deal = @taro.general_deals.build(:summary => "test", :summary_mode => 'unify', :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => "test", :summary_mode => 'unify', :date => Time.zone.today,
       :debtor_entries_attributes => [{:account_id => @taro_home_cost.id, :amount => 300}],
       :creditor_entries_attributes => [{:account_id => @taro_home.id, :amount => -300}])
   end

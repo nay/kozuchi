@@ -10,7 +10,7 @@ FactoryBot.define do
     summary_mode                { 'unify' }
     debtor_entries_attributes   { [:account_id => Fixtures.identify(:taro_food), :amount => 800] }
     creditor_entries_attributes { [:account_id => Fixtures.identify(:taro_cache), :amount => -800] }
-    date                        { Date.today }
+    date                        { Time.zone.today }
   end
 
   # 複数記入
@@ -20,7 +20,7 @@ FactoryBot.define do
     summary_mode                { 'unify' }
     debtor_entries_attributes   { [{:account_id => Fixtures.identify(:taro_food), :amount => 800, :line_number => 0}, {:account_id => Fixtures.identify(:taro_other), :amount => 200, :line_number => 1}] }
     creditor_entries_attributes { [:account_id => Fixtures.identify(:taro_cache), :amount => -1000, :line_number => 0] }
-    date                        { Date.today }
+    date                        { Time.zone.today }
   end
 
   # 残高記入
@@ -28,7 +28,7 @@ FactoryBot.define do
     user_id    { Fixtures.identify(:taro) }
     account_id { Fixtures.identify(:taro_cache) }
     balance    { 5431 }
-    date       { Date.today }
+    date       { Time.zone.today }
   end
 
 end
