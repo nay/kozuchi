@@ -4,62 +4,62 @@ taro_to_hanako:
   user_id: <%= Fixtures.identify :taro  %>
   target_id: <%= Fixtures.identify :hanako %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 taro_to_home:
   user_id: <%= Fixtures.identify :taro %>
   target_id: <%= Fixtures.identify :home %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 # hanako's
 hanako_to_taro:
   user_id: <%= Fixtures.identify :hanako %>
   target_id: <%= Fixtures.identify :taro %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 hanako_to_home:
   user_id: <%= Fixtures.identify :hanako %>
   target_id: <%= Fixtures.identify :home %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 # home's
 home_to_taro:
   user_id: <%= Fixtures.identify :home %>
   target_id: <%= Fixtures.identify :taro %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 home_to_hanako:
   user_id: <%= Fixtures.identify :home  %>
   target_id: <%= Fixtures.identify :hanako %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 # other's
 account_link_test_user_to_target_user:
   user_id: <%= Fixtures.identify(:account_link_test_user) %>
   target_id: <%= Fixtures.identify(:account_link_test_target_user) %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 account_link_test_target_user_to_user:
   user_id: <%= Fixtures.identify(:account_link_test_target_user) %>
   target_id: <%= Fixtures.identify(:account_link_test_user) %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 account_entry_test_taro_to_hanako:
   user_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
   target_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>
 account_entry_test_hanako_to_taro:
   user_id: <%= Fixtures.identify(:account_entry_test_user_hanako) %>
   target_id: <%= Fixtures.identify(:account_entry_test_user_taro) %>
   type: Friend::Acceptance
-  created_at: <%= DateTime.now %>
-  updated_at: <%= DateTime.now %>
+  created_at: <%= Time.zone.now.utc.to_s(:db) %>
+  updated_at: <%= Time.zone.now.utc.to_s(:db) %>

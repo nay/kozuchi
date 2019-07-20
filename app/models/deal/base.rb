@@ -26,7 +26,7 @@ class Deal::Base < ApplicationRecord
     start_date = Date.new(year.to_i, month.to_i, 1)
     in_a_time_between(start_date, start_date.end_of_month)
   }
-  scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.to_time, (date + 1).to_time).order(created_at: :desc) }
+  scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.beginning_of_day, (date + 1).beginning_of_day).order(created_at: :desc) }
   scope :time_ordering, -> { order(:date, :daily_seq) }
   scope :recently_updated_ordered, -> { order(updated_at: :desc) }
   scope :on, ->(account_or_account_id) {

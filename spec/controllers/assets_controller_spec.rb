@@ -11,7 +11,7 @@ describe AssetsController, type: :controller do
     context "口座が十分あるとき" do
       it "monthlyにリダイレクトされる" do
         get :index
-        expect(response).to redirect_to(monthly_assets_path(:year => Date.today.year, :month => Date.today.month))
+        expect(response).to redirect_to(monthly_assets_path(:year => Time.zone.today.year, :month => Time.zone.today.month))
       end
     end
     context "口座がないとき" do
@@ -26,7 +26,7 @@ describe AssetsController, type: :controller do
   end
   describe "monthly" do
     it "成功する" do
-      get :monthly, params: {:year => Date.today.year.to_s, :month => Date.today.month.to_s}
+      get :monthly, params: {:year => Time.zone.today.year.to_s, :month => Time.zone.today.month.to_s}
       expect(response).to be_successful
     end
   end

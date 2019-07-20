@@ -24,7 +24,7 @@ class News
           content << "<h4>#{item.title} (#{item.pubDate.strftime('%Y/%m/%d')})</h4>"
           content << item.description
         end
-        Kozuchi.news_updated_on = Date.today
+        Kozuchi.news_updated_on = Time.zone.today
         content
       end
     rescue StandardError, TimeoutError => e

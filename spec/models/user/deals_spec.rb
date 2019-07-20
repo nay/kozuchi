@@ -12,7 +12,7 @@ describe "user.deals" do
       @deal.save!
     end
     it "成功すること" do
-      expect(users(:taro).deals.created_on(Date.today).include?(@deal)).to be_truthy
+      expect(users(:taro).deals.created_on(Time.zone.today).include?(@deal)).to be_truthy
     end
   end
 

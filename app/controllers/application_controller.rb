@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
   def write_target_date(*args)
     session[:target_date] ||= {}
     if args.empty?
-      write_target_date Date.today
+      write_target_date Time.zone.today
     elsif args.first.kind_of?(Date)
       session[:target_date][:year] = args.first.year
       session[:target_date][:month] = args.first.month
@@ -197,7 +197,7 @@ class ApplicationController < ActionController::Base
     end
     # day がないときは補完できるならする
     unless session[:target_date][:day]
-      today = Date.today
+      today = Time.zone.today
       session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
     end
   end

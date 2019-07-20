@@ -32,7 +32,7 @@
     <div id="sidebar">
       <div id="user_and_today" class="top_box" link="<%= deals_path :today => 1 %>" <%= user_color_style %>>
         <%= t 'terms.user', :name => current_user.login_id %><br />
-        <%= l Date.today %>
+        <%= l Time.zone.today %>
       </div>
       <!-- menu -->
       <%= render :partial => "shared/menus" %>

@@ -40,7 +40,7 @@ describe Entry::Base do
   describe "create" do
     it "account_id, amount, date, daily_seq, user_id があれば、deal_id の値によらず成功する" do
       e = Entry::General.new(:amount => 400, :account_id => @cache.id)
-      e.date = Date.today
+      e.date = Time.zone.today
       e.daily_seq = 1
       e.user_id = Fixtures.identify(:account_entry_test_user)
       expect(e.save).to be_truthy
@@ -95,7 +95,7 @@ describe Entry::Base do
     it "相手勘定が１つなら、相手勘定の名前が返される" do
       deal = new_deal(3, 3, @cache, @food, 180)
       deal.save!
-#        deal = Deal::General.new(:summary => "買い物", :date => Date.today)
+#        deal = Deal::General.new(:summary => "買い物", :date => Time.zone.today)
 #        deal.entries.build(:amount => 180, :account_id => @food.id)
 #        deal.entries.build(:amount => -180, :account_id => @cache.id)
 #        deal.save!
@@ -106,7 +106,7 @@ describe Entry::Base do
 
   describe "unlink" do
     before do
-#      @deal = Deal::General.new(:summary => "test", :date => Date.today)
+#      @deal = Deal::General.new(:summary => "test", :date => Time.zone.today)
 #      @deal.user_id = users(:account_entry_test_user_taro)
 #      @deal.entries.build(
 #        :account_id => @cache_in_taro.id,
@@ -120,7 +120,7 @@ describe Entry::Base do
 
       @entry = Entry::General.new(:account_id => @hanako_in_taro.id, :amount => -200)
       @entry.daily_seq = 1
-      @entry.date = Date.today
+      @entry.date = Time.zone.today
       @entry.linked_ex_entry_id = 18 # 適当
       @entry.user_id = Fixtures.identify(:account_entry_test_user_taro)
     end
@@ -136,7 +136,7 @@ describe Entry::Base do
   def new_account_entry(attributes = {}, manual_attributes = {})
       e = Entry::General.new({:amount => 2980, :account_id => @cache.id}.merge(attributes))
       user_id = e.account.try(:user_id)
-      manual_attributes = {:date => Date.today, :daily_seq => 1, :user_id => user_id}.merge(manual_attributes)
+      manual_attributes = {:date => Time.zone.today, :daily_seq => 1, :user_id => user_id}.merge(manual_attributes)
       manual_attributes.keys.each do |key|
         e.send("#{key}=", manual_attributes[key])
       end

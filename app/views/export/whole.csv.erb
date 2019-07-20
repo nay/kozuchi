@@ -1,4 +1,4 @@
-<%= KOZUCHI_VERSION %>,<%= Time.now.to_s(:db) %>,<%= current_user.login %>
+<%= KOZUCHI_VERSION %>,<%= Time.zone.now.to_s(:db) %>,<%= current_user.login %>
 <%
         lines = []
         lines.concat current_user.assets.map{|a| a.to_csv}
