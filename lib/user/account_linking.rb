@@ -91,9 +91,8 @@ module User::AccountLinking
               linked_entries_side ||= e.creditor ? :creditor : :debtor
             end
             # 未確認なら相手entryは1つである想定だけど全部としておく
-            partner_entry_ids = (linked_entries_side == :creditor? ? linked_deal.debtor_entries : linked_deal.creditor_entries).map(&:id)
-            # ここでsaveしたくないみたいだけどないときはsaveしちゃってるし、いったん相手のほうはサマリー変更を終わらせる
-            Entry::Base.where(id: partner_entry_ids).update_all(summary: partner_entry_summary)
+            # ここでsaveしたくないみたいだけどはじめての連携時はsaveしちゃってるし、いったん相手のほうはサマリー変更を終わらせる
+            (linked_entries_side == :creditor? ? linked_deal.debtor_entries : linked_deal.creditor_entries).each{|e| e.update_columns(summary: partner_entry_summary)}
           end
         end
 
