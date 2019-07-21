@@ -56,6 +56,13 @@ module User::AccountLinking
   # このユーザー側に連携取引を作成する。すでにあれば更新する
   # proxy なら deal の中を分解して接続する
   def link_deal_for(sender_id, sender_ex_deal_id, ex_entries_hash, summary_mode, summary, date)
+
+    # 連携側でないほうのサマリーを準備する
+    partner_entry_summary = ex_entries_hash.first[:summary] # 連携entryが1つまたはunifyのとき
+    if summary_mode == 'split' && ex_entries_hash.size > 1 && partner_entry_summary.present?
+      partner_entry_summary = "#{partner_entry_summary.truncate(Entry::Base::SUMMARY_MAX_SIZE - 2)}、他"
+    end
+
     # すでにこの取引に紐づいたものがあるなら取得
     linked_deal = linked_deal_for(sender_id, sender_ex_deal_id)
     if linked_deal
@@ -76,11 +83,17 @@ module User::AccountLinking
             linked_deal.summary = summary # 使わないが念のためあわせておく
             Entry::General.where(deal_id: linked_deal.id).update_all(["summary = ?", summary])
           else
+            linked_entries_side = nil
             linked_entries.each do |e|
               ex_e = ex_entries_hash.detect{|h| h[:id] == e.linked_ex_entry_id }
               e.summary = ex_e[:summary]
               Entry::General.where(id: e.id).update_all(["summary = ?", ex_e[:summary]])
+              linked_entries_side ||= e.creditor ? :creditor : :debtor
             end
+            # 未確認なら相手entryは1つである想定だけど全部としておく
+            partner_entry_ids = (linked_entries_side == :creditor? ? linked_deal.debtor_entries : linked_deal.creditor_entries).map(&:id)
+            # ここでsaveしたくないみたいだけどないときはsaveしちゃってるし、いったん相手のほうはサマリー変更を終わらせる
+            Entry::Base.where(id: partner_entry_ids).update_all(summary: partner_entry_summary)
           end
         end
 
@@ -127,12 +140,12 @@ module User::AccountLinking
     raise "could not find safe partner account. " unless partner_account
 
     if diff < 0
-      creditor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => creditor_line_number += 1}
+      creditor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => creditor_line_number += 1, summary: partner_entry_summary}
     elsif diff > 0
-      debtor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => debtor_line_number += 1}
+      debtor_entries_attributes << {:account_id => partner_account.id, :amount => diff, :line_number => debtor_line_number += 1, summary: partner_entry_summary}
     end
     # 0 ならなにもしない
-    
+
     linked_deal.attributes = {:debtor_entries_attributes => debtor_entries_attributes, :creditor_entries_attributes => creditor_entries_attributes}
 
     linked_deal.save! # TODO: 連携時のエラー処理の整理
