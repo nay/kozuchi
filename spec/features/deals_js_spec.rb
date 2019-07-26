@@ -188,7 +188,9 @@ describe DealsController, js: true, type: :feature do
         let(:summary) { "朝食のサンドイッチ" }
         let(:suggestion_with_amount) { true }
         before do
-          create(deal_type, :date => Time.zone.today, :summary => summary)
+          create(deal_type, :card, :date => Time.zone.today, :summary => summary)
+          create(deal_type, :cache, :date => Time.zone.today, :summary => summary)
+
           fill_in 'deal_summary', :with => '朝食'
           expect(page).to have_css("#patterns div.clickable_text") # サジェッションが表示される
           clickable_text_index = suggestion_with_amount ? 0 : 1
@@ -257,6 +259,8 @@ describe DealsController, js: true, type: :feature do
 
         it "先に登録したデータがサジェッション表示される" do
           expect(page).to have_css("#patterns div.clickable_text")
+          expect(page.find('#patterns')).to have_content('現金')
+          expect(page.find('#patterns')).to have_content('クレジットカードＸ')
         end
 
       end
