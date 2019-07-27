@@ -6,7 +6,7 @@ describe AssetsController, js: true, type: :feature do
 
   include_context "太郎 logged in"
 
-  let(:target_date) {Date.today >> 1}
+  let(:target_date) {Time.zone.today >> 1}
   before do
     Deal::Base.destroy_all
     select_menu('分析', '資産表')

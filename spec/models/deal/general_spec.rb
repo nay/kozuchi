@@ -158,7 +158,7 @@ describe Deal::General do
 
       it "account_entryを手動で足してもcreateできる" do
         user = users(:deal_test_user)
-        deal = Deal::General.new(:summary => "test", :date => Date.today)
+        deal = Deal::General.new(:summary => "test", :date => Time.zone.today)
         deal.user_id = user.id
         deal.creditor_entries.build(
           :account_id => @cache.id,

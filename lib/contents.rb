@@ -13,7 +13,7 @@ module Contents
       resource = Timeout.timeout(timeout_seconds) do
         client.get(uri, follow_redirect: true)
       end
-      Kozuchi.send("#{cache_key}_updated_on=", Date.today)
+      Kozuchi.send("#{cache_key}_updated_on=", Time.zone.today)
       resource
     rescue StandardError, TimeoutError => e
       Rails.logger.error "Could not get #{self.class.name}."
@@ -24,7 +24,7 @@ module Contents
 
   def expired?
     return true unless cache_expire_days
-    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on") + (cache_expire_days - 1 ).days < Date.today
+    !Kozuchi.send("#{cache_key}_updated_on") || Kozuchi.send("#{cache_key}_updated_on") + (cache_expire_days - 1 ).days < Time.zone.today
   end
 
   def get_body!

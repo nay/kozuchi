@@ -122,6 +122,73 @@ describe "Deal Linking" do
 
     context "サマリー分割モードで記入された連携Entryを１つ含む複数明細" do
       let(:deal) {
+        new_complex_deal(7, 15, [[:taro_food, 800, 'ラーメン'], [:taro_food, 500, '菓子']], [[:taro_hanako, -800, '[太郎]ラーメン'], [:taro_cache, -500, '菓子']])
+      }
+
+      describe "valid?" do
+        it { expect(deal.valid?).to be_truthy }
+      end
+
+      describe "save (create)" do
+        it "登録が成功し、正しいサマリーが連携記入に含まれる" do
+          expect(deal.save).to be_truthy
+          linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+          expect(linked_deal).not_to be_nil
+          # 花子側の借方に連携が入る
+          expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]ラーメン']
+          # 花子側の貸し方にも同じものがはいる
+          expect(linked_deal.creditor_entries.map(&:summary)).to eq ['[太郎]ラーメン']
+        end
+      end
+
+      describe "save (update)" do
+        before do
+          deal.save!
+        end
+
+        context "一度保存して連携取引ができたあと、splitモードのまま、一部のサマリーを変えたとき" do
+          before do
+            deal.attributes = {
+                :debtor_entries_attributes => deal.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary}},
+                :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary == '[太郎]ラーメン' ? '[太郎]味噌ラーメン' : e.summary}}
+            }
+          end
+          it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+            expect(deal.save).to be_truthy
+            linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+            expect(linked_deal).not_to be_nil
+            # 花子側の借方に連携が入る
+            expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン']
+            # 花子側の貸し方にも同じサマリーがはいる
+            expect(linked_deal.creditor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン']
+          end
+        end
+
+        context "一度保存して連携取引ができたあと、unifyモードにしてサマリーを変えたとき" do
+          before do
+            deal.attributes = {
+                :summary_mode => 'unify',
+                :summary => 'ラーメンと菓子',
+                :debtor_entries_attributes => deal.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number}},
+                :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number}}
+            }
+          end
+          it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+            expect(deal.save).to be_truthy
+            linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+            expect(linked_deal).not_to be_nil
+            # 花子側の借方に連携が入る
+            expect(linked_deal.debtor_entries.map(&:summary)).to eq ['ラーメンと菓子']
+            expect(linked_deal.summary_unified?).to be_truthy
+            # 花子側の貸し方にも同じサマリーが入る
+            expect(linked_deal.creditor_entries.map(&:summary)).to eq ['ラーメンと菓子']
+          end
+        end
+      end
+    end
+
+    context "サマリー分割モードで記入された連携Entryを２つ含む複数明細" do
+      let(:deal) {
         new_complex_deal(7, 15, [[:taro_food, 800, 'ラーメン'], [:taro_food, 500, '菓子']], [[:taro_hanako, -800, '[太郎]ラーメン'], [:taro_hanako, -500, '[太郎]菓子']])
       }
 
@@ -136,6 +203,8 @@ describe "Deal Linking" do
           expect(linked_deal).not_to be_nil
           # 花子側の借方に連携が入る
           expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]ラーメン', '[太郎]菓子']
+          # 花子側の貸し方には最初の１つに「、他」をつけたサマリーがはいる
+          expect(linked_deal.creditor_entries.map(&:summary)).to eq ['[太郎]ラーメン、他']
         end
       end
 
@@ -148,15 +217,32 @@ describe "Deal Linking" do
           before do
             deal.attributes = {
               :debtor_entries_attributes => deal.debtor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary}},
-              :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary == '[太郎]ラーメン' ? '[太郎]味噌ラーメン' : e.summary}}
+              :creditor_entries_attributes => deal.creditor_entries.map{|e| {:account_id => e.account_id, :amount => e.amount, :id => e.id, :line_number => e.line_number, :summary => e.summary == '[太郎]ラーメン' ? new_summary : e.summary}}
             }
           end
-          it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
-            expect(deal.save).to be_truthy
-            linked_deal = hanako.linked_deal_for(taro.id, deal.id)
-            expect(linked_deal).not_to be_nil
-            # 花子側の借方に連携が入る
-            expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン', '[太郎]菓子']
+          context "変更後のサマリーが10文字のとき" do
+            let(:new_summary) { '[太郎]味噌ラーメン' }
+            it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+              expect(deal.save).to be_truthy
+              linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+              expect(linked_deal).not_to be_nil
+              # 花子側の借方に連携が入る
+              expect(linked_deal.debtor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン', '[太郎]菓子']
+              # 花子側の貸し方には最初の１つに「、他」をつけたサマリーがはいる
+              expect(linked_deal.creditor_entries.map(&:summary)).to eq ['[太郎]味噌ラーメン、他']
+            end
+          end
+          context "変更後のサマリーが64文字のとき" do
+            let(:new_summary) { '＊' * 64 }
+            it "更新が成功し、変更後のサマリーが連携記入に含まれる" do
+              expect(deal.save).to be_truthy
+              linked_deal = hanako.linked_deal_for(taro.id, deal.id)
+              expect(linked_deal).not_to be_nil
+              # 花子側の借方に連携が入る
+              expect(linked_deal.debtor_entries.map(&:summary)).to eq [new_summary, '[太郎]菓子']
+              # 花子側の貸し方には最初の１つをtruncateして「、他」をつけたサマリーがはいる
+              expect(linked_deal.creditor_entries.map(&:summary)).to eq ["#{'＊' * 59}...、他"]
+            end
           end
         end
 
@@ -176,6 +262,8 @@ describe "Deal Linking" do
             # 花子側の借方に連携が入る
             expect(linked_deal.debtor_entries.map(&:summary)).to eq ['ラーメンと菓子', 'ラーメンと菓子']
             expect(linked_deal.summary_unified?).to be_truthy
+            # 花子側の貸し方にも同じサマリーが入る
+            expect(linked_deal.creditor_entries.map(&:summary)).to eq ['ラーメンと菓子']
           end
         end
       end
@@ -224,7 +312,7 @@ describe "Deal Linking" do
         # 太郎と花子から借りた
         @home_deal = @home.general_deals.build(
           :summary => 'complex',
-          :date => Date.today,
+          :date => Time.zone.today,
           :debtor_entries_attributes => [{:account_id => @home_cache.id, :amount => 10000, :line_number => 0}],
           :creditor_entries_attributes => [{:account_id => @home_taro.id, :amount => -4000, :line_number => 0}, {:account_id => @home_hanako.id, :amount => -6000, :line_number => 1}]
         )
@@ -336,7 +424,7 @@ describe "Deal Linking" do
         end
 
         it "金額を変更したら、相手のdealが削除された上で新しく作られる" do
-          @taro_deal.attributes =  {:summary => 'test', :date => Date.today,
+          @taro_deal.attributes =  {:summary => 'test', :date => Time.zone.today,
             :creditor_entries_attributes => {'1' => {:account_id => @taro_cache.id, :amount => -320}},
             :debtor_entries_attributes => {'1' => {:account_id => @taro_hanako.id, :amount => 320}}
           }
@@ -444,7 +532,7 @@ describe "Deal Linking" do
 
   private
   def prepare_simple_taro_deal_with_one_link
-    @taro_deal = @taro.general_deals.build(:summary => 'test', :summary_mode => 'unify', :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => 'test', :summary_mode => 'unify', :date => Time.zone.today,
       :creditor_entries_attributes => [{:account_id => @taro_cache.id, :amount => -300}],
       :debtor_entries_attributes => [{:account_id => @taro_hanako.id, :amount => 300}]
     )
@@ -452,7 +540,7 @@ describe "Deal Linking" do
 
   def prepare_simpe_taro_deal_with_two_links
     # taro_home と taro_home_cost
-    @taro_deal = @taro.general_deals.build(:summary => "test", :summary_mode => 'unify', :date => Date.today,
+    @taro_deal = @taro.general_deals.build(:summary => "test", :summary_mode => 'unify', :date => Time.zone.today,
       :debtor_entries_attributes => [{:account_id => @taro_home_cost.id, :amount => 300}],
       :creditor_entries_attributes => [{:account_id => @taro_home.id, :amount => -300}])
   end

@@ -10,12 +10,12 @@ describe BalanceSheetController, type: :controller do
   describe "show" do
     it "monthlyにリダイレクトされる" do
       get :show
-      expect(response).to redirect_to(monthly_balance_sheet_path(:year => Date.today.year, :month => Date.today.month))
+      expect(response).to redirect_to(monthly_balance_sheet_path(:year => Time.zone.today.year, :month => Time.zone.today.month))
     end
   end
   describe "monthly" do
     it "成功する" do
-      get :monthly, params: {:year => Date.today.year, :month => Date.today.month}
+      get :monthly, params: {:year => Time.zone.today.year, :month => Time.zone.today.month}
       expect(response).to be_successful
     end
   end

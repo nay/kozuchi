@@ -206,7 +206,7 @@ class User < ApplicationRecord
   # Activates the user in the database.
   def activate
     @activated = true
-    self.activated_at = Time.now.utc
+    self.activated_at = Time.zone.now.utc
     self.activation_code = nil
     save(:validate => false)
   end
@@ -237,7 +237,7 @@ class User < ApplicationRecord
   end
 
   def remember_token?
-    remember_token_expires_at && Time.now.utc < remember_token_expires_at 
+    remember_token_expires_at && Time.zone.now.utc < remember_token_expires_at
   end
 
   # These create and unset the fields required for remembering users between browser closes
@@ -273,7 +273,7 @@ class User < ApplicationRecord
   end
 
   def password_token?
-    password_token_expires_at && Time.now.utc < password_token_expires_at 
+    password_token_expires_at && Time.zone.now.utc < password_token_expires_at
   end
   
   def change_password(password, password_confirmation)
@@ -288,7 +288,7 @@ class User < ApplicationRecord
         self.password_token_expires_at = nil
         unless self.active?
           @activated = true
-          self.activated_at = Time.now.utc
+          self.activated_at = Time.zone.now.utc
           self.activation_code = nil
         end
         self[:type] = nil
@@ -350,7 +350,7 @@ class User < ApplicationRecord
 
   
   def recent(months, &block)
-    recent_from(Date.today, months, &block)
+    recent_from(Time.zone.today, months, &block)
   end
 
   def recent_from(start_date, months, &block)
@@ -379,7 +379,7 @@ class User < ApplicationRecord
   # before filter 
   def encrypt_password
     return if password.blank?
-    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.zone.now.to_s}--#{login}--") if new_record?
     self.crypted_password = encrypt(password)
   end
     
@@ -389,7 +389,7 @@ class User < ApplicationRecord
   
   def make_activation_code
 
-    self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+    self.activation_code = Digest::SHA1.hexdigest( Time.zone.now.to_s.split(//).sort_by {rand}.join )
   end
 
   private

@@ -10,7 +10,7 @@ describe DealsController, type: :controller do
   describe "index" do
     it "monthlyにリダイレクトされる" do
       get :index
-      expect(response).to redirect_to monthly_deals_path(:year => Date.today.year, :month => Date.today.month)
+      expect(response).to redirect_to monthly_deals_path(:year => Time.zone.today.year, :month => Time.zone.today.month)
     end
   end
   describe "monthly" do

@@ -7,6 +7,7 @@ class Entry::Base < ApplicationRecord
   include Booking
 
   MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
+  SUMMARY_MAX_SIZE = 64
   
   belongs_to :account,
              :class_name => 'Account::Base',

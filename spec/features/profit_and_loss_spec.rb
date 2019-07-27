@@ -12,7 +12,7 @@ describe ProfitAndLossController, type: :feature do
 
   describe "メニュー「収支表」のクリック" do
     it "今月の収支表が表示される" do
-      expect(page).to have_content("#{Date.today.year}年#{Date.today.month}月末日の収支表")
+      expect(page).to have_content("#{Time.zone.today.year}年#{Time.zone.today.month}月末日の収支表")
     end
   end
 

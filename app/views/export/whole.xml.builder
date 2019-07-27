@@ -1,5 +1,5 @@
 xml.instruct!
-xml.kozuchi(:timestamp => Time.now.to_s(:db).gsub(/\s/, 'T'), :user => current_user.login, :version => KOZUCHI_VERSION) do
+xml.kozuchi(:timestamp => Time.zone.now.to_s(:db).gsub(/\s/, 'T'), :user => current_user.login, :version => KOZUCHI_VERSION) do
   xml.assets do
     current_user.assets.each{|a| a.to_xml(:builder => xml, :skip_instruct => true)}
   end

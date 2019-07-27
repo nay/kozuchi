@@ -65,7 +65,7 @@ describe DealsController, js: true, type: :feature do
     end
 
     describe "今日エリアのクリック" do
-      let(:target_date) {Date.today << 1}
+      let(:target_date) {Time.zone.today << 1}
       before do
         # 前月にしておいて
         click_calendar(target_date.year, target_date.month)
@@ -75,14 +75,14 @@ describe DealsController, js: true, type: :feature do
       end
 
       it "カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
-        expect(selected_month_text).to eq "#{Date.today.month}月"
-        expect(input_date_field_values).to eq [Date.today.year.to_s, Date.today.month.to_s, Date.today.day.to_s]
+        expect(selected_month_text).to eq "#{Time.zone.today.month}月"
+        expect(input_date_field_values).to eq [Time.zone.today.year.to_s, Time.zone.today.month.to_s, Time.zone.today.day.to_s]
       end
     end
 
 
     describe "カレンダー（翌月）のクリック" do
-      let(:target_date) {Date.today >> 1}
+      let(:target_date) {Time.zone.today >> 1}
       before do
         click_calendar(target_date.year, target_date.month)
       end
@@ -98,8 +98,8 @@ describe DealsController, js: true, type: :feature do
         find("#next_year").click
       end
       it "URLに翌年を含み、記入日の年が変わる" do
-        expect(current_path =~ /\/#{(Date.today >> 12).year.to_s}\//).to be_truthy
-        expect(find("input#date_year").value).to eq (Date.today >> 12).year.to_s
+        expect(current_path =~ /\/#{(Time.zone.today >> 12).year.to_s}\//).to be_truthy
+        expect(find("input#date_year").value).to eq (Time.zone.today >> 12).year.to_s
       end
     end
 
@@ -108,17 +108,17 @@ describe DealsController, js: true, type: :feature do
         find("#prev_year").click
       end
       it "URLに前年を含み、記入日の年が変わる" do
-        expect(current_path =~ /\/#{(Date.today << 12).year.to_s}\//).to be_truthy
-        expect(find("input#date_year").value).to eq (Date.today << 12).year.to_s
+        expect(current_path =~ /\/#{(Time.zone.today << 12).year.to_s}\//).to be_truthy
+        expect(find("input#date_year").value).to eq (Time.zone.today << 12).year.to_s
       end
     end
 
     describe "日ナビゲーターのクリック" do
-      let(:target_date) {Date.today << 1} # 前月
+      let(:target_date) {Time.zone.today << 1} # 前月
       before do
         click_calendar(target_date.year, target_date.month)
         # 3日をクリック
-        date = Date.new((Date.today << 1).year, target_date.month, 3)
+        date = Date.new((Time.zone.today << 1).year, target_date.month, 3)
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
       end
       it "URLに対応する日付ハッシュがつき、日の欄に指定した日が入る" do
@@ -188,7 +188,7 @@ describe DealsController, js: true, type: :feature do
         let(:summary) { "朝食のサンドイッチ" }
         let(:suggestion_with_amount) { true }
         before do
-          create(deal_type, :date => Date.today, :summary => summary)
+          create(deal_type, :date => Time.zone.today, :summary => summary)
           fill_in 'deal_summary', :with => '朝食'
           expect(page).to have_css("#patterns div.clickable_text") # サジェッションが表示される
           clickable_text_index = suggestion_with_amount ? 0 : 1
@@ -628,7 +628,7 @@ describe DealsController, js: true, type: :feature do
 
     describe "月の一覧に戻せる" do
       before do
-        click_link "総合(#{Date.today.year}年 #{Date.today.month}月)"
+        click_link "総合(#{Time.zone.today.year}年 #{Time.zone.today.month}月)"
       end
       it "URLに #monthly がつき、表示が変わる" do
         expect(current_hash).to eq "monthly"

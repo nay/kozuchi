@@ -82,11 +82,11 @@ module LoginEngine
     end
 
     def token_expired?
-      self.security_token and self.token_expiry and (Time.now > self.token_expiry)
+      self.security_token and self.token_expiry and (Time.zone.now > self.token_expiry)
     end
 
     def update_expiry
-      write_attribute('token_expiry', [self.token_expiry, Time.at(Time.now.to_i + 600 * 1000)].min)
+      write_attribute('token_expiry', [self.token_expiry, Time.at(Time.zone.now.to_i + 600 * 1000)].min)
       write_attribute('authenticated_by_token', true)
       write_attribute("verified", 1)
       update_without_callbacks
@@ -94,7 +94,7 @@ module LoginEngine
 
     def generate_security_token(hours = nil)
       if not hours.nil? or self.security_token.nil? or self.token_expiry.nil? or 
-          (Time.now.to_i + token_lifetime / 2) >= self.token_expiry.to_i
+          (Time.zone.now.to_i + token_lifetime / 2) >= self.token_expiry.to_i
         return new_security_token(hours)
       else
         return self.security_token
@@ -104,7 +104,7 @@ module LoginEngine
     def set_delete_after
       hours = LoginEngine.config(:delayed_delete_days) * 24
       write_attribute('deleted', 1)
-      write_attribute('delete_after', Time.at(Time.now.to_i + hours * 60 * 60))
+      write_attribute('delete_after', Time.at(Time.zone.now.to_i + hours * 60 * 60))
 
       # Generate and return a token here, so that it expires at
       # the same time that the account deletion takes effect.
@@ -126,7 +126,7 @@ module LoginEngine
 
     def crypt_password
       if @new_password
-        write_attribute("salt", AuthenticatedUser.hashed("salt-#{Time.now}"))
+        write_attribute("salt", AuthenticatedUser.hashed("salt-#{Time.zone.now}"))
         write_attribute("salted_password", AuthenticatedUser.salted_password(salt, AuthenticatedUser.hashed(@password)))
       end
     end
@@ -137,8 +137,8 @@ module LoginEngine
     end
 
     def new_security_token(hours = nil)
-      write_attribute('security_token', AuthenticatedUser.hashed(self.salted_password + Time.now.to_i.to_s + rand.to_s))
-      write_attribute('token_expiry', Time.at(Time.now.to_i + token_lifetime(hours)))
+      write_attribute('security_token', AuthenticatedUser.hashed(self.salted_password + Time.zone.now.to_i.to_s + rand.to_s))
+      write_attribute('token_expiry', Time.at(Time.zone.now.to_i + token_lifetime(hours)))
       update_without_callbacks
       return self.security_token
     end
