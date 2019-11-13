@@ -14,10 +14,10 @@ class Entry::General < Entry::Base
 
   scope :recent_summaries, ->(keyword) {
     select("summary, max(deal_id) as deal_id"
-    ).group("summary"
+    ).group("summary, account_id"
     ).where("summary like ?", "#{keyword}%"
     ).order("deal_id desc"
-    ).limit(5)
+    ).limit(10)
   }
 
   def partner_account_name
