@@ -186,7 +186,7 @@ $(function() {
     }
   });
 
-  if ($('#settlement_sums').size() > 0) {
+  if ($('#settlement_sums').length > 0) {
     settlement.debtorSum = $('#settlement_sums').data("debtor-sum");
     return settlement.creditorSum = $('#settlement_sums').data("creditor-sum");
   }

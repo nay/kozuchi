@@ -141,7 +141,7 @@ $(function() {
 
     // 金額のチェック
     const amounts = $('#deal_form input.amount');
-    if ((amounts.size() > 0) && ($.grep(amounts.get(), (amount, index) => $(amount).val() !== '').length === 0)) {
+    if ((amounts.length > 0) && ($.grep(amounts.get(), (amount, index) => $(amount).val() !== '').length === 0)) {
       alert('金額を入力してください。');
       return false;
     }
@@ -196,7 +196,7 @@ $(function() {
       $tr = $tr.prev();
     }
     $('.edit_deal_row').remove();
-    while (!$tr.hasClass('last_entry') && ($tr.size() > 0)) {
+    while (!$tr.hasClass('last_entry') && ($tr.length > 0)) {
       $tr = $tr.next();
     }
     disableCreateWindow();
@@ -331,7 +331,7 @@ $(function() {
   $(document).on('click', 'td.open_detail', function(event){
     let $tr = $(this).closest('tr');
 
-    while (!$tr.hasClass('last_entry') && ($tr.size() > 0)) {
+    while (!$tr.hasClass('last_entry') && ($tr.length > 0)) {
       $tr = $tr.next();
     }
 
@@ -355,7 +355,7 @@ $(function() {
   });
 
   // ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
-  if ($('#monthly_deals_body_tab').size() > 0) {
+  if ($('#monthly_deals_body_tab').length > 0) {
     if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
       return $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
     }
