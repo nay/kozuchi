@@ -230,6 +230,8 @@ GEM
     timecop (0.9.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    uglifier (4.2.0)
+      execjs (>= 0.3.0, < 3)
     webpacker (4.2.0)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
@@ -271,6 +273,7 @@ DEPENDENCIES
   sendgrid-ruby
   therubyracer
   timecop
+  uglifier
   webpacker
 
 RUBY VERSION
