@@ -23,7 +23,7 @@ gem 'therubyracer'
 
 group :assets do
   gem 'coffee-rails'
-  gem 'sass-rails', '~> 5'
+  gem 'sass-rails'
   gem 'uglifier'
 end
 
