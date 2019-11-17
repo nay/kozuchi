@@ -39,7 +39,7 @@ const addClassToUpdatedline = function() {
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
 // 最近の記入パターン欄の内容の更新
-this.loadRecentDealPatterns = function() {
+loadRecentDealPatterns = function() {
   const $frame = $('#deal_pattern_frame');
   return $frame.load($frame.data('url'));
 };
