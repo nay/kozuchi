@@ -12,7 +12,7 @@
     <%= stylesheet_link_tag 'application' %>
     <%= stylesheet_link_tag 'all_media', :media => :all %>
     <%= stylesheet_link_tag 'print', :media => :print %>
-    <%= javascript_include_tag :application %>
+    <%= javascript_pack_tag :application %>
     <%= render :partial => "shared/google_analytics" %>
     <%= yield :head %>
   </head>
