@@ -59,7 +59,7 @@ class Month {
 }
 
 // Calendar
-this.Calendar = class Calendar {
+Calendar = class Calendar {
   constructor(callback) {
     this.selectedMonth = null;
     this.startMonth = null;
