@@ -116,7 +116,7 @@ EOF
     <meta http-equiv="content-style-type" content="text/css" />
     #{csrf_meta_tags}
     #{stylesheet_link_tag *stylesheets.insert(0, 'application')}
-    #{javascript_include_tag :application}
+    #{javascript_pack_tag :application}
     #{render :partial => "shared/google_analytics"}
     #{inner_content}
   </head>
