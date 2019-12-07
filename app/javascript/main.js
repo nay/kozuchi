@@ -23,7 +23,7 @@ $(function() {
 });
 
 // 月末の日を得る
-this.endOfMonth = function(year, month) {
+endOfMonth = function(year, month) {
   if (!year || (year === '') || !month || (month === '')) {
     return null;
   }
