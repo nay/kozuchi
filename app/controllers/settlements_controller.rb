@@ -4,9 +4,9 @@ class SettlementsController < ApplicationController
   menu_group "精算"
   menu "新しい精算", :only => [:new, :create]
 
-  before_action :find_account,          only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create, :destroy_source]
-  before_action :set_settlement_source, only: [               :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create]
-  before_action :read_year_month,       only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :create, :destroy_source, :summary]
+  before_action :find_account,          only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :destroy_source]
+  before_action :read_year_month,       only: [:new, :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source, :destroy_source, :summary]
+  before_action :set_settlement_source, only: [      :create, :update_source, :select_all_deals_in_source, :remove_all_deals_in_source]
   before_action :find_settlement,       only: [:destroy, :print_form, :submit, :show]
 
   # 新しい精算口座を作る
