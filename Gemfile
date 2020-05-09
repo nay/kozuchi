@@ -1,29 +1,25 @@
 source 'http://rubygems.org'
-ruby '2.6.3'
+ruby '2.6.5'
 
 gem 'activerecord-session_store'
 gem 'bootstrap-sass'
 gem 'dynamic_form'
 gem 'haml-rails'
-gem 'html5jp_graphs', '~> 0.0.3'
 gem 'httpclient'
-gem 'jquery-rails'
 gem 'libv8'
 gem 'passenger'
 gem 'pg', '~> 0.18'
+gem 'sassc-rails'
 gem 'rails', '~> 5.2.3'
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rails-controller-testing'
 gem 'rails-observers'
 gem 'rake'
 gem 'rails_autolink'
 gem 'rb-readline'
 gem 'therubyracer'
+gem 'webpacker'
 
 group :assets do
-  gem 'coffee-rails'
-  gem 'sass-rails'
   gem 'uglifier'
 end
 
