@@ -1,7 +1,10 @@
 # -*- encoding : utf-8 -*-
 module Entry
 
+  SUMMARY_MAX_SIZE = 64
+
   def self.included(base)
+    base.before_validation :truncate_summary
     base.validates :amount, :numericality => {:only_integer => true, :allow_blank => true}
     base.validate :validate_amount_is_not_zero
 
@@ -57,7 +60,18 @@ module Entry
     !id.to_s.blank? && attributes[:id].to_s == id.to_s
   end
 
+  def summary_truncated?
+    @summary_truncated
+  end
+
   private
+
+  def truncate_summary
+    if summary && summary.length > SUMMARY_MAX_SIZE
+      self.summary = summary.truncate(SUMMARY_MAX_SIZE)
+      @summary_truncated = true # 登録・更新の開始時は新たにオブジェクトが作られてnilになっていることを想定している
+    end
+  end
 
   def validate_amount_is_not_zero
     errors.add :amount, "に0を指定することはできません。" if amount && amount.to_i == 0 && errors[:amount].empty?

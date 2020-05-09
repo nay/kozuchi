@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# NOTE: saveしたオブジェクトで再度更新を行う場合、entry内の@summary_truncated が最初の登録/更新でtrueになった場合はそれを引き継ぐ。必要ならリセットする。
 module Deal
 
   module AccountCareExtension
@@ -214,6 +215,10 @@ module Deal
         errors.delete(:"creditor_entries.#{attr}")
       end
     end
+  end
+
+  def summary_truncated?
+    active_entries.any?(&:summary_truncated?)
   end
 
   private
