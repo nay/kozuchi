@@ -18,7 +18,7 @@ class Deal::Balance < Deal::Base
   after_save :update_initial_balance
   after_destroy :update_initial_balance
 
-  delegate :account_id=, :account_id, :account, :balance=, :balance, :balance_before_type_cast, :amount, :summary, :initial_balance?, :balance_before, :to => :prepared_entry
+  delegate :account_id=, :account_id, :account, :balance=, :balance, :balance_before_type_cast, :amount, :summary, :initial_balance?, :balance_before, :summary_truncated?, to: :prepared_entry
 
   def balance?
     true
