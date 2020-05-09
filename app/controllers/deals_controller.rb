@@ -70,7 +70,7 @@ class DealsController < ApplicationController
       @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
       if @deal.save
         truncated_message = @deal.summary_truncated? ? "長すぎる摘要を64文字に短縮しました。" : ""
-        flash[:notice] = "#{@deal.human_name} を追加しました。#{truncated_message}" # TODO: 他コントーラとDRYに
+        flash[:notice] = "#{@deal.human_name} を追加しました。#{truncated_message}"
         flash[:"#{controller_name}_deal_type"] = deal_type
         write_target_date(@deal.date)
         account_has_been_selected(*@deal.accounts)

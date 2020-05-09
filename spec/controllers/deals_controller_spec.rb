@@ -125,6 +125,7 @@ describe DealsController, type: :controller do
       expect(deal).not_to be_nil
       expect(deal.balance).to eq 3000
     end
+    # 残高には摘要を入れないので長すぎる状態は生じない
   end
 
   describe "search" do
