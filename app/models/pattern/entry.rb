@@ -7,6 +7,7 @@ class Pattern::Entry < ApplicationRecord
              :foreign_key => 'account_id'
 
   include ::Entry
+  include Entry::SummaryTruncation
 #  attr_accessible :account_id, :amount, :line_number, :summary, :reversed_amount
 
   def assignable_attributes

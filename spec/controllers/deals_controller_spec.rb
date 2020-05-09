@@ -57,6 +57,7 @@ describe DealsController, type: :controller do
         expect(response).to be_successful
         deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
         expect(deal.summary).to eq "a" * 61 + "..."
+        expect(controller.instance_variable_get("@deal").summary).to eq "a" * 61 + "..." # DB内だけでなくオブジェクトの状態も完全である
         expect(request.flash[:notice]).to eq "記入 2010/07/07-1 を追加しました。長すぎる摘要を64文字に短縮しました。"
       end
     end
@@ -74,7 +75,7 @@ describe DealsController, type: :controller do
            params: {
                deal: {
                    year: '2010', month: '7', day: '9',
-                   summary: 'test_complex',
+                   summary: summary,
                    summary_mode: 'unify',
                    creditor_entries_attributes: [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
                    debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
@@ -99,7 +100,8 @@ describe DealsController, type: :controller do
         expect(response).to be_successful
         deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
         expect(deal.summary).to eq "a" * 61 + "..."
-        expect(request.flash[:notice]).to eq "記入 2010/07/07-1 を追加しました。長すぎる摘要を64文字に短縮しました。"
+        expect(controller.instance_variable_get("@deal").summary).to eq "a" * 61 + "..." # DB内だけでなくオブジェクトの状態も完全である
+        expect(request.flash[:notice]).to eq "記入 2010/07/09-1 を追加しました。長すぎる摘要を64文字に短縮しました。"
       end
     end
   end
