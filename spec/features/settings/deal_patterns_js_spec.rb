@@ -16,21 +16,31 @@ describe "記入パターン", js: true, type: :feature do
     end
 
     describe "実行" do
+      before do
+        page.find("a.unify_summary").click
+        fill_in "コード", with: "HML"
+        fill_in "名前", with: "ハニーミルクラテ"
+        fill_in :deal_pattern_summary, with: summary
+        fill_in :deal_pattern_debtor_entries_attributes_0_amount, with: "470"
+        select "食費", from: :deal_pattern_debtor_entries_attributes_0_account_id
+        fill_in :deal_pattern_creditor_entries_attributes_0_reversed_amount, with: "470"
+        select "現金", from: :deal_pattern_creditor_entries_attributes_0_account_id
+        click_button "登録"
+      end
+
       # TODO: 別のバリエーションも追加したい
       context "サマリー統一モードで完全なシンプルな記入をいれたとき" do
-        before do
-          page.find("a.unify_summary").click
-          fill_in "コード", with: "HML"
-          fill_in "名前", with: "ハニーミルクラテ"
-          fill_in :deal_pattern_summary, with: "ハニーミルクラテ"
-          fill_in :deal_pattern_debtor_entries_attributes_0_amount, with: "470"
-          select "食費", from: :deal_pattern_debtor_entries_attributes_0_account_id
-          fill_in :deal_pattern_creditor_entries_attributes_0_reversed_amount, with: "470"
-          select "現金", from: :deal_pattern_creditor_entries_attributes_0_account_id
-          click_button "登録"
-        end
+        let(:summary) { "ハニーミルクラテ" }
+
         it { expect(flash_notice).to have_content "記入パターン「HML ハニーミルクラテ」を登録しました。" }
         # TODO: 入れたとおりの内容が入っていることの確認
+
+        context "摘要が100文字のとき" do
+          let(:summary) { "a" * 100 }
+          it "サマリーが短縮されたとのメッセージが表示される" do
+            expect(flash_notice).to have_content "長すぎる摘要を64文字に短縮しました。"
+          end
+        end
       end
     end
 
@@ -74,13 +84,22 @@ describe "記入パターン", js: true, type: :feature do
     end
 
     describe "実行" do
+      let(:summary) { "給与（更新後）" }
       before do
         fill_in "コード", with: "002"
         fill_in "名前", with: "サラリー"
+        fill_in :deal_pattern_creditor_entries_attributes_0_summary, with: summary
         click_button "更新"
       end
       it { expect(flash_notice).to have_content "記入パターン「002 サラリー」を更新しました。" }
       # TODO: 変更したとおりの内容が入っていることの確認
+
+      context "摘要が100文字のとき" do
+        let(:summary) { "a" * 100 }
+        it "サマリーが短縮されたとのメッセージが表示される" do
+          expect(flash_notice).to have_content "長すぎる摘要を64文字に短縮しました。"
+        end
+      end
     end
 
     describe "記入欄を増やす" do

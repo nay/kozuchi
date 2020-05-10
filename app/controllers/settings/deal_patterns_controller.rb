@@ -1,4 +1,7 @@
 class Settings::DealPatternsController < ApplicationController
+
+  include Deals::SummaryTruncation
+
   menu_group "設定"
   menu "記入パターン"
   menu "記入パターンの新規登録", only: [:new, :create]
@@ -55,7 +58,7 @@ class Settings::DealPatternsController < ApplicationController
   def create
     @deal_pattern = current_user.deal_patterns.build(deal_pattern_params)
     if @deal_pattern.save
-      redirect_to settings_deal_patterns_path, :notice => message_on_create(@deal_pattern)
+      redirect_to settings_deal_patterns_path, :notice => message_on_create(@deal_pattern, truncation_message(@deal_pattern))
     else
       @deal_pattern.fill_complex_entries
       render :new
@@ -65,7 +68,7 @@ class Settings::DealPatternsController < ApplicationController
   def update
     @deal_pattern.attributes = deal_pattern_params
     if @deal_pattern.save
-      redirect_to settings_deal_patterns_path, :notice => message_on_update(@deal_pattern)
+      redirect_to settings_deal_patterns_path, :notice => message_on_update(@deal_pattern, truncation_message(@deal_pattern))
     else
       render :show
     end
