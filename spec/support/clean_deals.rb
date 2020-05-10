@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 shared_context 'when no deals and patterns exist', :no_deals_and_patterns do
   before do
     Deal::Base.destroy_all

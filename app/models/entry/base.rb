@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # １口座への１記入を表す
 class Entry::Base < ApplicationRecord
   self.table_name = 'account_entries'

@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 # Entry を include しているクラスに共通の振る舞い
 
 shared_examples "valid? when including ::Entry" do

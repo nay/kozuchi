@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 # 太郎でログインしているとき
 shared_context "太郎 logged in" do
   let!(:current_user) {users(:taro)}

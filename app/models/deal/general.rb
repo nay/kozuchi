@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 異動明細クラス。
 class Deal::General < Deal::Base
 

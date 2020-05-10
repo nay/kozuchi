@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 口座連携に関するUserモデルの処理
 # 同様のI/Fを将来、UserProxyに持たせる
 module User::AccountLinking

@@ -1,5 +1,4 @@
-# -*- encoding : utf-8 -*-
-# カスタマイズ （個人的好みによる設定） 
+# カスタマイズ （個人的好みによる設定）
 class Settings::PreferencesController < ApplicationController
   menu_group "設定"
   menu "カスタマイズ"

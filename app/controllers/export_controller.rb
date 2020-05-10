@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class ExportController < ApplicationController
   menu_group "データ管理"
   menu "エクスポート"

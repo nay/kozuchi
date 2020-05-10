@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Settings::FriendAcceptancesController < ApplicationController
   before_action :find_target_user
 

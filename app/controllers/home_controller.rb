@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class HomeController < ApplicationController
   menu_group "ホーム"
   helper :html5jp_graphs

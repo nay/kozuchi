@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Pattern::Entry < ApplicationRecord
   self.table_name = 'entry_patterns'
 

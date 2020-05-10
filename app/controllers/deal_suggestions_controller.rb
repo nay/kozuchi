@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class DealSuggestionsController < ApplicationController
 
   # 候補を出力する Ajax メソッド

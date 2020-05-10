@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Settings::PartnerAccountsController < ApplicationController
   menu_group "連携"
   menu "受け皿"

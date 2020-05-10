@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class ActionController::Base
   def rescue_action_in_public(exception)
     return if exception.kind_of?( ActionController::RoutingError )

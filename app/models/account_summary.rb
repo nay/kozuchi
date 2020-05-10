@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class AccountSummary
   attr_accessor :account, :sum, :diff
   

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 残高確認記入行クラス
 
 # * 登録時は、account_id, balanceをセットしてsaveする。

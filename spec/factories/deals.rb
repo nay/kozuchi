@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 FactoryBot.define do
 
   # 単純な記入

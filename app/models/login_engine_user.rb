@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class LoginEngineUser < User
 
   # Authentication for old users. Define LOGINE_ENGINE_SALT in your envrionment.

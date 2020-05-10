@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # Proxyと実オブジェクトで共通となるI/Fの実オブジェクト側実装をここに記述する
 module Account::Common
   def user_login

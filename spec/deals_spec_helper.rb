@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 使う場合は個別に require, include する
 module DealsSpecHelper
 

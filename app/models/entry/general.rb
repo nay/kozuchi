@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Entry::General < Entry::Base
   belongs_to :deal,
              :class_name => 'Deal::General',

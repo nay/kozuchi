@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class UsersController < ApplicationController
   skip_before_action :login_required, :except => [:destroy, :edit]
   menu_group "設定"

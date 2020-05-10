@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class SingleLogin < ApplicationRecord
   belongs_to :user
   attr_accessor :password

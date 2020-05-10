@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module EntrySpecHelper
   def new_general_entry(account_id, amount, options = {})
     account_id = account_id.kind_of?(Symbol) ? Fixtures.identify(account_id) : account_id

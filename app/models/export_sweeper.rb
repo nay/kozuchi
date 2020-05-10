@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class ExportSweeper < ActionController::Caching::Sweeper
   observe Deal::Base, Account::Base, Settlement, User
 

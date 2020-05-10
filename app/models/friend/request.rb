@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Friend::Request < ApplicationRecord
   self.table_name = "friend_requests"
   belongs_to :user

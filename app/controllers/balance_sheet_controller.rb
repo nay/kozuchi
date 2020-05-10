@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class BalanceSheetController < ApplicationController
   menu_group "家計簿"
   menu "貸借対照表"

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class DealsController < ApplicationController
   helper :html5jp_graphs
 
