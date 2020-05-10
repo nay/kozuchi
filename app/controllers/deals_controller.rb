@@ -1,4 +1,7 @@
 class DealsController < ApplicationController
+
+  include Deals::SummaryTruncation
+
   helper :html5jp_graphs
 
   cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
@@ -295,10 +298,6 @@ class DealsController < ApplicationController
   end
 
   private
-
-  def truncation_message(deal)
-    deal.summary_truncated? ? "長すぎる摘要を64文字に短縮しました。" : ""
-  end
 
   def data_for_day_navigator
     current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).distinct

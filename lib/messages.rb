@@ -12,16 +12,16 @@ module Messages
     t(key, options)
   end
 
-  def message_on_create(obj)
-    I18n.t("messages.complete.create", :target => human_name_of(obj))
+  def message_on_create(obj, additional_message = '')
+    I18n.t("messages.complete.create", :target => human_name_of(obj)) + additional_message
   end
 
-  def message_on_update(obj)
-    I18n.t("messages.complete.update", :target => human_name_of(obj))
+  def message_on_update(obj, additional_message = '')
+    I18n.t("messages.complete.update", :target => human_name_of(obj)) + additional_message
   end
 
-  def message_on_destroy(obj)
-    I18n.t("messages.complete.destroy", :target =>  human_name_of(obj))
+  def message_on_destroy(obj, additional_message = '')
+    I18n.t("messages.complete.destroy", :target =>  human_name_of(obj)) + additional_message
   end
 
   def confirm_message_on_destroy(obj)
