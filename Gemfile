@@ -32,6 +32,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem "factory_bot_rails"
   gem 'i18n_generators'
+  gem 'listen'
   gem 'poltergeist'
   gem 'puma'
   gem "pry-rails"
