@@ -1,3 +1,2 @@
 class InvalidParameterError < StandardError
-  
 end
