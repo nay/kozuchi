@@ -1,5 +1,7 @@
-# -*- encoding : utf-8 -*-
 class DealsController < ApplicationController
+
+  include Deals::SummaryTruncation
+
   helper :html5jp_graphs
 
   cache_sweeper :export_sweeper, :only => [:destroy, :update, :confirm, :create_general_deal, :create_complex_deal, :create_balance_deal]
@@ -69,7 +71,7 @@ class DealsController < ApplicationController
       size = deal_params[:creditor_entries_attributes].kind_of?(Array) ? deal_params[:creditor_entries_attributes].size : deal_params[:creditor_entries_attributes].try(:to_h).try(:size)
       @deal = current_user.send(deal_type.to_s =~ /general|complex/ ? 'general_deals' : 'balance_deals').new(deal_params)
       if @deal.save
-        flash[:notice] = "#{@deal.human_name} を追加しました。" # TODO: 他コントーラとDRYに
+        flash[:notice] = "#{@deal.human_name} を追加しました。#{truncation_message(@deal)}"
         flash[:"#{controller_name}_deal_type"] = deal_type
         write_target_date(@deal.date)
         account_has_been_selected(*@deal.accounts)
@@ -154,7 +156,7 @@ class DealsController < ApplicationController
     if @deal.save
       write_target_date(@deal.date)
       account_has_been_selected(*@deal.accounts)
-      flash[:notice] = "#{@deal.human_name} を更新しました。" # TODO: 他コントーラとDRYに
+      flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
       flash[:day] = @deal.date.day
       render json: {

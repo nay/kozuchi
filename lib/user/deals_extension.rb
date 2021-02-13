@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # Userのdeals関連(DealはBaseDealではなくDeal）の拡張を記述する。
 # User本体とコードを分けて整理するためモジュールで記述。
 module User::DealsExtension

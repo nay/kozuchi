@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 def new_rejection(user_id, target_id)
   r = Friend::Rejection.new(:target_id => target_id)
   r.user_id = user_id

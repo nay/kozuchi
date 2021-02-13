@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class UserMailer < ActionMailer::Base
   def signup_notification(user)
     @url = "#{ROOT_URL}/activate/#{user.activation_code}"

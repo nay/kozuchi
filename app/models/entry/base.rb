@@ -1,14 +1,13 @@
-# -*- encoding : utf-8 -*-
 # １口座への１記入を表す
 class Entry::Base < ApplicationRecord
   self.table_name = 'account_entries'
   unsavable
 
   include Booking
+  include Entry::SummaryTruncation
 
   MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
-  SUMMARY_MAX_SIZE = 64
-  
+
   belongs_to :account,
              :class_name => 'Account::Base',
              :foreign_key => 'account_id'
@@ -128,7 +127,7 @@ class Entry::Base < ApplicationRecord
   end
 
   private
-  
+
   def check_amount_exists
     # Entry::General では検証で防ぐ。Entry::Balanceの場合は検証を突破して自動で入れるため、ここでチェックする
     raise "no amount in #{inspect}" if amount.blank?

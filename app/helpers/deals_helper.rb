@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module DealsHelper
 
   def account_button(account, year, month)

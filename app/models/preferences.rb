@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Preferences < ApplicationRecord
   self.table_name = "preferences"
   belongs_to :user

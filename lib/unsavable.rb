@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 module Unsavable
   def self.included(base)
     base.instance_eval do

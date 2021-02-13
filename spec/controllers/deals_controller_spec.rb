@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 
@@ -26,19 +25,22 @@ describe DealsController, type: :controller do
     end
   end
   describe "create_general_deal" do
-    it "成功する" do
+    let(:summary) { 'test' }
+    before do
       # 貸し方の金額ははいらない
       post :create_general_deal,
            params: {
                deal: {
                    year: '2010', month: '7', day: '7',
-                   summary: 'test',
+                   summary: summary,
                    summary_mode: 'unify',
                    creditor_entries_attributes: [{:account_id => :taro_cache.to_id}],
                    debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000}]
                }
 
            }
+    end
+    it "成功する" do
       expect(response).to be_successful
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
       expect(deal).not_to be_nil
@@ -46,6 +48,17 @@ describe DealsController, type: :controller do
       expect(deal.creditor_entries.size).to eq 1
       expect(deal.debtor_entries.first.summary).to eq 'test'
       expect(deal.creditor_entries.first.summary).to eq 'test'
+    end
+
+    context "摘要が100文字のとき" do
+      let(:summary) { "a" * 100 }
+      it "成功し、摘要が切り詰められ、Flashメッセージで切り詰めが報告される" do
+        expect(response).to be_successful
+        deal = @current_user.general_deals.where(date: Date.new(2010, 7, 7)).order(created_at: :desc).first
+        expect(deal.summary).to eq "a" * 61 + "..."
+        expect(controller.instance_variable_get("@deal").summary).to eq "a" * 61 + "..." # DB内だけでなくオブジェクトの状態も完全である
+        expect(request.flash[:notice]).to eq "記入 2010/07/07-1 を追加しました。長すぎる摘要を64文字に短縮しました。"
+      end
     end
   end
   describe "new_complex_deal" do
@@ -55,17 +68,20 @@ describe DealsController, type: :controller do
     end
   end
   describe "create_complex_deal" do
-    it "成功する" do
+    let(:summary) { 'test_complex' }
+    before do
       post :create_complex_deal,
            params: {
                deal: {
                    year: '2010', month: '7', day: '9',
-                   summary: 'test_complex',
+                   summary: summary,
                    summary_mode: 'unify',
                    creditor_entries_attributes: [{:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}],
                    debtor_entries_attributes: [{:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}]
                }
            }
+    end
+    it "成功する" do
       expect(response).to be_successful
       deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
       expect(deal).not_to be_nil
@@ -74,6 +90,18 @@ describe DealsController, type: :controller do
       expect(deal.debtor_entries.first.summary).to eq 'test_complex'
       expect(deal.creditor_entries.first.summary).to eq 'test_complex'
       expect(deal.creditor_entries.last.summary).to eq 'test_complex'
+    end
+
+    context "摘要が100文字のとき" do
+      let(:summary) { "a" * 100 }
+
+      it "成功し、摘要が切り詰められ、Flashメッセージで切り詰めが報告される" do
+        expect(response).to be_successful
+        deal = @current_user.general_deals.where(date: Date.new(2010, 7, 9)).order(created_at: :desc).first
+        expect(deal.summary).to eq "a" * 61 + "..."
+        expect(controller.instance_variable_get("@deal").summary).to eq "a" * 61 + "..." # DB内だけでなくオブジェクトの状態も完全である
+        expect(request.flash[:notice]).to eq "記入 2010/07/09-1 を追加しました。長すぎる摘要を64文字に短縮しました。"
+      end
     end
   end
   describe "new_balance_deal" do
@@ -96,6 +124,7 @@ describe DealsController, type: :controller do
       expect(deal).not_to be_nil
       expect(deal.balance).to eq 3000
     end
+    # 残高には摘要を入れないので長すぎる状態は生じない
   end
 
   describe "search" do
@@ -142,24 +171,36 @@ describe DealsController, type: :controller do
   end
 
   describe "update" do
+    let(:summary) { 'changed like test_complex' }
     before do
       @deal = create_deal(:confirmed => false)
-    end
-    it "成功する" do
       put :update, params: {
-            :id => @deal.id, :deal => {
-            :year => '2010', :month => '7', :day => '9',
-            :summary => 'changed like test_complex',
-            :summary_mode => 'unify',
-            :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
-            :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
+          :id => @deal.id, :deal => {
+              :year => '2010', :month => '7', :day => '9',
+              :summary => summary,
+              :summary_mode => 'unify',
+              :creditor_entries_attributes => {'0' => {:account_id => :taro_cache.to_id, :amount => -800, :line_number => 0}, '1' => {:account_id => :taro_hanako.to_id, :amount => -200, :line_number => 1}},
+              :debtor_entries_attributes => {'0' => {:account_id => :taro_bank.to_id, :amount => 1000, :line_number => 0}}
           }
       }
+    end
+    it "成功する" do
       expect(response).to be_successful
       @deal.reload
       expect(@deal.creditor_entries.size).to eq 2
       expect(@deal.summary).to eq 'changed like test_complex'
       expect(@deal.date).to eq Date.new(2010, 7, 9)
+    end
+
+    context "摘要が100文字のとき" do
+      let(:summary) { "a" * 100 }
+      it "成功し、摘要が切り詰められ、Flashメッセージで切り詰めが報告される" do
+        expect(response).to be_successful
+        @deal.reload
+        expect(@deal.summary).to eq "a" * 61 + "..."
+        expect(controller.instance_variable_get("@deal").summary).to eq  "a" * 61 + "..."
+        expect(request.flash[:notice]).to eq "記入 2010/07/09-1 を更新しました。長すぎる摘要を64文字に短縮しました。"
+      end
     end
   end
 

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module UsabilityHelper
   
   # ロード時のフォーカスを指定します

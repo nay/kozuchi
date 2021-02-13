@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class DealPatternsController < ApplicationController
 
   # 仕訳帳・口座別出納などの記入フォームからの、Ajax による簡易なパターン登録

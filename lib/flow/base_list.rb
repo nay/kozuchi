@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Flow::BaseList < Array
 
   def new_flow(account, previous)

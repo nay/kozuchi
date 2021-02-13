@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module ControllerSpecHelper
 
   # AuthenticatedTestHelperを書き換える

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Friend::Permission < ApplicationRecord
   self.table_name = "friend_permissions"
   belongs_to :user

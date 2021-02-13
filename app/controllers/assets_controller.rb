@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class AssetsController < ApplicationController
   helper :graph
   menu_group "家計簿"

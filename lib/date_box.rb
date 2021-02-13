@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'time'
 
 # TODO: このクラスはなくす方向で

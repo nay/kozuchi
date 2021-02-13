@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Pattern::Deal < ApplicationRecord
   self.table_name = 'deal_patterns'
 

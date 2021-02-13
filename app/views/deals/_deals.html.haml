@@ -39,7 +39,7 @@
 
         - # account
         - if account_entry.linked_ex_entry_id || account_entry.kind_of?(Entry::General) && (account_entry.settlement_id || account_entry.result_settlement_id)
-          %td.account
+          %td
             = display_account_name(account_entry.account)
           %td.jump
             - if account_entry.linked_ex_entry_id
@@ -48,7 +48,7 @@
               %div
                 = link_to '精算', settlement_path(:id => account_entry.any_settlement_id)
         - else
-          %td{colspan: "2"}= account_entry.account.name
+          %td.account{colspan: "2"}= account_entry.account.name
 
         %td.account_deals_link= link_to '→', monthly_account_deals_path(:account_id => account_entry.account.id, :year => @year, :month => @month, :anchor => "d#{deal.id}")
         %td.amount= number_with_delimiter(account_entry.amount) if account_entry.amount  > 0 && !account_entry.initial_balance?

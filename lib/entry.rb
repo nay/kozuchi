@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+# TODO: balance を代表していないので、Entry::Amount 等に名前変更したい
 module Entry
 
   def self.included(base)

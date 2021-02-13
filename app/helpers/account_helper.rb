@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 口座に関するヘルパー
 module AccountHelper
   # 階層化した勘定選択欄を出力する。

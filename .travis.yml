@@ -1,7 +1,7 @@
 language: ruby
 
 rvm:
-  - ruby-2.6.5
+  - ruby-2.6.6
 
 addons:
   apt:
@@ -10,7 +10,7 @@ addons:
 
 before_script:
   - export DISPLAY=:99.0
-  - nvm install 8.16.2
+  - nvm install 10.13.0
   - npm install yarn
   - yarn install
 

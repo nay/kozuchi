@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Settings::SingleLoginsController < ApplicationController
   menu_group "設定"
   menu "シングルログイン"

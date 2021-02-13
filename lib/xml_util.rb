@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 class XMLUtil
   # Builderのエスケープを封じたので必要なものはここで
   def self.escape(text)

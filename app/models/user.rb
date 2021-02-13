@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # ユーザーに紐づくロジックは多いので、機能別にモジュールを記述してincludeする
 require 'digest/sha1'
 class User < ApplicationRecord

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # とりあえず単純なヘルプ
 class HelpController < ApplicationController
   skip_before_action :login_required

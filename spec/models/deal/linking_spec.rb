@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # 連携機能に特化したスペック
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')

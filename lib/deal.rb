@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module Deal
 
   module AccountCareExtension
@@ -68,8 +67,10 @@ module Deal
   def self.included(base)
     base.accepts_nested_attributes_for :debtor_entries, :creditor_entries, :allow_destroy => true
     base.before_validation :copy_deal_info_to_entries, :set_creditor_to_entries, :set_unified_summary
+    base.after_validation :get_summary_truncated # 後の工程でentryオブジェクトが入れ替わってしまい状態が失われるので取得しておく
     base.before_save :adjust_entry_line_numbers
     base.before_update :destroy_marked_entries
+    base.after_save :clear_unified_summary # entry側でtruncateされて変化したときにそれをsummaryとして扱えるようにする
 
     base.class_eval do
       # 単一記入では creditor に金額が指定されないことへの調整。
@@ -166,7 +167,7 @@ module Deal
   end
 
   def reload
-    @unified_summary = nil
+    clear_unified_summary
     super
   end
 
@@ -216,7 +217,19 @@ module Deal
     end
   end
 
+  def summary_truncated?
+    @summary_truncated
+  end
+
   private
+
+  def get_summary_truncated
+    @summary_truncated = active_entries.any?(&:summary_truncated?)
+  end
+
+  def clear_unified_summary
+    @unified_summary = nil
+  end
 
   # Rails を 3.2.6 から 3.2.11 にあげたら、
   # nested attributes の autosave で削除よりさきにentry登録がはしって

@@ -1,10 +1,10 @@
 class Account::Asset < Account::Base
 
   BASIC_KINDS = {
-    :cache =>             {:name => '現金', :banking => true},
-    :banking_facility =>  {:name => '金融機関口座', :banking => true},
-    :credit_card =>       {:name => 'クレジットカード', :credit => true},
-    :credit =>            {:name => '債権', :credit => true}
+    cache:            {name: '現金',           banking: true},
+    banking_facility: {name: '金融機関口座',    banking: true},
+    credit_card:      {name: 'クレジットカード', banking: true, credit: true},
+    credit:           {name: '債権',                          credit: true}
   }
 
   type_order 1

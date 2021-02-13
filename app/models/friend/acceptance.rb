@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Friend::Acceptance < Friend::Permission
   validate :validates_not_rejected, :validates_not_accepted
   after_create :create_target_request

@@ -50,6 +50,7 @@ td.number, th.number {
 
 td.account, th.account {
   width: 130px;
+  min-width: 130px;
 }
 td.account .sub_account_names {
   font-size: 80%;
