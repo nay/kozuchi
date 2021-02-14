@@ -35,11 +35,6 @@ module Kozuchi
     # like if you have constraints or database-specific column types
     # BINARY属性を文字列カラムに指定している部分があるため
     config.active_record.schema_format = :sql
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
-
-    config.assets.precompile += ['all_media.css', 'print.css']
   end
   class << self
     attr_accessor :news_updated_on, :personal_info_policy_updated_on, :privacy_policy_updated_on
