@@ -36,9 +36,6 @@ module Kozuchi
     # BINARY属性を文字列カラムに指定している部分があるため
     config.active_record.schema_format = :sql
 
-    # Enable the asset pipeline
-    config.assets.enabled = true
-
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
