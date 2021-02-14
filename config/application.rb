@@ -27,8 +27,6 @@ module Kozuchi
     # Activate observers that should always be running.
     config.active_record.observers = :user_observer
 
-    config.action_controller.cache_store = :file_store, File.join(::Rails.root.to_s, "tmp/cache")
-
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
