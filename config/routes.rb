@@ -1,6 +1,6 @@
 YEAR_MONTH_REQUIREMENTS = {:year => /[0-9]*|_YEAR_/, :month => /[1-9]|10|11|12|_MONTH_/}
 
-Kozuchi::Application.routes.draw do
+Rails.application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
