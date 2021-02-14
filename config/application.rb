@@ -27,9 +27,6 @@ module Kozuchi
     # Activate observers that should always be running.
     config.active_record.observers = :user_observer
 
-    # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
-
     config.action_controller.cache_store = :file_store, File.join(::Rails.root.to_s, "tmp/cache")
 
     # Enable escaping HTML in JSON.
