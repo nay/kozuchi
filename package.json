@@ -4,6 +4,7 @@
   "dependencies": {
     "@rails/webpacker": "5.3.0",
     "bootstrap": "3",
+    "is-svg": "^4.2.2",
     "jquery": "^3.5.0",
     "jquery-ujs": "^1.2.2",
     "webpack": "^4.46.0",
