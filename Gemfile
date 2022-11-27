@@ -1,5 +1,5 @@
 source 'http://rubygems.org'
-ruby '2.6.6'
+ruby '2.7.6'
 
 gem 'activerecord-session_store'
 gem 'bootstrap-sass'
@@ -33,6 +33,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem 'i18n_generators'
   gem 'listen'
+  gem 'phantomjs', :require => 'phantomjs/poltergeist'
   gem 'poltergeist'
   gem 'puma'
   gem "pry-rails"
