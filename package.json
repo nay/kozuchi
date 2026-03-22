@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "3",
-    "esbuild": "^0.19.0",
+    "esbuild": "^0.25.0",
     "jquery": "^3.5.0",
     "jquery-ujs": "^1.2.2"
   },
