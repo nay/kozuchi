@@ -15,6 +15,9 @@ module Kozuchi
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    # Rails 8.1 で `to_time` がオフセットではなく完全なタイムゾーンを保持するようになる先取り対応
+    config.active_support.to_time_preserves_timezone = :zone
+
     config.active_record.belongs_to_required_by_default = false
     config.autoload_paths << "#{config.root}/lib"
     config.active_support.escape_html_entities_in_json = true
