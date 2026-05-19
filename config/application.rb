@@ -22,6 +22,8 @@ module Kozuchi
     config.yjit = true
     # マイグレーションのタイムスタンプを検証（7.2 デフォルト）
     config.active_record.validate_migration_timestamps = true
+    # Active Storage のバリアント対象 web 画像タイプ（7.2 デフォルト）
+    config.active_storage.web_image_content_types = %w[image/png image/jpeg image/gif image/webp]
 
     config.active_record.belongs_to_required_by_default = false
     config.autoload_paths << "#{config.root}/lib"
