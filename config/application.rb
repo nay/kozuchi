@@ -26,6 +26,8 @@ module Kozuchi
     config.active_storage.web_image_content_types = %w[image/png image/jpeg image/gif image/webp]
     # 条件付きGETで If-None-Match と If-Modified-Since 併用時 RFC 7232 に従い ETag を優先（8.0 デフォルト）
     config.action_dispatch.strict_freshness = true
+    # PG アダプタが date 列を Date オブジェクトとしてデコード（7.2 デフォルト）
+    config.active_record.postgresql_adapter_decode_dates = true
 
     config.active_record.belongs_to_required_by_default = false
     config.autoload_paths << "#{config.root}/lib"
