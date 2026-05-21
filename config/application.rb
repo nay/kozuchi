@@ -28,6 +28,8 @@ module Kozuchi
     config.action_dispatch.strict_freshness = true
     # PG アダプタが date 列を Date オブジェクトとしてデコード（7.2 デフォルト）
     config.active_record.postgresql_adapter_decode_dates = true
+    # ReDoS 対策の正規表現グローバルタイムアウト 1 秒（8.0 デフォルト）
+    Regexp.timeout = 1
 
     config.active_record.belongs_to_required_by_default = false
     config.autoload_paths << "#{config.root}/lib"
