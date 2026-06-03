@@ -201,7 +201,7 @@ GEM
     nokogiri (1.19.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    passenger (6.1.3)
+    passenger (6.1.4)
       logger (>= 1.7.0)
       rack (>= 1.6.13)
       rackup (>= 1.0.1)
@@ -221,7 +221,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (7.2.0)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
