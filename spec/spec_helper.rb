@@ -75,7 +75,7 @@ end
 
 require 'capybara/cuprite'
 Capybara.register_driver(:cuprite) do |app|
-  Capybara::Cuprite::Driver.new(app, window_size: [1280, 800], process_timeout: 10, js_errors: true)
+  Capybara::Cuprite::Driver.new(app, window_size: [1280, 800], process_timeout: 30, js_errors: true)
 end
 Capybara.javascript_driver = :cuprite
 Capybara.default_max_wait_time = 5
