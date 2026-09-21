@@ -372,7 +372,7 @@ DEPENDENCIES
   timecop
 
 RUBY VERSION
-   ruby 3.4.10p104
+   ruby 4.0.7p0
 
 BUNDLED WITH
    2.6.9
