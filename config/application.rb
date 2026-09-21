@@ -20,6 +20,8 @@ module Kozuchi
     config.active_support.escape_js_separators_in_json = false
     # 並び順を決められない first / last などを例外にする（8.1 デフォルト）
     config.active_record.raise_on_missing_required_finder_order_columns = true
+    # スラッシュで始まらない相対パスへのリダイレクトを例外にする（8.1 デフォルト）
+    config.action_controller.action_on_path_relative_redirect = :raise
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
