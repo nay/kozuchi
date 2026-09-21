@@ -120,7 +120,7 @@ Rails.application.routes.draw do
   # AssetsController
   controller :assets do
     scope :path => 'f' do # /assets はじまりは無視されるため
-      get 'assets/:year/:month', {:as => :monthly_assets, :action => :monthly}.merge(YEAR_MONTH_REQUIREMENTS)
+      get 'assets/:year/:month', :as => :monthly_assets, :action => :monthly, **YEAR_MONTH_REQUIREMENTS
       resources :assets, :only => [:index]
     end
   end
@@ -128,13 +128,13 @@ Rails.application.routes.draw do
   # BalanceSheetController
   controller :balance_sheet do
     get :balance_sheet, :action => :show
-    get 'balance_sheet/:year/:month', {:as => :monthly_balance_sheet, :action => 'monthly'}.merge(YEAR_MONTH_REQUIREMENTS)
+    get 'balance_sheet/:year/:month', :as => :monthly_balance_sheet, :action => 'monthly', **YEAR_MONTH_REQUIREMENTS
   end
 
   # ProfitAndLossController
   controller :profit_and_loss do
     get :profit_and_loss, :action => :show
-    get 'profit_and_loss/:year/:month', {:as => :monthly_profit_and_loss, :action => 'monthly'}.merge(YEAR_MONTH_REQUIREMENTS)
+    get 'profit_and_loss/:year/:month', :as => :monthly_profit_and_loss, :action => 'monthly', **YEAR_MONTH_REQUIREMENTS
   end
 
   # ExportController
