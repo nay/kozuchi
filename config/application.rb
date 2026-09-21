@@ -14,6 +14,8 @@ module Kozuchi
     # Rails 8.1 デフォルトへの段階移行（全項目適用後に load_defaults 8.1 へ切替え予定）
     # development と test では YJIT を無効化（8.1 デフォルト。production は有効のまま）
     config.yjit = !Rails.env.local?
+    # render json: のレスポンスで HTML エンティティ等をエスケープしない（8.1 デフォルト）
+    config.action_controller.escape_json_responses = false
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
