@@ -24,6 +24,8 @@ module Kozuchi
     config.action_controller.action_on_path_relative_redirect = :raise
     # テンプレートの依存関係を Ruby パーサで解析する（8.1 デフォルト）
     config.action_view.render_tracker = :ruby
+    # hidden フィールドに autocomplete="off" を付けない（8.1 デフォルト）
+    config.action_view.remove_hidden_field_autocomplete = true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
