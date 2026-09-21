@@ -18,6 +18,8 @@ module Kozuchi
     config.action_controller.escape_json_responses = false
     # JSON で U+2028 / U+2029 をエスケープしない（8.1 デフォルト）
     config.active_support.escape_js_separators_in_json = false
+    # 並び順を決められない first / last などを例外にする（8.1 デフォルト）
+    config.active_record.raise_on_missing_required_finder_order_columns = true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
