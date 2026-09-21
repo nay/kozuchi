@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
+  # 死活監視用。Rails::HealthController は ApplicationController を経由しないため
+  # BASIC 認証やログインなしでアクセスできる
+  get 'up' => 'rails/health#show', as: :rails_health_check
+
   # settings
   namespace :settings do
     controller :accounts do
