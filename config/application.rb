@@ -16,6 +16,8 @@ module Kozuchi
     config.yjit = !Rails.env.local?
     # render json: のレスポンスで HTML エンティティ等をエスケープしない（8.1 デフォルト）
     config.action_controller.escape_json_responses = false
+    # JSON で U+2028 / U+2029 をエスケープしない（8.1 デフォルト）
+    config.active_support.escape_js_separators_in_json = false
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
