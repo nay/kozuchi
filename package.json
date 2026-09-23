@@ -2,6 +2,7 @@
   "name": "kozuchi",
   "private": true,
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
     "bootstrap": "3",
     "esbuild": "^0.28.1",
     "jquery": "^3.5.0",
