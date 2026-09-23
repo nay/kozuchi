@@ -97,8 +97,8 @@ describe DealsController, js: true, type: :feature do
         find("#next_year").click
       end
       it "URLに翌年を含み、記入日の年が変わる" do
-        expect(current_path =~ /\/#{(Time.zone.today >> 12).year.to_s}\//).to be_truthy
-        expect(find("input#date_year").value).to eq (Time.zone.today >> 12).year.to_s
+        expect(page).to have_current_path(%r{/#{(Time.zone.today >> 12).year}/})
+        expect(page).to have_field("date_year", with: (Time.zone.today >> 12).year.to_s)
       end
     end
 
@@ -107,8 +107,8 @@ describe DealsController, js: true, type: :feature do
         find("#prev_year").click
       end
       it "URLに前年を含み、記入日の年が変わる" do
-        expect(current_path =~ /\/#{(Time.zone.today << 12).year.to_s}\//).to be_truthy
-        expect(find("input#date_year").value).to eq (Time.zone.today << 12).year.to_s
+        expect(page).to have_current_path(%r{/#{(Time.zone.today << 12).year}/})
+        expect(page).to have_field("date_year", with: (Time.zone.today << 12).year.to_s)
       end
     end
 
@@ -136,6 +136,7 @@ describe DealsController, js: true, type: :feature do
         context "口座を選んだとき" do
           before do
             within('#account_selector') { select '現金', from: 'account_id' }
+            wait_for_turbo_frame_navigation
           end
 
           it "前月のまま、選んだ口座の一覧に移る" do
@@ -144,9 +145,8 @@ describe DealsController, js: true, type: :feature do
 
           context "さらに総合を選んだとき" do
             before do
-              # 口座の一覧に移るのを待ってから選び直す
-              expect(page).to have_current_path(%r{\A/accounts/})
               within('#account_selector') { select '総合', from: 'account_id' }
+              wait_for_turbo_frame_navigation
             end
 
             it "前月のまま、総合の一覧に移る" do
@@ -709,7 +709,6 @@ describe DealsController, js: true, type: :feature do
 
         context "ブラウザで戻ったとき" do
           before do
-            expect(page).to have_current_path("/deals/2012/6") # 前月に移るのを待ってから戻る
             page.go_back
           end
 
@@ -721,9 +720,31 @@ describe DealsController, js: true, type: :feature do
           end
 
           it "カレンダーで続けて移動できる" do
-            expect(page).to have_content("ラーメン") # 元の月に戻るのを待ってから押す
+            expect(page).to have_content("ラーメン")
+            wait_for_turbo_visit # 戻る処理が終わるのを待ってから押す
             click_calendar(2012, 8)
             expect(page).to have_current_path("/deals/2012/8")
+          end
+        end
+      end
+
+      context "「最近の記入」タブを開いてから、カレンダーで前月を押したとき" do
+        before do
+          click_link '最近の記入'
+          click_calendar(2012, 6)
+        end
+
+        context "Turbo に戻る先のページの控えがない状態で、ブラウザで戻ったとき" do
+          before do
+            page.execute_script("Turbo.cache.clear()")
+            page.go_back
+          end
+
+          it "元の月に戻り、「最近の記入」タブを表示する" do
+            expect(page).to have_content("総合(2012年 7月)")
+            expect(current_hash).to eq "recent"
+            expect(page).to have_css("#recent_area", visible: true)
+            expect(page).to have_css("#monthly_area", visible: false)
           end
         end
       end
@@ -731,6 +752,7 @@ describe DealsController, js: true, type: :feature do
       context "口座の選択で口座を選んだとき" do
         before do
           within('#account_selector') { select '現金', from: 'account_id' }
+          wait_for_turbo_frame_navigation
         end
 
         it "口座の一覧に変わり、摘要は残る" do
@@ -741,6 +763,7 @@ describe DealsController, js: true, type: :feature do
         context "さらに総合ボタンを押したとき" do
           before do
             click_link '総合', exact: true
+            wait_for_turbo_frame_navigation
           end
 
           it "総合の一覧に変わり、摘要は残る" do
@@ -750,8 +773,8 @@ describe DealsController, js: true, type: :feature do
 
           context "さらに口座のボタンを押したとき" do
             before do
-              expect(page).to have_current_path("/deals/2012/7") # 総合に移るのを待ってから押す
               find('a.monthly_deals_link', text: '現金').click
+              wait_for_turbo_frame_navigation
             end
 
             it "口座の一覧に変わり、摘要は残る" do

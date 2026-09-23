@@ -38,6 +38,17 @@ const addClassToUpdatedline = function() {
 
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
+// URL の # に合わせて表示を整える
+// #d123 なら更新された行に印をつけ、#recent, #monthly ならそのタブを表示する
+const applyLocationHash = function() {
+  addClassToUpdatedline();
+  if ($('#monthly_deals_body_tab').length > 0) {
+    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
+      $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
+    }
+  }
+};
+
 // 最近の記入パターン欄の内容の更新
 loadRecentDealPatterns = function() {
   const $frame = $('#deal_pattern_frame');
@@ -253,7 +264,9 @@ $(function() {
     return false;
   });
 
-  addClassToUpdatedline();
+  applyLocationHash();
+  // Turbo が戻る・進むでページ全体を描き直したときも、URL の # に合わせる
+  $(document).on('turbo:load', applyLocationHash);
 
   $(window).hashchange(function() {
     clearUpdateLine();
@@ -349,10 +362,4 @@ $(function() {
     return $('#' + $(this).attr('data') + "_area").show();
   });
 
-  // ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
-  if ($('#monthly_deals_body_tab').length > 0) {
-    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
-      return $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
-    }
-  }
 });
