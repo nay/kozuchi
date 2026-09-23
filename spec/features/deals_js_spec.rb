@@ -671,13 +671,15 @@ describe DealsController, js: true, type: :feature do
     end
 
     context "日ナビゲーターの日を押したとき" do
+      # 今月の日の欄には今日の日が最初から入っているので、今日と違う日を押す
+      let(:day) { Time.zone.today.day == 3 ? 4 : 3 }
       before do
-        click_link I18n.l(Time.zone.today.change(day: 3), format: :day).strip # strip しないとマッチしない
+        click_link I18n.l(Time.zone.today.change(day: day), format: :day).strip # strip しないとマッチしない
       end
 
       it "月の一覧に切り替わり、日の欄に押した日が入る" do
         expect(page).not_to have_content "昔の記入"
-        expect(find("input#date_day").value).to eq '3'
+        expect(find("input#date_day").value).to eq day.to_s
       end
     end
 
