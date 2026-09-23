@@ -749,6 +749,77 @@ describe DealsController, js: true, type: :feature do
         end
       end
 
+      context "日付の欄で日を入れてから、月を前月に変えたとき" do
+        before do
+          fill_in 'date_day', with: '15'
+          fill_in 'date_month', with: '6'
+          find('#date_month').send_keys(:tab) # フォーカスを外すと切り替わる
+          wait_for_turbo_frame_navigation
+        end
+
+        it "前月の一覧とURLに変わり、日付の欄に入れた年月日と摘要は残る" do
+          expect(page).to have_current_path("/deals/2012/6")
+          expect(page).not_to have_content("ラーメン")
+          expect(input_date_field_values).to eq ["2012", "6", "15"]
+          expect(find("input#deal_summary").value).to eq "書きかけ"
+        end
+      end
+
+      context "日付の欄で年を前年に変えたとき" do
+        before do
+          fill_in 'date_year', with: '2011'
+          find('#date_year').send_keys(:tab)
+          wait_for_turbo_frame_navigation
+        end
+
+        it "前年の同じ月の一覧とURLに変わる" do
+          expect(page).to have_current_path("/deals/2011/7")
+          expect(page).to have_content("総合(2011年 7月)")
+        end
+      end
+
+      context "日付の欄の月に13を入れたとき" do
+        before do
+          fill_in 'date_month', with: '13'
+          find('#date_month').send_keys(:tab)
+          sleep 1 # 切り替わらないことを確かめるため、切り替わるなら終わっている時間だけ待つ
+        end
+
+        it "一覧は切り替わらない" do
+          expect(page).to have_current_path("/deals/2012/7")
+          expect(page).to have_content("ラーメン")
+        end
+      end
+
+      context "日付の欄の年に3桁だけ入れたとき" do
+        before do
+          fill_in 'date_year', with: '201'
+          find('#date_year').send_keys(:tab)
+          sleep 1 # 切り替わらないことを確かめるため、切り替わるなら終わっている時間だけ待つ
+        end
+
+        it "一覧は切り替わらない" do
+          expect(page).to have_current_path("/deals/2012/7")
+          expect(page).to have_content("ラーメン")
+        end
+      end
+
+      context "一覧で変更ウィンドウを開き、変更ウィンドウの日付の欄の月を変えたとき" do
+        before do
+          click_link '変更'
+          within('#edit_window') do
+            fill_in 'date_month', with: '6'
+            find('#date_month').send_keys(:tab)
+          end
+          sleep 1 # 切り替わらないことを確かめるため、切り替わるなら終わっている時間だけ待つ
+        end
+
+        it "一覧は切り替わらず、変更ウィンドウも開いたままになる" do
+          expect(page).to have_current_path("/deals/2012/7")
+          expect(page).to have_css("#edit_window")
+        end
+      end
+
       context "口座の選択で口座を選んだとき" do
         before do
           within('#account_selector') { select '現金', from: 'account_id' }

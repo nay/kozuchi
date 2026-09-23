@@ -77,24 +77,43 @@ module DealsHelper
   end
 
 
-  # permanent - true のとき、Turbo Frame の中身を入れ替えても記入フォーム（#deal_forms）を入れ替えずに残す
-  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, permanent: false, &block)
+  # frame - Turbo Frame の中に置く登録フォームのとき、その Frame の id
+  #   Frame の中身を入れ替えても、日付の欄と記入フォーム（#deal_forms）は入れ替えずに残す
+  #   日付の欄の年・月を変えたら、month_url_template の _YEAR_, _MONTH_ を置き換えたURLの内容に Frame の中身を入れ替える
+  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, frame: nil, month_url_template: nil, &block)
     tab_index = start_tab_index
-    text = content_tag(:div, class: 'datebox') do
+    datebox_options = {class: 'datebox'}
+    if frame
+      datebox_options[:id] = 'new_deal_datebox'
+      datebox_options[:data] = {
+        turbo_permanent: true,
+        controller: 'deal-date',
+        action: 'change->deal-date#navigate turbo:visit@document->deal-date#visitStarted turbo:before-frame-render@document->deal-date#follow turbo:before-render@document->deal-date#follow',
+        deal_date_frame_value: frame,
+        deal_date_url_template_value: month_url_template,
+        deal_date_year_value: year,
+        deal_date_month_value: month
+      }
+    end
+    target = ->(name) { frame ? {data: {deal_date_target: name}} : {} }
+    text = ''.html_safe
+    # 日付の欄は入れ替えずに残るので、移動先の画面の年月日は、入れ替えられるこちらの要素から受け取る
+    text << content_tag(:div, nil, id: 'new_deal_datebox_source', hidden: true, data: {year: year, month: month, day: day}) if frame
+    text << content_tag(:div, **datebox_options) do
       content_tag :form, class: 'datebox_form' do
         d = ''
-        d << text_field(:date, :year, :size => 4, :max_length => 4, :tabindex => tab_index, :value => year)
+        d << text_field(:date, :year, {:size => 4, :max_length => 4, :tabindex => tab_index, :value => year}.merge(target.call('year')))
         tab_index += 1
-        d << text_field(:date, :month, :size => 2, :max_length => 2, :tabindex => tab_index, :value => month)
+        d << text_field(:date, :month, {:size => 2, :max_length => 2, :tabindex => tab_index, :value => month}.merge(target.call('month')))
         tab_index += 1
-        d << text_field(:date, :day, :size => 2, :max_length => 2, :tabindex => tab_index, :value => day)
+        d << text_field(:date, :day, {:size => 2, :max_length => 2, :tabindex => tab_index, :value => day}.merge(target.call('day')))
         d << ' '
         d << content_tag(:a, '月末', :class => 'end_of_month_button')
         d.html_safe
       end
     end
     deal_forms_options = {id: "deal_forms"}
-    deal_forms_options[:data] = {turbo_permanent: true} if permanent
+    deal_forms_options[:data] = {turbo_permanent: true} if frame
     text << content_tag(:div, capture(&block), **deal_forms_options)
     text.html_safe
   end
