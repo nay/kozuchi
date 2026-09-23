@@ -1,7 +1,8 @@
 module DealsHelper
 
-  def account_button(account, year, month)
-    link_to truncate(account.name, length: 10), monthly_account_deals_path(account_id: account.id, year: year, month: month), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}
+  # data - リンクに追加する data 属性
+  def account_button(account, year, month, data: {})
+    link_to truncate(account.name, length: 10), monthly_account_deals_path(account_id: account.id, year: year, month: month), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}.merge(data)
   end
 
   def money_count_field(name, caption)
@@ -76,7 +77,8 @@ module DealsHelper
   end
 
 
-  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, &block)
+  # permanent - true のとき、Turbo Frame の中身を入れ替えても記入フォーム（#deal_forms）を入れ替えずに残す
+  def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, permanent: false, &block)
     tab_index = start_tab_index
     text = content_tag(:div, class: 'datebox') do
       content_tag :form, class: 'datebox_form' do
@@ -91,7 +93,9 @@ module DealsHelper
         d.html_safe
       end
     end
-    text << content_tag(:div, capture(&block), :id => "deal_forms")
+    deal_forms_options = {id: "deal_forms"}
+    deal_forms_options[:data] = {turbo_permanent: true} if permanent
+    text << content_tag(:div, capture(&block), **deal_forms_options)
     text.html_safe
   end
 

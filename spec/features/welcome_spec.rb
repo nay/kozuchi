@@ -45,11 +45,14 @@ describe WelcomeController, type: :feature do
     end
 
     describe "link パスワードを忘れたとき (when not logged in)" do
-      before do
-        visit "/"
-        click_link("パスワードを忘れたとき")
+      context "メール送信ありの設定のとき" do
+        before do
+          stub_const("SKIP_MAIL", false)
+          visit "/"
+          click_link("パスワードを忘れたとき")
+        end
+        it_behaves_like "forgot_password (メール送信あり)"
       end
-      it_behaves_like "forgot_password (メール送信あり)"
     end
 
   end

@@ -38,6 +38,17 @@ const addClassToUpdatedline = function() {
 
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
+// URL の # に合わせて表示を整える
+// #d123 なら更新された行に印をつけ、#recent, #monthly ならそのタブを表示する
+const applyLocationHash = function() {
+  addClassToUpdatedline();
+  if ($('#monthly_deals_body_tab').length > 0) {
+    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
+      $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
+    }
+  }
+};
+
 // 最近の記入パターン欄の内容の更新
 loadRecentDealPatterns = function() {
   const $frame = $('#deal_pattern_frame');
@@ -121,6 +132,19 @@ $(function() {
 
   $(document).on('click', '#edit_window button.close', closeEditWindow);
   $(document).on('click', 'a.close_edit_window', () => $('#edit_window button.close').click());
+
+  // 月や口座の切り替えで Turbo Frame の中身を入れ替える直前に、編集中なら編集windowを閉じて登録フォームを戻す
+  // 登録フォームの id が書き換わったままだと、入れ替え後も残すべき登録フォームを Turbo が見つけられないため
+  // あわせて、ページごと移動していたときと同じように、前の操作のメッセージを消す
+  $(document).on('turbo:before-frame-render', '#monthly_deals', function() {
+    if ($('#new_deal_window').hasClass('disabled')) {
+      $('tr.edit_deal_row').remove();
+      enableCreateWindow();
+      hideRecentDealPatterns();
+    }
+    $('#content > .alert').remove();
+    hideNotice();
+  });
 
   // deal_tab
   $(document).on('click', '#deal_forms .tabbuttons a.btn', function() {
@@ -240,7 +264,9 @@ $(function() {
     return false;
   });
 
-  addClassToUpdatedline();
+  applyLocationHash();
+  // Turbo が戻る・進むでページ全体を描き直したときも、URL の # に合わせる
+  $(document).on('turbo:load', applyLocationHash);
 
   $(window).hashchange(function() {
     clearUpdateLine();
@@ -336,10 +362,4 @@ $(function() {
     return $('#' + $(this).attr('data') + "_area").show();
   });
 
-  // ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
-  if ($('#monthly_deals_body_tab').length > 0) {
-    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
-      return $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
-    }
-  }
 });
