@@ -38,8 +38,7 @@
     #deals_frame
       #deals_navigator
         #calendar_in_navigator
-          - url_for(year: '_YEAR_', month: '_MONTH_')
-          = render partial: "shared/calendar", :locals => {year: @year, month: @month, switcher: true, data: {url_template: url_for(year: '_YEAR_', month: '_MONTH_')}}
+          = render partial: "shared/calendar", :locals => {year: @year, month: @month, url_template: url_for(year: '_YEAR_', month: '_MONTH_')}
       #new_deal_window
         - # 折れ線グラフ
         #chart{style: "margin-top: 0px; width: 55%; height: 50px; float: left;"}
