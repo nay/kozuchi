@@ -4,7 +4,7 @@
   - data[:condition] = {account_id: @account.id} # 遷移先を決めるための条件
   - data[:condition_match_url] = monthly_account_deals_path(account_id: @account.id, year: '_YEAR_', month: '_MONTH_')
 - data[:result_url] = monthly_deals_path(year: '_YEAR_', month: '_MONTH_') # 条件がないときや、条件に合わなかったときの遷移先
-- # 月や口座の切り替えは、この Frame の中身だけを入れ替える。登録フォーム（#deal_forms）は入れ替えずに残して、入力中の内容を保つ
+- # 月や口座の切り替えは、この Frame の中身だけを入れ替える。登録フォーム（日付の欄と #deal_forms）は入れ替えずに残して、入力中の内容を保つ
 - # Frame の中のリンクは、Frame の中で移動するものに data-turbo: true を付けたものだけ Turbo が扱い、ほかは今までどおりページごと移動する
 %turbo-frame#monthly_deals{data: {turbo: 'false', turbo_prefetch: 'false'}}
   #deal_form_option{ data: data }
@@ -58,7 +58,7 @@
           - # ここに h3 してもいい
           .deal_editor
             - deal_type = flash[:"#{controller_name}_deal_type"]
-            = deal_editor 1, @year, @month, @day, permanent: true do
+            = deal_editor 1, @year, @month, @day, frame: 'monthly_deals', month_url_template: url_for(year: '_YEAR_', month: '_MONTH_') do
               = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
         %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;"}
           %li{roll: "presentation", class: 'active'}
