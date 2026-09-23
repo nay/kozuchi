@@ -9,6 +9,7 @@ import "./html5jp_graphs/vbar"
 
 import "bootstrap"
 
+import "./turbo"
 import "./controllers"
 
 import "./deals"

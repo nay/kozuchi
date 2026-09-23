@@ -1,9 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
+import { visit } from "../turbo"
 
 // 月を選ぶカレンダー
 // 選択中の月の7か月前から12か月分を表示し、月を選ぶと urlTemplate の _YEAR_, _MONTH_ を置き換えたURLへ移動する
+// frame が指定されていれば、その id の Turbo Frame の中身だけを入れ替える
 export default class extends Controller {
-  static values = { year: Number, month: Number, urlTemplate: String }
+  static values = { year: Number, month: Number, urlTemplate: String, frame: String }
 
   // 左端に表示する、選択中の月より前の月数
   static leftMargin = 7
@@ -14,7 +16,7 @@ export default class extends Controller {
 
   select(event) {
     const { year, month } = event.currentTarget.dataset
-    location.href = this.urlTemplateValue.replace("_YEAR_", year).replace("_MONTH_", month)
+    visit(this.urlTemplateValue.replace("_YEAR_", year).replace("_MONTH_", month), this.frameValue)
   }
 
   html() {

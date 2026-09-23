@@ -687,4 +687,96 @@ describe DealsController, js: true, type: :feature do
 
   end
 
+  describe "登録フォームに入力したままの、表示する年月や口座の切り替え" do
+    context "2012年7月（「ラーメン」の記入がある月）を表示し、登録フォームに摘要を入力しているとき" do
+      before do
+        create(:general_deal, date: Date.new(2012, 7, 10), summary: "ラーメン")
+        visit "/deals/2012/7"
+        fill_in 'deal_summary', with: '書きかけ'
+      end
+
+      context "カレンダーで前月を押したとき" do
+        before do
+          click_calendar(2012, 6)
+        end
+
+        it "前月の一覧と日付の欄に変わり、URLも前月になり、摘要は残る" do
+          expect(page).to have_current_path("/deals/2012/6")
+          expect(page).not_to have_content("ラーメン")
+          expect(find("input#date_month").value).to eq "6"
+          expect(find("input#deal_summary").value).to eq "書きかけ"
+        end
+
+        context "ブラウザで戻ったとき" do
+          before do
+            expect(page).to have_current_path("/deals/2012/6") # 前月に移るのを待ってから戻る
+            page.go_back
+          end
+
+          it "元の月の一覧と日付の欄に戻り、摘要は残る" do
+            expect(page).to have_current_path("/deals/2012/7")
+            expect(page).to have_content("ラーメン")
+            expect(find("input#date_month").value).to eq "7"
+            expect(find("input#deal_summary").value).to eq "書きかけ"
+          end
+
+          it "カレンダーで続けて移動できる" do
+            expect(page).to have_content("ラーメン") # 元の月に戻るのを待ってから押す
+            click_calendar(2012, 8)
+            expect(page).to have_current_path("/deals/2012/8")
+          end
+        end
+      end
+
+      context "口座の選択で口座を選んだとき" do
+        before do
+          within('#account_selector') { select '現金', from: 'account_id' }
+        end
+
+        it "口座の一覧に変わり、摘要は残る" do
+          expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/2012/7")
+          expect(find("input#deal_summary").value).to eq "書きかけ"
+        end
+
+        context "さらに総合ボタンを押したとき" do
+          before do
+            click_link '総合', exact: true
+          end
+
+          it "総合の一覧に変わり、摘要は残る" do
+            expect(page).to have_current_path("/deals/2012/7")
+            expect(find("input#deal_summary").value).to eq "書きかけ"
+          end
+
+          context "さらに口座のボタンを押したとき" do
+            before do
+              expect(page).to have_current_path("/deals/2012/7") # 総合に移るのを待ってから押す
+              find('a.monthly_deals_link', text: '現金').click
+            end
+
+            it "口座の一覧に変わり、摘要は残る" do
+              expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/2012/7")
+              expect(find("input#deal_summary").value).to eq "書きかけ"
+            end
+          end
+        end
+      end
+
+      context "一覧で変更ウィンドウを開いてから、カレンダーで前月を押したとき" do
+        before do
+          click_link '変更'
+          expect(page).to have_css("#edit_window") # 変更ウィンドウが開くのを待ってから押す
+          click_calendar(2012, 6)
+        end
+
+        it "変更ウィンドウが閉じ、登録フォームが摘要を残したまま使える状態に戻る" do
+          expect(page).to have_current_path("/deals/2012/6")
+          expect(page).not_to have_css("#edit_window")
+          expect(find("input#deal_summary")).not_to be_disabled
+          expect(find("input#deal_summary").value).to eq "書きかけ"
+        end
+      end
+    end
+  end
+
 end

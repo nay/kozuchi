@@ -122,6 +122,19 @@ $(function() {
   $(document).on('click', '#edit_window button.close', closeEditWindow);
   $(document).on('click', 'a.close_edit_window', () => $('#edit_window button.close').click());
 
+  // 月や口座の切り替えで Turbo Frame の中身を入れ替える直前に、編集中なら編集windowを閉じて登録フォームを戻す
+  // 登録フォームの id が書き換わったままだと、入れ替え後も残すべき登録フォームを Turbo が見つけられないため
+  // あわせて、ページごと移動していたときと同じように、前の操作のメッセージを消す
+  $(document).on('turbo:before-frame-render', '#monthly_deals', function() {
+    if ($('#new_deal_window').hasClass('disabled')) {
+      $('tr.edit_deal_row').remove();
+      enableCreateWindow();
+      hideRecentDealPatterns();
+    }
+    $('#content > .alert').remove();
+    hideNotice();
+  });
+
   // deal_tab
   $(document).on('click', '#deal_forms .tabbuttons a.btn', function() {
     if ($(this).hasClass('active')) { return false; }
