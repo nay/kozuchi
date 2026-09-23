@@ -126,6 +126,37 @@ describe DealsController, js: true, type: :feature do
       end
     end
 
+    describe "口座の選択" do
+      context "前月を表示しているとき" do
+        let(:target_date) { Time.zone.today << 1 }
+        before do
+          click_calendar(target_date.year, target_date.month)
+        end
+
+        context "口座を選んだとき" do
+          before do
+            within('#account_selector') { select '現金', from: 'account_id' }
+          end
+
+          it "前月のまま、選んだ口座の一覧に移る" do
+            expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/#{target_date.year}/#{target_date.month}")
+          end
+
+          context "さらに総合を選んだとき" do
+            before do
+              # 口座の一覧に移るのを待ってから選び直す
+              expect(page).to have_current_path(%r{\A/accounts/})
+              within('#account_selector') { select '総合', from: 'account_id' }
+            end
+
+            it "前月のまま、総合の一覧に移る" do
+              expect(page).to have_current_path("/deals/#{target_date.year}/#{target_date.month}")
+            end
+          end
+        end
+      end
+    end
+
     describe "登録" do
       describe "通常明細" do
         context "日付欄（日）にアルファベットがあるとき" do
@@ -636,6 +667,17 @@ describe DealsController, js: true, type: :feature do
       it "URLに #monthly がつき、表示が変わる" do
         expect(current_hash).to eq "monthly"
         expect(page).not_to have_content "昔の記入"
+      end
+    end
+
+    context "日ナビゲーターの日を押したとき" do
+      before do
+        click_link I18n.l(Time.zone.today.change(day: 3), format: :day).strip # strip しないとマッチしない
+      end
+
+      it "月の一覧に切り替わり、日の欄に押した日が入る" do
+        expect(page).not_to have_content "昔の記入"
+        expect(find("input#date_day").value).to eq '3'
       end
     end
 

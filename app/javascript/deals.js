@@ -257,13 +257,6 @@ $(function() {
   $(document).on('mouseover', '.account-memo-trigger', function() { return $('.account-memo', this).show(); });
   $(document).on('mouseout',  '.account-memo-trigger',function() { return $('.account-memo', this).hide(); });
 
-  // 日ナビゲーション
-
-  $('.for_deal_editor').on('click', '#day_navigator td.day a', function(event){
-    $(".body_tab_link[data=monthly]").click();
-    return $('input#date_day').val($(this).data('day'));
-  });
-
   // 記入パターンのロード（リターンキーが押されたとき）
   $(document).on('keypress', 'input#pattern_keyword', function(event) {
     if (event.which && (event.which === 13)) {
@@ -313,17 +306,6 @@ $(function() {
       return location.hash = "d" + data.deal.id;
     });
     return event.preventDefault();
-  });
-
-  // ナビゲーター内の口座選択の変更
-  $('#account_selector #account_id').change(function(event){
-    const account_id = $(this).val();
-    if (account_id === '') {
-      // TODO: あとで実装する
-      return document.location.href = $('#deal_form_option').data('all-url');
-    } else {
-      return document.location.href = $('#deal_form_option').data('account-url').replace('_ACCOUNT_ID_', account_id);
-    }
   });
 
 

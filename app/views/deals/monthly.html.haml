@@ -4,9 +4,6 @@
   - data[:condition] = {account_id: @account.id} # 遷移先を決めるための条件
   - data[:condition_match_url] = monthly_account_deals_path(account_id: @account.id, year: '_YEAR_', month: '_MONTH_')
 - data[:result_url] = monthly_deals_path(year: '_YEAR_', month: '_MONTH_') # 条件がないときや、条件に合わなかったときの遷移先
-- # 口座選択を変えたときのURLテンプレート
-- data[:account_url] = monthly_account_deals_path(account_id: '_ACCOUNT_ID_', year: @year, month: @month) # 口座が指定されたとき
-- data[:all_url] = monthly_deals_path(year: @year, month: @month) # 口座が解除されたとき
 #deal_form_option{ data: data }
 
 .for_monthly_deals.for_deal_editor
@@ -16,7 +13,10 @@
 
   #deals_right
     #account_selector
-      = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: '総合', class: "form-control"
+      = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: '総合', class: "form-control",
+        data: {controller: 'account-selector', action: 'change->account-selector#navigate',
+               account_selector_account_url_template_value: monthly_account_deals_path(account_id: '_ACCOUNT_ID_', year: @year, month: @month),
+               account_selector_all_url_value: monthly_deals_path(year: @year, month: @month)}
       %div{style: "padding: 4px 0 4px 0;"}
         - if @account
           .col-sm-1
