@@ -264,10 +264,6 @@ $(function() {
     return false;
   });
 
-  applyLocationHash();
-  // Turbo が戻る・進むでページ全体を描き直したときも、URL の # に合わせる
-  $(document).on('turbo:load', applyLocationHash);
-
   $(window).hashchange(function() {
     clearUpdateLine();
     return addClassToUpdatedline();
@@ -362,4 +358,8 @@ $(function() {
     return $('#' + $(this).attr('data') + "_area").show();
   });
 
+  // URL の # に合わせて表示を整える。タブのクリックの処理を登録してから呼ぶ（#recent ではタブをクリックするため）
+  applyLocationHash();
+  // Turbo が戻る・進むでページ全体を描き直したときも、URL の # に合わせる
+  $(document).on('turbo:load', applyLocationHash);
 });
