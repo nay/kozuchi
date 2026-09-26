@@ -187,10 +187,12 @@ describe DealsController, js: true, type: :feature do
 
           context "金額が正しいとき" do
             let(:amount) { '210' }
-            it "登録できる" do
+            it "登録でき、「最近の記入」タブを表示する" do
               expect(flash_notice).to have_content('追加しました。')
               expect(current_hash).to eq "recent"
               expect(page).to have_content('朝食のおにぎり')
+              expect(page).to have_css("#recent_area", visible: true)
+              expect(page).to have_css("#monthly_area", visible: false)
             end
           end
 
