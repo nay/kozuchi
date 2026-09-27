@@ -19,10 +19,6 @@ class Deal::Base < ApplicationRecord
   validates_presence_of :date
   
   scope :in_a_time_between, ->(from, to) { where("deals.date >= ? and deals.date <= ?", from, to) }
-  scope :in_month, ->(year, month) {
-    start_date = Date.new(year.to_i, month.to_i, 1)
-    in_a_time_between(start_date, start_date.end_of_month)
-  }
   scope :created_on, ->(date) { where("created_at >= ? and created_at < ?", date.beginning_of_day, (date + 1).beginning_of_day).order(created_at: :desc) }
   scope :time_ordering, -> { order(:date, :daily_seq) }
   scope :recently_updated_ordered, -> { order(updated_at: :desc) }

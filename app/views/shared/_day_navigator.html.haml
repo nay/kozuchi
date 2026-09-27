@@ -2,7 +2,7 @@
 - # path_proc - 日からのリンク先をブロックで渡す。なければ ""
 - # data - date というメソッドを持つオブジェクトの配列
 - path_proc ||= nil
-%table#day_navigator{data: {url: monthly_deal_days_path(year: '_YEAR_', month: '_MONTH_')}}
+%table#day_navigator
   %tr
     %td.year_month
       = "#{@year}年#{@month}月"

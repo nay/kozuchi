@@ -84,7 +84,6 @@ Rails.application.routes.draw do
       get "accounts/:account_id/#{t}_deals/new", :action => "new_#{t}_deal", :as => :"new_account_#{t}_deal"
     end
 
-    get 'deals/:year/:month/days', :as => :monthly_deal_days, :action => 'day_navigator'
     get 'accounts/:account_id/deals/today', as: :today_account_deals, action: :today
     get 'deals/today', as: :today_deals, action: :today
     get 'accounts/:account_id/deals/:year/:month/:day', as: :daily_account_deals, action: :daily, constraints: {day: /\d{1,2}/}

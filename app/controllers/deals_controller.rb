@@ -100,14 +100,6 @@ class DealsController < ApplicationController
     end
   end
 
-
-  # 日ナビゲーター部品を返す (Ajax)
-  def day_navigator
-    write_target_date(params[:year], params[:month])
-    @year, @month, @day = read_target_date
-    render partial: 'shared/day_navigator', locals: {data: data_for_day_navigator}
-  end
-
   RECENT_DEALS_SIZE = 5
 
   # 変更フォームを表示するAjaxアクション
@@ -337,10 +329,6 @@ class DealsController < ApplicationController
   def last_filter_day(year, month)
     date = Date.parse(session[:deals_filter_date]) if session[:deals_filter_date]
     date.day if date && date.year == year.to_i && date.month == month.to_i
-  end
-
-  def data_for_day_navigator
-    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).distinct
   end
 
   def find_deal
