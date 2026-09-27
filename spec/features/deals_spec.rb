@@ -29,6 +29,39 @@ describe DealsController, type: :feature do
     end
   end
 
+  # 年月を指定しない移動
+  describe "最後に表示した年月の一覧への移動" do
+    include_context "太郎 logged in"
+    context "花子さんへのシングルログインを設定し、2012年7月の一覧を表示してから、2012年6月の一覧を表示したとき" do
+      before do
+        SingleLogin.create!(user: current_user, login: 'hanako', password: 'hanako')
+        visit "/deals/2012/7"
+        visit "/deals/2012/6"
+      end
+
+      context "年月を指定せずに一覧を開いたとき" do
+        before do
+          visit "/deals"
+        end
+
+        it "2012年6月の一覧が表示される" do
+          expect(page).to have_current_path("/deals/2012/6")
+        end
+      end
+
+      context "シングルログインで花子さんのアカウントへ移動したとき" do
+        before do
+          click_link 'hanakoさんのアカウントへ移動'
+        end
+
+        it "花子さんの2012年6月の一覧が表示される" do
+          expect(page).to have_content("hanakoさんに切り替え中")
+          expect(page).to have_current_path("/deals/2012/6")
+        end
+      end
+    end
+  end
+
   # 検索
   describe "/deals/search" do
     include_context "太郎 logged in"
