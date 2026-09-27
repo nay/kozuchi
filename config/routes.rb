@@ -85,6 +85,8 @@ Rails.application.routes.draw do
     end
 
     get 'deals/:year/:month/days', :as => :monthly_deal_days, :action => 'day_navigator'
+    get 'accounts/:account_id/deals/:year/:month/:day', as: :daily_account_deals, action: :daily, constraints: {day: /\d{1,2}/}
+    get 'deals/:year/:month/:day', as: :daily_deals, action: :daily, constraints: {day: /\d{1,2}/}
     get 'accounts/:account_id/deals/:year/:month', as: :monthly_account_deals, action: :monthly
     # TODO: なぜか page.redirect_to redirect_options_proc.call(@deal) でrequirements があるとうまくいかない
     get 'deals/:year/:month', :as => :monthly_deals, :action => 'monthly' #, :requirements => YEAR_MONTH_REQUIREMENTS

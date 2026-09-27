@@ -3,8 +3,6 @@ require 'time'
 class Deal::Base < ApplicationRecord
   self.table_name = "deals"
 
-  include Booking
-
   belongs_to :user
 
   # 実験的に読み出し専用の共通的なentryを設定
