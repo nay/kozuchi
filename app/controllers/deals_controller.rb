@@ -13,7 +13,7 @@ class DealsController < ApplicationController
   before_action :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_action :find_new_or_existing_deal, :only => [:create_entry]
   before_action :find_account_if_specified, only: [:index, :today, :monthly, :daily, :new_general_deal, :new_complex_deal, :new_balance_deal, :create_general_deal, :create_complex_deal, :create_balance_deal]
-  before_action :prepare_month_list, only: [:monthly, :daily]
+  before_action :set_list_date, only: [:monthly, :daily]
   # NOTE: create_xxx_deal では @account はアクションでは使わないが、例えば残高記入で記入エラーが合った際の render で new の時点と画面が変わる恐れがあるため、元画面にあれば ajax でも伝わってくるようにしておく
 
   # 単数記入タブエリアの表示 (Ajax)
@@ -202,24 +202,13 @@ class DealsController < ApplicationController
 
   # 月表示 (総合 & 口座別)
   def monthly
-    write_target_date(@year, @month)
-    @day = read_target_date.third
-    session.delete(:deals_filter_date)
-
-    find_bookings(@start_of_month, @start_of_month.end_of_month)
+    prepare_list(@start_of_month, @start_of_month.end_of_month)
   end
 
   # 日で絞った表示 (総合 & 口座別)
-  # 月にない日（9月31日など）は、その月の近い日に直して移る
   def daily
-    date = @start_of_month.change(day: params[:day].to_i.clamp(1, @start_of_month.end_of_month.day))
-    return redirect_to(helpers.deals_list_path(@account&.id, date.year, date.month, date.day)) if date.day != params[:day].to_i
-
-    write_target_date(date)
-    @day = @filter_day = date.day
-    session[:deals_filter_date] = date.to_s # 年月を指定しない移動（シングルログインなど）で、日で絞った一覧に戻れるように覚える
-
-    find_bookings(date, date)
+    date = @start_of_month.change(day: @filter_day)
+    prepare_list(date, date)
     render :monthly
   end
 
@@ -256,12 +245,35 @@ class DealsController < ApplicationController
 
   private
 
-  # 一覧（月表示・日で絞った表示）で、表示する月に関わるものを用意する
-  # 明細の行のほかは、日で絞っていても月単位で出す
-  def prepare_month_list
+  # 一覧（月表示・日で絞った表示）で表示する年月と、日で絞るならその日を URL から決めて、セッションに覚える
+  # 月にない日（9月31日など）は、その月の近い日に直して移る
+  def set_list_date
     @year = params[:year].to_i
     @month = params[:month].to_i
     @start_of_month = Date.new(@year, @month, 1)
+
+    if params[:day]
+      date = @start_of_month.change(day: params[:day].to_i.clamp(1, @start_of_month.end_of_month.day))
+      return redirect_to(helpers.deals_list_path(@account&.id, date.year, date.month, date.day)) if date.day != params[:day].to_i
+
+      @filter_day = date.day
+      write_target_date(date)
+      session[:deals_filter_date] = date.to_s # 年月を指定しない移動（シングルログインなど）で、日で絞った一覧に戻れるように覚える
+    else
+      write_target_date(@year, @month)
+      session.delete(:deals_filter_date)
+    end
+    @day = read_target_date.third
+  end
+
+  # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する
+  # 明細は from から to までを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
+  def prepare_list(from, to)
+    if @account
+      @account_entries = AccountEntries.new(@account, from, to)
+    else
+      @deals = current_user.deals.in_a_time_between(from, to).includes(:readonly_entries).order(:date, :daily_seq)
+    end
 
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
@@ -319,15 +331,6 @@ class DealsController < ApplicationController
     end
     @expenses_summary = LineGraph.new([expenses], [label], y_label: "", max_grid: 3)
     @months_for_expenses = [""].concat(expenses_dates.map{|d| "#{d.month}月"})
-  end
-
-  # 一覧に出す明細の行を、from から to までの記入で用意する
-  def find_bookings(from, to)
-    if @account
-      @account_entries = AccountEntries.new(@account, from, to)
-    else
-      @deals = current_user.deals.in_a_time_between(from, to).includes(:readonly_entries).order(:date, :daily_seq)
-    end
   end
 
   # 最後に表示したのが year, month の月の日で絞った一覧なら、その日を返す
