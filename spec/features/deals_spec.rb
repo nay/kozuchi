@@ -82,6 +82,22 @@ describe DealsController, type: :feature do
     end
   end
 
+  # 今日ボタン
+  describe "今日ボタン" do
+    include_context "太郎 logged in"
+    context "現金の2012年7月20日で絞った一覧で、今日ボタンを押したとき" do
+      before do
+        visit "/accounts/#{Fixtures.identify(:taro_cache)}/deals/2012/7/20"
+        click_link '今日'
+      end
+
+      it "現金の今日で絞った一覧に移る" do
+        today = Time.zone.today
+        expect(page).to have_current_path("/accounts/#{Fixtures.identify(:taro_cache)}/deals/#{today.year}/#{today.month}/#{today.day}")
+      end
+    end
+  end
+
   # 年月を指定しない移動
   describe "最後に表示した一覧への移動" do
     include_context "太郎 logged in"
