@@ -27,7 +27,6 @@
         %td.amount= number_with_delimiter(@account_entries.balance_start)
         %td.icon_to_deal
         %td
-    - date = Date.new(@year.to_i, @month.to_i, 1)
     - balance_start = @account.kind_of?(Account::Asset) ? @account_entries.balance_start : 0
     - sign = @account.kind_of?(Account::Income) ? -1 : 1
     - @account_entries.each do |deal, entries|
@@ -36,14 +35,7 @@
         = content_tag :tr, class: tr_class, id: entry == entries.first ? "d#{deal.id}" : nil do
           - if entry == entries.first
             %td.date{rowspan: entries.size}
-              - while date <= entry.date
-                = day_anchor date
-                - date += 1
               = l entry.date
-              - if @account_entries.entries.last == entry
-                - while date.month == entry.date.month
-                  = day_anchor date
-                  - date += 1
               - unless deal.confirmed?
                 %br
                 %span.system 未確定

@@ -73,9 +73,11 @@ describe DealsController, js: true, type: :feature do
         find("#today").click
       end
 
-      it "カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
-        expect(selected_month_text).to eq "#{Time.zone.today.month}月"
-        expect(input_date_field_values).to eq [Time.zone.today.year.to_s, Time.zone.today.month.to_s, Time.zone.today.day.to_s]
+      it "今日で絞った一覧に移り、カレンダーの選択月が今月に変わり、記入日の年月日が変わる" do
+        today = Time.zone.today
+        expect(page).to have_current_path("/deals/#{today.year}/#{today.month}/#{today.day}")
+        expect(selected_month_text).to eq "#{today.month}月"
+        expect(input_date_field_values).to eq [today.year.to_s, today.month.to_s, today.day.to_s]
       end
     end
 
@@ -119,14 +121,47 @@ describe DealsController, js: true, type: :feature do
         # 3日をクリック
         date = Date.new((Time.zone.today << 1).year, target_date.month, 3)
         click_link I18n.l(date, :format => :day).strip # strip しないとマッチしない
+        wait_for_turbo_frame_navigation
       end
-      it "URLに対応する日付ハッシュがつき、日の欄に指定した日が入る" do
-        expect(current_hash).to eq('day3')
+      it "3日で絞った一覧に切り替わり、日の欄に3が入る" do
+        expect(page).to have_current_path("/deals/#{target_date.year}/#{target_date.month}/3")
+        expect(page).to have_content("総合(#{target_date.year}年#{target_date.month}月3日)")
         expect(find("input#date_day").value).to eq '3'
       end
     end
 
     describe "口座の選択" do
+      context "前月の3日で絞った一覧を表示しているとき" do
+        let(:target_date) { Time.zone.today << 1 }
+        before do
+          click_calendar(target_date.year, target_date.month)
+          click_link I18n.l(target_date.change(day: 3), format: :day).strip # strip しないとマッチしない
+          wait_for_turbo_frame_navigation
+        end
+
+        context "口座を選んだとき" do
+          before do
+            within('#account_selector') { select '現金', from: 'account_id' }
+            wait_for_turbo_frame_navigation
+          end
+
+          it "前月の3日で絞ったまま、選んだ口座の一覧に移る" do
+            expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/#{target_date.year}/#{target_date.month}/3")
+          end
+
+          context "さらに総合を選んだとき" do
+            before do
+              within('#account_selector') { select '総合', from: 'account_id' }
+              wait_for_turbo_frame_navigation
+            end
+
+            it "前月の3日で絞ったまま、総合の一覧に移る" do
+              expect(page).to have_current_path("/deals/#{target_date.year}/#{target_date.month}/3")
+            end
+          end
+        end
+      end
+
       context "前月を表示しているとき" do
         let(:target_date) { Time.zone.today << 1 }
         before do
@@ -679,7 +714,9 @@ describe DealsController, js: true, type: :feature do
         click_link I18n.l(Time.zone.today.change(day: day), format: :day).strip # strip しないとマッチしない
       end
 
-      it "月の一覧に切り替わり、日の欄に押した日が入る" do
+      it "押した日で絞った一覧に切り替わり、日の欄に押した日が入る" do
+        today = Time.zone.today
+        expect(page).to have_content "総合(#{today.year}年#{today.month}月#{day}日)"
         expect(page).not_to have_content "昔の記入"
         expect(find("input#date_day").value).to eq day.to_s
       end

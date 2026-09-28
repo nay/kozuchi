@@ -18,15 +18,11 @@ module ApplicationHelper
 
   # 現在の機能によってシングルログインでアカウント移動時の移動先識別子を返す
   def single_login_destination
-    if controller_name == 'deals' && action_name == 'monthly'
+    if controller_name == 'deals' && %w(monthly daily).include?(action_name)
       :deals
     else
       nil
     end
-  end
-
-  def day_anchor(date)
-    tag :span, :id => "day#{date.day}"
   end
 
   # deals などで副項目を扱う

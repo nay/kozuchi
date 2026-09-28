@@ -1,8 +1,19 @@
 module DealsHelper
 
+  # 明細の一覧のパス。account_id があればその口座の一覧、なければ総合の一覧
+  # day があればその日で絞った一覧、なければ月の一覧
+  def deals_list_path(account_id, year, month, day = nil, **options)
+    if day
+      account_id ? daily_account_deals_path(account_id: account_id, year: year, month: month, day: day, **options) : daily_deals_path(year: year, month: month, day: day, **options)
+    else
+      account_id ? monthly_account_deals_path(account_id: account_id, year: year, month: month, **options) : monthly_deals_path(year: year, month: month, **options)
+    end
+  end
+
+  # day - 指定すると、その日で絞った一覧へのボタンにする
   # data - リンクに追加する data 属性
-  def account_button(account, year, month, data: {})
-    link_to truncate(account.name, length: 10), monthly_account_deals_path(account_id: account.id, year: year, month: month), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}.merge(data)
+  def account_button(account, year, month, day: nil, data: {})
+    link_to truncate(account.name, length: 10), deals_list_path(account.id, year, month, day), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}.merge(data)
   end
 
   def money_count_field(name, caption)
