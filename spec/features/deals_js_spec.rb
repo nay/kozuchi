@@ -193,6 +193,11 @@ describe DealsController, js: true, type: :feature do
     end
 
     describe "登録" do
+      before do
+        # 月の一覧では日付の欄の日が空なので、日が入る今日の一覧から登録する
+        click_link '今日'
+      end
+
       describe "通常明細" do
         context "日付欄（日）にアルファベットがあるとき" do
           before do
@@ -222,8 +227,10 @@ describe DealsController, js: true, type: :feature do
 
           context "金額が正しいとき" do
             let(:amount) { '210' }
-            it "登録でき、「最近の記入」タブを表示する" do
+            it "登録でき、登録した日で絞った一覧の「最近の記入」タブを表示する" do
+              today = Time.zone.today
               expect(flash_notice).to have_content('追加しました。')
+              expect(URI(current_url).path).to eq "/deals/#{today.year}/#{today.month}/#{today.day}"
               expect(current_hash).to eq "recent"
               expect(page).to have_content('朝食のおにぎり')
               expect(page).to have_css("#recent_area", visible: true)
@@ -536,8 +543,10 @@ describe DealsController, js: true, type: :feature do
 
           context "金額が正しいとき" do
             let(:amount) { '1003' }
-            it "登録できる" do
+            it "登録でき、現金の登録した日で絞った一覧を表示する" do
+              today = Time.zone.today
               expect(flash_notice).to have_content("追加しました。")
+              expect(URI(current_url).path).to eq "/accounts/#{accounts(:taro_cache).id}/deals/#{today.year}/#{today.month}/#{today.day}"
               expect(page).to have_content("残高確認")
               expect(page).to have_content("1,003")
             end

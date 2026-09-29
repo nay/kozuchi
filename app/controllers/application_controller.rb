@@ -71,11 +71,11 @@ class ApplicationController < ActionController::Base
   end
 
   def current_year
-    read_target_date.first
+    target_date.year
   end
 
   def current_month
-    read_target_date.second
+    target_date.month
   end
 
   # TODO: deal系の機能とともにconcernsにでも出したい
@@ -168,39 +168,15 @@ class ApplicationController < ActionController::Base
     f[:notice] = message
   end
 
-  # セッションに入っているyear, month, dayを配列で返す
-  def read_target_date
-    write_target_date unless session[:target_date]
-    [session[:target_date][:year], session[:target_date][:month], session[:target_date][:day]]
+  # 最後に表示した年月日（VagueDate）。年月を指定しない移動（メニューの「家計簿」など）で、どこへ戻るかに使う
+  # 日があれば家計簿の日で絞った一覧に、なければ月の一覧に戻る。まだ何も表示していなければ（以前の形式のセッションも含む）今月
+  def target_date
+    session[:target_date].is_a?(String) ? VagueDate.parse(session[:target_date]) : VagueDate.new(Time.zone.today.year, Time.zone.today.month)
   end
 
-  # セッションに入っているyear, month, dayを更新する
-  # 引数なし - 今日
-  # date - 指定日
-  # year, month, day - 指定どおり。month, day はなくてもいい
-  def write_target_date(*args)
-    session[:target_date] ||= {}
-    if args.empty?
-      write_target_date Time.zone.today
-    elsif args.first.kind_of?(Date)
-      session[:target_date][:year] = args.first.year
-      session[:target_date][:month] = args.first.month
-      session[:target_date][:day] = args.first.day
-    else
-      old_year = session[:target_date][:year]
-      old_month = session[:target_date][:month]
-      session[:target_date][:year] = args.first
-      session[:target_date][:month] = args[1]
-      # 同じ月で、日付が指定されていなければ、日付を変更しない
-      session[:target_date][:day] = args[2] if (args[2] || old_year.to_i != session[:target_date][:year].to_i || old_month.to_i != session[:target_date][:month].to_i)
-    end
-    # day がないときは補完できるならする
-    unless session[:target_date][:day]
-      today = Time.zone.today
-      session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
-    end
+  def target_date=(vague_date)
+    session[:target_date] = vague_date.to_s
   end
-
 
   #TODO: どこかにありそうなきがするが・・・
   def to_date(hash)

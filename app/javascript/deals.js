@@ -195,6 +195,10 @@ $(function() {
           } else {
             resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month);
           }
+          // 登録したときは、登録した日で絞った一覧に移る（日で絞った一覧の URL は、月の一覧の URL の後ろに日を付けたもの）
+          if (result.created) {
+            resultUrl += "/" + result.day;
+          }
           resultUrlWithHash = resultUrl + "#recent";
         }
         let prevUrl = location.pathname;

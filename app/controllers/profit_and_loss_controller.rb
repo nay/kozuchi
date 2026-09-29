@@ -6,13 +6,12 @@ class ProfitAndLossController < ApplicationController
   before_action :check_account
 
   def show
-    year, month = read_target_date
-    redirect_to monthly_profit_and_loss_path(:year => year, :month => month)
+    redirect_to monthly_profit_and_loss_path(:year => target_date.year, :month => target_date.month)
   end
 
   def monthly
-    write_target_date(params[:year], params[:month])
-    @year, @month = read_target_date
+    self.target_date = VagueDate.new(params[:year], params[:month])
+    @year, @month = params[:year], params[:month]
 
     # 費目ごとの合計を得る
     start_inclusive = Date.new(@year.to_i, @month.to_i, 1)

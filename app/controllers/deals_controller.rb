@@ -74,15 +74,16 @@ class DealsController < ApplicationController
       if @deal.save
         flash[:notice] = "#{@deal.human_name} を追加しました。#{truncation_message(@deal)}"
         flash[:"#{controller_name}_deal_type"] = deal_type
-        write_target_date(@deal.date)
+        self.target_date = VagueDate.from_date(@deal.date)
         account_has_been_selected(*@deal.accounts)
         render json: {
+            created: true,
             id: @deal.id,
             deal: @deal.as_json(root: false, include: :readonly_entries),
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
-            redirect_to: @deal.balance? ? monthly_account_deals_path(account_id: @deal.account.id, year: @deal.date.year, month: @deal.date.month, anchor: 'monthly') : nil,
+            redirect_to: @deal.balance? ? daily_account_deals_path(account_id: @deal.account.id, year: @deal.date.year, month: @deal.date.month, day: @deal.date.day, anchor: 'monthly') : nil,
             error_view: false
         }
       else
@@ -147,7 +148,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      write_target_date(@deal.date)
+      self.target_date = VagueDate.from_date(@deal.date)
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
@@ -178,29 +179,26 @@ class DealsController < ApplicationController
   end
 
   # 仕分け帳画面を初期表示するための処理
-  # 最後に表示した年月の一覧に移る。最後に表示したのが日で絞った一覧なら、その日で絞った一覧に移る
+  # 最後に表示した一覧（月の一覧か、日で絞った一覧）に移る
   def index
     flash.keep
-    year, month = read_target_date
-    redirect_to helpers.deals_list_path(@account&.id, year, month, last_filter_day(year, month))
+    redirect_to helpers.deals_list_path(@account&.id, target_date)
   end
 
   # 今日で絞った一覧に移る
   def today
     flash.keep
-    today = Time.zone.today
-    redirect_to helpers.deals_list_path(@account&.id, today.year, today.month, today.day)
+    redirect_to helpers.deals_list_path(@account&.id, VagueDate.from_date(Time.zone.today))
   end
 
   # 月表示 (総合 & 口座別)
   def monthly
-    prepare_list(@start_of_month, @start_of_month.end_of_month)
+    prepare_list
   end
 
   # 日で絞った表示 (総合 & 口座別)
   def daily
-    date = @start_of_month.change(day: @filter_day)
-    prepare_list(date, date)
+    prepare_list
     render :monthly
   end
 
@@ -208,7 +206,6 @@ class DealsController < ApplicationController
   # Ajaxでリクエストされる前提
   def destroy
     @deal.destroy
-    write_target_date(@deal.date)
     render json: {
         deal: {id: @deal.id},
         success_message: "#{@deal.human_name} を削除しました。"
@@ -228,7 +225,6 @@ class DealsController < ApplicationController
   # Ajaxでリクエストされる前提
   def confirm
     @deal.confirm!
-    write_target_date(@deal.date)
     render json: {
       deal: {id: @deal.id},
       success_message:  "#{@deal.human_name} を確認しました。"
@@ -237,34 +233,23 @@ class DealsController < ApplicationController
 
   private
 
-  # 一覧（月表示・日で絞った表示）で表示する年月と、日で絞るならその日を URL から決めて、セッションに覚える
-  # 月にない日（9月31日など）は、その月の近い日に直して移る
+  # 一覧（月表示・日で絞った表示）で表示する年月日を URL から決めて、最後に表示した一覧としてセッションに覚える
+  # 月にない日（9月31日など）は、その月の近い日に直した URL に移る
   def set_list_date
-    @year = params[:year].to_i
-    @month = params[:month].to_i
-    @start_of_month = Date.new(@year, @month, 1)
+    @list_date = VagueDate.new(params[:year], params[:month], params[:day])
+    return redirect_to(helpers.deals_list_path(@account&.id, @list_date)) if params[:day] && @list_date.day != params[:day].to_i
 
-    if params[:day]
-      date = @start_of_month.change(day: params[:day].to_i.clamp(1, @start_of_month.end_of_month.day))
-      return redirect_to(helpers.deals_list_path(@account&.id, date.year, date.month, date.day)) if date.day != params[:day].to_i
-
-      @filter_day = date.day
-      write_target_date(date)
-      session[:deals_filter_date] = date.to_s # 年月を指定しない移動（シングルログインなど）で、日で絞った一覧に戻れるように覚える
-    else
-      write_target_date(@year, @month)
-      session.delete(:deals_filter_date)
-    end
-    @day = read_target_date.third
+    self.target_date = @list_date
   end
 
   # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する
-  # 明細は from から to までを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
-  def prepare_list(from, to)
+  # 明細は @list_date の期間のものを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
+  def prepare_list
+    range = @list_date.range
     if @account
-      @account_entries = AccountEntries.new(@account, from, to)
+      @account_entries = AccountEntries.new(@account, range.first, range.last)
     else
-      @deals = current_user.deals.in_a_time_between(from, to).includes(:readonly_entries).order(:date, :daily_seq)
+      @deals = current_user.deals.in_a_time_between(range.first, range.last).includes(:readonly_entries).order(:date, :daily_seq)
     end
 
     # フォーム用
@@ -282,15 +267,15 @@ class DealsController < ApplicationController
     @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
 
     # 日ナビゲーターで記入のある日に印を付けるため、日で絞っていても月全体の記入の日を用意する
-    @day_navigator_data = (@account ? @account.entries : current_user.deals).where(date: @start_of_month.all_month).select(:date).distinct
+    @day_navigator_data = (@account ? @account.entries : current_user.deals).where(date: @list_date.beginning_of_month.all_month).select(:date).distinct
 
     # 上部精算概況
     if @account && @account.any_credit?
-      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: @start_of_month)
+      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: @list_date.beginning_of_month)
     end
 
     # 上部折れ線グラフ
-    expenses, expenses_dates, label = @user.recent_from(@start_of_month, 4) do |user, d|
+    expenses, expenses_dates, label = @user.recent_from(@list_date.beginning_of_month, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -301,7 +286,7 @@ class DealsController < ApplicationController
         user.expenses_summary(d.year, d.month)
       end
     end
-    last_expenses, last_expenses_dates, label = @user.recent_from(@start_of_month << 12, 4) do |user, d|
+    last_expenses, last_expenses_dates, label = @user.recent_from(@list_date.beginning_of_month << 12, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -323,12 +308,6 @@ class DealsController < ApplicationController
     end
     @expenses_summary = LineGraph.new([expenses], [label], y_label: "", max_grid: 3)
     @months_for_expenses = [""].concat(expenses_dates.map{|d| "#{d.month}月"})
-  end
-
-  # 最後に表示したのが year, month の月の日で絞った一覧なら、その日を返す
-  def last_filter_day(year, month)
-    date = Date.parse(session[:deals_filter_date]) if session[:deals_filter_date]
-    date.day if date && date.year == year.to_i && date.month == month.to_i
   end
 
   def find_deal

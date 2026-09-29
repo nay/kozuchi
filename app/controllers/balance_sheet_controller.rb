@@ -3,8 +3,7 @@ class BalanceSheetController < ApplicationController
   menu "貸借対照表"
 
   def show
-    year, month = read_target_date
-    redirect_to monthly_balance_sheet_path(:year => year, :month => month)
+    redirect_to monthly_balance_sheet_path(:year => target_date.year, :month => target_date.month)
   end
 
   def monthly

@@ -6,13 +6,12 @@ class AssetsController < ApplicationController
   before_action :check_account
 
   def index
-    year, month = read_target_date
-    redirect_to monthly_assets_path(:year => year, :month => month)
+    redirect_to monthly_assets_path(:year => target_date.year, :month => target_date.month)
   end
 
   def monthly
-    write_target_date(params[:year], params[:month])
-    @year, @month = read_target_date
+    self.target_date = VagueDate.new(params[:year], params[:month])
+    @year, @month = params[:year], params[:month]
 
     date = Date.new(@year.to_i, @month.to_i, 1) >> 1
     asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Account::Income' and accounts.type != 'Account::Expense'") # TODO: マシにする
