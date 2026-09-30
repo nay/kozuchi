@@ -71,11 +71,11 @@ class ApplicationController < ActionController::Base
   end
 
   def current_year
-    target_vague_date.year
+    current_vague_date.year
   end
 
   def current_month
-    target_vague_date.month
+    current_vague_date.month
   end
 
   # TODO: deal系の機能とともにconcernsにでも出したい
@@ -170,14 +170,14 @@ class ApplicationController < ActionController::Base
 
   # 最後に表示した年月日（VagueDate）。年月を指定しない移動（メニューの「家計簿」など）で、どこへ戻るかに使う
   # 日があれば家計簿の日で絞った一覧に、なければ月の一覧に戻る。まだ何も表示していなければ今月
-  def target_vague_date
-    @target_vague_date ||= session[:target_vague_date] ? VagueDate.parse(session[:target_vague_date]) : VagueDate.new(Time.zone.today.year, Time.zone.today.month)
+  def current_vague_date
+    @current_vague_date ||= session[:current_vague_date] ? VagueDate.parse(session[:current_vague_date]) : VagueDate.new(Time.zone.today.year, Time.zone.today.month)
   end
 
   # 次に読むときは、書いたセッションの値から作り直す
-  def target_vague_date=(vague_date)
-    session[:target_vague_date] = vague_date.to_s
-    @target_vague_date = nil
+  def current_vague_date=(vague_date)
+    session[:current_vague_date] = vague_date.to_s
+    @current_vague_date = nil
   end
 
   #TODO: どこかにありそうなきがするが・・・

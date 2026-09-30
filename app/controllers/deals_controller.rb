@@ -74,7 +74,7 @@ class DealsController < ApplicationController
       if @deal.save
         flash[:notice] = "#{@deal.human_name} を追加しました。#{truncation_message(@deal)}"
         flash[:"#{controller_name}_deal_type"] = deal_type
-        self.target_vague_date = VagueDate.from_date(@deal.date)
+        self.current_vague_date = VagueDate.from_date(@deal.date)
         account_has_been_selected(*@deal.accounts)
         render json: {
             created: true,
@@ -148,7 +148,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      self.target_vague_date = VagueDate.from_date(@deal.date)
+      self.current_vague_date = VagueDate.from_date(@deal.date)
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
@@ -182,7 +182,7 @@ class DealsController < ApplicationController
   # 最後に表示した一覧（月の一覧か、日で絞った一覧）に移る
   def index
     flash.keep
-    redirect_to helpers.deals_list_path(@account&.id, target_vague_date)
+    redirect_to helpers.deals_list_path(@account&.id, current_vague_date)
   end
 
   # 今日で絞った一覧に移る
@@ -239,7 +239,7 @@ class DealsController < ApplicationController
     @list_date = VagueDate.new(params[:year], params[:month], params[:day])
     return redirect_to(helpers.deals_list_path(@account&.id, @list_date)) if params[:day] && @list_date.day != params[:day].to_i
 
-    self.target_vague_date = @list_date
+    self.current_vague_date = @list_date
   end
 
   # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する

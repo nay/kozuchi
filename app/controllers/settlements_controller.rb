@@ -169,13 +169,13 @@ class SettlementsController < ApplicationController
 
   # パラメータの年月から現在年月を更新
   def read_year_month
-    self.target_vague_date = VagueDate.new(params[:year], params[:month])
+    self.current_vague_date = VagueDate.new(params[:year], params[:month])
   end
 
   # 精算を取得し、精算の年月から現在年月を更新
   def find_settlement
     @settlement = current_user.settlements.find(params[:id])
-    self.target_vague_date = VagueDate.new(@settlement.year, @settlement.month)
+    self.current_vague_date = VagueDate.new(@settlement.year, @settlement.month)
   end
 
 end

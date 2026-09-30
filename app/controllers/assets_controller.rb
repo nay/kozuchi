@@ -6,11 +6,11 @@ class AssetsController < ApplicationController
   before_action :check_account
 
   def index
-    redirect_to monthly_assets_path(:year => target_vague_date.year, :month => target_vague_date.month)
+    redirect_to monthly_assets_path(:year => current_vague_date.year, :month => current_vague_date.month)
   end
 
   def monthly
-    self.target_vague_date = VagueDate.new(params[:year], params[:month])
+    self.current_vague_date = VagueDate.new(params[:year], params[:month])
     @year, @month = params[:year], params[:month]
 
     date = Date.new(@year.to_i, @month.to_i, 1) >> 1
