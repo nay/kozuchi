@@ -3,6 +3,9 @@
 class VagueDate
   attr_reader :year, :month, :day
 
+  # 日がないのに Date が必要になったとき
+  class NoDayError < StandardError; end
+
   # day が月にない日（9月31日など）なら、その月の近い日に直す
   def initialize(year, month, day = nil)
     @year = year.to_i
@@ -20,16 +23,23 @@ class VagueDate
   end
 
   def beginning_of_month
-    Date.new(year, month, 1)
+    @beginning_of_month ||= Date.new(year, month, 1)
   end
 
   def end_of_month
-    beginning_of_month.end_of_month
+    @end_of_month ||= beginning_of_month.end_of_month
+  end
+
+  # 日がなければ NoDayError
+  def to_date
+    raise NoDayError, "#{self} には日がありません" unless day
+
+    @to_date ||= Date.new(year, month, day)
   end
 
   # 表す期間。日があればその日だけ、なければその月全体
   def range
-    day ? Date.new(year, month, day)..Date.new(year, month, day) : beginning_of_month..end_of_month
+    day ? to_date..to_date : beginning_of_month..end_of_month
   end
 
   def ==(other)

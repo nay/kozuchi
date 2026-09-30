@@ -22,6 +22,20 @@ describe VagueDate do
     end
   end
 
+  describe "#to_date" do
+    context "日があるとき" do
+      it "その日の Date を返す" do
+        expect(VagueDate.new(2026, 9, 26).to_date).to eq Date.new(2026, 9, 26)
+      end
+    end
+
+    context "日がないとき" do
+      it "NoDayError になる" do
+        expect { VagueDate.new(2026, 9).to_date }.to raise_error(VagueDate::NoDayError)
+      end
+    end
+  end
+
   describe "#range" do
     context "日があるとき" do
       it "その日だけの期間を返す" do
