@@ -6,7 +6,7 @@ class ProfitAndLossController < ApplicationController
   before_action :check_account
 
   def show
-    redirect_to monthly_profit_and_loss_path(:year => current_vague_date.year, :month => current_vague_date.month)
+    redirect_to monthly_profit_and_loss_path(:year => current_year, :month => current_month)
   end
 
   def monthly

@@ -3,7 +3,7 @@ class BalanceSheetController < ApplicationController
   menu "貸借対照表"
 
   def show
-    redirect_to monthly_balance_sheet_path(:year => current_vague_date.year, :month => current_vague_date.month)
+    redirect_to monthly_balance_sheet_path(:year => current_year, :month => current_month)
   end
 
   def monthly
