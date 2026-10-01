@@ -12,7 +12,7 @@
   .for_monthly_deals.for_deal_editor
     #deals_left
       = link_to '今日', @account ? today_account_deals_path(account_id: @account.id) : today_deals_path, class: %w(btn btn-primary btn-sm), id: :today
-      #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:month => @list_date.beginning_of_month, :data => @day_navigator_data, path_proc: ->(date){ deals_list_path(@account&.id, VagueDate.from_date(date)) }}
+      #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:month => @list_date.beginning_of_month, :data => @day_navigator_data, path_proc: ->(date){ deals_list_path(@account&.id, date) }}
 
     #deals_right
       #account_selector

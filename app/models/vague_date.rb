@@ -17,6 +17,16 @@ class VagueDate
     new(date.year, date.month, date.day)
   end
 
+  # VagueDate、Date、[年, 月]、[年, 月, 日] のどれかから作る
+  def self.from(value)
+    case value
+    when VagueDate then value
+    when Date then from_date(value)
+    when Array then new(*value)
+    else raise ArgumentError, "#{value.inspect} から VagueDate を作れません"
+    end
+  end
+
   # to_s で作った文字列から作る
   def self.parse(string)
     new(*string.split('-'))

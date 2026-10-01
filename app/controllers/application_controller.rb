@@ -174,9 +174,10 @@ class ApplicationController < ActionController::Base
     @current_vague_date ||= session[:current_vague_date] ? VagueDate.parse(session[:current_vague_date]) : VagueDate.new(Time.zone.today.year, Time.zone.today.month)
   end
 
+  # value - VagueDate、Date、[年, 月]、[年, 月, 日] のどれか
   # 次に読むときは、書いたセッションの値から作り直す
-  def current_vague_date=(vague_date)
-    session[:current_vague_date] = vague_date.to_s
+  def current_vague_date=(value)
+    session[:current_vague_date] = VagueDate.from(value).to_s
     @current_vague_date = nil
   end
 

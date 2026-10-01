@@ -10,7 +10,7 @@ class ProfitAndLossController < ApplicationController
   end
 
   def monthly
-    self.current_vague_date = VagueDate.new(params[:year], params[:month])
+    self.current_vague_date = [params[:year], params[:month]]
     @year, @month = params[:year], params[:month]
 
     # 費目ごとの合計を得る

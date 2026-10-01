@@ -10,7 +10,7 @@ class AssetsController < ApplicationController
   end
 
   def monthly
-    self.current_vague_date = VagueDate.new(params[:year], params[:month])
+    self.current_vague_date = [params[:year], params[:month]]
     @year, @month = params[:year], params[:month]
 
     date = Date.new(@year.to_i, @month.to_i, 1) >> 1

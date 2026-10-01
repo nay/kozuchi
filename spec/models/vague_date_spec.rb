@@ -22,6 +22,21 @@ describe VagueDate do
     end
   end
 
+  describe ".from" do
+    it "VagueDate、Date、[年, 月]、[年, 月, 日] から作れる" do
+      expect(VagueDate.from(VagueDate.new(2026, 9))).to eq VagueDate.new(2026, 9)
+      expect(VagueDate.from(Date.new(2026, 9, 26))).to eq VagueDate.new(2026, 9, 26)
+      expect(VagueDate.from([2026, 9])).to eq VagueDate.new(2026, 9)
+      expect(VagueDate.from([2026, 9, 26])).to eq VagueDate.new(2026, 9, 26)
+    end
+
+    context "それ以外の値を渡したとき" do
+      it "ArgumentError になる" do
+        expect { VagueDate.from("2026-09") }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
   describe "#to_date" do
     context "日があるとき" do
       it "その日の Date を返す" do
