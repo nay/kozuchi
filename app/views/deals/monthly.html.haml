@@ -12,14 +12,14 @@
   .for_monthly_deals.for_deal_editor
     #deals_left
       = link_to '今日', @account ? today_account_deals_path(account_id: @account.id) : today_deals_path, class: %w(btn btn-primary btn-sm), id: :today
-      #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:month => @list_date.beginning_of_month, :data => @day_navigator_data, path_proc: ->(date){ deals_list_path(@account&.id, date) }}
+      #day_navigator_frame= render :partial => 'shared/day_navigator', :locals => {:month => current_vague_date.beginning_of_month, :data => @day_navigator_data, path_proc: ->(date){ deals_list_path(@account&.id, date) }}
 
     #deals_right
       #account_selector
         = grouped_account_select "account_id", current_user.accounts, @account.try(:id) || '', prompt: '総合', class: "form-control",
           data: {controller: 'account-selector', action: 'change->account-selector#navigate',
-                 account_selector_account_url_template_value: deals_list_path('_ACCOUNT_ID_', @list_date),
-                 account_selector_all_url_value: deals_list_path(nil, @list_date),
+                 account_selector_account_url_template_value: deals_list_path('_ACCOUNT_ID_', current_vague_date),
+                 account_selector_all_url_value: deals_list_path(nil, current_vague_date),
                  account_selector_frame_value: 'monthly_deals'}
         %div{style: "padding: 4px 0 4px 0;"}
           - if @account
@@ -30,10 +30,10 @@
               - if @account.description.present?
                 = render partial: 'shared/account_memo', locals: {account: @account}
       - if @account
-        = link_to '総合', deals_list_path(nil, @list_date), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_'), turbo: true, turbo_action: 'advance'}
+        = link_to '総合', deals_list_path(nil, current_vague_date), class: %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_'), turbo: true, turbo_action: 'advance'}
       - account_selection_histories.each do |a|
         - if @account != a
-          = account_button(a, @list_date.year, @list_date.month, day: @list_date.day, data: {turbo: true, turbo_action: 'advance'})
+          = account_button(a, current_vague_date.year, current_vague_date.month, day: current_vague_date.day, data: {turbo: true, turbo_action: 'advance'})
 
       #deal_pattern_frame{data: {url: recent_deal_patterns_path, mode: 'always'}}
         = render :partial => 'shared/deal_patterns/recent'
@@ -42,7 +42,7 @@
       #deals_frame
         #deals_navigator
           #calendar_in_navigator
-            = render partial: "shared/calendar", :locals => {year: @list_date.year, month: @list_date.month, url_template: monthly_deals_list_path_template(@account&.id), frame: 'monthly_deals'}
+            = render partial: "shared/calendar", :locals => {year: current_vague_date.year, month: current_vague_date.month, url_template: monthly_deals_list_path_template(@account&.id), frame: 'monthly_deals'}
         #new_deal_window
           - # 折れ線グラフ
           #chart{style: "margin-top: 0px; width: 55%; height: 50px; float: left;"}
@@ -58,11 +58,11 @@
           - # ここに h3 してもいい
           .deal_editor
             - deal_type = flash[:"#{controller_name}_deal_type"]
-            = deal_editor 1, @list_date.year, @list_date.month, @list_date.day, frame: 'monthly_deals', month_url_template: monthly_deals_list_path_template(@account&.id) do
+            = deal_editor 1, current_vague_date.year, current_vague_date.month, current_vague_date.day, frame: 'monthly_deals', month_url_template: monthly_deals_list_path_template(@account&.id) do
               = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
         %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;"}
           %li{roll: "presentation", class: 'active'}
-            %a.body_tab_link{data: "monthly", href: "#monthly"} #{@account ? @account.name : '総合'}(#{@list_date.day ? "#{@list_date.year}年#{@list_date.month}月#{@list_date.day}日" : "#{@list_date.year}年 #{@list_date.month}月"})
+            %a.body_tab_link{data: "monthly", href: "#monthly"} #{@account ? @account.name : '総合'}(#{current_vague_date.day ? "#{current_vague_date.year}年#{current_vague_date.month}月#{current_vague_date.day}日" : "#{current_vague_date.year}年 #{current_vague_date.month}月"})
           %li{roll: "presentation"}
             %a.body_tab_link{data: "recent", href: "#recent"} 最近の記入
         #monthly_contents

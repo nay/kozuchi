@@ -13,7 +13,7 @@ class DealsController < ApplicationController
   before_action :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_action :find_new_or_existing_deal, :only => [:create_entry]
   before_action :find_account_if_specified, only: [:index, :today, :monthly, :daily, :new_general_deal, :new_complex_deal, :new_balance_deal, :create_general_deal, :create_complex_deal, :create_balance_deal]
-  before_action :set_list_date, only: [:monthly, :daily]
+  before_action :set_current_vague_date, only: [:monthly, :daily]
   # NOTE: create_xxx_deal では @account はアクションでは使わないが、例えば残高記入で記入エラーが合った際の render で new の時点と画面が変わる恐れがあるため、元画面にあれば ajax でも伝わってくるようにしておく
 
   # 単数記入タブエリアの表示 (Ajax)
@@ -233,19 +233,19 @@ class DealsController < ApplicationController
 
   private
 
-  # 一覧（月表示・日で絞った表示）で表示する年月日を URL から決めて、最後に表示した一覧としてセッションに覚える
+  # 一覧（月表示・日で絞った表示）で表示する年月日を URL から決めて、表示中の年月日としてセッションに覚える
   # 月にない日（9月31日など）は、その月の近い日に直した URL に移る
-  def set_list_date
-    @list_date = VagueDate.new(params[:year], params[:month], params[:day])
-    return redirect_to(helpers.deals_list_path(@account&.id, @list_date)) if params[:day] && @list_date.day != params[:day].to_i
+  def set_current_vague_date
+    vague_date = VagueDate.from([params[:year], params[:month], params[:day]])
+    return redirect_to(helpers.deals_list_path(@account&.id, vague_date)) if params[:day] && vague_date.day != params[:day].to_i
 
-    self.current_vague_date = @list_date
+    self.current_vague_date = vague_date
   end
 
   # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する
-  # 明細は @list_date の期間のものを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
+  # 明細は表示中の年月日の期間のものを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
   def prepare_list
-    range = @list_date.range
+    range = current_vague_date.range
     if @account
       @account_entries = AccountEntries.new(@account, range.first, range.last)
     else
@@ -267,15 +267,15 @@ class DealsController < ApplicationController
     @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
 
     # 日ナビゲーターで記入のある日に印を付けるため、日で絞っていても月全体の記入の日を用意する
-    @day_navigator_data = (@account ? @account.entries : current_user.deals).where(date: @list_date.beginning_of_month.all_month).select(:date).distinct
+    @day_navigator_data = (@account ? @account.entries : current_user.deals).where(date: current_vague_date.beginning_of_month.all_month).select(:date).distinct
 
     # 上部精算概況
     if @account && @account.any_credit?
-      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: @list_date.beginning_of_month)
+      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: current_vague_date.beginning_of_month)
     end
 
     # 上部折れ線グラフ
-    expenses, expenses_dates, label = @user.recent_from(@list_date.beginning_of_month, 4) do |user, d|
+    expenses, expenses_dates, label = @user.recent_from(current_vague_date.beginning_of_month, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -286,7 +286,7 @@ class DealsController < ApplicationController
         user.expenses_summary(d.year, d.month)
       end
     end
-    last_expenses, last_expenses_dates, label = @user.recent_from(@list_date.beginning_of_month << 12, 4) do |user, d|
+    last_expenses, last_expenses_dates, label = @user.recent_from(current_vague_date.beginning_of_month << 12, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?

@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_action :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_vague_date, :current_year, :current_month, :dummy_year_and_month
   helper_method :settlement_source_exists?
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
