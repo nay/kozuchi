@@ -182,13 +182,13 @@ class DealsController < ApplicationController
   # 最後に表示した一覧（月の一覧か、日で絞った一覧）に移る
   def index
     flash.keep
-    redirect_to helpers.deals_list_path(@account&.id, current_vague_date)
+    redirect_to helpers.deals_list_path(date: current_vague_date, account_id: @account&.id)
   end
 
   # 今日で絞った一覧に移る
   def today
     flash.keep
-    redirect_to helpers.deals_list_path(@account&.id, Time.zone.today)
+    redirect_to helpers.deals_list_path(date: Time.zone.today, account_id: @account&.id)
   end
 
   # 月表示 (総合 & 口座別)
@@ -237,7 +237,7 @@ class DealsController < ApplicationController
   # 月にない日（9月31日など）は、その月の近い日に直した URL に移る
   def set_current_vague_date
     vague_date = VagueDate.from([params[:year], params[:month], params[:day]])
-    return redirect_to(helpers.deals_list_path(@account&.id, vague_date)) if params[:day] && vague_date.day != params[:day].to_i
+    return redirect_to(helpers.deals_list_path(date: vague_date, account_id: @account&.id)) if params[:day] && vague_date.day != params[:day].to_i
 
     self.current_vague_date = vague_date
   end

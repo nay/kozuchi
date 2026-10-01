@@ -1,13 +1,15 @@
 module DealsHelper
 
-  # 明細の一覧のパス。account_id があればその口座の一覧、なければ総合の一覧
-  # list_date に日があればその日で絞った一覧、なければ月の一覧
-  # list_date - VagueDate、Date、[年, 月]、[年, 月, 日] のどれか
-  def deals_list_path(account_id, list_date, **options)
-    list_date = VagueDate.from(list_date)
-    date_params = {year: list_date.year, month: list_date.month, **options}
-    if list_date.day
-      account_id ? daily_account_deals_path(account_id: account_id, day: list_date.day, **date_params) : daily_deals_path(day: list_date.day, **date_params)
+  # 明細の一覧のパス。日があればその日で絞った一覧、なければ月の一覧
+  # 年月日は date:（VagueDate か Date）か、year:, month:, day:（day は省略可）のどちらかで指定する
+  # account_id - 指定するとその口座の一覧、しなければ総合の一覧
+  def deals_list_path(date: nil, year: nil, month: nil, day: nil, account_id: nil, **options)
+    raise ArgumentError, "date: と year:, month:, day: は同時に指定できません" if date && (year || month || day)
+
+    date = VagueDate.from(date || [year, month, day])
+    date_params = {year: date.year, month: date.month, **options}
+    if date.day
+      account_id ? daily_account_deals_path(account_id: account_id, day: date.day, **date_params) : daily_deals_path(day: date.day, **date_params)
     else
       account_id ? monthly_account_deals_path(account_id: account_id, **date_params) : monthly_deals_path(**date_params)
     end
@@ -18,10 +20,10 @@ module DealsHelper
     account_id ? monthly_account_deals_path(account_id: account_id, year: '_YEAR_', month: '_MONTH_') : monthly_deals_path(year: '_YEAR_', month: '_MONTH_')
   end
 
-  # day - 指定すると、その日で絞った一覧へのボタンにする
+  # 年月日は deals_list_path と同じく、date: か year:, month:, day: で指定する
   # data - リンクに追加する data 属性
-  def account_button(account, year, month, day: nil, data: {})
-    link_to truncate(account.name, length: 10), deals_list_path(account.id, [year, month, day]), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}.merge(data)
+  def account_button(account, date: nil, year: nil, month: nil, day: nil, data: {})
+    link_to truncate(account.name, length: 10), deals_list_path(date: date, year: year, month: month, day: day, account_id: account.id), class:  %w(btn btn-default monthly_deals_link), data: {url_template: monthly_deals_path(year: '_YEAR_', month: '_MONTH_')}.merge(data)
   end
 
   def money_count_field(name, caption)
