@@ -83,7 +83,7 @@ class DealsController < ApplicationController
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
-            redirect_to: @deal.balance? ? daily_account_deals_path(account_id: @deal.account.id, year: @deal.date.year, month: @deal.date.month, day: @deal.date.day, anchor: 'monthly') : nil,
+            redirect_to: @deal.balance? ? helpers.deals_list_path(date: @deal.date, account_id: @deal.account.id, anchor: 'monthly') : nil,
             error_view: false
         }
       else
