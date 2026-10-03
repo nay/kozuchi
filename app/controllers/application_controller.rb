@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   before_action :login_required, :load_user, :set_ssl
   helper :all
-  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_year, :current_month, :dummy_year_and_month
+  helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_vague_date, :current_year, :current_month, :dummy_year_and_month
   helper_method :settlement_source_exists?
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
@@ -71,11 +71,11 @@ class ApplicationController < ActionController::Base
   end
 
   def current_year
-    read_target_date.first
+    current_vague_date.year
   end
 
   def current_month
-    read_target_date.second
+    current_vague_date.month
   end
 
   # TODO: deal系の機能とともにconcernsにでも出したい
@@ -168,39 +168,18 @@ class ApplicationController < ActionController::Base
     f[:notice] = message
   end
 
-  # セッションに入っているyear, month, dayを配列で返す
-  def read_target_date
-    write_target_date unless session[:target_date]
-    [session[:target_date][:year], session[:target_date][:month], session[:target_date][:day]]
+  # 最後に表示した年月日（VagueDate）。年月を指定しない移動（メニューの「家計簿」など）で、どこへ戻るかに使う
+  # 日があれば家計簿の日で絞った一覧に、なければ月の一覧に戻る。まだ何も表示していなければ今月
+  def current_vague_date
+    @current_vague_date ||= session[:current_vague_date] ? VagueDate.parse(session[:current_vague_date]) : VagueDate.new(Time.zone.today.year, Time.zone.today.month)
   end
 
-  # セッションに入っているyear, month, dayを更新する
-  # 引数なし - 今日
-  # date - 指定日
-  # year, month, day - 指定どおり。month, day はなくてもいい
-  def write_target_date(*args)
-    session[:target_date] ||= {}
-    if args.empty?
-      write_target_date Time.zone.today
-    elsif args.first.kind_of?(Date)
-      session[:target_date][:year] = args.first.year
-      session[:target_date][:month] = args.first.month
-      session[:target_date][:day] = args.first.day
-    else
-      old_year = session[:target_date][:year]
-      old_month = session[:target_date][:month]
-      session[:target_date][:year] = args.first
-      session[:target_date][:month] = args[1]
-      # 同じ月で、日付が指定されていなければ、日付を変更しない
-      session[:target_date][:day] = args[2] if (args[2] || old_year.to_i != session[:target_date][:year].to_i || old_month.to_i != session[:target_date][:month].to_i)
-    end
-    # day がないときは補完できるならする
-    unless session[:target_date][:day]
-      today = Time.zone.today
-      session[:target_date][:day] = today.day if session[:target_date][:year].to_s == today.year.to_s && session[:target_date][:month].to_s == today.month.to_s
-    end
+  # value - VagueDate、Date、[年, 月]、[年, 月, 日] のどれか
+  # 次に読むときは、書いたセッションの値から作り直す
+  def current_vague_date=(value)
+    session[:current_vague_date] = VagueDate.from(value).to_s
+    @current_vague_date = nil
   end
-
 
   #TODO: どこかにありそうなきがするが・・・
   def to_date(hash)
