@@ -264,7 +264,11 @@ $(function() {
 
   $(document).on('click', 'a.end_of_month_button', function() {
     const day = endOfMonth($('#date_year').val(), $('#date_month').val());
-    if (day) { $('#date_day').val(day); }
+    if (day) {
+      $('#date_day').val(day);
+      // 日を入れたので、日付の欄を手で変えたときと同じく、その日で絞った一覧に切り替える
+      $('#date_day')[0].dispatchEvent(new Event('change', { bubbles: true }));
+    }
     return false;
   });
 
