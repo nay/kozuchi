@@ -11,10 +11,8 @@ class ProfitAndLossController < ApplicationController
 
   def monthly
     self.current_vague_date = [params[:year], params[:month]]
-    @year, @month = params[:year], params[:month]
-
     # 費目ごとの合計を得る
-    start_inclusive = Date.new(@year.to_i, @month.to_i, 1)
+    start_inclusive = current_vague_date.beginning_of_month
     end_exclusive = start_inclusive >> 1
 
     # 全口座のフローを得る

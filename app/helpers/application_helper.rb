@@ -259,11 +259,11 @@ EOS
   # 帳簿系表示ヘルパー
   # 一行を表示する　(table.book の下で呼ばれることを前提とする)
   # :account があれば :name は自動で入れる :account はないこともある
-  # @year, @month の存在を前提とする
+  # 口座へのリンクは、表示中の年月（current_year, current_month）の口座の一覧へ移る
   def book_line(contents = {})
     contents[:name] ||= contents[:account].try(:name)
     string = "<tr>\n"
-    string += "<td>#{contents[:account] ? link_to(contents[:name], monthly_account_deals_path(:account_id => contents[:account].id, :year => @year.to_s, :month => @month.to_s), :class => 'account') : contents[:name]}</td>\n" if contents[:name]
+    string += "<td>#{contents[:account] ? link_to(contents[:name], monthly_account_deals_path(:account_id => contents[:account].id, :year => current_year, :month => current_month), :class => 'account') : contents[:name]}</td>\n" if contents[:name]
     string += "<td class='percentage'>#{contents[:percentage]}%</td>\n" if contents[:percentage]
     string += "<td class='amount'>#{number_with_delimiter(contents[:amount])}</td>\n" if contents[:amount]
     string += "</tr>\n"

@@ -168,6 +168,17 @@ describe DealsController, type: :feature do
         end
       end
 
+      context "さらに貸借対照表で2012年8月を表示してから、年月を指定せずに一覧を開いたとき" do
+        before do
+          visit "/balance_sheet/2012/8"
+          visit "/deals"
+        end
+
+        it "2012年8月の一覧が表示される" do
+          expect(page).to have_current_path("/deals/2012/8")
+        end
+      end
+
       context "さらに2012年6月の一覧を表示してから、年月を指定せずに一覧を開いたとき" do
         before do
           visit "/deals/2012/6"

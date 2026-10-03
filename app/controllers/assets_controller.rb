@@ -11,9 +11,7 @@ class AssetsController < ApplicationController
 
   def monthly
     self.current_vague_date = [params[:year], params[:month]]
-    @year, @month = params[:year], params[:month]
-
-    date = Date.new(@year.to_i, @month.to_i, 1) >> 1
+    date = current_vague_date.beginning_of_month >> 1
     asset_accounts = current_user.accounts.balances(date, "accounts.type != 'Account::Income' and accounts.type != 'Account::Expense'") # TODO: マシにする
     @assets = AccountsBalanceReport.new(asset_accounts, date)
   end
