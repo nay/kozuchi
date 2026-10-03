@@ -15,7 +15,7 @@ describe UsersController, type: :feature do
   describe "ユーザー登録できる" do
     context "メール送信をスキップする設定のとき" do
       before do
-        SKIP_MAIL = true # 警告が出るがしかたない。TODO: 変更可能な形態にする
+        stub_const("SKIP_MAIL", true)
         visit "/"
         click_link "アカウント登録して使い始める（無料）"
         fill_in "ログインID", with: "featuretest"
@@ -33,7 +33,7 @@ describe UsersController, type: :feature do
 
     context "メール送信ありの設定のとき" do
       before do
-        SKIP_MAIL = false # 警告が出るがしかたない。TODO: 変更可能な形態にする
+        stub_const("SKIP_MAIL", false)
         visit "/"
         click_link "アカウント登録して使い始める（無料）"
         fill_in "ログインID", with: "featuretest"
@@ -52,7 +52,7 @@ describe UsersController, type: :feature do
   describe "パスワードを忘れたとき" do
     context "メール送信をスキップする設定のとき" do
       before do
-        SKIP_MAIL = true # 警告が出るがしかたない。TODO: 変更可能な形態にする
+        stub_const("SKIP_MAIL", true)
         visit "/"
         click_link "パスワードを忘れたとき"
       end
@@ -61,7 +61,7 @@ describe UsersController, type: :feature do
 
     context "メール送信ありの設定のとき" do
       before do
-        SKIP_MAIL = false # 警告が出るがしかたない。TODO: 変更可能な形態にする
+        stub_const("SKIP_MAIL", false)
         visit "/"
         click_link "パスワードを忘れたとき"
       end

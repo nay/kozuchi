@@ -12,7 +12,8 @@ class DealsController < ApplicationController
   before_action :check_account
   before_action :find_deal, :only => [:edit, :load_deal_pattern_into_edit, :update, :confirm, :destroy, :show]
   before_action :find_new_or_existing_deal, :only => [:create_entry]
-  before_action :find_account_if_specified, only: [:index, :monthly, :new_general_deal, :new_complex_deal, :new_balance_deal, :create_general_deal, :create_complex_deal, :create_balance_deal]
+  before_action :find_account_if_specified, only: [:index, :today, :monthly, :daily, :new_general_deal, :new_complex_deal, :new_balance_deal, :create_general_deal, :create_complex_deal, :create_balance_deal]
+  before_action :set_current_vague_date, only: [:monthly, :daily]
   # NOTE: create_xxx_deal では @account はアクションでは使わないが、例えば残高記入で記入エラーが合った際の render で new の時点と画面が変わる恐れがあるため、元画面にあれば ajax でも伝わってくるようにしておく
 
   # 単数記入タブエリアの表示 (Ajax)
@@ -73,15 +74,16 @@ class DealsController < ApplicationController
       if @deal.save
         flash[:notice] = "#{@deal.human_name} を追加しました。#{truncation_message(@deal)}"
         flash[:"#{controller_name}_deal_type"] = deal_type
-        write_target_date(@deal.date)
+        self.current_vague_date = @deal.date
         account_has_been_selected(*@deal.accounts)
         render json: {
+            created: true,
             id: @deal.id,
             deal: @deal.as_json(root: false, include: :readonly_entries),
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
-            redirect_to: @deal.balance? ? monthly_account_deals_path(account_id: @deal.account.id, year: @deal.date.year, month: @deal.date.month, anchor: 'monthly') : nil,
+            redirect_to: @deal.balance? ? helpers.deals_list_path(date: @deal.date, account_id: @deal.account.id, anchor: 'monthly') : nil,
             error_view: false
         }
       else
@@ -97,14 +99,6 @@ class DealsController < ApplicationController
         }
       end
     end
-  end
-
-
-  # 日ナビゲーター部品を返す (Ajax)
-  def day_navigator
-    write_target_date(params[:year], params[:month])
-    @year, @month, @day = read_target_date
-    render partial: 'shared/day_navigator', locals: {data: data_for_day_navigator}
   end
 
   RECENT_DEALS_SIZE = 5
@@ -154,7 +148,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      write_target_date(@deal.date)
+      self.current_vague_date = @deal.date
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
@@ -185,22 +179,78 @@ class DealsController < ApplicationController
   end
 
   # 仕分け帳画面を初期表示するための処理
-  # パラメータ：年月、年月日、タブ（明細or残高）、選択行
+  # 最後に表示した一覧（月の一覧か、日で絞った一覧）に移る
   def index
-    write_target_date if params[:today]
-    year, month = read_target_date
     flash.keep
-    redirect_to @account ? monthly_account_deals_path(account_id: @account.id, year: year, month: month) : monthly_deals_path(year: year, month: month)
+    redirect_to helpers.deals_list_path(date: current_vague_date, account_id: @account&.id)
+  end
+
+  # 今日で絞った一覧に移る
+  def today
+    flash.keep
+    redirect_to helpers.deals_list_path(date: Time.zone.today, account_id: @account&.id)
   end
 
   # 月表示 (総合 & 口座別)
   def monthly
-    # 日付
-    write_target_date(params[:year], params[:month])
-    @year, @month, @day = read_target_date
+    prepare_list
+  end
 
-    start_date = Date.new(@year.to_i, @month.to_i, 1)
-    end_date = (start_date >> 1) - 1
+  # 日で絞った表示 (総合 & 口座別)
+  def daily
+    prepare_list
+    render :monthly
+  end
+
+  # 記入の削除
+  # Ajaxでリクエストされる前提
+  def destroy
+    @deal.destroy
+    render json: {
+        deal: {id: @deal.id},
+        success_message: "#{@deal.human_name} を削除しました。"
+    }
+  end
+
+  # キーワードで検索したときに一覧を出す
+  def search
+    raise InvalidParameterError if params[:keyword].blank?
+    @keywords = params[:keyword].split(' ')
+    @deals = current_user.deals.time_ordering.including(@keywords).distinct # NOTE: Rails4.1.0 関連の直後だとuniqがスコープにならず発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう。countはDISTINCTが重なってSQLエラーになるので view でlength を使っている
+    @as_action = :index
+  end
+
+  
+  # 確認
+  # Ajaxでリクエストされる前提
+  def confirm
+    @deal.confirm!
+    render json: {
+      deal: {id: @deal.id},
+      success_message:  "#{@deal.human_name} を確認しました。"
+    }
+  end
+
+  private
+
+  # 一覧（月表示・日で絞った表示）で表示する年月日を URL から決めて、表示中の年月日としてセッションに覚える
+  # 月にない日（9月31日など）は、その月の近い日に直した URL に移る
+  def set_current_vague_date
+    vague_date = VagueDate.from([params[:year], params[:month], params[:day]])
+    return redirect_to(helpers.deals_list_path(date: vague_date, account_id: @account&.id)) if params[:day] && vague_date.day != params[:day].to_i
+
+    self.current_vague_date = vague_date
+  end
+
+  # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する
+  # 明細は表示中の年月日の期間のものを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
+  def prepare_list
+    range = current_vague_date.range
+    if @account
+      @account_entries = AccountEntries.new(@account, range.first, range.last)
+    else
+      @deals = current_user.deals.in_a_time_between(range.first, range.last).includes(:readonly_entries).order(:date, :daily_seq)
+    end
 
     # フォーム用
     # NOTE: 残高変更後は残高タブを表示しようとするので、正しいクラスのインスタンスがないとエラーになる
@@ -216,22 +266,16 @@ class DealsController < ApplicationController
     # 最近登録/更新された記入を常に5件まで表示する
     @recently_updated_deals = current_user.deals.recently_updated_ordered.includes(:readonly_entries).limit(RECENT_DEALS_SIZE)
 
-    @bookings = if @account
-      @account_entries = AccountEntries.new(@account, start_date, start_date.end_of_month)
-    else
-      @deals = current_user.deals.in_a_time_between(start_date, end_date).includes(:readonly_entries).order(:date, :daily_seq)
-    end
-
-    # 日ナビゲーターから移動できるようにするためのアンカー情報を仕込む
-    Booking.set_anchor_dates_to(@bookings, @year, @month)
+    # 日ナビゲーターで記入のある日に印を付けるため、日で絞っていても月全体の記入の日を用意する
+    @day_navigator_data = (@account ? @account.entries : current_user.deals).where(date: current_vague_date.beginning_of_month.all_month).select(:date).distinct
 
     # 上部精算概況
     if @account && @account.any_credit?
-      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: start_date)
+      @settlement_summaries = SettlementSummaries.new(current_user, past: 0, future: 2, target_account: @account, target_date: current_vague_date.beginning_of_month)
     end
 
     # 上部折れ線グラフ
-    expenses, expenses_dates, label = @user.recent_from(start_date, 4) do |user, d|
+    expenses, expenses_dates, label = @user.recent_from(current_vague_date.beginning_of_month, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -242,7 +286,7 @@ class DealsController < ApplicationController
         user.expenses_summary(d.year, d.month)
       end
     end
-    last_expenses, last_expenses_dates, label = @user.recent_from(start_date << 12, 4) do |user, d|
+    last_expenses, last_expenses_dates, label = @user.recent_from(current_vague_date.beginning_of_month << 12, 4) do |user, d|
       if @account&.asset?
         @account.balance_before_date(d.end_of_month + 1)
       elsif @account&.expense?
@@ -264,43 +308,6 @@ class DealsController < ApplicationController
     end
     @expenses_summary = LineGraph.new([expenses], [label], y_label: "", max_grid: 3)
     @months_for_expenses = [""].concat(expenses_dates.map{|d| "#{d.month}月"})
-  end
-
-  # 記入の削除
-  # Ajaxでリクエストされる前提
-  def destroy
-    @deal.destroy
-    write_target_date(@deal.date)
-    render json: {
-        deal: {id: @deal.id},
-        success_message: "#{@deal.human_name} を削除しました。"
-    }
-  end
-
-  # キーワードで検索したときに一覧を出す
-  def search
-    raise InvalidParameterError if params[:keyword].blank?
-    @keywords = params[:keyword].split(' ')
-    @deals = current_user.deals.time_ordering.including(@keywords).distinct # NOTE: Rails4.1.0 関連の直後だとuniqがスコープにならず発動してしまうので最後につける必要がある。なお、ここではこれがないと発火前のsizeが重複分を含んでしまう。countはDISTINCTが重なってSQLエラーになるので view でlength を使っている
-    @as_action = :index
-  end
-
-  
-  # 確認
-  # Ajaxでリクエストされる前提
-  def confirm
-    @deal.confirm!
-    write_target_date(@deal.date)
-    render json: {
-      deal: {id: @deal.id},
-      success_message:  "#{@deal.human_name} を確認しました。"
-    }
-  end
-
-  private
-
-  def data_for_day_navigator
-    current_user.deals.in_month(@year, @month).order(:date, :daily_seq).select(:date).distinct
   end
 
   def find_deal

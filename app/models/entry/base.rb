@@ -3,7 +3,6 @@ class Entry::Base < ApplicationRecord
   self.table_name = 'account_entries'
   unsavable
 
-  include Booking
   include Entry::SummaryTruncation
 
   MAX_LINE_NUMBER = 999 # 処理の都合上、上限があったほうが安心なため片側最大行数を決める
