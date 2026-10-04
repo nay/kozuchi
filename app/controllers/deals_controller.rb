@@ -153,7 +153,6 @@ class DealsController < ApplicationController
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
-      flash[:day] = @deal.date.day
       render json: {
           id: @deal.id,
           deal: @deal.as_json(root: false, include: :readonly_entries),
