@@ -47,6 +47,11 @@ class VagueDate
     @to_date ||= Date.new(year, month, day)
   end
 
+  # 日があるかどうかはそのままに、date に移した VagueDate。日があれば date の日、なければ date の月
+  def move_to(date)
+    day ? VagueDate.from_date(date) : VagueDate.new(date.year, date.month)
+  end
+
   # 表す期間。日があればその日だけ、なければその月全体
   def range
     day ? to_date..to_date : beginning_of_month..end_of_month

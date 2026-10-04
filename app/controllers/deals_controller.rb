@@ -77,12 +77,12 @@ class DealsController < ApplicationController
         self.current_vague_date = @deal.date
         account_has_been_selected(*@deal.accounts)
         render json: {
-            created: true,
             id: @deal.id,
             deal: @deal.as_json(root: false, include: :readonly_entries),
             year: @deal.date.year,
             month: @deal.date.month,
             day: @deal.date.day,
+            list_day: current_vague_date.day, # 移り先の一覧で絞る日（記入した日）
             redirect_to: @deal.balance? ? helpers.deals_list_path(date: @deal.date, account_id: @deal.account.id, anchor: 'monthly') : nil,
             error_view: false
         }
@@ -148,7 +148,8 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      self.current_vague_date = @deal.date
+      # 日で絞った一覧から変更したなら変更後の日で絞った一覧、月の一覧から変更したなら変更後の日付の月の一覧に移る
+      self.current_vague_date = current_vague_date.move_to(@deal.date)
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
       flash[:"#{controller_name}_deal_type"] = deal_type
@@ -159,6 +160,7 @@ class DealsController < ApplicationController
           year: @deal.date.year,
           month: @deal.date.month,
           day: @deal.date.day,
+          list_day: current_vague_date.day, # 移り先の一覧で絞る日。月の一覧に移るなら nil
           error_view: false
       }
     else

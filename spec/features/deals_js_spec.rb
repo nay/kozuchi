@@ -575,6 +575,44 @@ describe DealsController, js: true, type: :feature do
 
     describe "変更" do
 
+      describe "変更したあとの移り先" do
+        let!(:deal) { create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
+
+        context "7月10日で絞った一覧で、単純明細の日付を8月11日に変えて変更したとき" do
+          before do
+            visit "/deals/2012/7/10"
+            click_link '変更'
+            within('#edit_window') do
+              fill_in 'date_month', with: '8'
+              fill_in 'date_day', with: '11'
+            end
+            click_button '変更'
+          end
+
+          it "8月11日で絞った一覧に移る" do
+            expect(flash_notice).to have_content("更新しました。")
+            expect(URI(current_url).path).to eq "/deals/2012/8/11"
+          end
+        end
+
+        context "7月の一覧で、単純明細の日付を8月11日に変えて変更したとき" do
+          before do
+            visit "/deals/2012/7"
+            click_link '変更'
+            within('#edit_window') do
+              fill_in 'date_month', with: '8'
+              fill_in 'date_day', with: '11'
+            end
+            click_button '変更'
+          end
+
+          it "8月の一覧に移る" do
+            expect(flash_notice).to have_content("更新しました。")
+            expect(URI(current_url).path).to eq "/deals/2012/8"
+          end
+        end
+      end
+
       context "単純明細の変更ボタンをクリックしたとき" do
         let!(:deal) { create(:general_deal, :date => Date.new(2012, 7, 10), :summary => "ラーメン") }
         before do

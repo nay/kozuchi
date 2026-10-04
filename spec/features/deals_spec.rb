@@ -218,6 +218,16 @@ describe DealsController, type: :feature do
       it do
         expect(page).to have_content("「ランチ」を含む明細は1件あります。")
       end
+
+      context "さらに検索結果の明細の「→」を押したとき" do
+        before do
+          find('td.icon_to_deal a').click
+        end
+
+        it "その明細の日で絞った一覧に移る" do
+          expect(page).to have_current_path("/deals/2012/7/10")
+        end
+      end
     end
   end
 
