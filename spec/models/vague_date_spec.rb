@@ -51,6 +51,20 @@ describe VagueDate do
     end
   end
 
+  describe "#move_to" do
+    context "日があるとき" do
+      it "渡した日付の日を持つ VagueDate を返す" do
+        expect(VagueDate.new(2026, 9, 26).move_to(Date.new(2026, 10, 3))).to eq VagueDate.new(2026, 10, 3)
+      end
+    end
+
+    context "日がないとき" do
+      it "渡した日付の月の、日のない VagueDate を返す" do
+        expect(VagueDate.new(2026, 9).move_to(Date.new(2026, 10, 3))).to eq VagueDate.new(2026, 10)
+      end
+    end
+  end
+
   describe "#range" do
     context "日があるとき" do
       it "その日だけの期間を返す" do

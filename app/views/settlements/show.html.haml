@@ -51,7 +51,7 @@
     - for target_entry in @settlement.target_entries
       %tr
         = display_account_entry(target_entry)
-        %td.icon_to_deal= icon_to_deal_in_monthly(target_entry.year, target_entry.month, target_entry.deal_id)
+        %td.icon_to_deal= icon_to_deal(target_entry)
 
   %h3 精算結果
   - unless @settlement.result_entry
@@ -63,4 +63,4 @@
         %th.icon_to_deal
       %tr
         = display_account_entry(@settlement.result_entry)
-        %td.icon_to_deal= icon_to_deal_in_monthly(@settlement.result_entry.year, @settlement.result_entry.month, @settlement.result_entry.deal_id)
+        %td.icon_to_deal= icon_to_deal(@settlement.result_entry)
