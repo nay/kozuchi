@@ -7,14 +7,25 @@ import { visit } from "../turbo"
 // カレンダーなど、ほかの操作で Frame の中身が切り替わるときや、戻る・進むでページが描き直されるときは、
 // 移動先の日付の欄の年月日に合わせる
 export default class extends Controller {
-  static targets = ["year", "month", "day"]
+  static targets = ["year", "month", "day", "clear"]
   // urlTemplate - 月の一覧の URL。_YEAR_, _MONTH_ を置き換えて使う。日で絞った一覧の URL は、その後ろに日を付けたもの
   // day - 表示中の一覧で絞っている日。月の一覧なら 0
   static values = { frame: String, urlTemplate: String, year: Number, month: Number, day: Number }
 
+  connect() {
+    this.updateClearButton()
+  }
+
+  // クリアボタンは、日が空のときは薄く表示する
+  updateClearButton() {
+    if (!this.hasClearTarget) return
+    this.clearTarget.classList.toggle("inactive", this.dayTarget.value.trim() === "")
+  }
+
   // 年が4桁、月が1〜12、日が空か1〜2桁の数字で、表示中の一覧と違うときだけ切り替える（入力の途中の値では切り替えない）
   // 月にない日は、移動先のサーバーで近い日に直る
   navigate() {
+    this.updateClearButton()
     const year = this.yearTarget.value.trim()
     const month = this.monthTarget.value.trim()
     const day = this.dayTarget.value.trim()
@@ -29,6 +40,12 @@ export default class extends Controller {
     let url = this.urlTemplateValue.replace("_YEAR_", y).replace("_MONTH_", m)
     if (day !== "") url += "/" + d
     visit(url, this.frameValue)
+  }
+
+  // クリアボタン。表示中の年月の月の一覧をページごと読み込み直して、日付の欄と登録フォームを、その月を最初に開いたときの状態に戻す
+  // 日付の欄と登録フォームは Frame の中身を入れ替えても残る作りなので、Frame ではなくページごと移動する
+  clear() {
+    location.href = this.urlTemplateValue.replace("_YEAR_", this.yearValue).replace("_MONTH_", this.monthValue)
   }
 
   // Turbo のページ単位の移動が始まるときに呼ばれる。戻る・進む（restore）かどうかを覚えておく
@@ -60,5 +77,6 @@ export default class extends Controller {
     this.yearTarget.value = source.dataset.year
     this.monthTarget.value = source.dataset.month
     this.dayTarget.value = source.dataset.day || ""
+    this.updateClearButton()
   }
 }

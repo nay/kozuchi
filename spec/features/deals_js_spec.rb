@@ -743,6 +743,10 @@ describe DealsController, js: true, type: :feature do
         fill_in 'deal_summary', with: '書きかけ'
       end
 
+      it "日付の欄の日が空なので、クリアボタンは薄く表示される" do
+        expect(page).to have_css("a.clear_deal_form_button.inactive")
+      end
+
       context "カレンダーで前月を押したとき" do
         before do
           click_calendar(2012, 6)
@@ -811,6 +815,10 @@ describe DealsController, js: true, type: :feature do
           expect(find("input#deal_summary").value).to eq "書きかけ"
         end
 
+        it "クリアボタンが薄い表示でなくなる" do
+          expect(page).to have_css("a.clear_deal_form_button:not(.inactive)")
+        end
+
         context "さらに月を前月に変えたとき" do
           before do
             fill_in 'date_month', with: '6'
@@ -832,9 +840,10 @@ describe DealsController, js: true, type: :feature do
             wait_for_turbo_frame_navigation
           end
 
-          it "7月の一覧とURLに戻る" do
+          it "7月の一覧とURLに戻り、クリアボタンは薄い表示に戻る" do
             expect(page).to have_current_path("/deals/2012/7")
             expect(page).to have_content("ラーメン")
+            expect(page).to have_css("a.clear_deal_form_button.inactive")
           end
         end
       end
@@ -852,6 +861,22 @@ describe DealsController, js: true, type: :feature do
         it "6月にない31日は30日に直り、6月30日で絞った一覧とURLに変わる" do
           expect(page).to have_current_path("/deals/2012/6/30")
           expect(input_date_field_values).to eq ["2012", "6", "30"]
+        end
+      end
+
+      context "日付の欄の日に15を入れて15日で絞った一覧にしてから、クリアを押したとき" do
+        before do
+          fill_in 'date_day', with: '15'
+          find('#date_day').send_keys(:tab)
+          wait_for_turbo_frame_navigation
+          find('a.clear_deal_form_button').click # クリアボタンは href のない a 要素なので、click_link では見つからない
+        end
+
+        it "7月の一覧をページごと開き直し、日付の欄は年月だけになり、摘要も空になる" do
+          expect(page).to have_current_path("/deals/2012/7")
+          expect(page).to have_content("ラーメン")
+          expect(input_date_field_values).to eq ["2012", "7", ""]
+          expect(find("input#deal_summary").value).to eq ""
         end
       end
 
