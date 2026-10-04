@@ -855,6 +855,22 @@ describe DealsController, js: true, type: :feature do
         end
       end
 
+      context "日付の欄の日に15を入れて15日で絞った一覧にしてから、クリアを押したとき" do
+        before do
+          fill_in 'date_day', with: '15'
+          find('#date_day').send_keys(:tab)
+          wait_for_turbo_frame_navigation
+          find('a.clear_deal_form_button').click # クリアボタンは href のない a 要素なので、click_link では見つからない
+        end
+
+        it "7月の一覧をページごと開き直し、日付の欄は年月だけになり、摘要も空になる" do
+          expect(page).to have_current_path("/deals/2012/7")
+          expect(page).to have_content("ラーメン")
+          expect(input_date_field_values).to eq ["2012", "7", ""]
+          expect(find("input#deal_summary").value).to eq ""
+        end
+      end
+
       context "月末を押したとき" do
         before do
           find('a.end_of_month_button').click # 月末ボタンは href のない a 要素なので、click_link では見つからない

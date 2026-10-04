@@ -31,6 +31,12 @@ export default class extends Controller {
     visit(url, this.frameValue)
   }
 
+  // クリアボタン。表示中の年月の月の一覧をページごと読み込み直して、日付の欄と登録フォームを、その月を最初に開いたときの状態に戻す
+  // 日付の欄と登録フォームは Frame の中身を入れ替えても残る作りなので、Frame ではなくページごと移動する
+  clear() {
+    location.href = this.urlTemplateValue.replace("_YEAR_", this.yearValue).replace("_MONTH_", this.monthValue)
+  }
+
   // Turbo のページ単位の移動が始まるときに呼ばれる。戻る・進む（restore）かどうかを覚えておく
   visitStarted(event) {
     this.restoring = event.detail.action === "restore"
