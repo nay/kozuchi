@@ -797,19 +797,73 @@ describe DealsController, js: true, type: :feature do
         end
       end
 
-      context "日付の欄で日を入れてから、月を前月に変えたとき" do
+      context "日付の欄の日に15を入れたとき" do
         before do
           fill_in 'date_day', with: '15'
-          fill_in 'date_month', with: '6'
-          find('#date_month').send_keys(:tab) # フォーカスを外すと切り替わる
+          find('#date_day').send_keys(:tab) # フォーカスを外すと切り替わる
           wait_for_turbo_frame_navigation
         end
 
-        it "前月の一覧とURLに変わり、日付の欄に入れた年月日と摘要は残る" do
-          expect(page).to have_current_path("/deals/2012/6")
+        it "15日で絞った一覧とURLに変わり、摘要は残る" do
+          expect(page).to have_current_path("/deals/2012/7/15")
+          expect(page).to have_content("総合(2012年7月15日)")
           expect(page).not_to have_content("ラーメン")
-          expect(input_date_field_values).to eq ["2012", "6", "15"]
           expect(find("input#deal_summary").value).to eq "書きかけ"
+        end
+
+        context "さらに月を前月に変えたとき" do
+          before do
+            fill_in 'date_month', with: '6'
+            find('#date_month').send_keys(:tab)
+            wait_for_turbo_frame_navigation
+          end
+
+          it "前月の15日で絞った一覧とURLに変わり、日付の欄に入れた年月日と摘要は残る" do
+            expect(page).to have_current_path("/deals/2012/6/15")
+            expect(input_date_field_values).to eq ["2012", "6", "15"]
+            expect(find("input#deal_summary").value).to eq "書きかけ"
+          end
+        end
+
+        context "さらに日を空にしたとき" do
+          before do
+            fill_in 'date_day', with: ''
+            find('#date_day').send_keys(:tab)
+            wait_for_turbo_frame_navigation
+          end
+
+          it "7月の一覧とURLに戻る" do
+            expect(page).to have_current_path("/deals/2012/7")
+            expect(page).to have_content("ラーメン")
+          end
+        end
+      end
+
+      context "日付の欄の日に31を入れてから、月を6月に変えたとき" do
+        before do
+          fill_in 'date_day', with: '31'
+          find('#date_day').send_keys(:tab)
+          wait_for_turbo_frame_navigation
+          fill_in 'date_month', with: '6'
+          find('#date_month').send_keys(:tab)
+          wait_for_turbo_frame_navigation
+        end
+
+        it "6月にない31日は30日に直り、6月30日で絞った一覧とURLに変わる" do
+          expect(page).to have_current_path("/deals/2012/6/30")
+          expect(input_date_field_values).to eq ["2012", "6", "30"]
+        end
+      end
+
+      context "月末を押したとき" do
+        before do
+          find('a.end_of_month_button').click # 月末ボタンは href のない a 要素なので、click_link では見つからない
+          wait_for_turbo_frame_navigation
+        end
+
+        it "日付の欄の日に31が入り、7月31日で絞った一覧とURLに変わる" do
+          expect(page).to have_current_path("/deals/2012/7/31")
+          expect(input_date_field_values).to eq ["2012", "7", "31"]
         end
       end
 

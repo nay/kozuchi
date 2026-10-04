@@ -100,7 +100,7 @@ module DealsHelper
 
   # frame - Turbo Frame の中に置く登録フォームのとき、その Frame の id
   #   Frame の中身を入れ替えても、日付の欄と記入フォーム（#deal_forms）は入れ替えずに残す
-  #   日付の欄の年・月を変えたら、month_url_template の _YEAR_, _MONTH_ を置き換えたURLの内容に Frame の中身を入れ替える
+  #   日付の欄の年月日を変えたら、month_url_template の _YEAR_, _MONTH_ を置き換えた月の一覧（日があればその日で絞った一覧）の内容に Frame の中身を入れ替える
   def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, frame: nil, month_url_template: nil, &block)
     tab_index = start_tab_index
     datebox_options = {class: 'datebox'}
@@ -113,7 +113,8 @@ module DealsHelper
         deal_date_frame_value: frame,
         deal_date_url_template_value: month_url_template,
         deal_date_year_value: year,
-        deal_date_month_value: month
+        deal_date_month_value: month,
+        deal_date_day_value: day
       }
     end
     target = ->(name) { frame ? {data: {deal_date_target: name}} : {} }
