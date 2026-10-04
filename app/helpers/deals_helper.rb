@@ -34,11 +34,12 @@ module DealsHelper
     end
   end
 
-  # 総合の一覧の中の、明細（deal）の行へのリンク。その明細の日で絞った一覧に移る
+  # 総合の一覧の中の、明細（deal）の行へのリンク
   # deal_or_entry - 明細（Deal）か、明細の中の記入（Entry）
-  def icon_to_deal(deal_or_entry)
+  # date - 移る一覧の年月日（VagueDate か Date）。指定しなければ、その明細の日で絞った一覧に移る
+  def icon_to_deal(deal_or_entry, date: deal_or_entry.date)
     deal_id = deal_or_entry.is_a?(Entry::Base) ? deal_or_entry.deal_id : deal_or_entry.id
-    link_to '→', deals_list_path(date: deal_or_entry.date, anchor: "d#{deal_id}")
+    link_to '→', deals_list_path(date: date, anchor: "d#{deal_id}")
   end
 
   def write_hiddens_and_get_simple_deal_procs(f, options = {})

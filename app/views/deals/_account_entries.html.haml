@@ -50,7 +50,8 @@
             - if entry.any_settlement_id
               %div= link_to '精算', settlement_path(:id => entry.any_settlement_id)
           %td.amount= deal.confirmed ? number_with_delimiter(balance_start + (entry.pure_balance * sign)) : '*'
-          %td.icon_to_deal= icon_to_deal entry
+          - # 総合の一覧の「→」と同じく、一覧どうしの行き来なので、日で絞っていたかどうかを保つ
+          %td.icon_to_deal= icon_to_deal entry, date: current_vague_date.move_to(entry.date)
           - if entry == entries.first
             %td.action.open_detail{data: {url: deal_path(id: deal.id)}, rowspan: entries.size}
               %span{style: "font-size: small;"} 詳細

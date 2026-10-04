@@ -82,6 +82,47 @@ describe DealsController, type: :feature do
     end
   end
 
+  # 一覧どうしの「→」での行き来
+  describe "総合の一覧と口座の一覧の「→」での行き来" do
+    include_context "太郎 logged in"
+    let(:cache_id) { Fixtures.identify(:taro_cache) }
+    before do
+      create(:general_deal, summary: "20日のランチ", date: Date.new(2012, 7, 20))
+    end
+
+    context "総合の2012年7月の一覧で、明細の現金の「→」を押したとき" do
+      before do
+        visit "/deals/2012/7"
+        all('td.account_deals_link a').find { |link| link[:href].start_with?("/accounts/#{cache_id}/") }.click
+      end
+
+      it "現金の2012年7月の一覧に移る（日で絞らない）" do
+        expect(page).to have_current_path("/accounts/#{cache_id}/deals/2012/7")
+      end
+
+      context "さらに明細の「→」を押したとき" do
+        before do
+          find('td.icon_to_deal a').click
+        end
+
+        it "総合の2012年7月の一覧に戻る（日で絞らない）" do
+          expect(page).to have_current_path("/deals/2012/7")
+        end
+      end
+    end
+
+    context "現金の2012年7月20日で絞った一覧で、明細の「→」を押したとき" do
+      before do
+        visit "/accounts/#{cache_id}/deals/2012/7/20"
+        find('td.icon_to_deal a').click
+      end
+
+      it "総合の2012年7月20日で絞った一覧に移る" do
+        expect(page).to have_current_path("/deals/2012/7/20")
+      end
+    end
+  end
+
   # 今日ボタン
   describe "今日ボタン" do
     include_context "太郎 logged in"
