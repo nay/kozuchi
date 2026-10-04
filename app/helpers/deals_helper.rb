@@ -101,7 +101,7 @@ module DealsHelper
   # frame - Turbo Frame の中に置く登録フォームのとき、その Frame の id
   #   Frame の中身を入れ替えても、日付の欄と記入フォーム（#deal_forms）は入れ替えずに残す
   #   日付の欄の年月日を変えたら、month_url_template の _YEAR_, _MONTH_ を置き換えた月の一覧（日があればその日で絞った一覧）の内容に Frame の中身を入れ替える
-  #   クリアボタンを置き、押したら表示中の年月の月の一覧をページごと開き直す
+  #   日の欄のすぐ右にクリアボタンを置き、押したら表示中の年月の月の一覧をページごと開き直す。日が空のときは薄く表示する
   def deal_editor(start_tab_index = 1, year = nil, month = nil, day = nil, frame: nil, month_url_template: nil, &block)
     tab_index = start_tab_index
     datebox_options = {class: 'datebox'}
@@ -110,7 +110,7 @@ module DealsHelper
       datebox_options[:data] = {
         turbo_permanent: true,
         controller: 'deal-date',
-        action: 'change->deal-date#navigate turbo:visit@document->deal-date#visitStarted turbo:before-frame-render@document->deal-date#follow turbo:before-render@document->deal-date#follow',
+        action: 'change->deal-date#navigate input->deal-date#updateClearButton turbo:visit@document->deal-date#visitStarted turbo:before-frame-render@document->deal-date#follow turbo:before-render@document->deal-date#follow',
         deal_date_frame_value: frame,
         deal_date_url_template_value: month_url_template,
         deal_date_year_value: year,
@@ -131,8 +131,8 @@ module DealsHelper
         tab_index += 1
         d << text_field(:date, :day, {:size => 2, :max_length => 2, :tabindex => tab_index, :value => day}.merge(target.call('day')))
         d << ' '
+        d << content_tag(:a, 'クリア', class: 'clear_deal_form_button', data: {action: 'deal-date#clear', deal_date_target: 'clear'}) if frame
         d << content_tag(:a, '月末', :class => 'end_of_month_button')
-        d << content_tag(:a, 'クリア', class: 'clear_deal_form_button', data: {action: 'deal-date#clear'}) if frame
         d.html_safe
       end
     end

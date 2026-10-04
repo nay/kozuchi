@@ -743,6 +743,10 @@ describe DealsController, js: true, type: :feature do
         fill_in 'deal_summary', with: '書きかけ'
       end
 
+      it "日付の欄の日が空なので、クリアボタンは薄く表示される" do
+        expect(page).to have_css("a.clear_deal_form_button.inactive")
+      end
+
       context "カレンダーで前月を押したとき" do
         before do
           click_calendar(2012, 6)
@@ -811,6 +815,10 @@ describe DealsController, js: true, type: :feature do
           expect(find("input#deal_summary").value).to eq "書きかけ"
         end
 
+        it "クリアボタンが薄い表示でなくなる" do
+          expect(page).to have_css("a.clear_deal_form_button:not(.inactive)")
+        end
+
         context "さらに月を前月に変えたとき" do
           before do
             fill_in 'date_month', with: '6'
@@ -832,9 +840,10 @@ describe DealsController, js: true, type: :feature do
             wait_for_turbo_frame_navigation
           end
 
-          it "7月の一覧とURLに戻る" do
+          it "7月の一覧とURLに戻り、クリアボタンは薄い表示に戻る" do
             expect(page).to have_current_path("/deals/2012/7")
             expect(page).to have_content("ラーメン")
+            expect(page).to have_css("a.clear_deal_form_button.inactive")
           end
         end
       end

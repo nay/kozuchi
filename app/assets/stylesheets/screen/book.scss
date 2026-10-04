@@ -509,6 +509,10 @@ table.book, table.book_header {
   border: 1px solid #000000;
   cursor: pointer;
 }
+/* 日が空のときのクリアボタン */
+.clear_deal_form_button.inactive {
+  opacity: 0.4;
+}
 
 table.book a.account {
   color: #041A61;
