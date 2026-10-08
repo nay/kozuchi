@@ -261,7 +261,12 @@ class DealsController < ApplicationController
       # TODO: 口座
     else
       @deal = Deal::General.new
-      @deal.build_simple_entries
+      # アカウントを切り替える前に書きかけていた内容があれば、それを入れる
+      if flash[:deal_draft]
+        @deal.build_entries_from_draft(flash[:deal_draft])
+      else
+        @deal.build_simple_entries
+      end
     end
 
     # 最近登録/更新された記入を常に5件まで表示する

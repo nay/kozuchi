@@ -59,7 +59,7 @@
           .deal_editor
             - deal_type = flash[:"#{controller_name}_deal_type"]
             = deal_editor 1, current_vague_date.year, current_vague_date.month, current_vague_date.day, frame: 'monthly_deals', month_url_template: monthly_deals_list_path_template(@account&.id) do
-              = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : 'general_deal_form'
+              = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : @deal.complex? ? 'complex_deal_form' : 'general_deal_form'
         %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;"}
           %li{roll: "presentation", class: 'active'}
             %a.body_tab_link{data: "monthly", href: "#monthly"} #{@account ? @account.name : '総合'}(#{current_vague_date.day ? "#{current_vague_date.year}年#{current_vague_date.month}月#{current_vague_date.day}日" : "#{current_vague_date.year}年 #{current_vague_date.month}月"})

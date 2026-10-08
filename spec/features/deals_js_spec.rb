@@ -1038,4 +1038,70 @@ describe DealsController, js: true, type: :feature do
     end
   end
 
+  describe "登録フォームに書きかけたままのアカウントの切り替え" do
+    context "hanakoさんへのシングルログインを設定し、2012年7月の一覧を表示しているとき" do
+      before do
+        current_user.single_logins.create!(login: 'hanako', password: 'hanako')
+        visit "/deals/2012/7"
+      end
+
+      def switch_to_hanako
+        click_button 'taroさんでログイン中'
+        click_link 'hanakoさんのアカウントへ移動'
+        expect(flash_notice).to have_content('hanakoさんの家計簿に移動しました。')
+      end
+
+      context "15日で絞った一覧で、明細に摘要と金額を入れてから切り替えたとき" do
+        before do
+          fill_in 'date_day', with: '15'
+          wait_for_turbo_frame_navigation
+          fill_in 'deal_summary', with: '書きかけ'
+          fill_in 'deal_debtor_entries_attributes_0_amount', with: '980'
+          switch_to_hanako
+        end
+
+        it "切り替え先の15日で絞った一覧の明細に、摘要と金額が入る" do
+          expect(page).to have_current_path("/deals/2012/7/15")
+          expect(find("input#deal_summary").value).to eq "書きかけ"
+          expect(find("input#deal_debtor_entries_attributes_0_amount").value).to eq "980"
+          expect(find("input#date_day").value).to eq "15"
+        end
+      end
+
+      context "明細(複数)で記入欄を6行に増やし、1行目と6行目に摘要と金額を入れてから切り替えたとき" do
+        before do
+          click_link "明細(複数)"
+          click_link '記入欄を増やす'
+          expect(page).to have_css('input#deal_debtor_entries_attributes_5_amount')
+          fill_in 'deal_creditor_entries_attributes_0_summary', with: '書きかけ1'
+          fill_in 'deal_creditor_entries_attributes_0_reversed_amount', with: '1000'
+          fill_in 'deal_debtor_entries_attributes_5_summary', with: '書きかけ6'
+          fill_in 'deal_debtor_entries_attributes_5_amount', with: '1000'
+          switch_to_hanako
+        end
+
+        it "切り替え先が6行の明細(複数)になり、行ごとの摘要と金額が入る" do
+          expect(page).to have_css('input#deal_debtor_entries_attributes_5_amount')
+          expect(find("input#deal_creditor_entries_attributes_0_summary").value).to eq "書きかけ1"
+          expect(find("input#deal_creditor_entries_attributes_0_reversed_amount").value).to eq "1000"
+          expect(find("input#deal_debtor_entries_attributes_5_summary").value).to eq "書きかけ6"
+          expect(find("input#deal_debtor_entries_attributes_5_amount").value).to eq "1000"
+        end
+      end
+
+      context "明細に口座だけを選んでから切り替えたとき" do
+        before do
+          select '現金', from: 'deal_creditor_entries_attributes_0_account_id'
+          switch_to_hanako
+        end
+
+        it "切り替え先の明細の摘要と金額は空になる" do
+          expect(find("input#deal_summary").value).to eq ""
+          expect(find("input#deal_debtor_entries_attributes_0_amount").value).to eq ""
+        end
+      end
+    end
+    end
+
+
 end
