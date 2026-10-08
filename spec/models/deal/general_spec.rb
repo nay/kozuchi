@@ -55,6 +55,37 @@ describe Deal::General do
     end
   end
 
+  describe "#build_entries_from_draft" do
+    let(:deal) { Deal::General.new.build_entries_from_draft(draft) }
+
+    context "明細の書きかけ（貸借1行ずつ）のとき" do
+      let(:draft) { {summary: '書きかけ', debtor_entries_attributes: {'0' => {amount: '980'}}} }
+
+      it "貸借1行ずつで、摘要と金額が入る" do
+        expect(deal.debtor_entries.size).to eq 1
+        expect(deal.creditor_entries.size).to eq 1
+        expect(deal.summary).to eq '書きかけ'
+        expect(deal.debtor_entries.first.amount).to eq 980
+      end
+    end
+
+    context "6行の明細(複数)の書きかけで、1行目にだけ金額があるとき" do
+      # 借方: 0行目が1000円、1〜5行目は空
+      # 貸方: 0〜5行目がすべて空
+      let(:draft) do
+        empty_rows = (0..5).to_h { |i| [i.to_s, {line_number: i.to_s}] }
+        {debtor_entries_attributes: empty_rows.merge('0' => {line_number: '0', amount: '1000'}), creditor_entries_attributes: empty_rows}
+      end
+
+      it "空の行も含めて貸借6行ずつになり、1行目に金額が入る" do
+        expect(deal.debtor_entries.size).to eq 6
+        expect(deal.creditor_entries.size).to eq 6
+        expect(deal.debtor_entries.first.amount).to eq 1000
+        expect(deal).to be_complex
+      end
+    end
+  end
+
   describe "valid?" do
     it "数字の合った複合Dealが検証をとおること" do
       deal = new_complex_deal(3, 1, {:taro_food => 1300},{:taro_cache => -1000, :taro_bank => -300})

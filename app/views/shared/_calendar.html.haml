@@ -1,7 +1,6 @@
-- # locals として year, month を必要とする。
-- # data が指定されていればマージして#calendarに出力する
-- # switcher が指定されていればクラスに switcher をつける（=data-url-templateのURLヘリダイレクトされるだけになる）
-- data ||= {}
-- switcher ||= false
+- # locals として year, month, url_template を必要とする。
+- # 月を選ぶと、url_template の _YEAR_, _MONTH_ を選んだ年月に置き換えたURLへ移動する
+- # frame が指定されていれば、ページ全体ではなく、その id の Turbo Frame の中身だけを移動先の内容に入れ替える
+- frame ||= nil
 #calendar_form
-  #calendar.top_box{data: data.merge(initial_year: year, initial_month: month), class: switcher ? 'switcher': nil}
+  #calendar.top_box{data: {controller: 'calendar', calendar_year_value: year, calendar_month_value: month, calendar_url_template_value: url_template, calendar_frame_value: frame}}

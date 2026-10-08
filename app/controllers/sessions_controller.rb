@@ -51,6 +51,8 @@ class SessionsController < ApplicationController
 
     # ユーザー依存の情報（勘定や記入のidに関するものなど）をクリアする。年や月など有用な情報は保持する。
     clear_user_session
+    # 一覧の登録フォームに書きかけていた摘要と金額を、切り替え先の一覧の登録フォームに1回だけ渡す。口座は切り替え先にないので渡さない
+    flash[:deal_draft] = deal_draft_params.to_h if params[:deal_draft]
     flash[:notice] = "#{current_user.login}さんの家計簿に移動しました。"
     redirect_to_target_feature
   end
@@ -64,6 +66,11 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def deal_draft_params
+    entry_attributes = [:summary, :amount, :reversed_amount, :line_number]
+    params.require(:deal_draft).permit(:summary, :summary_mode, debtor_entries_attributes: entry_attributes, creditor_entries_attributes: entry_attributes)
+  end
 
   def redirect_to_target_feature
     redirect_to case params[:to]

@@ -18,15 +18,11 @@ module ApplicationHelper
 
   # 現在の機能によってシングルログインでアカウント移動時の移動先識別子を返す
   def single_login_destination
-    if controller_name == 'deals' && action_name == 'monthly'
+    if controller_name == 'deals' && %w(monthly daily).include?(action_name)
       :deals
     else
       nil
     end
-  end
-
-  def day_anchor(date)
-    tag :span, :id => "day#{date.day}"
   end
 
   # deals などで副項目を扱う
@@ -179,7 +175,7 @@ EOF
       <td class="date" #{style}>#{format_date entry.date}</td>
       <td class="number" #{style}>#{entry.daily_seq}</td>
       <td class="summary" #{style}>#{entry.summary}</td>
-      <td class="account_deals_link">#{link_to '→', monthly_account_deals_path(:account_id => entry.account_id, :year => entry.date.year, :month => entry.date.month, :anchor => "e#{entry.id}")}</td>
+      <td class="account_deals_link">#{link_to '→', deals_list_path(date: entry.date, account_id: entry.account_id, anchor: "e#{entry.id}")}</td>
       <td class="account" #{style}>#{entry.mate_account_name}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount.abs) if entry.amount < 0}</td>
       <td class="amount" #{style}>#{number_with_delimiter(entry.amount) if entry.amount >= 0}</td>
@@ -263,11 +259,11 @@ EOS
   # 帳簿系表示ヘルパー
   # 一行を表示する　(table.book の下で呼ばれることを前提とする)
   # :account があれば :name は自動で入れる :account はないこともある
-  # @year, @month の存在を前提とする
+  # 口座へのリンクは、表示中の年月（current_year, current_month）の口座の一覧へ移る
   def book_line(contents = {})
     contents[:name] ||= contents[:account].try(:name)
     string = "<tr>\n"
-    string += "<td>#{contents[:account] ? link_to(contents[:name], monthly_account_deals_path(:account_id => contents[:account].id, :year => @year.to_s, :month => @month.to_s), :class => 'account') : contents[:name]}</td>\n" if contents[:name]
+    string += "<td>#{contents[:account] ? link_to(contents[:name], monthly_account_deals_path(:account_id => contents[:account].id, :year => current_year, :month => current_month), :class => 'account') : contents[:name]}</td>\n" if contents[:name]
     string += "<td class='percentage'>#{contents[:percentage]}%</td>\n" if contents[:percentage]
     string += "<td class='amount'>#{number_with_delimiter(contents[:amount])}</td>\n" if contents[:amount]
     string += "</tr>\n"
