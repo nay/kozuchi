@@ -67,6 +67,39 @@ const hideRecentDealPatterns = function() {
   return $('#deal_pattern_frame').hide();
 };
 
+// 登録フォームの欄のうち、アカウントを切り替えても引き継ぐもの（摘要と金額、行の並び）
+const DEAL_DRAFT_FIELD_NAME = /^deal\[(summary|summary_mode|(debtor|creditor)_entries_attributes\]\[\d+\]\[(summary|amount|reversed_amount|line_number))\]$/;
+const DEAL_DRAFT_INPUT_NAME = /^deal\[(summary|(debtor|creditor)_entries_attributes\]\[\d+\]\[(summary|amount|reversed_amount))\]$/;
+
+// 登録フォームの明細・明細(複数)に書きかけの摘要か金額があれば、引き継ぐ欄の [名前, 値] の一覧を返す。なければ null
+// 編集中（登録フォームが無効）や残高のフォームは対象にしない
+const dealDraftFields = function() {
+  const form = document.querySelector('#new_deal_window:not(.disabled) #deal_form');
+  if (!form) { return null; }
+  const fields = Array.from(form.elements).filter(e => !e.disabled && DEAL_DRAFT_FIELD_NAME.test(e.name));
+  if (!fields.some(e => DEAL_DRAFT_INPUT_NAME.test(e.name) && e.value.trim() !== '')) { return null; }
+  return fields.map(e => [e.name.replace(/^deal\[/, 'deal_draft['), e.value]);
+};
+
+// アカウントを切り替えるリンク（data-carry-deal-draft）で、登録フォームに書きかけがあれば、それを切り替えのリクエストに足して送る
+// リンクの PUT は jquery-ujs が作るフォームで送られ、値を足せないため、書きかけがあるときは jquery-ujs より先にここで処理する
+document.addEventListener('click', function(event) {
+  const link = event.target.closest('a[data-carry-deal-draft]');
+  if (!link) { return; }
+  const fields = dealDraftFields();
+  if (!fields) { return; }
+  event.preventDefault();
+  event.stopPropagation();
+
+  const $form = $('<form method="post"></form>').attr('action', link.href).hide();
+  $form.append($('<input type="hidden" name="_method" value="put">'));
+  $form.append($('<input type="hidden">').attr('name', $('meta[name=csrf-param]').attr('content')).val($('meta[name=csrf-token]').attr('content')));
+  for (let [name, value] of fields) {
+    $form.append($('<input type="hidden">').attr('name', name).val(value));
+  }
+  $form.appendTo('body')[0].submit();
+}, true);
+
 const dealHasAccountId = function(deal, account_id){
   if (!account_id || !deal) { return false; }
   for (let entry of Array.from(deal.readonly_entries)) {
