@@ -1,16 +1,17 @@
 - # 日ナビゲーター
+- # month - 表示する月の初日
 - # path_proc - 日からのリンク先をブロックで渡す。なければ ""
 - # data - date というメソッドを持つオブジェクトの配列
 - path_proc ||= nil
-%table#day_navigator{data: {url: monthly_deal_days_path(year: '_YEAR_', month: '_MONTH_')}}
+%table#day_navigator
   %tr
     %td.year_month
-      = "#{@year}年#{@month}月"
-    - date = Date.new(@year.to_i, @month.to_i, 1)
-    - while date.month == @month.to_i
+      = "#{month.year}年#{month.month}月"
+    - date = month
+    - while date.month == month.month
       %tr
         %td.day
           %div{class: "cwday#{date.cwday}#{date == Time.zone.today ? ' today' : ''}"}
-            = link_to l(date, :format => :day), path_proc ? path_proc.call(date) : '#', data: {day: date.day}
+            = link_to l(date, :format => :day), path_proc ? path_proc.call(date) : '#', data: {turbo: true, turbo_action: 'advance'}
         %td= '*' if data.any?{|d| d.date == date }
       - date += 1

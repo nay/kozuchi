@@ -3,3 +3,5 @@ taro_preference:
   color:
   business_use: 1
   use_daily_booking: 1
+hanako_preference:
+  user_id: <%= Fixtures.identify(:hanako) %>

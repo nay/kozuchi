@@ -45,6 +45,22 @@ class Deal::General < Deal::Base
     self
   end
 
+  # 書きかけの記入欄の内容（摘要と金額など）から記入欄用のオブジェクト（未保存）を作成する
+  # 貸借のどちらかが複数行なら、空の行も含めて同じ行数の複数記入にする。そうでなければ貸借1つずつにする
+  def build_entries_from_draft(draft)
+    error_if_not_empty
+    draft = draft.to_h.with_indifferent_access
+    size = [draft[:debtor_entries_attributes].to_h.size, draft[:creditor_entries_attributes].to_h.size].max
+    self.attributes = draft
+    if size > 1
+      fill_complex_entries(size)
+    else
+      debtor_entries.build if debtor_entries.empty?
+      creditor_entries.build if creditor_entries.empty?
+    end
+    self
+  end
+
   def to_s
     "Deal:#{self.id}:#{object_id}(#{user ? user.login : user.id})" + ((debtor_entries + creditor_entries).map{|e| "(#{e.account_id})#{e.amount}"}.join(','))
   end

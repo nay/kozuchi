@@ -19,7 +19,7 @@
                 - if e == d.entries.first
                   %td.date{rowspan: d.entries.size}= l d.date
                   %td.summary{rowspan: d.entries.size}= d.summary
-                  %td.icon_to_deal{rowspan: d.entries.size, syle: "text-align:center;"}= icon_to_deal_in_monthly d
+                  %td.icon_to_deal{rowspan: d.entries.size, syle: "text-align:center;"}= icon_to_deal d
                 %td.account= e.account.name
                 %td.amount= number_with_delimiter(e.amount) if e.amount  > 0 && !e.initial_balance?
                 %td.amount= number_with_delimiter(e.amount.abs) if e.amount < 0 && !e.initial_balance?

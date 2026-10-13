@@ -38,6 +38,17 @@ const addClassToUpdatedline = function() {
 
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
+// URL の # に合わせて表示を整える
+// #d123 なら更新された行に印をつけ、#recent, #monthly ならそのタブを表示する
+const applyLocationHash = function() {
+  addClassToUpdatedline();
+  if ($('#monthly_deals_body_tab').length > 0) {
+    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
+      $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
+    }
+  }
+};
+
 // 最近の記入パターン欄の内容の更新
 loadRecentDealPatterns = function() {
   const $frame = $('#deal_pattern_frame');
@@ -55,6 +66,39 @@ const hideRecentDealPatterns = function() {
   if ($('#deal_pattern_frame').data('mode') === 'always') { return; }
   return $('#deal_pattern_frame').hide();
 };
+
+// 登録フォームの欄のうち、アカウントを切り替えても引き継ぐもの（摘要と金額、行の並び）
+const DEAL_DRAFT_FIELD_NAME = /^deal\[(summary|summary_mode|(debtor|creditor)_entries_attributes\]\[\d+\]\[(summary|amount|reversed_amount|line_number))\]$/;
+const DEAL_DRAFT_INPUT_NAME = /^deal\[(summary|(debtor|creditor)_entries_attributes\]\[\d+\]\[(summary|amount|reversed_amount))\]$/;
+
+// 登録フォームの明細・明細(複数)に書きかけの摘要か金額があれば、引き継ぐ欄の [名前, 値] の一覧を返す。なければ null
+// 編集中（登録フォームが無効）や残高のフォームは対象にしない
+const dealDraftFields = function() {
+  const form = document.querySelector('#new_deal_window:not(.disabled) #deal_form');
+  if (!form) { return null; }
+  const fields = Array.from(form.elements).filter(e => !e.disabled && DEAL_DRAFT_FIELD_NAME.test(e.name));
+  if (!fields.some(e => DEAL_DRAFT_INPUT_NAME.test(e.name) && e.value.trim() !== '')) { return null; }
+  return fields.map(e => [e.name.replace(/^deal\[/, 'deal_draft['), e.value]);
+};
+
+// アカウントを切り替えるリンク（data-carry-deal-draft）で、登録フォームに書きかけがあれば、それを切り替えのリクエストに足して送る
+// リンクの PUT は jquery-ujs が作るフォームで送られ、値を足せないため、書きかけがあるときは jquery-ujs より先にここで処理する
+document.addEventListener('click', function(event) {
+  const link = event.target.closest('a[data-carry-deal-draft]');
+  if (!link) { return; }
+  const fields = dealDraftFields();
+  if (!fields) { return; }
+  event.preventDefault();
+  event.stopPropagation();
+
+  const $form = $('<form method="post"></form>').attr('action', link.href).hide();
+  $form.append($('<input type="hidden" name="_method" value="put">'));
+  $form.append($('<input type="hidden">').attr('name', $('meta[name=csrf-param]').attr('content')).val($('meta[name=csrf-token]').attr('content')));
+  for (let [name, value] of fields) {
+    $form.append($('<input type="hidden">').attr('name', name).val(value));
+  }
+  $form.appendTo('body')[0].submit();
+}, true);
 
 const dealHasAccountId = function(deal, account_id){
   if (!account_id || !deal) { return false; }
@@ -122,6 +166,19 @@ $(function() {
   $(document).on('click', '#edit_window button.close', closeEditWindow);
   $(document).on('click', 'a.close_edit_window', () => $('#edit_window button.close').click());
 
+  // 月や口座の切り替えで Turbo Frame の中身を入れ替える直前に、編集中なら編集windowを閉じて登録フォームを戻す
+  // 登録フォームの id が書き換わったままだと、入れ替え後も残すべき登録フォームを Turbo が見つけられないため
+  // あわせて、ページごと移動していたときと同じように、前の操作のメッセージを消す
+  $(document).on('turbo:before-frame-render', '#monthly_deals', function() {
+    if ($('#new_deal_window').hasClass('disabled')) {
+      $('tr.edit_deal_row').remove();
+      enableCreateWindow();
+      hideRecentDealPatterns();
+    }
+    $('#content > .alert').remove();
+    hideNotice();
+  });
+
   // deal_tab
   $(document).on('click', '#deal_forms .tabbuttons a.btn', function() {
     if ($(this).hasClass('active')) { return false; }
@@ -170,6 +227,11 @@ $(function() {
             resultUrl = $('#deal_form_option').data("condition-match-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month);
           } else {
             resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month);
+          }
+          // 移り先で日を絞るときは、日で絞った一覧に移る（日で絞った一覧の URL は、月の一覧の URL の後ろに日を付けたもの）
+          // 記入したときは記入した日、変更したときは日で絞った一覧から変更したときだけ変更後の日で絞る
+          if (result.list_day) {
+            resultUrl += "/" + result.list_day;
           }
           resultUrlWithHash = resultUrl + "#recent";
         }
@@ -236,11 +298,13 @@ $(function() {
 
   $(document).on('click', 'a.end_of_month_button', function() {
     const day = endOfMonth($('#date_year').val(), $('#date_month').val());
-    if (day) { $('#date_day').val(day); }
+    if (day) {
+      $('#date_day').val(day);
+      // 日を入れたので、日付の欄を手で変えたときと同じく、その日で絞った一覧に切り替える
+      $('#date_day')[0].dispatchEvent(new Event('change', { bubbles: true }));
+    }
     return false;
   });
-
-  addClassToUpdatedline();
 
   $(window).hashchange(function() {
     clearUpdateLine();
@@ -256,13 +320,6 @@ $(function() {
   // 口座情報の表示
   $(document).on('mouseover', '.account-memo-trigger', function() { return $('.account-memo', this).show(); });
   $(document).on('mouseout',  '.account-memo-trigger',function() { return $('.account-memo', this).hide(); });
-
-  // 日ナビゲーション
-
-  $('.for_deal_editor').on('click', '#day_navigator td.day a', function(event){
-    $(".body_tab_link[data=monthly]").click();
-    return $('input#date_day').val($(this).data('day'));
-  });
 
   // 記入パターンのロード（リターンキーが押されたとき）
   $(document).on('keypress', 'input#pattern_keyword', function(event) {
@@ -315,17 +372,6 @@ $(function() {
     return event.preventDefault();
   });
 
-  // ナビゲーター内の口座選択の変更
-  $('#account_selector #account_id').change(function(event){
-    const account_id = $(this).val();
-    if (account_id === '') {
-      // TODO: あとで実装する
-      return document.location.href = $('#deal_form_option').data('all-url');
-    } else {
-      return document.location.href = $('#deal_form_option').data('account-url').replace('_ACCOUNT_ID_', account_id);
-    }
-  });
-
 
   // 口座選択状態などで情報ボタンを押したとき
   $(document).on('click', 'td.open_detail', function(event){
@@ -354,10 +400,8 @@ $(function() {
     return $('#' + $(this).attr('data') + "_area").show();
   });
 
-  // ロード時、#recent, #monthly というロケーションハッシュがあればリンククリック状態にする
-  if ($('#monthly_deals_body_tab').length > 0) {
-    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
-      return $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
-    }
-  }
+  // URL の # に合わせて表示を整える。タブのクリックの処理を登録してから呼ぶ（#recent ではタブをクリックするため）
+  applyLocationHash();
+  // Turbo が戻る・進むでページ全体を描き直したときも、URL の # に合わせる
+  $(document).on('turbo:load', applyLocationHash);
 });

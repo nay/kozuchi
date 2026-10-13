@@ -67,8 +67,8 @@
               %li= link_to 'プロフィール', edit_user_path
               - if original_user
                 %li.divider{role: 'presentation'}
-                %li= link_to "#{original_user.login}さんのアカウントへ戻る", single_login_path(login: original_user.login, to: single_login_destination), method: :put
+                %li= link_to "#{original_user.login}さんのアカウントへ戻る", single_login_path(login: original_user.login, to: single_login_destination), method: :put, data: {carry_deal_draft: true}
               - elsif current_user.single_logins.length > 0
                 %li.divider{role: 'presentation'}
                 - current_user.single_logins.each do |single_login|
-                  %li= link_to "#{single_login.login}さんのアカウントへ移動", single_login_path(login: single_login.login, to: single_login_destination), method: :put
+                  %li= link_to "#{single_login.login}さんのアカウントへ移動", single_login_path(login: single_login.login, to: single_login_destination), method: :put, data: {carry_deal_draft: true}

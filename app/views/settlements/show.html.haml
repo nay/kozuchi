@@ -8,7 +8,7 @@
         = button_to "提出する", submit_settlement_path(:id => @settlement), :method => :put, :class => 'button', :data => {:confirm => "この精算内容を#{@settlement.account.destination_account.user_login}さんに提出済の状態にします。以後、#{@settlement.account.destination_account.user_login}さんがこの精算の提出を取り消すまで、こちらからは変更、削除、提出の取消が行えなくなります。提出済にしてよろしいですか？"}, class: %w(btn btn-warning)
   - if @settlement.deletable? || !@settlement.kind_of?(SubmittedSettlement)
     %hr
-  = account_button(@settlement.account, @settlement.result_entry.date.year, @settlement.result_entry.date.month)
+  = account_button(@settlement.account, year: @settlement.result_entry.date.year, month: @settlement.result_entry.date.month)
   %hr
   = link_to "#{@settlement.account.name}の精算", account_settlements_path(account_id: @settlement.account.id, year: @settlement.result_entry.date.year, month: @settlement.result_entry.date.month), class: %w(btn btn-default)
   = link_to 'すべての精算', settlements_path(year: current_year, month: current_month), class: %w(btn btn-default)
@@ -51,7 +51,7 @@
     - for target_entry in @settlement.target_entries
       %tr
         = display_account_entry(target_entry)
-        %td.icon_to_deal= icon_to_deal_in_monthly(target_entry.year, target_entry.month, target_entry.deal_id)
+        %td.icon_to_deal= icon_to_deal(target_entry)
 
   %h3 精算結果
   - unless @settlement.result_entry
@@ -63,4 +63,4 @@
         %th.icon_to_deal
       %tr
         = display_account_entry(@settlement.result_entry)
-        %td.icon_to_deal= icon_to_deal_in_monthly(@settlement.result_entry.year, @settlement.result_entry.month, @settlement.result_entry.deal_id)
+        %td.icon_to_deal= icon_to_deal(@settlement.result_entry)

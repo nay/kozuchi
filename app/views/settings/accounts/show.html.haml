@@ -1,6 +1,6 @@
 #simple_right
   = link_to "#{@account.class.type_name}一覧", {action: :index}, class: %w(btn btn-default)
-  = account_button(@account, current_year, current_month)
+  = account_button(@account, year: current_year, month: current_month)
 
 #simple_main
   .panel.panel-default.col-sm-offset-1.col-sm-10

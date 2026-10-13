@@ -9,7 +9,9 @@ import "./html5jp_graphs/vbar"
 
 import "bootstrap"
 
-import "./calendar"
+import "./turbo"
+import "./controllers"
+
 import "./deals"
 import "./jquery.ba-hashchange"
 import "./jquery.observe_field"

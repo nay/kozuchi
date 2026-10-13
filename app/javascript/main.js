@@ -6,7 +6,8 @@
  */
 $(function() {
 
-  $('#user_and_today').click(function() {
+  // Turbo がページ全体を描き直しても外れないように、document で受ける
+  $(document).on('click', '#user_and_today', function() {
     return window.location.href = $(this).attr('link');
   });
 
