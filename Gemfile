@@ -1,5 +1,5 @@
 source 'http://rubygems.org'
-ruby '4.0.7'
+ruby '4.0.9'
 
 # 2.3.0 では、セッションの中のハッシュを直接書き換えた変更が保存されない（表示した年月がセッションに残らない）ため、2.2 系に留める
 # https://github.com/rails/activerecord-session_store/issues/236 が直ったら外す
