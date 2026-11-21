@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include Messages
 
   include AuthenticatedSystem
-  before_action :login_required, :load_user, :set_ssl
+  before_action :log_out_if_original_user_missing, :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_vague_date, :current_year, :current_month, :dummy_year_and_month
   helper_method :settlement_source_exists?, :link_target_changeable?
@@ -44,6 +44,15 @@ class ApplicationController < ActionController::Base
   # * target - Userオブジェクトかidのどちらでもよい
   def link_target_changeable?(target)
     !original_user || original_user.itself_or_friend?(target)
+  end
+
+  # シングルログインの切り替え元のユーザーが削除されていたら、戻る先がないので、切り替えたままにせずログアウトさせる
+  def log_out_if_original_user_missing
+    return if !session[:original_user_id] || original_user
+    cookies.delete :auth_token
+    reset_session
+    flash[:notice] = "切り替え元のアカウントが見つからないため、ログアウトしました。"
+    redirect_to root_path
   end
 
   # アカウントそのものに関わる操作を、シングルログインで切り替えているあいだはできないようにする
