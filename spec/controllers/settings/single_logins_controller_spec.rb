@@ -50,4 +50,20 @@ describe Settings::SingleLoginsController, type: :controller do
     end
   end
 
+  describe "destroy" do
+    before do
+      @single_login = @current_user.single_logins.create!(login: 'hanako', password: 'hanako')
+    end
+
+    context "homeさんからシングルログインで切り替えているとき" do
+      before { switched_from :home }
+      it "操作できずにホームに戻され、設定は残る" do
+        delete :destroy, params: {id: @single_login.id}
+        expect(response).to redirect_to(home_path)
+        expect(flash[:alert]).to include('切り替えているあいだは操作できません')
+        expect(SingleLogin.find_by(id: @single_login.id)).not_to be_nil
+      end
+    end
+  end
+
 end
