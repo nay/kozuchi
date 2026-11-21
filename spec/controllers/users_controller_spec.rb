@@ -9,9 +9,11 @@ describe UsersController, type: :controller do
   end
 
   describe "edit" do
-    it "成功する" do
-      get :edit
-      expect(response).to be_successful
+    context "シングルログインで切り替えていないとき" do
+      it "プロフィールの画面が表示される" do
+        get :edit
+        expect(response).to be_successful
+      end
     end
 
     context "homeさんからシングルログインで切り替えているとき" do
