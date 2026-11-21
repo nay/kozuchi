@@ -14,15 +14,17 @@
               %td
                 - if linked_account_summary[:to]
                   %span→
-                  （
-                  = link_to "解除", settings_account_link_path(:account_id => account.id), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」への連携書き込みを行わないようにします。よろしいですか？"}
-                  ）
+                  - if link_target_changeable?(linked_account_summary[:user_id])
+                    （
+                      = link_to "解除", settings_account_link_path(:account_id => account.id), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」への連携書き込みを行わないようにします。よろしいですか？"}
+                    ）
                   %br
                 - if linked_account_summary[:from]
                   %span ←
-                  （
-                  = link_to "解除", settings_account_link_request_path(:account_id => account.id, :id => linked_account_summary[:request_id]), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」からの連携書き込みを行わないようにします。よろしいですか？"}
-                  ）
+                  - if link_target_changeable?(linked_account_summary[:user_id])
+                    （
+                    = link_to "解除", settings_account_link_request_path(:account_id => account.id, :id => linked_account_summary[:request_id]), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」からの連携書き込みを行わないようにします。よろしいですか？"}
+                    ）
                   %br
               %td= linked_account_summary[:name_with_user]
       %h3 連携機能の解説

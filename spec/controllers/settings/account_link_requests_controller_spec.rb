@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../controller_spec_helper')
 
 describe Settings::AccountLinkRequestsController, type: :controller do
-  fixtures :users, :accounts, :account_links, :account_link_requests
+  fixtures :users, :friend_requests, :friend_permissions, :accounts, :account_links, :account_link_requests
 
   before do
     login_as :taro
@@ -25,6 +25,27 @@ describe Settings::AccountLinkRequestsController, type: :controller do
         expect(response).to redirect_to(settings_account_links_path)
         expect(AccountLinkRequest.find_by(id: @target_id)).to be_nil
         expect(flash[:errors]).to be_nil
+      end
+
+      context "シングルログインで切り替えているとき" do
+        context "元のユーザーが、依頼元のhanakoさんのフレンドのhomeさんのとき" do
+          before { switched_from :home }
+          it "AccountLinkRequestを削除できる" do
+            delete :destroy, params: {:id => @target_id, :account_id => @target_account_id}
+            expect(response).to redirect_to(settings_account_links_path)
+            expect(AccountLinkRequest.find_by(id: @target_id)).to be_nil
+          end
+        end
+
+        context "元のユーザーが、依頼元のhanakoさんのフレンドではないcommon_generalさんのとき" do
+          before { switched_from :common_general }
+          it "AccountLinkRequestは削除されず、連携の画面に戻される" do
+            delete :destroy, params: {:id => @target_id, :account_id => @target_account_id}
+            expect(response).to redirect_to(settings_account_links_path)
+            expect(flash[:alert]).to include('フレンドではない人との連携を変えられません')
+            expect(AccountLinkRequest.find_by(id: @target_id)).not_to be_nil
+          end
+        end
       end
     end
     context "目的のAccountLinkRequestがないとき" do

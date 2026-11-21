@@ -1,5 +1,6 @@
 class Settings::AccountLinkRequestsController < ApplicationController
   before_action :find_account
+  before_action -> { reject_link_change_while_switched(@account.link_requests.find(params[:id]).sender) }
 
   def destroy
     link_request = @account.link_requests.find(params[:id])

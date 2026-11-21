@@ -13,6 +13,14 @@ describe Settings::FriendsController, type: :controller do
       get :index
       expect(response).to be_successful
     end
+
+    context "homeさんからシングルログインで切り替えているとき" do
+      before do
+        switched_from :home
+        get :index
+      end
+      it_behaves_like '切り替え中なので操作できず、ホームに戻される'
+    end
   end
 
 end

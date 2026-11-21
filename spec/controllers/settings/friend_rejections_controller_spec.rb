@@ -18,6 +18,16 @@ describe Settings::FriendRejectionsController, type: :controller do
       expect(@current_user.friend_rejections.find_by(target_id: :hanako.to_id)).not_to be_nil
       expect(flash[:errors]).to be_nil
     end
+
+    context "homeさんからシングルログインで切り替えているとき" do
+      before { switched_from :home }
+      it "操作できずにホームに戻され、拒否は登録されない" do
+        post :create, params: {:target_login => 'hanako'}
+        expect(response).to redirect_to(home_path)
+        expect(flash[:alert]).to include('切り替えているあいだは操作できません')
+        expect(@current_user.friend_rejections.find_by(target_id: :hanako.to_id)).to be_nil
+      end
+    end
   end
 
   describe "destroy" do

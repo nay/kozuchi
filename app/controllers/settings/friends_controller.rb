@@ -3,6 +3,8 @@ class Settings::FriendsController < ApplicationController
   menu_group "連携"
   menu "フレンド"
 
+  before_action :reject_while_switched
+
   def index
     @requests = current_user.friend_requests.not_determined
     @acceptances = current_user.friend_acceptances

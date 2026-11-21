@@ -3,11 +3,13 @@ class Settings::AccountLinksController < ApplicationController
   menu "連携"
 
   before_action :find_account, :only => [:destroy, :create]
+  before_action -> { reject_link_change_while_switched(User.find_by(login: params[:linked_user_login])) }, only: :create
+  before_action -> { reject_link_change_while_switched(@account.link&.target_user) }, only: :destroy
 
   # 取引連動初期表示画面
   def index
     @accounts = current_user.accounts
-    @friends = current_user.friends
+    @friends = current_user.friends.select { |friend| link_target_changeable?(friend) }
     @linked_accounts = @accounts.select{|a| a.linked?}
   end
 
