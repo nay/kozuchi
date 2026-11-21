@@ -53,8 +53,9 @@ class ApplicationController < ActionController::Base
     redirect_back fallback_location: home_path
   end
 
-  def reject_link_change_while_switched(target)
-    return if !target || link_target_changeable?(target) # 相手が見つからないときは、それぞれの処理でエラーにする
+  # @link_target_user に、変えようとしている連携の相手を入れてから使う
+  def reject_link_change_while_switched
+    return if !@link_target_user || link_target_changeable?(@link_target_user) # 相手が見つからないときは、それぞれの処理でエラーにする
     flash[:alert] = "#{current_user.login}さんに切り替えているあいだは、#{original_user.login}さんのフレンドではない人との連携を変えられません。"
     redirect_to settings_account_links_path
   end

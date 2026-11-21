@@ -3,8 +3,8 @@ class Settings::AccountLinksController < ApplicationController
   menu "連携"
 
   before_action :find_account, :only => [:destroy, :create]
-  before_action -> { reject_link_change_while_switched(User.find_by(login: params[:linked_user_login])) }, only: :create
-  before_action -> { reject_link_change_while_switched(@account.link&.target_user) }, only: :destroy
+  before_action :find_link_target_user, only: [:destroy, :create]
+  before_action :reject_link_change_while_switched, only: [:destroy, :create]
 
   # 取引連動初期表示画面
   def index
@@ -22,11 +22,10 @@ class Settings::AccountLinksController < ApplicationController
   # すでにある場合は更新する
   def create
     begin
-      target_user = User.find_by(login: params[:linked_user_login])
       raise PossibleError, "フレンドの口座名を指定してください" if params[:linked_account_name].blank?
-      target_account = target_user ? target_user.accounts.find_by(name: params[:linked_account_name]) : nil
+      target_account = @link_target_user ? @link_target_user.accounts.find_by(name: params[:linked_account_name]) : nil
       # とれてなければset_link内でエラーとなる
-      @account.set_link(target_user, target_account, params[:require_reverse] == "1")
+      @account.set_link(@link_target_user, target_account, params[:require_reverse] == "1")
       flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しました。"
     rescue User::AccountLinking::AccountHasDifferentLinkError => e
       flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しましたが、相手の口座にはすでに別の連携先があるため、双方向の連携を設定できませんでした。"
@@ -37,4 +36,9 @@ class Settings::AccountLinksController < ApplicationController
     redirect_to settings_account_links_path
   end
 
+  private
+
+  def find_link_target_user
+    @link_target_user = action_name == 'create' ? User.find_by(login: params[:linked_user_login]) : @account.link&.target_user
+  end
 end
