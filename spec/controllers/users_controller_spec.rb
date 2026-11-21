@@ -25,20 +25,15 @@ describe UsersController, type: :controller do
 
   describe "update" do
     context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
-      it "操作できずにホームに戻され、メールアドレスは変わらない" do
+      before do
+        switched_from :home
+        request.env['HTTP_REFERER'] = edit_user_url # プロフィールの画面から来たリクエストにする
+      end
+      it "操作できずに、元のプロフィールの画面ではなくホームに戻され、メールアドレスは変わらない" do
         put :update, params: {user: {login: 'taro', email: 'changed@example.com'}}
         expect(response).to redirect_to(home_path)
         expect(flash[:alert]).to include('切り替えているあいだは操作できません')
         expect(@current_user.reload.email).to eq 'taro@kozuchi.net'
-      end
-
-      context "プロフィールの画面から送られたとき" do
-        before { request.env['HTTP_REFERER'] = edit_user_url }
-        it "プロフィールの画面ではなく、ホームに戻される" do
-          put :update, params: {user: {login: 'taro', email: 'changed@example.com'}}
-          expect(response).to redirect_to(home_path)
-        end
       end
     end
   end
