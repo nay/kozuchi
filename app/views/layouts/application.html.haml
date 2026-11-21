@@ -32,5 +32,9 @@
         .alert.alert-danger.alert-dismissable
           %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
           = flash[:error]
+      - if flash[:alert].present?
+        .alert.alert-danger.alert-dismissable
+          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
+          = flash[:alert]
       = yield
     = render partial: "shared/footer"

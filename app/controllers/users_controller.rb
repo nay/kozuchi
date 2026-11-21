@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   menu_group "設定"
   menu "プロフィール", :only => [:edit, :update]
 
+  before_action :reject_while_switched, only: [:edit, :update, :destroy]
   before_action :password_token_required, :only => [:edit_password, :update_password]
   cache_sweeper :export_sweeper, :only => [:destroy]
 
@@ -69,6 +70,7 @@ class UsersController < ApplicationController
     # 更新実行
     if @user.change_password(params[:password], params[:password_confirmation])
       flash[:notice] = "パスワードを変更しました。"
+      self.original_user = nil # ログインし直したら、シングルログインの切り替えを終わらせる
       self.current_user = @user
       redirect_to :controller => 'home', :action => 'index'
     else
@@ -129,6 +131,7 @@ class UsersController < ApplicationController
   
   
   def do_activate(activation_code)
+    self.original_user = nil # ログインし直したら、シングルログインの切り替えを終わらせる
     self.current_user = activation_code.blank? ? false : User.find_by(activation_code: activation_code)
     if logged_in? && !current_user.active?
       current_user.activate
