@@ -14,17 +14,15 @@
               %td
                 - if linked_account_summary[:to]
                   %span→
-                  - if link_target_changeable?(linked_account_summary[:user_id])
-                    （
-                    = link_to "解除", settings_account_link_path(:account_id => account.id), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」への連携書き込みを行わないようにします。よろしいですか？"}
-                    ）
+                  （
+                  = link_to "解除", settings_account_link_path(:account_id => account.id), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」への連携書き込みを行わないようにします。よろしいですか？"}
+                  ）
                   %br
                 - if linked_account_summary[:from]
                   %span ←
-                  - if link_target_changeable?(linked_account_summary[:user_id])
-                    （
-                    = link_to "解除", settings_account_link_request_path(:account_id => account.id, :id => linked_account_summary[:request_id]), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」からの連携書き込みを行わないようにします。よろしいですか？"}
-                    ）
+                  （
+                  = link_to "解除", settings_account_link_request_path(:account_id => account.id, :id => linked_account_summary[:request_id]), :method => :delete, :data => {:confirm => "「#{linked_account_summary[:name_with_user]}」からの連携書き込みを行わないようにします。よろしいですか？"}
+                  ）
                   %br
               %td= linked_account_summary[:name_with_user]
       %h3 連携機能の解説
@@ -57,7 +55,5 @@
                 = check_box_tag :require_reverse, "1", flash[:form] ? flash[:form]['require_reverse'] == '1' : true
                 相手が記入したら自分側にも記入されるようにする
               = submit_tag "連携を設定", class: %w(btn btn-primary)
-          - elsif original_user
-            %p.guide 取引連動の相手となる、#{original_user.login}さんと#{current_user.login}さんの共通のフレンドがいません。
           - else
             %p.guide 取引連動機能を利用するには、フレンドが必要です。フレンド登録を申請し、お友達に承認をもらってください。

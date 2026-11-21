@@ -1,5 +1,4 @@
 class Settings::FriendRejectionsController < ApplicationController
-  before_action :reject_while_switched
   before_action :find_target_user
 
   # フレンド関係の拒否

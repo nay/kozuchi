@@ -36,8 +36,7 @@
               %li= link_to '記入パターン', settings_deal_patterns_path
               %li= link_to 'カスタマイズ', settings_preferences_path
               %li.divider{role: 'presentation'}
-              - unless original_user
-                %li= link_to 'フレンド', settings_friends_path
+              %li= link_to 'フレンド', settings_friends_path
               %li= link_to '連携', settings_account_links_path
               %li= link_to '受け皿', settings_partner_accounts_path
               - unless original_user

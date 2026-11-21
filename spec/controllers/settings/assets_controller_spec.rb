@@ -101,20 +101,6 @@ describe Settings::AccountsController, type: :controller do
         expect(flash[:errors]).not_to be_nil
         expect(@current_user.assets.find_by(id: :taro_cache.to_id)).not_to be_nil
       end
-
-      # 切り替え中は、元のユーザーのフレンドではない人との連携を変えられないが、使っていない口座の削除で連携がなくなるのは許している
-      context "hanakoさんへ連携している、使っていない口座があり、hanakoさんのフレンドではないcommon_generalさんからシングルログインで切り替えているとき" do
-        before do
-          AccountLink.create!(account_id: :taro_cache.to_id, target_user_id: :hanako.to_id, target_ex_account_id: :hanako_cache.to_id)
-          switched_from :common_general
-        end
-        it "その口座を削除でき、連携もなくなる" do
-          delete :destroy, params: {id: :taro_cache.to_id, account_type: 'asset'}
-          expect(response).to redirect_to(settings_assets_path)
-          expect(Account::Base.find_by(id: :taro_cache.to_id)).to be_nil
-          expect(AccountLink.find_by(account_id: :taro_cache.to_id)).to be_nil
-        end
-      end
     end
   end
 end

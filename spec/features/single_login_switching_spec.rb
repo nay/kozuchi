@@ -17,7 +17,6 @@ describe "シングルログインでの切り替え", type: :feature do
       within('body header .navbar') do
         expect(page).to have_link('口座')
         expect(page).not_to have_link('プロフィール')
-        expect(page).not_to have_link('フレンド')
         expect(page).not_to have_link('シングルログイン')
       end
     end

@@ -1,5 +1,4 @@
 class Settings::FriendAcceptancesController < ApplicationController
-  before_action :reject_while_switched
   before_action :find_target_user
 
   def create

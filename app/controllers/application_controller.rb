@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :log_out_if_original_user_missing, :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_vague_date, :current_year, :current_month, :dummy_year_and_month
-  helper_method :settlement_source_exists?, :link_target_changeable?
+  helper_method :settlement_source_exists?
   attr_writer :menu_group, :menu, :title
   helper_method :'menu_group=', :'menu=', :'title='
 
@@ -40,12 +40,6 @@ class ApplicationController < ActionController::Base
     @original_user = user || false
   end
 
-  # シングルログインで切り替えているあいだは、元のユーザー本人か、元のユーザーの相互フレンドとの連携だけを変えられる
-  # * target - Userオブジェクトかidのどちらでもよい
-  def link_target_changeable?(target)
-    !original_user || original_user.itself_or_friend?(target)
-  end
-
   # シングルログインの切り替え元のユーザーが削除されていたら、戻る先がないので、切り替えたままにせずログアウトさせる
   def log_out_if_original_user_missing
     return if !session[:original_user_id] || original_user
@@ -61,14 +55,6 @@ class ApplicationController < ActionController::Base
     flash[:alert] = "#{current_user.login}さんに切り替えているあいだは操作できません。#{original_user.login}さんのアカウントに戻ってから操作してください。"
     redirect_to home_path # 元の画面も拒否される画面のことがあるので、元の画面には戻さない
   end
-
-  # @link_target_user に、変えようとしている連携の相手を入れてから使う
-  def reject_link_change_while_switched
-    return if !@link_target_user || link_target_changeable?(@link_target_user) # 相手が見つからないときは、それぞれの処理でエラーにする
-    flash[:alert] = "#{current_user.login}さんに切り替えているあいだは、#{original_user.login}さんのフレンドではない人との連携を変えられません。"
-    redirect_to settings_account_links_path
-  end
-
 
   private
 
