@@ -10,6 +10,7 @@ class SessionsController < ApplicationController
 
   def create
     if params[:passport] != "1" # utnをつかった簡単ログインでなければ
+      self.original_user = nil # ログインし直したら、シングルログインの切り替えを終わらせる
       self.current_user = User.authenticate(params[:login], params[:password])
     end
     if logged_in? # utnを使った簡単ログインの場合、上記をスキップしてここで自動ログインされる
