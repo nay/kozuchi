@@ -1,6 +1,7 @@
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
   skip_before_action :login_required, :only => [:new, :create, :destroy]
+  before_action :reject_while_switched, only: :update, unless: :switching_to_original_or_current_user? # 切り替え中は、切り替え先のユーザーのシングルログイン設定を使えない
   
   # functional test のために残している
   def new
@@ -39,13 +40,13 @@ class SessionsController < ApplicationController
       redirect_to_target_feature
       return
     else
-      single_login = current_user.single_logins.find_by(login: params[:login])
+      single_login = current_user.single_logins.find_by(login: params[:login]) unless original_user # 切り替え中は、切り替え先のユーザーのシングルログイン設定は使えない
       if !single_login || !single_login.active?
         flash[:errors] = ["#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
         redirect_to_target_feature
         return
       end
-      self.original_user ||= self.current_user
+      self.original_user = self.current_user
       self.current_user = User.find_by(login: single_login.login)
     end
 
@@ -70,6 +71,10 @@ class SessionsController < ApplicationController
   def deal_draft_params
     entry_attributes = [:summary, :amount, :reversed_amount, :line_number]
     params.require(:deal_draft).permit(:summary, :summary_mode, debtor_entries_attributes: entry_attributes, creditor_entries_attributes: entry_attributes)
+  end
+
+  def switching_to_original_or_current_user?
+    [original_user&.login, current_user.login].include?(params[:login])
   end
 
   def redirect_to_target_feature
