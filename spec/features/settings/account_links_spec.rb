@@ -34,5 +34,22 @@ describe Settings::AccountLinksController, type: :feature do
         expect(page).to have_select('linked_user_login', options: %w(taro))
       end
     end
+
+    context "taroさんがhanakoさんに切り替えていて、taroさんとhanakoさんはフレンドではなく、共通のフレンドもいないとき" do
+      before do
+        current_user.friend_acceptances.find_by(target_id: Fixtures.identify(:hanako)).destroy
+        current_user.friend_acceptances.find_by(target_id: Fixtures.identify(:home)).destroy
+        current_user.single_logins.create!(login: 'hanako', password: 'hanako')
+        visit home_path
+        click_button 'taroさんでログイン中'
+        click_link 'hanakoさんのアカウントへ移動'
+        visit settings_account_links_path
+      end
+
+      it "新しい連携のフォームは出ず、共通のフレンドがいないことが表示される" do
+        expect(page).not_to have_select('linked_user_login')
+        expect(page).to have_content('取引連動の相手となる、taroさんとhanakoさんの共通のフレンドがいません。')
+      end
+    end
   end
 end

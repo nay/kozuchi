@@ -57,5 +57,7 @@
                 = check_box_tag :require_reverse, "1", flash[:form] ? flash[:form]['require_reverse'] == '1' : true
                 相手が記入したら自分側にも記入されるようにする
               = submit_tag "連携を設定", class: %w(btn btn-primary)
+          - elsif original_user
+            %p.guide 取引連動の相手となる、#{original_user.login}さんと#{current_user.login}さんの共通のフレンドがいません。
           - else
             %p.guide 取引連動機能を利用するには、フレンドが必要です。フレンド登録を申請し、お友達に承認をもらってください。
