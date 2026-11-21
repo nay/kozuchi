@@ -32,6 +32,14 @@ describe UsersController, type: :controller do
         expect(flash[:alert]).to include('切り替えているあいだは操作できません')
         expect(@current_user.reload.email).to eq 'taro@kozuchi.net'
       end
+
+      context "プロフィールの画面から送られたとき" do
+        before { request.env['HTTP_REFERER'] = edit_user_url }
+        it "プロフィールの画面ではなく、ホームに戻される" do
+          put :update, params: {user: {login: 'taro', email: 'changed@example.com'}}
+          expect(response).to redirect_to(home_path)
+        end
+      end
     end
   end
 

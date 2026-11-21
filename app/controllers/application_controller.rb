@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
   def reject_while_switched
     return unless original_user
     flash[:alert] = "#{current_user.login}さんに切り替えているあいだは操作できません。#{original_user.login}さんのアカウントに戻ってから操作してください。"
-    redirect_back fallback_location: home_path
+    redirect_to home_path # 元の画面も拒否される画面のことがあるので、元の画面には戻さない
   end
 
   # @link_target_user に、変えようとしている連携の相手を入れてから使う
