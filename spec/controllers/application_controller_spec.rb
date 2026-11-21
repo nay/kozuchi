@@ -14,7 +14,7 @@ describe ApplicationController, type: :controller do
     login_as :taro
   end
 
-  describe "シングルログインの切り替え元のユーザーの確認" do
+  describe "シングルログインの切り替え元と切り替え先のユーザーの確認" do
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
 
@@ -25,19 +25,30 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    context "homeさんからシングルログインで切り替えていて、homeさんのアカウントが削除されたとき" do
+    shared_examples_for 'ログアウトされ、トップページに戻される' do
+      it "ログアウトされ、トップページに戻される" do
+        get :index
+        expect(response).to redirect_to(root_path)
+        expect(flash[:notice]).to eq '切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。'
+        expect(session[:user_id]).to be_nil
+        expect(session[:original_user_id]).to be_nil
+      end
+    end
+
+    context "homeさんからシングルログインで切り替えていて、切り替え元のhomeさんのアカウントが削除されたとき" do
       before do
         switched_from :home
         users(:home).destroy
       end
+      it_behaves_like 'ログアウトされ、トップページに戻される'
+    end
 
-      it "ログアウトされ、トップページに戻される" do
-        get :index
-        expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to eq '切り替え元のアカウントが見つからないため、ログアウトしました。'
-        expect(session[:user_id]).to be_nil
-        expect(session[:original_user_id]).to be_nil
+    context "homeさんからシングルログインで切り替えていて、切り替え先のtaroさんのアカウントが削除されたとき" do
+      before do
+        switched_from :home
+        users(:taro).destroy
       end
+      it_behaves_like 'ログアウトされ、トップページに戻される'
     end
   end
 end

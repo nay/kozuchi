@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include Messages
 
   include AuthenticatedSystem
-  before_action :log_out_if_original_user_missing, :login_required, :load_user, :set_ssl
+  before_action :log_out_if_switching_user_missing, :login_required, :load_user, :set_ssl
   helper :all
   helper_method :original_user, :bookkeeping_style?, :account_selection_histories, :last_selected_credit, :current_vague_date, :current_year, :current_month, :dummy_year_and_month
   helper_method :settlement_source_exists?
@@ -40,12 +40,12 @@ class ApplicationController < ActionController::Base
     @original_user = user || false
   end
 
-  # シングルログインの切り替え元のユーザーが削除されていたら、戻る先がないので、切り替えたままにせずログアウトさせる
-  def log_out_if_original_user_missing
-    return if !session[:original_user_id] || original_user
+  # シングルログインの切り替え元か切り替え先のユーザーが削除されていたら、切り替えたままにせずログアウトさせる
+  def log_out_if_switching_user_missing
+    return if !session[:original_user_id] || (original_user && User.exists?(session[:user_id]))
     cookies.delete :auth_token
     reset_session
-    flash[:notice] = "切り替え元のアカウントが見つからないため、ログアウトしました。"
+    flash[:notice] = "切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。"
     redirect_to root_path
   end
 
