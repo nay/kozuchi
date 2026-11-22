@@ -1,6 +1,7 @@
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
   skip_before_action :login_required, :only => [:new, :create, :destroy]
+  skip_before_action :end_switching_if_user_missing, only: [:create, :destroy] # ログインもログアウトも、切り替えの状態にかかわらず切り替えを終わらせる
   before_action :reject_while_switched, only: :update, unless: :switching_to_original_or_current_user? # 切り替え中は、切り替え先のユーザーのシングルログイン設定を使えない
   
   # functional test のために残している
