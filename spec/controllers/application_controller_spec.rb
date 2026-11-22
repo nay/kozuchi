@@ -64,17 +64,8 @@ describe ApplicationController, type: :controller do
         before do
           users(:home).remember_me
           request.cookies[:auth_token] = users(:home).remember_token
-          session[:account_id] = 1 # 切り替え先のtaroさんの口座を見ていた
         end
-
-        it "切り替えが終わってhomeさんに戻り、ホームに移される" do
-          get :index
-          expect(response).to redirect_to(home_path)
-          expect(flash[:notice]).to eq '切り替え先のアカウントが見つからないため、homeさんの家計簿に戻りました。'
-          expect(session[:user_id]).to eq users(:home).id
-          expect(session[:original_user_id]).to be_nil
-          expect(session[:account_id]).to be_nil
-        end
+        it_behaves_like 'ログアウトされ、トップページに戻される'
       end
     end
   end

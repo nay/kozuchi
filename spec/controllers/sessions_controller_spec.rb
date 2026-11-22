@@ -25,12 +25,8 @@ describe SessionsController, type: :controller do
         expect(session[:original_user_id]).to be_nil
       end
 
-      context "切り替え先のtaroさんのアカウントが削除されていて、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
-        before do
-          users(:taro).destroy
-          users(:home).remember_me
-          request.cookies[:auth_token] = users(:home).remember_token
-        end
+      context "切り替え先のtaroさんのアカウントが削除されているとき" do
+        before { users(:taro).destroy }
 
         it "ほかのユーザーでログインすると、そのユーザーになり、切り替えは終わる" do
           post :create, params: {login: 'no_mobile_ident_user', password: 'test'}
@@ -48,12 +44,8 @@ describe SessionsController, type: :controller do
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
 
-      context "切り替え先のtaroさんのアカウントが削除されていて、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
-        before do
-          users(:taro).destroy
-          users(:home).remember_me
-          request.cookies[:auth_token] = users(:home).remember_token
-        end
+      context "切り替え先のtaroさんのアカウントが削除されているとき" do
+        before { users(:taro).destroy }
 
         it "ログアウトされる" do
           delete :destroy

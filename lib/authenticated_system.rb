@@ -9,7 +9,7 @@ module AuthenticatedSystem
     # Accesses the current user from the session. 
     # Future calls avoid the database because nil is not equal to false.
     def current_user
-      @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie) unless @current_user == false
+      @current_user ||= (session[:user_id] ? login_from_session : (login_from_basic_auth || login_from_cookie)) unless @current_user == false # Basic 認証と Cookie は、セッションにユーザーがないときだけ使う
     end
 
     # Store the given user id in the session.
