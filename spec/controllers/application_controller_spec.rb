@@ -36,7 +36,7 @@ describe ApplicationController, type: :controller do
       it "ログアウトされ、トップページに戻される" do
         get :index
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to eq '切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。'
+        expect(flash[:alert]).to eq '切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。'
         expect(session[:user_id]).to be_nil
         expect(session[:original_user_id]).to be_nil
       end

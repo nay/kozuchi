@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
     return if original_user && current_user
     cookies.delete :auth_token
     reset_session
-    flash[:notice] = "切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。"
+    flash[:alert] = "切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。"
     redirect_to root_path
   end
 
