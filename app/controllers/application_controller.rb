@@ -42,7 +42,8 @@ class ApplicationController < ActionController::Base
 
   # シングルログインの切り替え元か切り替え先のユーザーが削除されていたら、切り替えたままにせずログアウトさせる
   def log_out_if_switching_user_missing
-    return if !session[:original_user_id] || (original_user && User.exists?(session[:user_id]))
+    return unless session[:original_user_id]
+    return if original_user && User.exists?(session[:user_id])
     cookies.delete :auth_token
     reset_session
     flash[:notice] = "切り替え元か切り替え先のアカウントが見つからないため、ログアウトしました。"
