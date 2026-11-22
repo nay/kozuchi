@@ -51,7 +51,7 @@ class UsersController < ApplicationController
     
     user =  User.find_by(email: params[:email])
     unless user
-      flash[:alert] = "該当するユーザーは登録されていません。"
+      flash.now[:alert] = "該当するユーザーは登録されていません。"
       render :action => 'forgot_password'
       return
     end
