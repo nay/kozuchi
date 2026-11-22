@@ -51,7 +51,7 @@ class UsersController < ApplicationController
     
     user =  User.find_by(email: params[:email])
     unless user
-      flash[:error] = "該当するユーザーは登録されていません。"
+      flash[:alert] = "該当するユーザーは登録されていません。"
       render :action => 'forgot_password'
       return
     end
@@ -122,7 +122,7 @@ class UsersController < ApplicationController
 
     @user = User.find_by(password_token: params[:password_token])
     if !@user || !@user.password_token?
-      flash[:error] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
+      flash[:alert] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
       redirect_to forgot_password_path
     else
       @password_token = params[:password_token]

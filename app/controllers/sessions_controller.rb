@@ -20,7 +20,7 @@ class SessionsController < ApplicationController
       end
       redirect_back_or_default(url_for(:controller => 'home', :action => 'index'))
     else
-      flash[:error] = "ログインに失敗しました。"
+      flash[:alert] = "ログインに失敗しました。"
       flash[:login] = params[:login]
       redirect_to root_path
     end

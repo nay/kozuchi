@@ -28,10 +28,6 @@
         .alert.alert-success.alert-dismissable
           %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
           = flash[:notice]
-      - if flash[:error].present?
-        .alert.alert-danger.alert-dismissable
-          %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;
-          = flash[:error]
       - if flash[:alert].present?
         .alert.alert-danger.alert-dismissable
           %button.close{type: 'button', 'data-dismiss'=>'alert', 'aria-hidden'=>"true"} &times;

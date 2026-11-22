@@ -20,7 +20,7 @@ describe SessionsController, type: :controller do
       it "ログインに失敗すると、ログアウトされ、切り替えも終わる" do
         post :create, params: {login: 'taro', password: 'wrong'}
         expect(response).to redirect_to(root_path)
-        expect(flash[:error]).to eq 'ログインに失敗しました。'
+        expect(flash[:alert]).to eq 'ログインに失敗しました。'
         expect(session[:user_id]).to be_nil
         expect(session[:original_user_id]).to be_nil
       end
