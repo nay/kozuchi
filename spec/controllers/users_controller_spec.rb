@@ -42,16 +42,17 @@ describe UsersController, type: :controller do
 
   describe "update_password" do
     context "homeさんからシングルログインで切り替えているとき" do
-      before do
-        switched_from :home
-        @current_user.update_password_token
-      end
+      before { switched_from :home }
 
-      it "taroさんのパスワード再設定のリンクでパスワードを変えると、taroさんのまま、切り替えは終わる" do
-        post :update_password, params: {password_token: @current_user.password_token, password: 'newpassword', password_confirmation: 'newpassword'}
-        expect(response).to redirect_to(home_path)
-        expect(session[:user_id]).to eq @current_user.id
-        expect(session[:original_user_id]).to be_nil
+      context "taroさんがパスワード再設定を申し込んでいるとき" do
+        before { @current_user.update_password_token }
+
+        it "パスワード再設定のリンクでパスワードを変えると、taroさんのまま、切り替えは終わる" do
+          post :update_password, params: {password_token: @current_user.password_token, password: 'newpassword', password_confirmation: 'newpassword'}
+          expect(response).to redirect_to(home_path)
+          expect(session[:user_id]).to eq @current_user.id
+          expect(session[:original_user_id]).to be_nil
+        end
       end
     end
   end
