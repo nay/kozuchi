@@ -34,7 +34,7 @@ describe Settings::AccountLinksController, type: :controller do
       it "成功する" do
         post :create, params: {:linked_account_name => '太郎', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'}
         expect(response).to redirect_to(settings_account_links_path)
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
         expect(AccountLink.find_by(account_id: Fixtures.identify(:taro_hanako), target_user_id: Fixtures.identify(:hanako))).not_to be_nil
       end
     end

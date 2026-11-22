@@ -16,7 +16,7 @@ describe Settings::FriendAcceptancesController, type: :controller do
       post :create, params: {:target_login => 'hanako'}
       expect(response).to redirect_to(settings_friends_path)
       expect(@current_user.friend_acceptances.find_by(target_id: :hanako.to_id)).not_to be_nil
-      expect(flash[:errors]).to be_nil
+      expect(flash[:alert]).to be_nil
     end
     it "すでにあると失敗する" do
       @current_user.friend_acceptances.create!(:target_id => :hanako.to_id)
@@ -24,7 +24,7 @@ describe Settings::FriendAcceptancesController, type: :controller do
       post :create, params: {:target_login => 'hanako'}
       expect(response).to redirect_to(settings_friends_path)
       expect(@current_user.friend_acceptances.find_by(target_id: :hanako.to_id)).not_to be_nil
-      expect(flash[:errors]).not_to be_nil
+      expect(flash[:alert]).not_to be_nil
     end
   end
 
@@ -34,7 +34,7 @@ describe Settings::FriendAcceptancesController, type: :controller do
       delete :destroy, params: {:target_login => 'hanako'}
       expect(response).to redirect_to(settings_friends_path)
       expect(@current_user.friend_acceptances.find_by(target_id: :hanako.to_id)).to be_nil
-      expect(flash[:errors]).to be_nil
+      expect(flash[:alert]).to be_nil
     end
   end
 

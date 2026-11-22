@@ -53,7 +53,7 @@ class Settings::AccountsController < ApplicationController
       @account.destroy
       flash[:notice]="「#{@account.name}」を削除しました。"
     rescue Account::Base::UsedAccountException => err
-      flash[:errors]= [err.message]
+      flash[:alert] = err.message
     end
     redirect_to action: :index
   end

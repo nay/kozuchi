@@ -26,7 +26,7 @@ describe Settings::AccountsController, type: :controller do
           expense = @current_user.expenses.find_by(name: '追加')
           expect(expense).not_to be_nil
           expect(expense.sort_key).to eq 77
-          expect(flash[:errors]).to be_nil
+          expect(flash[:alert]).to be_nil
         end
       end
       context "正しいパラメータ" do
@@ -63,7 +63,7 @@ describe Settings::AccountsController, type: :controller do
         expect(response).to redirect_to(settings_expenses_path)
         expense = @current_user.expenses.find_by(name: 'しょくひ')
         expect(expense).not_to be_nil
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_food.to_id.to_s][:name] = ""
@@ -83,7 +83,7 @@ describe Settings::AccountsController, type: :controller do
         delete :destroy, params: {id: :taro_food.to_id, account_type: 'expense'}
         expect(response).to redirect_to(settings_expenses_path)
         expect(Account::Base.find_by(id: :taro_food.to_id)).to be_nil
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
       it "他人の口座を指定できない" do
         expect {delete :destroy, params: {id: :hanako_food.to_id, account_type: 'expense'}}.to raise_error(ActiveRecord::RecordNotFound)
@@ -95,7 +95,7 @@ describe Settings::AccountsController, type: :controller do
           )
         delete :destroy, params: {id: :taro_food.to_id, account_type: 'expense'}
         expect(response).to redirect_to(settings_expenses_path)
-        expect(flash[:errors]).not_to be_nil
+        expect(flash[:alert]).not_to be_nil
         expect(@current_user.expenses.find_by(id: :taro_food.to_id)).not_to be_nil
       end
     end

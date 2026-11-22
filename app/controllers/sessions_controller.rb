@@ -43,7 +43,7 @@ class SessionsController < ApplicationController
     else
       single_login = current_user.single_logins.find_by(login: params[:login])
       if !single_login || !single_login.active?
-        flash[:errors] = ["#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
+        flash[:alert] = "#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"
         redirect_to_target_feature
         return
       end
