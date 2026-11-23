@@ -4,6 +4,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 describe UsersController, type: :controller do
   fixtures :users, :preferences
 
+  let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') } # 有効にしていないユーザー
+
   shared_examples_for 'ログイン中なので利用できず、ホームに戻される' do
     it "利用できず、ホームに戻される" do
       expect(response).to redirect_to(home_path)
@@ -91,13 +93,16 @@ describe UsersController, type: :controller do
   end
 
   describe "edit_password" do
-    context "taroさんがパスワード再設定を申し込んでいて、ログインしているとき" do
-      before do
-        users(:taro).update_password_token
-        login_as :taro
-        get :edit_password, params: {password_token: users(:taro).password_token}
+    context "taroさんがパスワード再設定を申し込んでいるとき" do
+      before { users(:taro).update_password_token }
+
+      context "ログインしているとき" do
+        before do
+          login_as :taro
+          get :edit_password, params: {password_token: users(:taro).password_token}
+        end
+        it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
       end
-      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
     end
   end
 
@@ -127,20 +132,20 @@ describe UsersController, type: :controller do
       end
     end
 
-    context "ログインしていなくて、無効なパスワード再設定のリンクのとき" do
-      before { post :update_password, params: {password_token: 'invalid', password: 'newpassword', password_confirmation: 'newpassword'} }
+    context "無効なパスワード再設定のリンクのとき" do
+      context "ログインしていないとき" do
+        before { post :update_password, params: {password_token: 'invalid', password: 'newpassword', password_confirmation: 'newpassword'} }
 
-      it "申し込み直すよう伝えて、パスワードを忘れたときの画面に戻される" do
-        expect(response).to redirect_to(forgot_password_path)
-        expect(flash[:alert]).to eq 'このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。'
+        it "申し込み直すよう伝えて、パスワードを忘れたときの画面に戻される" do
+          expect(response).to redirect_to(forgot_password_path)
+          expect(flash[:alert]).to eq 'このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。'
+        end
       end
     end
   end
 
   describe "activate" do
     context "jiroさんの有効化のリンクがあるとき" do
-      let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
-
       context "ログインしていないとき" do
         before { get :activate, params: {activation_code: jiro.activation_code} }
 
@@ -165,13 +170,14 @@ describe UsersController, type: :controller do
   end
 
   describe "activate_login_engine" do
-    context "jiroさんの有効化のリンクがあり、taroさんでログインしているとき" do
-      let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
-      before do
-        login_as :taro
-        get :activate_login_engine, params: {key: jiro.activation_code}
+    context "jiroさんの有効化のリンクがあるとき" do
+      context "taroさんでログインしているとき" do
+        before do
+          login_as :taro
+          get :activate_login_engine, params: {key: jiro.activation_code}
+        end
+        it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
       end
-      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
     end
   end
 
