@@ -4,11 +4,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../controller_spec_helper')
 describe UsersController, type: :controller do
   fixtures :users, :preferences
 
-  before do
-    login_as :taro
+  shared_examples_for 'ログイン中なので利用できず、ホームに戻される' do
+    it "利用できず、ホームに戻される" do
+      expect(response).to redirect_to(home_path)
+      expect(flash[:alert]).to eq 'ログインしているあいだは利用できません。ログアウトしてから操作してください。'
+    end
   end
 
   describe "edit" do
+    before { login_as :taro }
+
     context "シングルログインで切り替えていないとき" do
       it "プロフィールの画面が表示される" do
         get :edit
@@ -26,6 +31,8 @@ describe UsersController, type: :controller do
   end
 
   describe "update" do
+    before { login_as :taro }
+
     context "homeさんからシングルログインで切り替えているとき" do
       before do
         switched_from :home
@@ -40,35 +47,87 @@ describe UsersController, type: :controller do
     end
   end
 
+  describe "new" do
+    context "ログインしているとき" do
+      before do
+        login_as :taro
+        get :new
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+    end
+  end
+
+  describe "create" do
+    context "ログインしているとき" do
+      before do
+        login_as :taro
+        post :create, params: {user: {login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234'}}
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+      it "ユーザーは登録されない" do
+        expect(User.find_by(login: 'jiro')).to be_nil
+      end
+    end
+  end
+
+  describe "forgot_password" do
+    context "ログインしているとき" do
+      before do
+        login_as :taro
+        get :forgot_password
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+    end
+  end
+
+  describe "deliver_password_notification" do
+    context "ログインしているとき" do
+      before do
+        login_as :taro
+        post :deliver_password_notification, params: {email: 'taro@kozuchi.net'}
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+    end
+  end
+
+  describe "edit_password" do
+    context "taroさんがパスワード再設定を申し込んでいて、ログインしているとき" do
+      before do
+        users(:taro).update_password_token
+        login_as :taro
+        get :edit_password, params: {password_token: users(:taro).password_token}
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+    end
+  end
+
   describe "update_password" do
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "taroさんがパスワード再設定を申し込んでいるとき" do
+      before { users(:taro).update_password_token }
 
-      context "taroさんがパスワード再設定を申し込んでいるとき" do
-        before { @current_user.update_password_token }
+      context "ログインしていないとき" do
+        before { post :update_password, params: {password_token: users(:taro).password_token, password: 'newpassword', password_confirmation: 'newpassword'} }
 
-        shared_examples_for 'パスワードが変わり、taroさんのまま、切り替えは終わる' do
-          it "パスワードが変わり、taroさんのまま、切り替えは終わる" do
-            post :update_password, params: {password_token: @current_user.password_token, password: 'newpassword', password_confirmation: 'newpassword'}
-            expect(response).to redirect_to(home_path)
-            expect(User.authenticate('taro', 'newpassword')).to eq @current_user
-            expect(session[:user_id]).to eq @current_user.id
-            expect(session[:original_user_id]).to be_nil
-          end
+        it "パスワードが変わり、taroさんでログインする" do
+          expect(response).to redirect_to(home_path)
+          expect(User.authenticate('taro', 'newpassword')).to eq users(:taro)
+          expect(session[:user_id]).to eq users(:taro).id
         end
+      end
 
-        context "どちらのアカウントもあるとき" do
-          it_behaves_like 'パスワードが変わり、taroさんのまま、切り替えは終わる'
+      context "ログインしているとき" do
+        before do
+          login_as :taro
+          post :update_password, params: {password_token: users(:taro).password_token, password: 'newpassword', password_confirmation: 'newpassword'}
         end
-
-        context "切り替え元のhomeさんのアカウントが削除されているとき" do
-          before { users(:home).destroy }
-          it_behaves_like 'パスワードが変わり、taroさんのまま、切り替えは終わる'
+        it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+        it "パスワードは変わらない" do
+          expect(User.authenticate('taro', 'newpassword')).to be_nil
         end
       end
     end
 
-    context "無効なパスワード再設定のリンクのとき" do
+    context "ログインしていなくて、無効なパスワード再設定のリンクのとき" do
       before { post :update_password, params: {password_token: 'invalid', password: 'newpassword', password_confirmation: 'newpassword'} }
 
       it "申し込み直すよう伝えて、パスワードを忘れたときの画面に戻される" do
@@ -79,35 +138,46 @@ describe UsersController, type: :controller do
   end
 
   describe "activate" do
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "jiroさんの有効化のリンクがあるとき" do
+      let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
 
-      context "jiroさんの有効化のリンクがあるとき" do
-        let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
+      context "ログインしていないとき" do
+        before { get :activate, params: {activation_code: jiro.activation_code} }
 
-        shared_examples_for 'jiroさんが有効になってjiroさんになり、切り替えは終わる' do
-          it "jiroさんが有効になってjiroさんになり、切り替えは終わる" do
-            get :activate, params: {activation_code: jiro.activation_code}
-            expect(response).to redirect_to(home_path)
-            expect(jiro.reload).to be_active
-            expect(session[:user_id]).to eq jiro.id
-            expect(session[:original_user_id]).to be_nil
-          end
+        it "jiroさんが有効になり、jiroさんでログインする" do
+          expect(response).to redirect_to(home_path)
+          expect(jiro.reload).to be_active
+          expect(session[:user_id]).to eq jiro.id
         end
+      end
 
-        context "どちらのアカウントもあるとき" do
-          it_behaves_like 'jiroさんが有効になってjiroさんになり、切り替えは終わる'
+      context "taroさんでログインしているとき" do
+        before do
+          login_as :taro
+          get :activate, params: {activation_code: jiro.activation_code}
         end
-
-        context "切り替え元のhomeさんのアカウントが削除されているとき" do
-          before { users(:home).destroy }
-          it_behaves_like 'jiroさんが有効になってjiroさんになり、切り替えは終わる'
+        it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+        it "jiroさんは有効にならない" do
+          expect(jiro.reload).not_to be_active
         end
       end
     end
   end
 
+  describe "activate_login_engine" do
+    context "jiroさんの有効化のリンクがあり、taroさんでログインしているとき" do
+      let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
+      before do
+        login_as :taro
+        get :activate_login_engine, params: {key: jiro.activation_code}
+      end
+      it_behaves_like 'ログイン中なので利用できず、ホームに戻される'
+    end
+  end
+
   describe "destroy" do
+    before { login_as :taro }
+
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
       it "操作できずにホームに戻され、アカウントは削除されない" do
