@@ -40,7 +40,7 @@ describe ApplicationController, type: :controller do
           expect(session[:user_id]).to eq users(:taro).id
         end
 
-        it "ユーザーを読むクエリは、切り替え元と切り替え先の2本だけ" do
+        it "ユーザーを読むクエリは、切り替え元と切り替え先の2本だけ発行する" do
           user_queries = []
           callback = ->(*, payload) { user_queries << payload[:sql] if payload[:sql].include?('"users"') }
           ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') { get :index }
@@ -48,12 +48,12 @@ describe ApplicationController, type: :controller do
         end
       end
 
-      context "切り替え元のhomeさんのアカウントが削除されたとき" do
+      context "切り替え元のhomeさんのアカウントが削除されているとき" do
         before { users(:home).destroy }
         it_behaves_like 'ログアウトされ、トップページに戻される'
       end
 
-      context "切り替え先のtaroさんのアカウントが削除されたとき" do
+      context "切り替え先のtaroさんのアカウントが削除されているとき" do
         before { users(:taro).destroy }
 
         context "「ログイン状態を記憶」の Cookie がないとき" do
@@ -66,6 +66,11 @@ describe ApplicationController, type: :controller do
             request.cookies[:auth_token] = users(:home).remember_token
           end
           it_behaves_like 'ログアウトされ、トップページに戻される'
+
+          it "Cookie も消される" do
+            get :index
+            expect(cookies[:auth_token]).to be_nil
+          end
         end
       end
     end

@@ -8,7 +8,9 @@ module AuthenticatedSystem
 
     # 今のユーザー。いなければ false を覚えて、同じリクエストの中では探し直さない
     def current_user
-      self.current_user = (session[:user_id] ? session_user : (basic_auth_user || cookie_user)) if @current_user.nil? # Basic 認証と Cookie は、セッションにユーザーがないときだけ使う
+      if @current_user.nil?
+        self.current_user = session[:user_id] ? session_user : (basic_auth_user || cookie_user) # Basic 認証と Cookie は、セッションにユーザーがないときだけ使う
+      end
       @current_user || nil # 呼ぶ側には、いないときは今までどおり nil を返す
     end
 

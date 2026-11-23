@@ -11,9 +11,11 @@ describe Settings::SingleLoginsController, type: :controller do
   response_should_be_redirected_without_login { get :index }
 
   describe "index" do
-    it "成功する" do
-      get :index
-      expect(response).to be_successful
+    context "シングルログインで切り替えていないとき" do
+      it "成功する" do
+        get :index
+        expect(response).to be_successful
+      end
     end
 
     context "homeさんからシングルログインで切り替えているとき" do

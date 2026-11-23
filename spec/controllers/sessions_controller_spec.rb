@@ -10,24 +10,26 @@ describe SessionsController, type: :controller do
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
 
-      context "taroさんでログインし直したとき" do
-        before { post :create, params: {login: 'taro', password: 'taro'} }
+      context "どちらのアカウントもあるとき" do
+        context "taroさんでログインし直したとき" do
+          before { post :create, params: {login: 'taro', password: 'taro'} }
 
-        it "taroさんのまま、切り替えは終わる" do
-          expect(response).to redirect_to(home_path)
-          expect(session[:user_id]).to eq users(:taro).id
-          expect(session[:original_user_id]).to be_nil
+          it "taroさんのまま、切り替えは終わる" do
+            expect(response).to redirect_to(home_path)
+            expect(session[:user_id]).to eq users(:taro).id
+            expect(session[:original_user_id]).to be_nil
+          end
         end
-      end
 
-      context "ログインに失敗したとき" do
-        before { post :create, params: {login: 'taro', password: 'wrong'} }
+        context "ログインに失敗したとき" do
+          before { post :create, params: {login: 'taro', password: 'wrong'} }
 
-        it "ログアウトされ、切り替えも終わる" do
-          expect(response).to redirect_to(root_path)
-          expect(flash[:alert]).to eq 'ログインに失敗しました。'
-          expect(session[:user_id]).to be_nil
-          expect(session[:original_user_id]).to be_nil
+          it "ログアウトされ、切り替えも終わる" do
+            expect(response).to redirect_to(root_path)
+            expect(flash[:alert]).to eq 'ログインに失敗しました。'
+            expect(session[:user_id]).to be_nil
+            expect(session[:original_user_id]).to be_nil
+          end
         end
       end
 
@@ -149,6 +151,8 @@ describe SessionsController, type: :controller do
 
         it "taroさんのまま変わらない" do
           expect(response).to redirect_to(home_path)
+          expect(flash[:notice]).to eq 'taroさんの家計簿に移動しました。'
+          expect(flash[:alert]).to be_nil
           expect(session[:user_id]).to eq users(:taro).id
           expect(session[:original_user_id]).to eq users(:home).id
         end
