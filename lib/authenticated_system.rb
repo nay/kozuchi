@@ -92,12 +92,10 @@ module AuthenticatedSystem
       base.send :helper_method, :current_user, :logged_in?
     end
 
-    # セッションの id のユーザー
     def session_user
       User.find_by(id: session[:user_id])
     end
 
-    # Basic 認証のログインIDとパスワードで照合できたユーザー
     def basic_auth_user
       authenticate_with_http_basic { |username, password| User.authenticate(username, password) }
     end

@@ -63,9 +63,9 @@ describe UsersController, type: :controller do
   describe "activate" do
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
-      let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
 
       context "jiroさんの有効化のリンクを開いたとき" do
+        let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
         before { get :activate, params: {activation_code: jiro.activation_code} }
 
         it "jiroさんになり、切り替えは終わる" do

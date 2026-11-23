@@ -5,19 +5,15 @@ describe ApplicationController, type: :controller do
   fixtures :users, :preferences
 
   controller do
-    skip_before_action :login_required, only: :show
+    skip_before_action :login_required, only: :new
 
     def index
       head :ok
     end
 
-    def show # 同じリクエストの中で今のユーザーを2回読み、それぞれのログインIDを返す
+    def new # 同じリクエストの中で今のユーザーを2回読み、それぞれのログインIDを返す
       render plain: [current_user, current_user].map { |user| user&.login }.inspect
     end
-  end
-
-  before do
-    login_as :taro
   end
 
   describe "シングルログインの切り替え元と切り替え先のユーザーの確認" do
@@ -31,8 +27,11 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "homeさんからtaroさんにシングルログインで切り替えているとき" do
+      before do
+        login_as :taro
+        switched_from :home
+      end
 
       context "切り替え元のhomeさんも切り替え先のtaroさんもいるとき" do
         it "そのまま表示される" do
@@ -74,8 +73,6 @@ describe ApplicationController, type: :controller do
 
   describe "今のユーザー" do
     context "セッションにユーザーがないとき" do
-      before { session[:user_id] = nil }
-
       context "homeさんの「ログイン状態を記憶」の Cookie があるとき" do
         before do
           users(:home).remember_me
@@ -115,13 +112,14 @@ describe ApplicationController, type: :controller do
 
     context "セッションのtaroさんのアカウントが削除されていて、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
       before do
+        login_as :taro
         users(:taro).destroy
         users(:home).remember_me
         request.cookies[:auth_token] = users(:home).remember_token
       end
 
       it "同じリクエストの中で何回読んでも、ログインしていない" do
-        get :show, params: {id: 1}
+        get :new
         expect(response.body).to eq [nil, nil].inspect
       end
     end
