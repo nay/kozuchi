@@ -6,10 +6,10 @@ module AuthenticatedSystem
       !!current_user
     end
 
-    # Accesses the current user from the session. 
-    # Future calls avoid the database because nil is not equal to false.
+    # 今のユーザー。いなければ false を覚えて、同じリクエストの中では探し直さない
     def current_user
-      @current_user ||= (session[:user_id] ? login_from_session : (login_from_basic_auth || login_from_cookie)) unless @current_user == false # Basic 認証と Cookie は、セッションにユーザーがないときだけ使う
+      self.current_user = (session[:user_id] ? session_user : (basic_auth_user || cookie_user)) if @current_user.nil? # Basic 認証と Cookie は、セッションにユーザーがないときだけ使う
+      @current_user || nil # 呼ぶ側には、いないときは今までどおり nil を返す
     end
 
     # Store the given user id in the session.
@@ -92,24 +92,19 @@ module AuthenticatedSystem
       base.send :helper_method, :current_user, :logged_in?
     end
 
-    # Called from #current_user.  First attempt to login by the user id stored in the session.
-    def login_from_session
-      self.current_user = User.find_by(id: session[:user_id]) if session[:user_id]
+    # セッションの id のユーザー
+    def session_user
+      User.find_by(id: session[:user_id])
     end
 
-    # Called from #current_user.  Now, attempt to login by basic authentication information.
-    def login_from_basic_auth
-      authenticate_with_http_basic do |username, password|
-        self.current_user = User.authenticate(username, password)
-      end
+    # Basic 認証のログインIDとパスワードで照合できたユーザー
+    def basic_auth_user
+      authenticate_with_http_basic { |username, password| User.authenticate(username, password) }
     end
 
-    # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
-    def login_from_cookie
+    # 「ログイン状態を記憶」の Cookie の合言葉が、期限内で合うユーザー
+    def cookie_user
       user = cookies[:auth_token] && User.find_by(remember_token: cookies[:auth_token])
-      if user && user.remember_token?
-        cookies[:auth_token] = { :value => user.remember_token, :expires => user.remember_token_expires_at }
-        self.current_user = user
-      end
+      user if user&.remember_token?
     end
 end

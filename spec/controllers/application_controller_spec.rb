@@ -5,8 +5,14 @@ describe ApplicationController, type: :controller do
   fixtures :users, :preferences
 
   controller do
+    skip_before_action :login_required, only: :show
+
     def index
       head :ok
+    end
+
+    def show # 同じリクエストの中で今のユーザーを2回読み、それぞれのログインIDを返す
+      render plain: [current_user, current_user].map { |user| user&.login }.inspect
     end
   end
 
@@ -62,6 +68,35 @@ describe ApplicationController, type: :controller do
           end
           it_behaves_like 'ログアウトされ、トップページに戻される'
         end
+      end
+    end
+  end
+
+  describe "今のユーザー" do
+    context "セッションにユーザーがなく、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
+      before do
+        session[:user_id] = nil
+        users(:home).remember_me
+        request.cookies[:auth_token] = users(:home).remember_token
+      end
+
+      it "homeさんでログインする" do
+        get :index
+        expect(response).to be_successful
+        expect(session[:user_id]).to eq users(:home).id
+      end
+    end
+
+    context "セッションのtaroさんのアカウントが削除されていて、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
+      before do
+        users(:taro).destroy
+        users(:home).remember_me
+        request.cookies[:auth_token] = users(:home).remember_token
+      end
+
+      it "同じリクエストの中で何回読んでも、ログインしていない" do
+        get :show, params: {id: 1}
+        expect(response.body).to eq [nil, nil].inspect
       end
     end
   end
