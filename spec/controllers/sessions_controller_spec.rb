@@ -53,6 +53,19 @@ describe SessionsController, type: :controller do
     context "homeさんからシングルログインで切り替えているとき" do
       before { switched_from :home }
 
+      context "homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
+        before do
+          users(:home).remember_me
+          users(:taro).remember_me
+          delete :destroy
+        end
+
+        it "切り替え元のhomeさんの記憶だけが消える" do
+          expect(users(:home).reload.remember_token).to be_nil
+          expect(users(:taro).reload.remember_token).not_to be_nil
+        end
+      end
+
       context "切り替え先のtaroさんのアカウントが削除されているとき" do
         before do
           users(:taro).destroy
