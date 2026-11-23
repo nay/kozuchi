@@ -73,17 +73,43 @@ describe ApplicationController, type: :controller do
   end
 
   describe "今のユーザー" do
-    context "セッションにユーザーがなく、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
-      before do
-        session[:user_id] = nil
-        users(:home).remember_me
-        request.cookies[:auth_token] = users(:home).remember_token
+    context "セッションにユーザーがないとき" do
+      before { session[:user_id] = nil }
+
+      context "homeさんの「ログイン状態を記憶」の Cookie があるとき" do
+        before do
+          users(:home).remember_me
+          request.cookies[:auth_token] = users(:home).remember_token
+        end
+
+        it "homeさんでログインする" do
+          get :index
+          expect(response).to be_successful
+          expect(session[:user_id]).to eq users(:home).id
+        end
       end
 
-      it "homeさんでログインする" do
-        get :index
-        expect(response).to be_successful
-        expect(session[:user_id]).to eq users(:home).id
+      context "homeさんの「ログイン状態を記憶」の Cookie が期限切れのとき" do
+        before do
+          users(:home).remember_me_until(1.day.ago)
+          request.cookies[:auth_token] = users(:home).remember_token
+        end
+
+        it "ログインせず、トップページに移される" do
+          get :index
+          expect(response).to redirect_to(root_path)
+          expect(session[:user_id]).to be_nil
+        end
+      end
+
+      context "Basic 認証でtaroさんのログインIDとパスワードを送ったとき" do
+        before { request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials('taro', 'taro') }
+
+        it "taroさんでログインする" do
+          get :index
+          expect(response).to be_successful
+          expect(session[:user_id]).to eq users(:taro).id
+        end
       end
     end
 
