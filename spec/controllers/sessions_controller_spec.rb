@@ -48,35 +48,66 @@ describe SessionsController, type: :controller do
   end
 
   describe "destroy" do
-    before { login_as :taro }
+    shared_examples_for 'ログアウトされる' do
+      it "ログアウトされる" do
+        expect(response).to redirect_to(root_path)
+        expect(flash[:notice]).to eq 'ログアウトしました。'
+        expect(session[:user_id]).to be_nil
+        expect(session[:original_user_id]).to be_nil
+      end
+    end
 
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
+      before do
+        login_as :taro
+        users(:home).remember_me
+        users(:taro).remember_me
+      end
 
-      context "homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
-        before do
-          users(:home).remember_me
-          users(:taro).remember_me
-          delete :destroy
-        end
+      context "taroさんがシングルログインで切り替えていないとき" do
+        before { delete :destroy }
 
-        it "切り替え元のhomeさんの記憶だけが消える" do
-          expect(users(:home).reload.remember_token).to be_nil
-          expect(users(:taro).reload.remember_token).not_to be_nil
+        it_behaves_like 'ログアウトされる'
+        it "taroさんの記憶が消える" do
+          expect(users(:taro).reload.remember_token).to be_nil
         end
       end
 
-      context "切り替え先のtaroさんのアカウントが削除されているとき" do
-        before do
-          users(:taro).destroy
-          delete :destroy
+      context "homeさんからtaroさんにシングルログインで切り替えているとき" do
+        before { switched_from :home }
+
+        context "どちらのアカウントもあるとき" do
+          before { delete :destroy }
+
+          it_behaves_like 'ログアウトされる'
+          it "切り替え元のhomeさんの記憶だけが消える" do
+            expect(users(:home).reload.remember_token).to be_nil
+            expect(users(:taro).reload.remember_token).not_to be_nil
+          end
         end
 
-        it "ログアウトされる" do
-          expect(response).to redirect_to(root_path)
-          expect(flash[:notice]).to eq 'ログアウトしました。'
-          expect(session[:user_id]).to be_nil
-          expect(session[:original_user_id]).to be_nil
+        context "切り替え元のhomeさんのアカウントが削除されているとき" do
+          before do
+            users(:home).destroy
+            delete :destroy
+          end
+
+          it_behaves_like 'ログアウトされる'
+          it "切り替え先のtaroさんの記憶は消えない" do
+            expect(users(:taro).reload.remember_token).not_to be_nil
+          end
+        end
+
+        context "切り替え先のtaroさんのアカウントが削除されているとき" do
+          before do
+            users(:taro).destroy
+            delete :destroy
+          end
+
+          it_behaves_like 'ログアウトされる'
+          it "切り替え元のhomeさんの記憶が消える" do
+            expect(users(:home).reload.remember_token).to be_nil
+          end
         end
       end
     end

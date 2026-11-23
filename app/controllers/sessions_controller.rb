@@ -61,7 +61,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    (original_user || current_user).forget_me if logged_in? # 切り替え中は、このブラウザでログインした切り替え元の「ログイン状態を記憶」を消す
+    (session[:original_user_id] ? original_user : current_user)&.forget_me # このブラウザでログインした人（切り替え中なら切り替え元）の「ログイン状態を記憶」を消す
     cookies.delete :auth_token
     reset_session
     flash[:notice] = "ログアウトしました。"
