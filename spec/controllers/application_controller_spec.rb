@@ -92,7 +92,7 @@ describe ApplicationController, type: :controller do
           request.cookies[:auth_token] = users(:home).remember_token
         end
 
-        it "ログインせず、トップページに移される" do
+        it "ログインせず、トップページに戻される" do
           get :index
           expect(response).to redirect_to(root_path)
           expect(session[:user_id]).to be_nil
@@ -110,17 +110,22 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    context "セッションのtaroさんのアカウントが削除されていて、homeさんの「ログイン状態を記憶」の Cookie があるとき" do
+    context "セッションのtaroさんのアカウントが削除されているとき" do
       before do
         login_as :taro
         users(:taro).destroy
-        users(:home).remember_me
-        request.cookies[:auth_token] = users(:home).remember_token
       end
 
-      it "同じリクエストの中で何回読んでも、ログインしていない" do
-        get :new
-        expect(response.body).to eq [nil, nil].inspect
+      context "homeさんの「ログイン状態を記憶」の Cookie があるとき" do
+        before do
+          users(:home).remember_me
+          request.cookies[:auth_token] = users(:home).remember_token
+        end
+
+        it "同じリクエストの中で何回読んでも、ログインしていない" do
+          get :new
+          expect(response.body).to eq [nil, nil].inspect
+        end
       end
     end
   end

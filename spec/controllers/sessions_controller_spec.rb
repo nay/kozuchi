@@ -57,7 +57,7 @@ describe SessionsController, type: :controller do
       end
     end
 
-    context "homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
+    context "taroさんでログインしていて、homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
       before do
         login_as :taro
         users(:home).remember_me
