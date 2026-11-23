@@ -49,6 +49,14 @@ describe Settings::AccountLinksController, type: :controller do
     context "すでにあるとき" do
       it_behaves_like 'createが成功する'
     end
+
+    context "フレンドの口座名を指定しなかったとき" do
+      it "口座名を指定するよう伝える" do
+        post :create, params: {:linked_account_name => '', :account_id => Fixtures.identify(:taro_hanako), :linked_user_login => 'hanako'}
+        expect(response).to redirect_to(settings_account_links_path)
+        expect(flash[:alert]).to eq 'フレンドの口座名を指定してください'
+      end
+    end
   end
 
 end

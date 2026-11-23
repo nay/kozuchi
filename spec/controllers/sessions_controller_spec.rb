@@ -5,10 +5,11 @@ describe SessionsController, type: :controller do
   fixtures :users, :preferences
 
   describe "create" do
-    before { login_as :taro }
-
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "homeさんからtaroさんにシングルログインで切り替えているとき" do
+      before do
+        login_as :taro
+        switched_from :home
+      end
 
       context "どちらのアカウントもあるとき" do
         context "taroさんでログインし直したとき" do
@@ -59,15 +60,14 @@ describe SessionsController, type: :controller do
       end
     end
 
-    context "taroさんでログインしていて、homeさんもtaroさんも「ログイン状態を記憶」しているとき" do
-      before do
-        login_as :taro
-        users(:home).remember_me
-        users(:taro).remember_me
-      end
+    context "taroさんが「ログイン状態を記憶」しているとき" do
+      before { users(:taro).remember_me }
 
-      context "taroさんがシングルログインで切り替えていないとき" do
-        before { delete :destroy }
+      context "taroさんでログインしていて、シングルログインで切り替えていないとき" do
+        before do
+          login_as :taro
+          delete :destroy
+        end
 
         it_behaves_like 'ログアウトされる'
         it "taroさんの記憶が消える" do
@@ -75,8 +75,12 @@ describe SessionsController, type: :controller do
         end
       end
 
-      context "homeさんからtaroさんにシングルログインで切り替えているとき" do
-        before { switched_from :home }
+      context "「ログイン状態を記憶」してログインしたhomeさんから、taroさんにシングルログインで切り替えているとき" do
+        before do
+          users(:home).remember_me
+          login_as :taro
+          switched_from :home
+        end
 
         context "どちらのアカウントもあるとき" do
           before { delete :destroy }
@@ -116,9 +120,19 @@ describe SessionsController, type: :controller do
   end
 
   describe "update" do
-    before { login_as :taro }
+    context "taroさんでログインしていて、シングルログインで切り替えていないとき" do
+      before { login_as :taro }
 
-    context "シングルログインで切り替えていないとき" do
+      context "hanakoさんへのシングルログイン設定がなく、hanakoさんを指定したとき" do
+        before { put :update, params: {login: 'hanako'} }
+
+        it "設定が無効なことを伝え、切り替わらない" do
+          expect(response).to redirect_to(home_path)
+          expect(flash[:alert]).to eq 'hanakoさんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。'
+          expect(session[:user_id]).to eq users(:taro).id
+        end
+      end
+
       context "taroさんにhanakoさんへのシングルログイン設定があり、hanakoさんを指定したとき" do
         before do
           @current_user.single_logins.create!(login: 'hanako', password: 'hanako')
@@ -133,8 +147,11 @@ describe SessionsController, type: :controller do
       end
     end
 
-    context "homeさんからシングルログインで切り替えているとき" do
-      before { switched_from :home }
+    context "homeさんからtaroさんにシングルログインで切り替えているとき" do
+      before do
+        login_as :taro
+        switched_from :home
+      end
 
       context "元のhomeさんを指定したとき" do
         before { put :update, params: {login: 'home'} }

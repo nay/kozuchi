@@ -26,6 +26,16 @@ describe Settings::FriendAcceptancesController, type: :controller do
       expect(@current_user.friend_acceptances.find_by(target_id: :hanako.to_id)).not_to be_nil
       expect(flash[:alert]).not_to be_nil
     end
+    it "ユーザーIDを指定しないと、指定するよう伝える" do
+      post :create, params: {:target_login => ''}
+      expect(response).to redirect_to(settings_friends_path)
+      expect(flash[:alert]).to eq 'ユーザーIDを入力してください。'
+    end
+    it "自分を指定すると、指定できないことを伝える" do
+      post :create, params: {:target_login => 'taro'}
+      expect(response).to redirect_to(settings_friends_path)
+      expect(flash[:alert]).to eq '自分を指定することはできません。'
+    end
   end
 
   describe "destroy" do

@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   menu_group "設定"
   menu "プロフィール", :only => [:edit, :update]
 
+  skip_before_action :log_out_if_switching_user_missing, only: [:create, :activate, :activate_login_engine, :update_password] # ログインし直すアクションは、切り替えの状態にかかわらず切り替えを終わらせる
   before_action :reject_while_switched, only: [:edit, :update, :destroy]
   before_action :password_token_required, :only => [:edit_password, :update_password]
   cache_sweeper :export_sweeper, :only => [:destroy]
