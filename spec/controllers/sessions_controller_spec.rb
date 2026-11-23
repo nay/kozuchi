@@ -31,16 +31,17 @@ describe SessionsController, type: :controller do
         end
       end
 
-      context "切り替え先のtaroさんのアカウントが削除されていて、ほかのユーザーでログインしたとき" do
-        before do
-          users(:taro).destroy
-          post :create, params: {login: 'no_mobile_ident_user', password: 'test'}
-        end
+      context "切り替え先のtaroさんのアカウントが削除されているとき" do
+        before { users(:taro).destroy }
 
-        it "そのユーザーになり、切り替えは終わる" do
-          expect(response).to redirect_to(home_path)
-          expect(session[:user_id]).to eq users(:no_mobile_ident_user).id
-          expect(session[:original_user_id]).to be_nil
+        context "ほかのユーザーでログインしたとき" do
+          before { post :create, params: {login: 'no_mobile_ident_user', password: 'test'} }
+
+          it "そのユーザーになり、切り替えは終わる" do
+            expect(response).to redirect_to(home_path)
+            expect(session[:user_id]).to eq users(:no_mobile_ident_user).id
+            expect(session[:original_user_id]).to be_nil
+          end
         end
       end
     end

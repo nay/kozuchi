@@ -47,11 +47,14 @@ describe UsersController, type: :controller do
       context "taroさんがパスワード再設定を申し込んでいるとき" do
         before { @current_user.update_password_token }
 
-        it "パスワード再設定のリンクでパスワードを変えると、taroさんのまま、切り替えは終わる" do
-          post :update_password, params: {password_token: @current_user.password_token, password: 'newpassword', password_confirmation: 'newpassword'}
-          expect(response).to redirect_to(home_path)
-          expect(session[:user_id]).to eq @current_user.id
-          expect(session[:original_user_id]).to be_nil
+        context "パスワード再設定のリンクでパスワードを変えたとき" do
+          before { post :update_password, params: {password_token: @current_user.password_token, password: 'newpassword', password_confirmation: 'newpassword'} }
+
+          it "taroさんのまま、切り替えは終わる" do
+            expect(response).to redirect_to(home_path)
+            expect(session[:user_id]).to eq @current_user.id
+            expect(session[:original_user_id]).to be_nil
+          end
         end
       end
     end
@@ -62,11 +65,14 @@ describe UsersController, type: :controller do
       before { switched_from :home }
       let(:jiro) { User.create!(login: 'jiro', email: 'jiro@example.com', password: 'jiro1234', password_confirmation: 'jiro1234') }
 
-      it "jiroさんの有効化のリンクを開くと、jiroさんになり、切り替えは終わる" do
-        get :activate, params: {activation_code: jiro.activation_code}
-        expect(response).to redirect_to(home_path)
-        expect(session[:user_id]).to eq jiro.id
-        expect(session[:original_user_id]).to be_nil
+      context "jiroさんの有効化のリンクを開いたとき" do
+        before { get :activate, params: {activation_code: jiro.activation_code} }
+
+        it "jiroさんになり、切り替えは終わる" do
+          expect(response).to redirect_to(home_path)
+          expect(session[:user_id]).to eq jiro.id
+          expect(session[:original_user_id]).to be_nil
+        end
       end
     end
   end
