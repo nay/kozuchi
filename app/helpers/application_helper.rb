@@ -68,7 +68,6 @@ module ApplicationHelper
   end
 
   # 国際化に合わせるまでの臨時措置。attrを無視した従来の検証エラーに対応した表示ヘルパー。
-  # flash_validation_errorからこちらにまず移行するために用意。
   def error_messages(obj)
     return "" if obj.errors.empty?
     messages = '<div id="errors" class="middle_box">'

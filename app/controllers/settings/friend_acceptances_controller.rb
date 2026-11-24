@@ -4,15 +4,15 @@ class Settings::FriendAcceptancesController < ApplicationController
   def create
     if !@target_user
       if params[:target_login].blank?
-        flash_error("ユーザーIDを入力してください。")
+        flash[:alert] = "ユーザーIDを入力してください。"
         redirect_to settings_friends_path
         return
       end
-      flash_error("指定されたユーザーが見つかりません。")
+      flash[:alert] = "指定されたユーザーが見つかりません。"
       redirect_to settings_friends_path
       return
     elsif @target_user == current_user
-      flash_error("自分を指定することはできません。")
+      flash[:alert] = "自分を指定することはできません。"
       redirect_to settings_friends_path
       return
     end
@@ -20,7 +20,7 @@ class Settings::FriendAcceptancesController < ApplicationController
     if @acceptance.save
       flash[:notice] = "#{ERB::Util.h @target_user.login}さんをフレンドに登録しました。"
     else
-      flash_validation_errors(@acceptance)
+      flash[:alert] = @acceptance.errors.full_messages.join
       flash[:target_login] = params[:target_login]
     end
     redirect_to settings_friends_path

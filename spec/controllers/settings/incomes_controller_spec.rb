@@ -27,7 +27,7 @@ describe Settings::AccountsController, type: :controller do
           income = @current_user.incomes.find_by(name: '追加')
           expect(income).not_to be_nil
           expect(income.sort_key).to eq 77
-          expect(flash[:errors]).to be_nil
+          expect(flash[:alert]).to be_nil
         end
       end
       context "正しいパラメータ" do
@@ -64,7 +64,7 @@ describe Settings::AccountsController, type: :controller do
         expect(response).to redirect_to(settings_incomes_path)
         income = @current_user.incomes.find_by(name: 'きゅうりょう')
         expect(income).not_to be_nil
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_salary.to_id.to_s][:name] = ""
@@ -83,7 +83,7 @@ describe Settings::AccountsController, type: :controller do
       it "成功する" do
         delete :destroy, params: {:id => :taro_salary.to_id, account_type: 'income'}
         expect(response).to redirect_to(settings_incomes_path)
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
         expect(Account::Base.find_by(id: :taro_salary.to_id)).to be_nil
       end
       it "他人の口座を指定できない" do
@@ -96,7 +96,7 @@ describe Settings::AccountsController, type: :controller do
           )
         delete :destroy, params: {:id => :taro_salary.to_id, account_type: 'income'}
         expect(response).to redirect_to(settings_incomes_path)
-        expect(flash[:errors]).not_to be_nil
+        expect(flash[:alert]).not_to be_nil
         expect(@current_user.incomes.find_by(id: :taro_salary.to_id)).not_to be_nil
       end
     end

@@ -1,6 +1,8 @@
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
   skip_before_action :login_required, :only => [:new, :create, :destroy]
+  skip_before_action :log_out_if_switching_user_missing, only: [:create, :destroy] # ログインもログアウトも、切り替えの状態にかかわらず切り替えを終わらせる
+  before_action :reject_while_switched, only: :update, unless: :switching_to_original_or_current_user? # 切り替え中は、切り替え先のユーザーのシングルログイン設定を使えない
   
   # functional test のために残している
   def new
@@ -9,6 +11,7 @@ class SessionsController < ApplicationController
 
   def create
     if params[:passport] != "1" # utnをつかった簡単ログインでなければ
+      self.original_user = nil # ログインし直したら、シングルログインの切り替えを終わらせる
       self.current_user = User.authenticate(params[:login], params[:password])
     end
     if logged_in? # utnを使った簡単ログインの場合、上記をスキップしてここで自動ログインされる
@@ -18,7 +21,7 @@ class SessionsController < ApplicationController
       end
       redirect_back_or_default(url_for(:controller => 'home', :action => 'index'))
     else
-      flash[:error] = "ログインに失敗しました。"
+      flash[:alert] = "ログインに失敗しました。"
       flash[:login] = params[:login]
       redirect_to root_path
     end
@@ -41,11 +44,11 @@ class SessionsController < ApplicationController
     else
       single_login = current_user.single_logins.find_by(login: params[:login])
       if !single_login || !single_login.active?
-        flash[:errors] = ["#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"]
+        flash[:alert] = "#{params[:login]}さんへのシングルログイン設定は無効です。ログインID、パスワードが正しいか確認してください。"
         redirect_to_target_feature
         return
       end
-      self.original_user ||= self.current_user
+      self.original_user = self.current_user
       self.current_user = User.find_by(login: single_login.login)
     end
 
@@ -58,7 +61,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    self.current_user.forget_me if logged_in?
+    (session[:original_user_id] ? original_user : current_user)&.forget_me # このブラウザでログインした人（切り替え中なら切り替え元）の「ログイン状態を記憶」を消す
     cookies.delete :auth_token
     reset_session
     flash[:notice] = "ログアウトしました。"
@@ -70,6 +73,10 @@ class SessionsController < ApplicationController
   def deal_draft_params
     entry_attributes = [:summary, :amount, :reversed_amount, :line_number]
     params.require(:deal_draft).permit(:summary, :summary_mode, debtor_entries_attributes: entry_attributes, creditor_entries_attributes: entry_attributes)
+  end
+
+  def switching_to_original_or_current_user?
+    [original_user&.login, current_user.login].include?(params[:login])
   end
 
   def redirect_to_target_feature

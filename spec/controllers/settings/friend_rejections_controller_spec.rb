@@ -16,7 +16,7 @@ describe Settings::FriendRejectionsController, type: :controller do
       post :create, params: {:target_login => 'hanako'}
       expect(response).to redirect_to(settings_friends_path)
       expect(@current_user.friend_rejections.find_by(target_id: :hanako.to_id)).not_to be_nil
-      expect(flash[:errors]).to be_nil
+      expect(flash[:alert]).to be_nil
     end
   end
 
@@ -26,7 +26,7 @@ describe Settings::FriendRejectionsController, type: :controller do
       delete :destroy, params: {:target_login => 'hanako'}
       expect(response).to redirect_to(settings_friends_path)
       expect(@current_user.friend_rejections.find_by(target_id: :hanako.to_id)).to be_nil
-      expect(flash[:errors]).to be_nil
+      expect(flash[:alert]).to be_nil
     end
   end
 
