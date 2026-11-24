@@ -30,7 +30,7 @@ class Settings::AccountLinksController < ApplicationController
       flash[:notice] = "#{ERB::Util.h(target_account.name_with_user)}への連携書き込みを設定しましたが、相手の口座にはすでに別の連携先があるため、双方向の連携を設定できませんでした。"
     rescue PossibleError => e
       flash[:form] = params.slice(:account_id, :linked_account_name, :linked_user_login, :linked_account_name, :require_reverse)
-      flash_error(ERB::Util.h(e.message))
+      flash[:alert] = e.message
     end
     redirect_to settings_account_links_path
   end

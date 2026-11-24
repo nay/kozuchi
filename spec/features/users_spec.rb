@@ -117,6 +117,11 @@ describe UsersController, type: :feature do
         context "登録されていないメールアドレスのとき" do
           let(:email) { "unknown@kozuchi.net" }
           it { expect(page).to have_content "該当するユーザーは登録されていません。" }
+
+          it "続けてほかの画面を開くと、メッセージは出ない" do
+            visit "/"
+            expect(page).not_to have_content "該当するユーザーは登録されていません。"
+          end
         end
       end
     end

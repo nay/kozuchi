@@ -27,7 +27,7 @@ describe Settings::AccountsController, type: :controller do
           expect(asset).not_to be_nil
           expect(asset.asset_kind).to eq 'cache'
           expect(asset.sort_key).to eq 77
-          expect(flash[:errors]).to be_nil
+          expect(flash[:alert]).to be_nil
         end
       end
       context "正しいパラメータ" do
@@ -66,7 +66,7 @@ describe Settings::AccountsController, type: :controller do
         asset = @current_user.assets.find_by(name: 'げんきん')
         expect(asset).not_to be_nil
         expect(asset.asset_kind).to eq 'credit'
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
       it "空の口座名をいれるとエラーメッセージ" do
         @current_values[:taro_cache.to_id.to_s][:name] = ""
@@ -86,7 +86,7 @@ describe Settings::AccountsController, type: :controller do
         delete :destroy, params: {id: Fixtures.identify(:taro_cache), account_type: 'asset'}
         expect(response).to redirect_to(settings_assets_path)
         expect(Account::Base.find_by(id: Fixtures.identify(:taro_cache))).to be_nil
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
       it "他人の口座を指定できない" do
         expect {delete :destroy, params: {id: Fixtures.identify(:hanako_cache), account_type: 'asset'}}.to raise_error(ActiveRecord::RecordNotFound)
@@ -98,7 +98,7 @@ describe Settings::AccountsController, type: :controller do
           )
         delete :destroy, params: {id: :taro_cache.to_id, account_type: 'asset'}
         expect(response).to redirect_to(settings_assets_path)
-        expect(flash[:errors]).not_to be_nil
+        expect(flash[:alert]).not_to be_nil
         expect(@current_user.assets.find_by(id: :taro_cache.to_id)).not_to be_nil
       end
     end

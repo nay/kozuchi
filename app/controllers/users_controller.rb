@@ -3,6 +3,8 @@ class UsersController < ApplicationController
   menu_group "設定"
   menu "プロフィール", :only => [:edit, :update]
 
+  before_action :reject_while_logged_in, only: [:new, :create, :activate, :activate_login_engine, :forgot_password, :deliver_password_notification, :edit_password, :update_password] # ログインしていない人のための画面
+  before_action :reject_while_switched, only: [:edit, :update, :destroy]
   before_action :password_token_required, :only => [:edit_password, :update_password]
   cache_sweeper :export_sweeper, :only => [:destroy]
 
@@ -50,7 +52,7 @@ class UsersController < ApplicationController
     
     user =  User.find_by(email: params[:email])
     unless user
-      flash[:error] = "該当するユーザーは登録されていません。"
+      flash.now[:alert] = "該当するユーザーは登録されていません。"
       render :action => 'forgot_password'
       return
     end
@@ -115,12 +117,18 @@ class UsersController < ApplicationController
     params.require(:user).permit(:login, :email, :password, :password_confirmation)
   end
 
+  def reject_while_logged_in
+    return unless logged_in?
+    flash[:alert] = "ログインしているあいだは利用できません。ログアウトしてから操作してください。"
+    redirect_to home_path
+  end
+
   def password_token_required
     raise InvalidParameterError if params[:password_token].blank?
 
     @user = User.find_by(password_token: params[:password_token])
     if !@user || !@user.password_token?
-      flash[:error] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
+      flash[:alert] = "このパスワード変更のお申し込みは無効になっています。恐れ入りますが、あらためてお申し込みください。"
       redirect_to forgot_password_path
     else
       @password_token = params[:password_token]

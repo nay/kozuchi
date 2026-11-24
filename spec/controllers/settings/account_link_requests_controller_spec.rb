@@ -24,7 +24,7 @@ describe Settings::AccountLinkRequestsController, type: :controller do
         delete :destroy, params: {:id => @target_id, :account_id => @target_account_id}
         expect(response).to redirect_to(settings_account_links_path)
         expect(AccountLinkRequest.find_by(id: @target_id)).to be_nil
-        expect(flash[:errors]).to be_nil
+        expect(flash[:alert]).to be_nil
       end
     end
     context "目的のAccountLinkRequestがないとき" do

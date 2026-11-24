@@ -2,6 +2,7 @@ class Settings::SingleLoginsController < ApplicationController
   menu_group "設定"
   menu "シングルログイン"
 
+  before_action :reject_while_switched
   before_action :find_single_login, :only => [:destroy]
 
   def index
