@@ -234,8 +234,8 @@ describe DealsController, js: true, type: :feature do
               expect(current_hash).to eq "recent"
               expect(page).to have_content('朝食のおにぎり')
               expect(page).to have_css("#recent_area", visible: true)
-              expect(page).to have_css("#daily_area", visible: false)
-              expect(page).to have_css("#monthly_area", visible: false)
+              expect(page).to have_css("#daily_area", visible: :hidden)
+              expect(page).to have_css("#monthly_area", visible: :hidden)
             end
           end
 
@@ -777,16 +777,45 @@ describe DealsController, js: true, type: :feature do
 
   end
 
-  context "2012年7月10日に「ラーメン」の記入があり、7月15日で絞った一覧を、URLに #monthly をつけて開いたとき" do
+  context "2012年7月10日に、現金で払った「ラーメン」の記入があるとき" do
     before do
-      create(:general_deal, date: Date.new(2012, 7, 10), summary: "ラーメン")
-      visit "/deals/2012/7/15#monthly"
+      create(:general_deal, :cache, date: Date.new(2012, 7, 10), summary: "ラーメン")
     end
 
-    it "月の一覧タブを表示し、15日以外の記入も見える" do
-      expect(page).to have_css("#monthly_area", visible: true)
-      expect(page).to have_css("#daily_area", visible: false)
-      expect(page).to have_content("ラーメン")
+    context "7月15日で絞った一覧を、URLに #monthly をつけて開いたとき" do
+      before do
+        visit "/deals/2012/7/15#monthly"
+      end
+
+      it "月の一覧タブを表示し、15日以外の記入も見える" do
+        expect(page).to have_css("#monthly_area", visible: true)
+        expect(page).to have_css("#daily_area", visible: :hidden)
+        expect(page).to have_content("ラーメン")
+      end
+    end
+
+    context "現金の7月15日で絞った一覧を開いたとき" do
+      before do
+        visit "/accounts/#{accounts(:taro_cache).id}/deals/2012/7/15"
+      end
+
+      it "日の一覧タブを表示し、15日以外の記入は見えない" do
+        expect(page).to have_css("#daily_area", visible: true)
+        expect(page).to have_css("#monthly_area", visible: :hidden)
+        expect(page).not_to have_content("ラーメン")
+      end
+
+      context "さらに月の一覧タブを押したとき" do
+        before do
+          click_link "現金(2012年 7月)"
+        end
+
+        it "月の一覧を表示し、15日以外の記入も見える" do
+          expect(page).to have_css("#monthly_area", visible: true)
+          expect(page).to have_css("#daily_area", visible: :hidden)
+          expect(page).to have_content("ラーメン")
+        end
+      end
     end
   end
 
@@ -847,7 +876,7 @@ describe DealsController, js: true, type: :feature do
             expect(page).to have_content("総合(2012年 7月)")
             expect(current_hash).to eq "recent"
             expect(page).to have_css("#recent_area", visible: true)
-            expect(page).to have_css("#monthly_area", visible: false)
+            expect(page).to have_css("#monthly_area", visible: :hidden)
           end
         end
       end
@@ -863,7 +892,7 @@ describe DealsController, js: true, type: :feature do
           expect(page).to have_current_path("/deals/2012/7/15")
           expect(page).to have_link("総合(2012年7月15日)")
           expect(page).to have_css("#daily_area", visible: true)
-          expect(page).to have_css("#monthly_area", visible: false)
+          expect(page).to have_css("#monthly_area", visible: :hidden)
           expect(page).not_to have_content("ラーメン")
           expect(find("input#deal_summary").value).to eq "書きかけ"
         end
@@ -875,7 +904,7 @@ describe DealsController, js: true, type: :feature do
 
           it "ページを読み込み直さずに月の一覧を表示し、URLに #monthly がつき、摘要は残る" do
             expect(page).to have_css("#monthly_area", visible: true)
-            expect(page).to have_css("#daily_area", visible: false)
+            expect(page).to have_css("#daily_area", visible: :hidden)
             expect(page).to have_content("ラーメン")
             expect(current_hash).to eq "monthly"
             expect(find("input#deal_summary").value).to eq "書きかけ"
@@ -887,11 +916,12 @@ describe DealsController, js: true, type: :feature do
               wait_for_turbo_frame_navigation
             end
 
-            it "口座の15日で絞った一覧に変わり、月の一覧タブを表示したままになる" do
+            it "口座の15日で絞った一覧に変わり、月の一覧タブを表示したままで、URLに #monthly がつく" do
               expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/2012/7/15")
+              expect(current_hash).to eq "monthly"
               expect(page).to have_link("現金(2012年7月15日)")
               expect(page).to have_css("#monthly_area", visible: true)
-              expect(page).to have_css("#daily_area", visible: false)
+              expect(page).to have_css("#daily_area", visible: :hidden)
             end
           end
 
@@ -906,7 +936,7 @@ describe DealsController, js: true, type: :feature do
               expect(page).to have_current_path("/deals/2012/7/20")
               expect(page).to have_link("総合(2012年7月20日)")
               expect(page).to have_css("#daily_area", visible: true)
-              expect(page).to have_css("#monthly_area", visible: false)
+              expect(page).to have_css("#monthly_area", visible: :hidden)
             end
           end
         end
