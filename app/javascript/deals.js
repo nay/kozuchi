@@ -39,11 +39,11 @@ const addClassToUpdatedline = function() {
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
 // URL の # に合わせて表示を整える
-// #d123 なら更新された行に印をつけ、#recent, #monthly ならそのタブを表示する
+// #d123 なら更新された行に印をつけ、#monthly, #daily, #recent ならそのタブを表示する
 const applyLocationHash = function() {
   addClassToUpdatedline();
   if ($('#monthly_deals_body_tab').length > 0) {
-    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
+    if (['#monthly', '#daily', '#recent'].includes(window.location.hash)) {
       $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
     }
   }
@@ -398,6 +398,23 @@ $(function() {
 
     $('.body_tab_area').hide();
     return $('#' + $(this).attr('data') + "_area").show();
+  });
+
+  // 日で絞ったまま月の一覧タブを見ていて口座を切り替えたときは、切り替え後も月の一覧タブを表示する
+  // 一覧は日で絞っていると日の一覧タブを表示して届くので、同じ日で口座だけが変わったときに、月の一覧タブに戻す
+  let keepMonthlyTab = false;
+  $(document).on('turbo:before-frame-render', '#monthly_deals', function(event) {
+    const $tab = $('#monthly_deals_body_tab');
+    const $newTab = $(event.originalEvent.detail.newFrame).find('#monthly_deals_body_tab');
+    keepMonthlyTab = $tab.find('.body_tab_link[data=monthly]').closest('li').hasClass('active') &&
+      $tab.data('day') !== undefined && $newTab.data('day') === $tab.data('day') &&
+      $newTab.data('account-id') !== $tab.data('account-id');
+  });
+  $(document).on('turbo:frame-render', '#monthly_deals', function() {
+    if (keepMonthlyTab) {
+      $('.body_tab_link[data=monthly]').click();
+      keepMonthlyTab = false;
+    }
   });
 
   // URL の # に合わせて表示を整える。タブのクリックの処理を登録してから呼ぶ（#recent ではタブをクリックするため）

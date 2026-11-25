@@ -60,18 +60,31 @@
             - deal_type = flash[:"#{controller_name}_deal_type"]
             = deal_editor 1, current_vague_date.year, current_vague_date.month, current_vague_date.day, frame: 'monthly_deals', month_url_template: monthly_deals_list_path_template(@account&.id) do
               = render :partial => deal_type == 'balance_deal' ? 'balance_deal_form' : @deal.complex? ? 'complex_deal_form' : 'general_deal_form'
-        %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;"}
-          %li{roll: "presentation", class: 'active'}
-            %a.body_tab_link{data: "monthly", href: "#monthly"} #{@account ? @account.name : '総合'}(#{current_vague_date.day ? "#{current_vague_date.year}年#{current_vague_date.month}月#{current_vague_date.day}日" : "#{current_vague_date.year}年 #{current_vague_date.month}月"})
+        - # 月の一覧タブはいつも出し、日で絞っているときは日の一覧タブも出して、最初は日の一覧タブを表示する
+        - # data の日と口座は、口座を切り替えたときに見ていたタブを保つために使う
+        - list_name = @account ? @account.name : '総合'
+        %ul.nav.nav-tabs.nav-justified.body_tab#monthly_deals_body_tab{style: "margin-top: 8px;", data: {day: current_vague_date.day, account_id: @account&.id}}
+          %li{roll: "presentation", class: current_vague_date.day ? nil : 'active'}
+            %a.body_tab_link{data: "monthly", href: "#monthly"} #{list_name}(#{current_vague_date.year}年 #{current_vague_date.month}月)
+          - if current_vague_date.day
+            %li{roll: "presentation", class: 'active'}
+              %a.body_tab_link{data: "daily", href: "#daily"} #{list_name}(#{current_vague_date.year}年#{current_vague_date.month}月#{current_vague_date.day}日)
           %li{roll: "presentation"}
             %a.body_tab_link{data: "recent", href: "#recent"} 最近の記入
         #monthly_contents
           #book.bottom_box
-            .body_tab_area#monthly_area
+            - # 同じ記入の行が日と月の両方の一覧に出る。URL の #d123 で表示中の日の一覧の行に移れるよう、日の一覧を先に置く
+            - if current_vague_date.day
+              .body_tab_area#daily_area
+                - if @account
+                  = render partial: "account_entries", locals: {account_entries: @daily_account_entries}
+                - else
+                  = render partial: "deals", locals: {deals: @daily_deals}
+            .body_tab_area#monthly_area{style: current_vague_date.day ? "display: none;" : nil}
               - if @account
-                = render :partial => "account_entries"
+                = render partial: "account_entries", locals: {account_entries: @account_entries}
               - else
-                = render :partial => "deals"
+                = render partial: "deals", locals: {deals: @deals}
             .body_tab_area#recent_area{style: "display: none;"}
               = render :partial => "deals", locals: {deals: @recently_updated_deals}
 

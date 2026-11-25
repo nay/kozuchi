@@ -234,6 +234,7 @@ describe DealsController, js: true, type: :feature do
               expect(current_hash).to eq "recent"
               expect(page).to have_content('朝食のおにぎり')
               expect(page).to have_css("#recent_area", visible: true)
+              expect(page).to have_css("#daily_area", visible: false)
               expect(page).to have_css("#monthly_area", visible: false)
             end
           end
@@ -543,10 +544,12 @@ describe DealsController, js: true, type: :feature do
 
           context "金額が正しいとき" do
             let(:amount) { '1003' }
-            it "登録でき、現金の登録した日で絞った一覧を表示する" do
+            it "登録でき、現金の登録した日で絞った一覧の、日の一覧タブを表示する" do
               today = Time.zone.today
               expect(flash_notice).to have_content("追加しました。")
               expect(URI(current_url).path).to eq "/accounts/#{accounts(:taro_cache).id}/deals/#{today.year}/#{today.month}/#{today.day}"
+              expect(current_hash).to eq "daily"
+              expect(page).to have_css("#daily_area", visible: true)
               expect(page).to have_content("残高確認")
               expect(page).to have_content("1,003")
             end
@@ -761,9 +764,10 @@ describe DealsController, js: true, type: :feature do
         click_link I18n.l(Time.zone.today.change(day: day), format: :day).strip # strip しないとマッチしない
       end
 
-      it "押した日で絞った一覧に切り替わり、日の欄に押した日が入る" do
+      it "押した日で絞った一覧の、日の一覧タブに切り替わり、日の欄に押した日が入る" do
         today = Time.zone.today
-        expect(page).to have_content "総合(#{today.year}年#{today.month}月#{day}日)"
+        expect(page).to have_link "総合(#{today.year}年#{today.month}月#{day}日)"
+        expect(page).to have_css("#daily_area", visible: true)
         expect(page).not_to have_content "昔の記入"
         expect(find("input#date_day").value).to eq day.to_s
       end
@@ -773,16 +777,25 @@ describe DealsController, js: true, type: :feature do
 
   end
 
+  context "2012年7月10日に「ラーメン」の記入があり、7月15日で絞った一覧を、URLに #monthly をつけて開いたとき" do
+    before do
+      create(:general_deal, date: Date.new(2012, 7, 10), summary: "ラーメン")
+      visit "/deals/2012/7/15#monthly"
+    end
+
+    it "月の一覧タブを表示し、15日以外の記入も見える" do
+      expect(page).to have_css("#monthly_area", visible: true)
+      expect(page).to have_css("#daily_area", visible: false)
+      expect(page).to have_content("ラーメン")
+    end
+  end
+
   describe "登録フォームに入力したままの、表示する年月や口座の切り替え" do
     context "2012年7月（「ラーメン」の記入がある月）を表示し、登録フォームに摘要を入力しているとき" do
       before do
         create(:general_deal, date: Date.new(2012, 7, 10), summary: "ラーメン")
         visit "/deals/2012/7"
         fill_in 'deal_summary', with: '書きかけ'
-      end
-
-      it "日付の欄の日が空なので、クリアボタンは薄く表示される" do
-        expect(page).to have_css("a.clear_deal_form_button.inactive")
       end
 
       context "カレンダーで前月を押したとき" do
@@ -846,15 +859,56 @@ describe DealsController, js: true, type: :feature do
           wait_for_turbo_frame_navigation
         end
 
-        it "15日で絞った一覧とURLに変わり、摘要は残る" do
+        it "15日で絞った一覧とURLに変わって日の一覧タブを表示し、摘要は残る" do
           expect(page).to have_current_path("/deals/2012/7/15")
-          expect(page).to have_content("総合(2012年7月15日)")
+          expect(page).to have_link("総合(2012年7月15日)")
+          expect(page).to have_css("#daily_area", visible: true)
+          expect(page).to have_css("#monthly_area", visible: false)
           expect(page).not_to have_content("ラーメン")
           expect(find("input#deal_summary").value).to eq "書きかけ"
         end
 
-        it "クリアボタンが薄い表示でなくなる" do
-          expect(page).to have_css("a.clear_deal_form_button:not(.inactive)")
+        context "さらに月の一覧タブを押したとき" do
+          before do
+            click_link "総合(2012年 7月)"
+          end
+
+          it "ページを読み込み直さずに月の一覧を表示し、URLに #monthly がつき、摘要は残る" do
+            expect(page).to have_css("#monthly_area", visible: true)
+            expect(page).to have_css("#daily_area", visible: false)
+            expect(page).to have_content("ラーメン")
+            expect(current_hash).to eq "monthly"
+            expect(find("input#deal_summary").value).to eq "書きかけ"
+          end
+
+          context "さらに口座の選択で口座を選んだとき" do
+            before do
+              within('#account_selector') { select '現金', from: 'account_id' }
+              wait_for_turbo_frame_navigation
+            end
+
+            it "口座の15日で絞った一覧に変わり、月の一覧タブを表示したままになる" do
+              expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/2012/7/15")
+              expect(page).to have_link("現金(2012年7月15日)")
+              expect(page).to have_css("#monthly_area", visible: true)
+              expect(page).to have_css("#daily_area", visible: false)
+            end
+          end
+
+          context "さらに日付の欄の日に20を入れたとき" do
+            before do
+              fill_in 'date_day', with: '20'
+              find('#date_day').send_keys(:tab)
+              wait_for_turbo_frame_navigation
+            end
+
+            it "20日で絞った一覧とURLに変わり、日の一覧タブを表示する" do
+              expect(page).to have_current_path("/deals/2012/7/20")
+              expect(page).to have_link("総合(2012年7月20日)")
+              expect(page).to have_css("#daily_area", visible: true)
+              expect(page).to have_css("#monthly_area", visible: false)
+            end
+          end
         end
 
         context "さらに月を前月に変えたとき" do
@@ -878,10 +932,11 @@ describe DealsController, js: true, type: :feature do
             wait_for_turbo_frame_navigation
           end
 
-          it "7月の一覧とURLに戻り、クリアボタンは薄い表示に戻る" do
+          it "7月の一覧とURLに戻り、日の一覧タブはなくなる" do
             expect(page).to have_current_path("/deals/2012/7")
             expect(page).to have_content("ラーメン")
-            expect(page).to have_css("a.clear_deal_form_button.inactive")
+            expect(page).not_to have_link("総合(2012年7月15日)")
+            expect(page).not_to have_css("#daily_area", visible: :all)
           end
         end
       end
@@ -899,22 +954,6 @@ describe DealsController, js: true, type: :feature do
         it "6月にない31日は30日に直り、6月30日で絞った一覧とURLに変わる" do
           expect(page).to have_current_path("/deals/2012/6/30")
           expect(input_date_field_values).to eq ["2012", "6", "30"]
-        end
-      end
-
-      context "日付の欄の日に15を入れて15日で絞った一覧にしてから、クリアを押したとき" do
-        before do
-          fill_in 'date_day', with: '15'
-          find('#date_day').send_keys(:tab)
-          wait_for_turbo_frame_navigation
-          find('a.clear_deal_form_button').click # クリアボタンは href のない a 要素なので、click_link では見つからない
-        end
-
-        it "7月の一覧をページごと開き直し、日付の欄は年月だけになり、摘要も空になる" do
-          expect(page).to have_current_path("/deals/2012/7")
-          expect(page).to have_content("ラーメン")
-          expect(input_date_field_values).to eq ["2012", "7", ""]
-          expect(find("input#deal_summary").value).to eq ""
         end
       end
 
