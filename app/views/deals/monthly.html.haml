@@ -77,14 +77,14 @@
             - if current_vague_date.day
               .body_tab_area#daily_area
                 - if @account
-                  = render partial: "account_entries", locals: {account_entries: @daily_account_entries}
+                  = render partial: "account_entries", locals: {account_entries: @daily_account_entries, list_date: current_vague_date}
                 - else
-                  = render partial: "deals", locals: {deals: @daily_deals}
+                  = render partial: "deals", locals: {deals: @daily_deals, list_date: current_vague_date}
             .body_tab_area#monthly_area{style: current_vague_date.day ? "display: none;" : nil}
               - if @account
-                = render partial: "account_entries", locals: {account_entries: @account_entries}
+                = render partial: "account_entries", locals: {account_entries: @account_entries, list_date: VagueDate.new(current_vague_date.year, current_vague_date.month)}
               - else
-                = render partial: "deals", locals: {deals: @deals}
+                = render partial: "deals", locals: {deals: @deals, list_date: VagueDate.new(current_vague_date.year, current_vague_date.month)}
             .body_tab_area#recent_area{style: "display: none;"}
               = render :partial => "deals", locals: {deals: @recently_updated_deals}
 
