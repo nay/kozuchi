@@ -38,12 +38,20 @@ const addClassToUpdatedline = function() {
 
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
+// URL の # を記入の行（id が d123 の行）にして、$area の中のその行までスクロールする
+// 同じ記入の行は月の一覧・日の一覧・最近の記入に重ねて出て id も重なるので、# のスクロールに任せず、押した一覧の行に移る
+const jumpToDealRow = function($area, dealId) {
+  location.hash = 'd' + dealId;
+  const row = $area.find('tr#d' + dealId)[0];
+  if (row) { row.scrollIntoView(); }
+};
+
 // URL の # に合わせて表示を整える
-// #d123 なら更新された行に印をつけ、#recent, #monthly ならそのタブを表示する
+// #d123 なら更新された行に印をつけ、#monthly, #daily, #recent ならそのタブを表示する
 const applyLocationHash = function() {
   addClassToUpdatedline();
   if ($('#monthly_deals_body_tab').length > 0) {
-    if ((window.location.hash === '#recent') || (window.location.hash === '#monthly')) {
+    if (['#monthly', '#daily', '#recent'].includes(window.location.hash)) {
       $(".body_tab_link[data=" + window.location.hash.slice(1) + "]").click();
     }
   }
@@ -229,7 +237,7 @@ $(function() {
             resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month);
           }
           // 移り先で日を絞るときは、日で絞った一覧に移る（日で絞った一覧の URL は、月の一覧の URL の後ろに日を付けたもの）
-          // 記入したときは記入した日、変更したときは日で絞った一覧から変更したときだけ変更後の日で絞る
+          // 記入したときは記入した日、変更したときは日で絞っているときだけ（どのタブから変更しても）変更後の日で絞る
           if (result.list_day) {
             resultUrl += "/" + result.list_day;
           }
@@ -253,6 +261,8 @@ $(function() {
 
   // 編集リンクのクリック
   $(document).on('click', 'a.edit_deal', function(event){
+    const $area = $(this).closest('.body_tab_area');
+    const dealId = $(this).data('deal-id');
     let $tr = $(this).closest('tr');
     if ($tr.hasClass('edit_deal_row')) {
       $tr = $tr.prev();
@@ -264,7 +274,7 @@ $(function() {
     disableCreateWindow();
     $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(this).data('deal-id') + "'></td></tr>");
     $(".edit_deal_row td").load(this.href, null, function() {
-      return location.hash = 'd' + $(this).data("deal-id"); // コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
+      jumpToDealRow($area, dealId); // コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
     });
     showRecentDealPatterns();
     return event.preventDefault();
@@ -306,7 +316,7 @@ $(function() {
     return false;
   });
 
-  $(window).hashchange(function() {
+  $(window).on('hashchange', function() {
     clearUpdateLine();
     return addClassToUpdatedline();
   });
@@ -362,12 +372,13 @@ $(function() {
 
   // 記入の確認
   $(document).on('click', 'a.deal_confirmation_link', function(event){
+    const $area = $(this).closest('.body_tab_area');
     $.post(this.href, {_method: 'put'}, function(data) {
       $('#content').find(".alert").remove();
       $('#content').prepend("<div class='alert alert-success alert-dismissable'><button class='close' type='button' data-dismiss='alert' area-hidden='true'>&times;</button>" + data.success_message + "</div>");
       $("tr.d" + data.deal.id + " a.deal_confirmation_link").remove();
       $("tr.d" + data.deal.id).removeClass('unconfirmed');
-      return location.hash = "d" + data.deal.id;
+      jumpToDealRow($area, data.deal.id);
     });
     return event.preventDefault();
   });
@@ -387,17 +398,52 @@ $(function() {
     } else { // 新しく開くリクエストがきたらいったん全部閉じてから開く
       $('tr.detail_row').hide();
       $tr.next('.detail_row').show();
-      return location.hash = $(this).closest('tr').attr('id');
+      jumpToDealRow($(this).closest('.body_tab_area'), $(this).closest('tr').attr('id').slice(1));
     }
   });
 
   // monthlyページのボディタブ切り替え
-  $(document).on('click', '.body_tab_link', function(event){
+  // name - monthly, daily, recent のどれか
+  const showBodyTab = function(name) {
     $('.body_tab li').removeClass('active');
-    $(this).closest('li').addClass('active');
+    $(".body_tab_link[data=" + name + "]").closest('li').addClass('active');
 
     $('.body_tab_area').hide();
-    return $('#' + $(this).attr('data') + "_area").show();
+    $('#' + name + "_area").show();
+  };
+  $(document).on('click', '.body_tab_link', function(event){
+    showBodyTab($(this).attr('data'));
+  });
+
+  // 戻る・進むで # が変わったときも、表示するタブを URL に合わせる
+  // タブを押すと # だけが変わって履歴に積まれるので、戻ったときに描き直さないと、URL と表示中のタブがずれる
+  // # がなければ、最初に表示するタブ（日で絞っていれば日の一覧、なければ月の一覧）にする。#d123 のときは、見ているタブのままにする
+  $(window).on('hashchange', function() {
+    if ($('#monthly_deals_body_tab').length === 0) { return; }
+    const name = location.hash.slice(1);
+    if (['monthly', 'daily', 'recent'].includes(name)) {
+      showBodyTab(name);
+    } else if (name === '') {
+      showBodyTab($('.body_tab_link[data=daily]').length > 0 ? 'daily' : 'monthly');
+    }
+  });
+
+  // 日で絞ったまま月の一覧タブを見ていて口座を切り替えたときは、切り替え後も月の一覧タブを表示する
+  // 一覧は日で絞っていると日の一覧タブを表示して届くので、同じ日で口座だけが変わったときに、月の一覧タブに戻す
+  let keepMonthlyTab = false;
+  $(document).on('turbo:before-frame-render', '#monthly_deals', function(event) {
+    const $tab = $('#monthly_deals_body_tab');
+    const $newTab = $(event.originalEvent.detail.newFrame).find('#monthly_deals_body_tab');
+    keepMonthlyTab = $tab.find('.body_tab_link[data=monthly]').closest('li').hasClass('active') &&
+      $tab.data('day') !== undefined && $newTab.data('day') === $tab.data('day') &&
+      $newTab.data('account-id') !== $tab.data('account-id');
+  });
+  $(document).on('turbo:frame-render', '#monthly_deals', function() {
+    if (keepMonthlyTab) {
+      showBodyTab('monthly');
+      history.replaceState(history.state, '', '#monthly'); // 手でタブを押したときと同じく # を付ける。Turbo が戻る・進むに使う state は残す
+      keepMonthlyTab = false;
+    }
   });
 
   // URL の # に合わせて表示を整える。タブのクリックの処理を登録してから呼ぶ（#recent ではタブをクリックするため）

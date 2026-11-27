@@ -83,7 +83,7 @@ class DealsController < ApplicationController
             month: @deal.date.month,
             day: @deal.date.day,
             list_day: current_vague_date.day, # 移り先の一覧で絞る日（記入した日）
-            redirect_to: @deal.balance? ? helpers.deals_list_path(date: @deal.date, account_id: @deal.account.id, anchor: 'monthly') : nil,
+            redirect_to: @deal.balance? ? helpers.deals_list_path(date: @deal.date, account_id: @deal.account.id, anchor: 'daily') : nil,
             error_view: false
         }
       else
@@ -148,7 +148,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      # 日で絞った一覧から変更したなら変更後の日で絞った一覧、月の一覧から変更したなら変更後の日付の月の一覧に移る
+      # 日で絞っているなら（日の一覧・月の一覧のどちらのタブから変更しても）変更後の日で絞った一覧、日で絞っていないなら変更後の日付の月の一覧に移る
       self.current_vague_date = current_vague_date.move_to(@deal.date)
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
@@ -159,7 +159,7 @@ class DealsController < ApplicationController
           year: @deal.date.year,
           month: @deal.date.month,
           day: @deal.date.day,
-          list_day: current_vague_date.day, # 移り先の一覧で絞る日。月の一覧に移るなら nil
+          list_day: current_vague_date.day, # 移り先の一覧で絞る日。日で絞らない一覧に移るなら nil
           error_view: false
       }
     else
@@ -244,13 +244,18 @@ class DealsController < ApplicationController
   end
 
   # 一覧（月表示・日で絞った表示）の画面に必要なものを用意する
-  # 明細は表示中の年月日の期間のものを出す。グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
+  # 月の一覧の明細はいつも用意し、日で絞っているときは、日の一覧の明細もあわせて用意する（タブを押すだけで行き来できるように）
+  # グラフや精算概況など、ほかの部品は日で絞っていても月単位で出す
   def prepare_list
-    range = current_vague_date.range
+    month_range = current_vague_date.beginning_of_month.all_month
+    day_range = current_vague_date.range if current_vague_date.day
     if @account
-      @account_entries = AccountEntries.new(@account, range.first, range.last)
+      @account_entries = AccountEntries.new(@account, month_range.first, month_range.last)
+      @daily_account_entries = AccountEntries.new(@account, day_range.first, day_range.last) if day_range
     else
-      @deals = current_user.deals.in_a_time_between(range.first, range.last).includes(:readonly_entries).order(:date, :daily_seq)
+      deals = current_user.deals.includes(:readonly_entries).order(:date, :daily_seq)
+      @deals = deals.in_a_time_between(month_range.first, month_range.last)
+      @daily_deals = deals.in_a_time_between(day_range.first, day_range.last) if day_range
     end
 
     # フォーム用
