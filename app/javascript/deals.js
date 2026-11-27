@@ -38,11 +38,12 @@ const addClassToUpdatedline = function() {
 
 const clearUpdateLine = () => $("tr").removeClass("updated_line");
 
-// URL の # を記入の行（id が d123 の行）にして、その行までスクロールする
-// 同じ記入の行は月の一覧・日の一覧・最近の記入に重ねて出て id も重なるので、# のスクロールに任せず、渡された行に移る
-const jumpToDealRow = function(row) {
-  location.hash = row.id;
-  row.scrollIntoView();
+// URL の # を記入の行（id が d123 の行）にして、$area の中のその行までスクロールする
+// 同じ記入の行は月の一覧・日の一覧・最近の記入に重ねて出て id も重なるので、# のスクロールに任せず、押した一覧の行に移る
+const jumpToDealRow = function($area, dealId) {
+  location.hash = 'd' + dealId;
+  const row = $area.find('tr#d' + dealId)[0];
+  if (row) { row.scrollIntoView(); }
 };
 
 // URL の # に合わせて表示を整える
@@ -260,7 +261,8 @@ $(function() {
 
   // 編集リンクのクリック
   $(document).on('click', 'a.edit_deal', function(event){
-    const dealRow = $(this).closest('.body_tab_area').find('tr#d' + $(this).data('deal-id'))[0];
+    const $area = $(this).closest('.body_tab_area');
+    const dealId = $(this).data('deal-id');
     let $tr = $(this).closest('tr');
     if ($tr.hasClass('edit_deal_row')) {
       $tr = $tr.prev();
@@ -272,7 +274,7 @@ $(function() {
     disableCreateWindow();
     $tr.after("<tr class='edit_deal_row'><td colspan='12' data-deal-id='" + $(this).data('deal-id') + "'></td></tr>");
     $(".edit_deal_row td").load(this.href, null, function() {
-      jumpToDealRow(dealRow); // コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
+      jumpToDealRow($area, dealId); // コールバックで変えたほうが編集フォームが見やすい位置にスクロールされる
     });
     showRecentDealPatterns();
     return event.preventDefault();
@@ -314,7 +316,7 @@ $(function() {
     return false;
   });
 
-  $(window).hashchange(function() {
+  $(window).on('hashchange', function() {
     clearUpdateLine();
     return addClassToUpdatedline();
   });
@@ -370,13 +372,13 @@ $(function() {
 
   // 記入の確認
   $(document).on('click', 'a.deal_confirmation_link', function(event){
-    const dealRow = $(this).closest('tr')[0];
+    const $area = $(this).closest('.body_tab_area');
     $.post(this.href, {_method: 'put'}, function(data) {
       $('#content').find(".alert").remove();
       $('#content').prepend("<div class='alert alert-success alert-dismissable'><button class='close' type='button' data-dismiss='alert' area-hidden='true'>&times;</button>" + data.success_message + "</div>");
       $("tr.d" + data.deal.id + " a.deal_confirmation_link").remove();
       $("tr.d" + data.deal.id).removeClass('unconfirmed');
-      jumpToDealRow(dealRow);
+      jumpToDealRow($area, data.deal.id);
     });
     return event.preventDefault();
   });
@@ -396,7 +398,7 @@ $(function() {
     } else { // 新しく開くリクエストがきたらいったん全部閉じてから開く
       $('tr.detail_row').hide();
       $tr.next('.detail_row').show();
-      jumpToDealRow($(this).closest('tr')[0]);
+      jumpToDealRow($(this).closest('.body_tab_area'), $(this).closest('tr').attr('id').slice(1));
     }
   });
 
@@ -411,6 +413,19 @@ $(function() {
   };
   $(document).on('click', '.body_tab_link', function(event){
     showBodyTab($(this).attr('data'));
+  });
+
+  // 戻る・進むで # が変わったときも、表示するタブを URL に合わせる
+  // タブを押すと # だけが変わって履歴に積まれるので、戻ったときに描き直さないと、URL と表示中のタブがずれる
+  // # がなければ、最初に表示するタブ（日で絞っていれば日の一覧、なければ月の一覧）にする。#d123 のときは、見ているタブのままにする
+  $(window).on('hashchange', function() {
+    if ($('#monthly_deals_body_tab').length === 0) { return; }
+    const name = location.hash.slice(1);
+    if (['monthly', 'daily', 'recent'].includes(name)) {
+      showBodyTab(name);
+    } else if (name === '') {
+      showBodyTab($('.body_tab_link[data=daily]').length > 0 ? 'daily' : 'monthly');
+    }
   });
 
   // 日で絞ったまま月の一覧タブを見ていて口座を切り替えたときは、切り替え後も月の一覧タブを表示する

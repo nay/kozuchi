@@ -794,6 +794,33 @@ describe DealsController, js: true, type: :feature do
       end
     end
 
+    context "7月15日にも「うどん」の記入があり、7月15日で絞った一覧の月の一覧タブで、うどんの「変更」を押したとき" do
+      let!(:udon) { create(:general_deal, date: Date.new(2012, 7, 15), summary: "うどん") }
+      before do
+        visit "/deals/2012/7/15#monthly"
+        within('#monthly_area') { find("tr#d#{udon.id}").click_link '変更' }
+      end
+
+      it "月の一覧の中に変更ウィンドウが開き、URLに #d（記入のid）がつく" do
+        within('#monthly_area') { expect(page).to have_css("#edit_window") }
+        expect(current_hash).to eq "d#{udon.id}"
+      end
+    end
+
+    context "7月15日に未確定の記入があり、現金の7月の一覧で、その記入の詳細を開いて「確認」を押したとき" do
+      let!(:unconfirmed_deal) { create(:general_deal, :cache, date: Date.new(2012, 7, 15), summary: "未確定のうどん").tap { |deal| deal.update_columns(confirmed: false) } }
+      before do
+        visit "/accounts/#{accounts(:taro_cache).id}/deals/2012/7"
+        find("tr#d#{unconfirmed_deal.id} td.open_detail").click
+        within("tr.detail_row.d#{unconfirmed_deal.id}") { click_link '確認' }
+      end
+
+      it "URLに #d（記入のid）がつき、記入の行に印がつく" do
+        expect(page).to have_css("tr.updated_line.d#{unconfirmed_deal.id}")
+        expect(current_hash).to eq "d#{unconfirmed_deal.id}"
+      end
+    end
+
     context "現金の7月15日で絞った一覧を開いたとき" do
       before do
         visit "/accounts/#{accounts(:taro_cache).id}/deals/2012/7/15"
@@ -897,6 +924,19 @@ describe DealsController, js: true, type: :feature do
           expect(find("input#deal_summary").value).to eq "書きかけ"
         end
 
+        context "さらに口座の選択で口座を選んだとき" do
+          before do
+            within('#account_selector') { select '現金', from: 'account_id' }
+            wait_for_turbo_frame_navigation
+          end
+
+          it "口座の15日で絞った一覧に変わり、日の一覧タブを表示したままになる" do
+            expect(page).to have_current_path("/accounts/#{accounts(:taro_cache).id}/deals/2012/7/15")
+            expect(page).to have_css("#daily_area", visible: true)
+            expect(page).to have_css("#monthly_area", visible: :hidden)
+          end
+        end
+
         context "さらに月の一覧タブを押したとき" do
           before do
             click_link "総合(2012年 7月)"
@@ -908,6 +948,18 @@ describe DealsController, js: true, type: :feature do
             expect(page).to have_content("ラーメン")
             expect(current_hash).to eq "monthly"
             expect(find("input#deal_summary").value).to eq "書きかけ"
+          end
+
+          context "さらにブラウザで戻ったとき" do
+            before do
+              page.go_back
+            end
+
+            it "URLの # がなくなり、日の一覧タブの表示に戻る" do
+              expect(page).to have_css("#daily_area", visible: true)
+              expect(page).to have_css("#monthly_area", visible: :hidden)
+              expect(current_hash).to be_nil
+            end
           end
 
           context "さらに口座の選択で口座を選んだとき" do

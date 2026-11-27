@@ -13,7 +13,6 @@ import "./turbo"
 import "./controllers"
 
 import "./deals"
-import "./jquery.ba-hashchange"
 import "./jquery.observe_field"
 import "./main"
 import "./settlements"
