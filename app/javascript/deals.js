@@ -237,7 +237,7 @@ $(function() {
             resultUrl = $('#deal_form_option').data("result-url").replace(/_YEAR_/, result.year).replace(/_MONTH_/, result.month);
           }
           // 移り先で日を絞るときは、日で絞った一覧に移る（日で絞った一覧の URL は、月の一覧の URL の後ろに日を付けたもの）
-          // 記入したときは記入した日、変更したときは日で絞った一覧から変更したときだけ変更後の日で絞る
+          // 記入したときは記入した日、変更したときは日で絞っているときだけ（どのタブから変更しても）変更後の日で絞る
           if (result.list_day) {
             resultUrl += "/" + result.list_day;
           }

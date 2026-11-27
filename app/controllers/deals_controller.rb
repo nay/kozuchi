@@ -148,7 +148,7 @@ class DealsController < ApplicationController
 
     deal_type = @deal.kind_of?(Deal::Balance) ? 'balance_deal' : 'general_deal'
     if @deal.save
-      # 日で絞った一覧から変更したなら変更後の日で絞った一覧、月の一覧から変更したなら変更後の日付の月の一覧に移る
+      # 日で絞っているなら（日の一覧・月の一覧のどちらのタブから変更しても）変更後の日で絞った一覧、日で絞っていないなら変更後の日付の月の一覧に移る
       self.current_vague_date = current_vague_date.move_to(@deal.date)
       account_has_been_selected(*@deal.accounts)
       flash[:notice] = "#{@deal.human_name} を更新しました。#{truncation_message(@deal)}"
@@ -159,7 +159,7 @@ class DealsController < ApplicationController
           year: @deal.date.year,
           month: @deal.date.month,
           day: @deal.date.day,
-          list_day: current_vague_date.day, # 移り先の一覧で絞る日。月の一覧に移るなら nil
+          list_day: current_vague_date.day, # 移り先の一覧で絞る日。日で絞らない一覧に移るなら nil
           error_view: false
       }
     else

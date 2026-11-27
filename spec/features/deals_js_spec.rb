@@ -598,6 +598,24 @@ describe DealsController, js: true, type: :feature do
           end
         end
 
+        context "7月10日で絞った一覧の月の一覧タブで、単純明細の日付を8月11日に変えて変更したとき" do
+          before do
+            visit "/deals/2012/7/10#monthly"
+            within('#monthly_area') { click_link '変更' }
+            within('#edit_window') do
+              fill_in 'date_month', with: '8'
+              fill_in 'date_day', with: '11'
+            end
+            click_button '変更'
+          end
+
+          it "8月11日で絞った一覧の、最近の記入タブに移る" do
+            expect(flash_notice).to have_content("更新しました。")
+            expect(URI(current_url).path).to eq "/deals/2012/8/11"
+            expect(current_hash).to eq "recent"
+          end
+        end
+
         context "7月の一覧で、単純明細の日付を8月11日に変えて変更したとき" do
           before do
             visit "/deals/2012/7"
@@ -801,9 +819,11 @@ describe DealsController, js: true, type: :feature do
         within('#monthly_area') { find("tr#d#{udon.id}").click_link '変更' }
       end
 
-      it "月の一覧の中に変更ウィンドウが開き、URLに #d（記入のid）がつく" do
+      it "月の一覧タブを表示したまま、月の一覧の中に変更ウィンドウが開き、URLに #d（記入のid）がつく" do
         within('#monthly_area') { expect(page).to have_css("#edit_window") }
         expect(current_hash).to eq "d#{udon.id}"
+        expect(page).to have_css("#monthly_area", visible: true)
+        expect(page).to have_css("#daily_area", visible: :hidden)
       end
     end
 
@@ -814,9 +834,11 @@ describe DealsController, js: true, type: :feature do
         within("#monthly_area tr#d#{unconfirmed_deal.id}") { click_link '確認' }
       end
 
-      it "URLに #d（記入のid）がつき、日の一覧を含むすべての一覧で、その記入の行が未確定でなくなる" do
+      it "月の一覧タブを表示したまま、URLに #d（記入のid）がつき、日の一覧を含むすべての一覧で、その記入の行が未確定でなくなる" do
         expect(page).to have_css("#monthly_area tr.updated_line.d#{unconfirmed_deal.id}")
         expect(current_hash).to eq "d#{unconfirmed_deal.id}"
+        expect(page).to have_css("#monthly_area", visible: true)
+        expect(page).to have_css("#daily_area", visible: :hidden)
         expect(page).not_to have_css("tr.unconfirmed.d#{unconfirmed_deal.id}", visible: :all)
       end
     end
