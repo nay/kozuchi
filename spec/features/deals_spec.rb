@@ -133,6 +133,17 @@ describe DealsController, type: :feature do
       end
     end
 
+    context "現金の2012年7月20日で絞った一覧で、月の一覧タブの明細の詳細にある、食費の「→」を押したとき" do
+      before do
+        visit "/accounts/#{cache_id}/deals/2012/7/20"
+        all('#monthly_area tr.detail_row td.account_deals_link a', visible: :all).find { |link| link[:href].start_with?("/accounts/#{Fixtures.identify(:taro_food)}/") }.click # 月の一覧タブと詳細は隠れているが、押したときの移り先だけを確かめる
+      end
+
+      it "食費の2012年7月の一覧に移る（日で絞らない）" do
+        expect(page).to have_current_path("/accounts/#{Fixtures.identify(:taro_food)}/deals/2012/7")
+      end
+    end
+
     context "総合の2012年7月20日で絞った一覧で、月の一覧タブの明細の現金の「→」を押したとき" do
       before do
         visit "/deals/2012/7/20"

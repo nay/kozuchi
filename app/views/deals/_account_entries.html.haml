@@ -57,7 +57,7 @@
             %span{style: "font-size: small;"} 詳細
     %tr{class: [:detail_row, "d#{deal.id}"], style: "display: none;"}
       %td{colspan: "10"}
-        = render partial: 'detail', locals: {deal: deal}
+        = render partial: 'detail', locals: {deal: deal, list_date: list_date}
   - if @account.kind_of?(Account::Asset)
     %tr
       %td.date

@@ -1,2 +1,3 @@
+- # list_date - 詳細を開いた一覧が表す年月日（VagueDate）。「→」の移り先を、開いた一覧に合わせる
 .panel.panel-default
-  = render partial: 'deals', locals: { deals: [deal], skip_deal_id: true }
+  = render partial: 'deals', locals: { deals: [deal], skip_deal_id: true, list_date: list_date }

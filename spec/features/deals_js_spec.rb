@@ -807,6 +807,20 @@ describe DealsController, js: true, type: :feature do
       end
     end
 
+    context "7月15日に未確定の記入があり、7月15日で絞った一覧の月の一覧タブで、その記入の「確認」を押したとき" do
+      let!(:unconfirmed_deal) { create(:general_deal, date: Date.new(2012, 7, 15), summary: "未確定のうどん").tap { |deal| deal.update_columns(confirmed: false) } }
+      before do
+        visit "/deals/2012/7/15#monthly"
+        within("#monthly_area tr#d#{unconfirmed_deal.id}") { click_link '確認' }
+      end
+
+      it "URLに #d（記入のid）がつき、日の一覧を含むすべての一覧で、その記入の行が未確定でなくなる" do
+        expect(page).to have_css("#monthly_area tr.updated_line.d#{unconfirmed_deal.id}")
+        expect(current_hash).to eq "d#{unconfirmed_deal.id}"
+        expect(page).not_to have_css("tr.unconfirmed.d#{unconfirmed_deal.id}", visible: :all)
+      end
+    end
+
     context "7月15日に未確定の記入があり、現金の7月の一覧で、その記入の詳細を開いて「確認」を押したとき" do
       let!(:unconfirmed_deal) { create(:general_deal, :cache, date: Date.new(2012, 7, 15), summary: "未確定のうどん").tap { |deal| deal.update_columns(confirmed: false) } }
       before do
@@ -974,6 +988,18 @@ describe DealsController, js: true, type: :feature do
               expect(page).to have_link("現金(2012年7月15日)")
               expect(page).to have_css("#monthly_area", visible: true)
               expect(page).to have_css("#daily_area", visible: :hidden)
+            end
+
+            context "さらにブラウザで戻ったとき" do
+              before do
+                page.go_back
+              end
+
+              it "総合の15日で絞った一覧の、月の一覧タブに戻る" do
+                expect(page).to have_link("総合(2012年7月15日)")
+                expect(page).to have_css("#monthly_area", visible: true)
+                expect(page).to have_css("#daily_area", visible: :hidden)
+              end
             end
           end
 
